@@ -60,8 +60,12 @@ describe('Recording and live-streaming', () => {
         }
 
         await p.switchToIFrame();
-        await p.getNotifications().waitForRecordingStartedNotification();
-        await p.switchToMainFrame();
+        try {
+            await p.getNotifications().waitForRecordingStartedNotification();
+            await p.getNotifications().closeRecordingLinkGeneratedNotification();
+        } finally {
+            await p.switchToMainFrame();
+        }
 
         const jaasEvent: {
             customerId: string;
@@ -71,11 +75,18 @@ describe('Recording and live-streaming', () => {
         expect('RECORDING_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
 
-        const iFrameEvent = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+        const iFrameEvent = await p.driver.waitUntil(async () => {
+            const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
 
-        if (iFrameEvent.error) {
-            throw new Error(`Recording failed to start: ${iFrameEvent.error}`);
-        }
+            if (event?.error) {
+                throw new Error(`Recording failed to start: ${event.error}`);
+            }
+
+            return event?.mode === 'file' && event?.on === true ? event : false;
+        }, {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event with mode=file, on=true not received'
+        });
 
         expect(iFrameEvent.mode).toBe('file');
         expect(iFrameEvent.on).toBe(true);

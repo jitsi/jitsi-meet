@@ -19,7 +19,14 @@ const RAISE_HAND_NOTIFICATION_ID = 'notify.raisedHand';
 const RECORDING_STARTED_NOTIFICATION_IDS = [
     'recording.on',
     'recording.onBy',
+    'recording.onWithTranscription',
+    'recording.onByWithTranscription',
     'recording.linkGenerated'
+];
+const RECORDING_START_FAILURE_NOTIFICATION_IDS = [
+    'recording.busyTitle',
+    'recording.unavailableTitle',
+    'recording.failedToStart'
 ];
 const REENABLE_SELF_VIEW_CLOSE_NOTIFICATION = 'notify.selfViewTitle-dismiss';
 const REENABLE_SELF_VIEW_NOTIFICATION_ID = 'notify.selfViewTitle';
@@ -103,6 +110,14 @@ export default class Notifications extends BasePageObject {
      */
     async waitForRecordingStartedNotification() {
         await this.participant.driver.waitUntil(async () => {
+            for (const id of RECORDING_START_FAILURE_NOTIFICATION_IDS) {
+                const notification = this.participant.driver.$(`div[data-testid="${id}"]`);
+
+                if (await notification.isDisplayed()) {
+                    throw new Error(`Recording start failed: ${id}`);
+                }
+            }
+
             for (const id of RECORDING_STARTED_NOTIFICATION_IDS) {
                 const notification = this.participant.driver.$(`div[data-testid="${id}"]`);
 
@@ -116,6 +131,13 @@ export default class Notifications extends BasePageObject {
             timeout: 120_000,
             timeoutMsg: 'Recording started notification not displayed'
         });
+    }
+
+    /**
+     * Closes the sticky recording link notification, if it is displayed.
+     */
+    async closeRecordingLinkGeneratedNotification() {
+        return this.closeNotification('recording.linkGenerated', true);
     }
 
     /**
