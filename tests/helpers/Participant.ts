@@ -779,8 +779,8 @@ export class Participant {
      */
     async waitForSendReceiveData(timeout = 15_000, msg?: string): Promise<boolean> {
         const values = await Promise.all([
-            await this.waitForSendMedia(timeout, msg ? `${msg} (send)` : undefined),
-            await this.waitForReceiveMedia(timeout, msg ? `${msg} (receive)` : undefined)
+            this.waitForSendMedia(timeout, msg ? `${msg} (send)` : undefined),
+            this.waitForReceiveMedia(timeout, msg ? `${msg} (receive)` : undefined)
         ]);
 
         return values[0] && values[1];
