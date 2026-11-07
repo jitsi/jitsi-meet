@@ -41,15 +41,18 @@ const GifsMenu = () => {
         goBack();
     }, []);
 
+    const searchPlaceholder = t('giphy.search');
+
     return (
         <JitsiScreen
             footerComponent = { GifsMenuFooter }
             style = { styles.container }>
             <Input
+                accessibilityLabel = { searchPlaceholder }
                 clearable = { true }
                 customStyles = {{ container: styles.customContainer }}
                 onChange = { setSearchQuery }
-                placeholder = { t('giphy.search') }
+                placeholder = { searchPlaceholder }
                 value = { searchQuery } />
             <GiphyGridView
                 cellPadding = { 5 }
