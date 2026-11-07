@@ -61,7 +61,7 @@ export interface IProps extends WithTranslation {
 interface IState {
     _fieldFocused?: boolean;
     animateTimeoutId?: number;
-    generateRoomNames?: string;
+    generateRoomNames?: boolean;
     generatedRoomName: string;
     hintBoxAnimation?: any;
     insecureRoomName: boolean;
@@ -87,7 +87,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @type {Object}
      * @property {number|null} animateTimeoutId - Identifier of the letter
      * animation timeout.
-     * @property {boolean} generatedRoomName - Automatically generated room name.
+     * @property {string} generatedRoomName - Automatically generated room name.
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
@@ -96,7 +96,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     override state: IState = {
         animateTimeoutId: undefined,
-        generatedRoomName: false,
+        generatedRoomName: '',
         generateRoomNames: undefined,
         insecureRoomName: false,
         joining: false,
@@ -238,9 +238,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
             insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
         });
 
-        if (!value && this.state.generateRoomNames !== false) {
+        if (!value) {
             this._updateRoomName();
-        } 
+        }
     }
 
     /**
@@ -264,6 +264,10 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _updateRoomName() {
+        if (!this.state.generateRoomNames) {
+            return;
+        }
+
         const generatedRoomName = generateRoomWithoutSeparator();
         const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);

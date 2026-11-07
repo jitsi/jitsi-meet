@@ -64,6 +64,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     constructor(props: IProps) {
         super(props);
 
+        this.state.generateRoomNames = true;
+
         this.state._fieldFocused = false;
 
         this.state.isSettingsScreenFocused = false;
