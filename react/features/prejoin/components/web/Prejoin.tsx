@@ -459,15 +459,16 @@ const Prejoin = ({
                                     { ...rest } />
                             ))}
                         </div> }
+                        headingLabel = { t('prejoin.joinOptions') }
                         onPopoverClose = { onDropdownClose }
                         position = 'bottom'
                         trigger = 'click'
                         visible = { showJoinByPhoneButtons }>
                         <ActionButton
                             OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
-                            ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
+                            ariaDropDownLabel = { t('prejoin.joinOptions') }
+                            ariaExpanded = { showJoinByPhoneButtons }
                             ariaLabel = { t('prejoin.joinMeeting') }
-                            ariaPressed = { showJoinByPhoneButtons }
                             disabled = { joiningInProgress
                                 || (showUnsafeRoomWarning && !unsafeRoomConsent)
                                 || showErrorOnField }

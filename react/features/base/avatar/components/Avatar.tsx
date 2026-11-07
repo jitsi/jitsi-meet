@@ -38,6 +38,12 @@ export interface IProps {
     _loadableAvatarUrlUseCORS?: boolean;
 
     /**
+     * Whether assistive technologies should announce the name of the person the avatar stands for. Leave it
+     * off where the name is already visible next to the avatar, otherwise screen readers read it twice.
+     */
+    accessibilityAnnounceName?: boolean;
+
+    /**
      * A prop to maintain compatibility with web.
      */
     className?: string;
@@ -176,6 +182,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             _initialsBase,
             _loadableAvatarUrl,
             _loadableAvatarUrlUseCORS,
+            accessibilityAnnounceName,
             className,
             colorBase,
             defaultIcon,
@@ -197,8 +204,10 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             url?: string;
             useCORS?: boolean;
         } = {
+            accessibilityAnnounceName,
             className,
             color: undefined,
+            displayName: _initialsBase,
             id,
             initials: undefined,
             onAvatarLoadError: undefined,

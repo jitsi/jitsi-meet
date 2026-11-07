@@ -326,13 +326,15 @@ ReducerRegistry.register<IFilmstripState>(
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
 
-            if (local) {
+            const { [id]: removedVolume, ...participantsVolume } = state.participantsVolume;
+
+            if (local || removedVolume === undefined) {
                 return state;
             }
-            delete state.participantsVolume[id];
 
             return {
-                ...state
+                ...state,
+                participantsVolume
             };
         }
         case SET_FILMSTRIP_HEIGHT:{
