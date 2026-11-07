@@ -52,9 +52,9 @@ export async function ensureThreeParticipants(options?: IJoinOptions): Promise<v
         ctx.p3.waitForIceConnected()
     ]);
     await Promise.all([
-        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
-        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
-        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(2)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(2)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(2)),
     ]);
 }
 
@@ -115,10 +115,10 @@ export async function ensureFourParticipants(options?: IJoinOptions): Promise<vo
         ctx.p4.waitForIceConnected()
     ]);
     await Promise.all([
-        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
-        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
-        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
-        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(1)),
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(3)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(3)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(3)),
+        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(3)),
     ]);
 }
 
@@ -156,12 +156,12 @@ export async function ensureSixParticipants(options?: IJoinOptions): Promise<voi
         ctx.p6.waitForIceConnected()
     ]);
     await Promise.all([
-        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
-        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
-        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
-        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(1)),
-        ctx.p5.waitForSendReceiveData().then(() => ctx.p5.waitForRemoteStreams(1)),
-        ctx.p6.waitForSendReceiveData().then(() => ctx.p6.waitForRemoteStreams(1))
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(5)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(5)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(5)),
+        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(5)),
+        ctx.p5.waitForSendReceiveData().then(() => ctx.p5.waitForRemoteStreams(5)),
+        ctx.p6.waitForSendReceiveData().then(() => ctx.p6.waitForRemoteStreams(5))
     ]);
 }
 
