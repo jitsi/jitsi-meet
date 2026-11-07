@@ -108,6 +108,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch ]);
 
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
+    const displayNamePlaceholder = t('dialog.enterDisplayName');
 
     useEffect(() => {
         const hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -186,11 +187,12 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
                 {
                     showDisplayNameInput && <Input
+                        accessibilityLabel = { displayNamePlaceholder }
                         customStyles = {{ input: styles.customInput }}
                         disabled = { isDisplayNameReadonly }
                         error = { showDisplayNameError }
                         onChange = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
+                        placeholder = { displayNamePlaceholder }
                         value = { displayName } />
                 }
                 {
