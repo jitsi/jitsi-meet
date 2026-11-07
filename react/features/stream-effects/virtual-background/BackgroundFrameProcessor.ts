@@ -6,6 +6,7 @@ import { IVirtualBackground } from '../../virtual-background/reducer';
 import { BackendType } from './DeviceTierDetector';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import { ICompositor } from './compositor/ICompositor';
+import { ICoverCropRect, getCoverCropRect } from './utils';
 
 /** Benchmark log interval in frames. */
 const BENCHMARK_LOG_INTERVAL = 60;
@@ -92,6 +93,9 @@ export default class BackgroundFrameProcessor {
     _edgeLow: number;
     _firstMaskFrame = true;
     _frameCount = 0;
+    _imageCoverRect: ICoverCropRect | null = null;
+    _imageCoverTargetHeight = 0;
+    _imageCoverTargetWidth = 0;
     _inferenceSkipCounter = 0;
     _isReady = false;
     _maskAccumF32: Float32Array | null = null;
@@ -364,8 +368,28 @@ export default class BackgroundFrameProcessor {
             ctx.filter = `blur(${this._options.blurValue ?? 8}px)`;
             ctx.drawImage(source, 0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
         } else if (this._options.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE && this._virtualImage) {
-            ctx.drawImage(this._virtualImage, 0, 0,
-                this._backgroundCanvas.width, this._backgroundCanvas.height);
+            const { width, height } = this._backgroundCanvas;
+
+            if (!this._imageCoverRect
+                || this._imageCoverTargetWidth !== width
+                || this._imageCoverTargetHeight !== height) {
+                const nw = this._virtualImage.naturalWidth;
+                const nh = this._virtualImage.naturalHeight;
+
+                if (nw && nh) {
+                    this._imageCoverRect = getCoverCropRect(nw, nh, width, height);
+                    this._imageCoverTargetWidth = width;
+                    this._imageCoverTargetHeight = height;
+                }
+            }
+
+            if (this._imageCoverRect) {
+                const { sx, sy, sw, sh } = this._imageCoverRect;
+
+                ctx.drawImage(this._virtualImage, sx, sy, sw, sh, 0, 0, width, height);
+            } else {
+                ctx.drawImage(this._virtualImage, 0, 0, width, height);
+            }
         } else {
             ctx.clearRect(0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
         }
