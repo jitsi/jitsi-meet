@@ -165,6 +165,8 @@ const PollCreate = (props: AbstractProps) => {
         </>
     ), [ question ]);
 
+    const singleAnswerLabel = t('polls.create.singleAnswer');
+
     return (
         <SafeAreaView style = { pollsStyles.pollCreateContainer as ViewStyle }>
             <View style = { pollsStyles.pollCreateSubContainer as ViewStyle }>
@@ -182,11 +184,12 @@ const PollCreate = (props: AbstractProps) => {
                     ] as ViewStyle[] }>
                     { showSingleAnswer && <View style = { pollsStyles.switchRow as ViewStyle }>
                         <Switch
+                            accessibilityLabel = { singleAnswerLabel }
                             checked = { singleAnswer }
                             id = 'polls-single-answer'
                             onChange = { state => setSingleAnswer(Boolean(state)) } />
                         <Text style = { pollsStyles.switchLabel as TextStyle }>
-                            { t('polls.create.singleAnswer') }
+                            { singleAnswerLabel }
                         </Text>
                     </View> }
                     <Button
