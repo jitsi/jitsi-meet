@@ -60,6 +60,10 @@ const ChatSearchBar = ({ t }: IProps) => {
         _onNext();
     }, [ _onNext ]);
 
+    const searchPlaceholder = t('chat.search.placeholder');
+    const previousLabel = t('chat.search.previous');
+    const nextLabel = t('chat.search.next');
+
     return (
         <View
             style = { [
@@ -67,6 +71,7 @@ const ChatSearchBar = ({ t }: IProps) => {
                 focused && styles.searchBarContainerFocused
             ] as ViewStyle[] }>
             <Input
+                accessibilityLabel = { searchPlaceholder }
                 clearable = { true }
                 customStyles = {{
                     clearButton: styles.searchClearButton,
@@ -77,7 +82,7 @@ const ChatSearchBar = ({ t }: IProps) => {
                 onChange = { _onChangeText }
                 onFocus = { _onFocus }
                 onSubmitEditing = { _onSubmitEditing }
-                placeholder = { t('chat.search.placeholder') }
+                placeholder = { searchPlaceholder }
                 returnKeyType = 'search'
                 value = { query } />
             { hasQuery && (
@@ -91,7 +96,7 @@ const ChatSearchBar = ({ t }: IProps) => {
                             : t('chat.search.noResults') }
                     </Text>
                     <TouchableOpacity
-                        accessibilityLabel = { t('chat.search.previous') }
+                        accessibilityLabel = { previousLabel }
                         accessibilityRole = 'button'
                         disabled = { !hasMatches }
                         onPress = { _onPrevious }
@@ -102,7 +107,7 @@ const ChatSearchBar = ({ t }: IProps) => {
                             src = { IconArrowUp } />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        accessibilityLabel = { t('chat.search.next') }
+                        accessibilityLabel = { nextLabel }
                         accessibilityRole = 'button'
                         disabled = { !hasMatches }
                         onPress = { _onNext }
