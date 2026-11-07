@@ -39,6 +39,8 @@ const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
 const VIRTUAL_BACKGROUND = 'Select Background';
+const NOISE_SUPPRESSION = 'Extra noise suppression';
+const DISABLE_NOISE_SUPPRESSION = 'Disable extra noise suppression';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
 
@@ -487,6 +489,51 @@ export default class Toolbar extends BasePageObject {
      */
     clickVirtualBackgroundButton() {
         return this.clickButtonInOverflowMenu(VIRTUAL_BACKGROUND);
+    }
+
+    /**
+     * Clicks on the noise suppression button in the overflow menu.
+     */
+    clickNoiseSuppressionButton() {
+        return this.clickButtonInOverflowMenu([ NOISE_SUPPRESSION, DISABLE_NOISE_SUPPRESSION ]);
+    }
+
+    /**
+     * Clicks the audio settings button (arrow next to microphone) to toggle the audio device menu.
+     */
+    async clickAudioSettingsButton(): Promise<void> {
+        await this.participant.log('Clicking on: Audio Settings Button');
+        const audioSettingsBtn = this.participant.driver.$('#audio-settings-button');
+
+        await audioSettingsBtn.waitForExist({
+            timeout: 5000,
+            timeoutMsg: 'Audio settings button not found'
+        });
+        await audioSettingsBtn.waitForClickable({
+            timeout: 5000,
+            timeoutMsg: 'Audio settings button not clickable'
+        });
+        await audioSettingsBtn.click();
+    }
+
+    /**
+     * Selects a microphone from the audio settings popup menu by device label.
+     */
+    async selectMicrophoneFromMenu(deviceLabel: string): Promise<void> {
+        await this.participant.log('Selecting microphone from menu: ' + deviceLabel);
+        await this.clickAudioSettingsButton();
+
+        const micEntry = this.participant.driver.$('//li[@role="menuitemradio"][contains(., "' + deviceLabel + '")]');
+
+        await micEntry.waitForExist({
+            timeout: 5000,
+            timeoutMsg: 'Microphone entry "' + deviceLabel + '" not found in menu'
+        });
+        await micEntry.waitForClickable({
+            timeout: 5000,
+            timeoutMsg: 'Microphone entry "' + deviceLabel + '" not clickable'
+        });
+        await micEntry.click();
     }
 
     /**
