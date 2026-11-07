@@ -62,7 +62,7 @@ const STORE_NAME = 'features/calendar-sync';
 PersistenceRegistry.register(STORE_NAME, {
     integrationType: true,
     msAuthState: true
-});
+}, DEFAULT_STATE);
 
 ReducerRegistry.register<ICalendarSyncState>(STORE_NAME, (state = DEFAULT_STATE, action): ICalendarSyncState => {
     switch (action.type) {
