@@ -5,6 +5,7 @@ import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 const DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
+const SERVER_FEATURES_NS = 'http://jitsi.org/protocol/server-features';
 
 const LOADED_FEATURE = 'http://jitsi.org/protocol/test#loaded_feature';
 
@@ -38,6 +39,20 @@ describe('mod_jiconop', () => {
 
         return { client: c,
             msg };
+    }
+
+    /**
+     * Returns the server features of a jiconop message.
+     *
+     * @param {object} msg - The jiconop message.
+     * @returns {string[]}
+     */
+    function serverFeatures(msg) {
+        const features = msg.getChild('features', SERVER_FEATURES_NS);
+
+        assert.ok(features, 'message must contain <features xmlns="http://jitsi.org/protocol/server-features">');
+
+        return features.getChildren('feature').map(f => f.attrs.var);
     }
 
     it('sends an unsolicited message with a disco#info query on connect', async () => {
@@ -85,7 +100,7 @@ describe('mod_jiconop', () => {
         assert.equal(release.attrs.name, 'test-release');
     });
 
-    it('query contains the features advertised with jitsi-add-feature', async () => {
+    it('sends the features advertised with jitsi-add-feature in their own element', async () => {
         const feature = 'http://jitsi.org/protocol/test#jiconop_feature';
 
         // Connect first, so the query is cached before the feature is added.
@@ -94,12 +109,14 @@ describe('mod_jiconop', () => {
             `>prosody.hosts["localhost"].events.fire_event("jitsi-add-feature", { feature = "${feature}" })`);
 
         const { msg } = await connectAndGetJiconop();
-        const features = msg.getChild('query', DISCO_INFO_NS)
+        const features = serverFeatures(msg);
+        const queryFeatures = msg.getChild('query', DISCO_INFO_NS)
             .getChildren('feature')
             .map(f => f.attrs.var);
 
-        assert.ok(features.includes(feature), 'query must contain the advertised feature');
-        assert.ok(!features.includes('urn:xmpp:ping'), 'query must not contain the standard XMPP features');
+        assert.ok(features.includes(feature), 'the server features must contain the advertised feature');
+        assert.ok(!features.includes('urn:xmpp:ping'), 'the server features must not contain the standard XMPP ones');
+        assert.ok(!queryFeatures.includes(feature), 'the query must not contain the server features');
     });
 
     it('the main host disco#info contains the features advertised with jitsi-add-feature', async () => {
@@ -129,11 +146,8 @@ describe('mod_jiconop', () => {
         await prosodyShell('module:load("test_add_feature", "conference.localhost")');
 
         const { msg } = await connectAndGetJiconop();
-        const jiconopFeatures = msg.getChild('query', DISCO_INFO_NS)
-            .getChildren('feature')
-            .map(f => f.attrs.var);
-
-        assert.ok(jiconopFeatures.includes(LOADED_FEATURE), 'query must contain the feature of the loaded module');
+        assert.ok(serverFeatures(msg).includes(LOADED_FEATURE),
+            'the server features must contain the feature of the loaded module');
 
         await prosodyShell('module:unload("test_add_feature", "conference.localhost")');
         await prosodyShell('module:load("test_add_feature", "conference.localhost")');

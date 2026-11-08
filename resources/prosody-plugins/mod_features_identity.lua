@@ -13,8 +13,7 @@ local added_features = {};
 -- Other components can use the event 'jitsi-add-feature' to advertise a feature of theirs, which clients discover
 -- with the disco#info of the main virtual host (and with jiconop). A client can then enable an option only when the
 -- deployed modules support it, e.g. 'http://jitsi.org/protocol/polls#single_answer'.
--- Name features 'http://jitsi.org/protocol/<module>#<feature>': jiconop sends only those. Older lib-jitsi-meet
--- versions take any feature ending with '#rename' or '#displayname_required' for the breakout rooms and lobby ones.
+-- Name features 'http://jitsi.org/protocol/<module>#<feature>': jiconop and lib-jitsi-meet report only those.
 module:hook('jitsi-add-feature', function(event)
     if type(event.feature) ~= 'string' then
         module:log('warn', 'Ignoring jitsi-add-feature without a feature');

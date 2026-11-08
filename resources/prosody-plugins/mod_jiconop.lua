@@ -31,14 +31,20 @@ end
 -- Only the features of jitsi modules are sent, the client discovers the standard XMPP ones when it needs them.
 local JITSI_FEATURE_PREFIX = 'http://jitsi.org/protocol/';
 
+-- The server features are sent in their own element, apart from the query that also carries the features of the room
+-- in the connection URL (lobby, breakout rooms). Older lib-jitsi-meet versions read every <query> child and ignore it.
+local SERVER_FEATURES_NS = 'http://jitsi.org/protocol/server-features';
+
 -- we cache the query as server identities will not change dynamically, amd use its clone every time
 local query_cache;
+local features_cache;
 
 -- A module that is loaded later can add or remove an identity or a feature (e.g. with jitsi-add-feature), rebuild
 -- the query then.
 process_host_module(main_virtual_host, function(host_module)
     local function clear_query_cache()
         query_cache = nil;
+        features_cache = nil;
     end
 
     for _, event_name in ipairs({ 'item-added/identity', 'item-removed/identity',
@@ -64,14 +70,16 @@ module:hook("resource-bind", function (event)
             end
         end
 
+        local features = st.stanza("features", { xmlns = SERVER_FEATURES_NS });
         for _,feature in ipairs(module:context(main_virtual_host):get_host_items("feature")) do
             if not done[feature] and feature:sub(1, #JITSI_FEATURE_PREFIX) == JITSI_FEATURE_PREFIX then
-                query:tag("feature", { var = feature }):up();
+                features:tag("feature", { var = feature }):up();
                 done[feature] = true;
             end
         end
 
         query_cache = query;
+        features_cache = features;
     end
 
     local query = st.clone(query_cache);
@@ -92,6 +100,7 @@ module:hook("resource-bind", function (event)
             from = module.host;
             to = session.full_jid; });
     stanza:add_child(query):up();
+    stanza:add_child(st.clone(features_cache)):up();
 
     session.send(stanza);
 end);

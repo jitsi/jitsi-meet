@@ -8,6 +8,7 @@ const CONFERENCE = 'conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 const DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
+const SERVER_FEATURES_NS = 'http://jitsi.org/protocol/server-features';
 const CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
 
 let _counter = 0;
@@ -320,8 +321,8 @@ describe('mod_filter_messages', () => {
 
         clients.push(c);
 
-        const jiconop = await c.waitForMessage(m => m.getChild('query', DISCO_INFO_NS) !== null);
-        const jiconopFeatures = jiconop.getChild('query', DISCO_INFO_NS)
+        const jiconop = await c.waitForMessage(m => m.getChild('features', SERVER_FEATURES_NS) !== null);
+        const jiconopFeatures = jiconop.getChild('features', SERVER_FEATURES_NS)
             .getChildren('feature')
             .map(f => f.attrs.var);
 
