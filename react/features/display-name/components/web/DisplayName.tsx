@@ -123,7 +123,7 @@ const DisplayName = ({
         }
 
         restoreFocusOnCloseRef.current = false;
-        displayNameRef.current?.focus({ focusVisible: true });
+        displayNameRef.current?.focus();
     }, [ isEditing ]);
 
     const onClick = useCallback((e: React.MouseEvent) => {
@@ -139,6 +139,8 @@ const DisplayName = ({
             return;
         }
 
+        cancelEditingRef.current = true;
+
         dispatch(updateSettings({
             displayName: editDisplayNameValue
         }));
@@ -149,12 +151,15 @@ const DisplayName = ({
     }, [ editDisplayNameValue, nameInputRef ]);
 
     const onKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if(e.repeat) return;
+        if (e.repeat) {
+            return;
+        }
 
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
             cancelEditingRef.current = true;
+            restoreFocusOnCloseRef.current = true;
             setEditDisplayNameValue('');
             setIsEditing(false);
             nameInputRef.current = null;
@@ -164,12 +169,12 @@ const DisplayName = ({
 
         if (e.key === 'Enter') {
             e.preventDefault();
+            restoreFocusOnCloseRef.current = true;
             onSubmit();
         }
     }, [ onSubmit ]);
 
-    const startEditing = useCallback((restoreFocus = false) => {
-        restoreFocusOnCloseRef.current = restoreFocus;
+    const startEditing = useCallback(() => {
         setIsEditing(true);
         setEditDisplayNameValue(configuredDisplayName);
     }, [ configuredDisplayName ]);
@@ -177,7 +182,7 @@ const DisplayName = ({
     const onStartEditing = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
 
-        startEditing(e.detail === 0);
+        startEditing();
     }, [ startEditing ]);
 
     const onDisplayNameKeyPress = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {

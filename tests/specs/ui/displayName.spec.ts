@@ -52,12 +52,24 @@ describe('Display name', () => {
         const endpointId = await p2.getEndpointId();
         const wasPinned = await p2.driver.$(`#pin-indicator-${endpointId}`).isExisting();
 
+        const nameBeforeCancel = await p2.getLocalDisplayName();
+
         await p2.driver.keys(Key.Return);
 
         await p2.driver.$('#editDisplayName').waitForExist({ timeout: 2_000 });
         expect(await p2.execute(() => document.activeElement?.id)).toBe('editDisplayName');
         expect(await p2.driver.$(`#pin-indicator-${endpointId}`).isExisting()).toBe(wasPinned);
 
+        await p2.driver.keys('Cancelled');
+        await p2.driver.keys(Key.Escape);
+
+        expect(await p2.getLocalDisplayName()).toBe(nameBeforeCancel);
+        expect(await p1.getFilmstrip().getRemoteDisplayName(endpointId)).toBe(nameBeforeCancel);
+        expect(await p2.execute(() => document.activeElement?.id)).toBe('localDisplayName');
+
+        await p2.driver.keys(Key.Return);
+
+        await p2.driver.$('#editDisplayName').waitForExist({ timeout: 2_000 });
         await p2.driver.keys(randomName);
         await p2.driver.keys(Key.Return);
 
