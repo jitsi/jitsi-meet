@@ -77,6 +77,8 @@ const MeetingParticipantList = ({
             searchString = { searchString } />
     );
 
+    const searchPlaceholder = t('participantsPane.search');
+
     return (
         <View style = { styles.meetingListContainer }>
             <Text
@@ -102,12 +104,13 @@ const MeetingParticipantList = ({
                     type = { BUTTON_TYPES.PRIMARY } />
             }
             <Input
+                accessibilityLabel = { searchPlaceholder }
                 clearable = { true }
                 customStyles = {{
                     container: styles.inputContainer,
                     input: styles.centerInput }}
                 onChange = { onSearchStringChange }
-                placeholder = { t('participantsPane.search') }
+                placeholder = { searchPlaceholder }
                 value = { searchString } />
             <FlatList
                 data = { sortedParticipantIds as Array<any> }
