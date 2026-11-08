@@ -1447,7 +1447,10 @@ var config = {
     //             macos: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg',
     //             windows: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe'
     //         },
-    //         enabled: false
+    //         enabled: false,
+    //         // The desktop platforms on which to open the app: any of 'linux', 'macos' and 'windows'.
+    //         // When unset, all of them. On a platform not listed the meeting continues in the browser.
+    //         platforms: [ 'linux', 'macos', 'windows' ]
     //     },
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.
