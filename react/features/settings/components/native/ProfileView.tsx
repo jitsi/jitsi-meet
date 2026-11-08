@@ -113,6 +113,12 @@ const ProfileView = ({ isInWelcomePage }: {
         });
     }, [ navigation ]);
 
+    const displayNameLabel = t('settingsView.displayName');
+    const displayNamePlaceholder = t('settingsView.displayNamePlaceholderText');
+    const emailLabel = t('settingsView.email');
+    const emailPlaceholder = t('settingsView.emailPlaceholderText');
+    const gavatarMessage = t('settingsView.gavatarMessage');
+
     return (
         <JitsiScreen
             disableForcedKeyboardDismiss = { true }
@@ -130,29 +136,31 @@ const ProfileView = ({ isInWelcomePage }: {
                     </View>
                     <FormSection>
                         <Input
+                            accessibilityLabel = { displayNameLabel }
                             customStyles = {{ container: styles.customContainer }}
-                            label = { t('settingsView.displayName') }
+                            label = { displayNameLabel }
                             onChange = { onDisplayNameChanged }
-                            placeholder = { t('settingsView.displayNamePlaceholderText') }
+                            placeholder = { displayNamePlaceholder }
                             textContentType = { 'name' } // iOS only
                             value = { displayName ?? '' } />
                         <Input
+                            accessibilityLabel = { emailLabel }
                             autoCapitalize = 'none'
                             customStyles = {{ container: styles.customContainer }}
                             keyboardType = { 'email-address' }
-                            label = { t('settingsView.email') }
+                            label = { emailLabel }
                             onChange = { onEmailChanged }
-                            placeholder = { t('settingsView.emailPlaceholderText') }
+                            placeholder = { emailPlaceholder }
                             textContentType = { 'emailAddress' } // iOS only
                             value = { email ?? '' } />
                         <Text style = { styles.gavatarMessageContainer }>
-                            { t('settingsView.gavatarMessage') }
+                            { gavatarMessage }
                         </Text>
                     </FormSection>
                 </View>
                 <Button
-                    accessibilityLabel = { t('settingsView.apply') }
-                    labelKey = { 'settingsView.apply' }
+                    accessibilityLabel = 'settingsView.apply'
+                    labelKey = 'settingsView.apply'
                     onClick = { onApplySettings }
                     style = { styles.applyProfileSettingsButton }
                     type = { BUTTON_TYPES.PRIMARY } />
