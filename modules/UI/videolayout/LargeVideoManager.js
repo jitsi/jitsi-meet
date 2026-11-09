@@ -555,6 +555,7 @@ export default class LargeVideoManager {
         this._avatarRoot.render(
             <Provider store = { APP.store }>
                 <Avatar
+                    accessibilityAnnounceName = { true }
                     id = "dominantSpeakerAvatar"
                     participantId = { this.id }
                     size = { 200 } />

@@ -90,6 +90,7 @@ const SecondScreenSingle = ({ id, win }: IProps) => {
     return (
         <div style = { CONTAINER_STYLE }>
             <Avatar
+                accessibilityAnnounceName = { true }
                 participantId = { participant?.id }
                 size = { AVATAR_SIZE } />
         </div>
