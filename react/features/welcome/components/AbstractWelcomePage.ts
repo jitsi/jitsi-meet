@@ -97,7 +97,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     override state: IState = {
         animateTimeoutId: undefined,
         generatedRoomName: '',
-        generateRoomNames: undefined,
+        generateRoomNames: true,
         insecureRoomName: false,
         joining: false,
         room: '',
