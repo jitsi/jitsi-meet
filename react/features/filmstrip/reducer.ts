@@ -281,12 +281,14 @@ ReducerRegistry.register<IFilmstripState>(
                 horizontalViewDimensions: action.dimensions
             };
         case SET_REMOTE_PARTICIPANTS: {
-            state.remoteParticipants = action.participants;
+            const remoteParticipants = action.participants;
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
-
-            return { ...state };
+            return {
+                ...state,
+                remoteParticipants,
+                visibleRemoteParticipants: new Set(remoteParticipants.slice(startIndex, endIndex + 1))
+            };
         }
         case SET_TILE_VIEW_DIMENSIONS:
             return {
