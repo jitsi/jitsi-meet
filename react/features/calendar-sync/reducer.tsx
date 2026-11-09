@@ -14,11 +14,12 @@ import {
 } from './actionTypes';
 
 /**
- * The default state of the calendar feature.
+ * The default state of the calendar feature. It is also merged under the
+ * persisted subtree on rehydration, which restores the non-persisted fields.
  *
- * @type {Object}
+ * @type {ICalendarSyncState}
  */
-const DEFAULT_STATE = {
+const DEFAULT_STATE: ICalendarSyncState = {
     authorization: undefined,
     events: [],
     integrationReady: false,
