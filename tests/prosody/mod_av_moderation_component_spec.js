@@ -101,6 +101,26 @@ async function waitForWhitelist(client, mediaType, pred = () => true, { removed 
     return payload.whitelists[mediaType] ?? [];
 }
 
+/**
+ * Asserts that NO av_moderation json-message matching the predicate arrives
+ * within the given window.
+ *
+ * @param {object} client
+ * @param {Function} pred
+ * @param {number} [timeout=1000]
+ */
+async function assertNoAvModeration(client, pred, timeout = 1000) {
+    try {
+        await waitForAvModeration(client, pred, timeout);
+    } catch (err) {
+        if (err.message.includes('Timeout')) {
+            return; // expected — nothing arrived
+        }
+        throw err;
+    }
+    throw new Error('received unexpected av_moderation message');
+}
+
 describe('mod_av_moderation_component', () => {
 
     let clients;
@@ -249,6 +269,19 @@ describe('mod_av_moderation_component', () => {
             } finally {
                 await setStrictMode(true);
             }
+        });
+
+        it('does not send an update when a participant that was not whitelisted leaves', async () => {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const moderator = await joinModerator(r, 'moderator');
+            const participant = await joinParticipant(r);
+
+            await enableAll(moderator, focus);
+
+            await participant.leaveRoom(r);
+
+            await assertNoAvModeration(focus, p => p.removed === true);
         });
 
         it('whitelists a moderator again when it rejoins', async () => {

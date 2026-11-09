@@ -449,8 +449,8 @@ function occupant_left(event)
     for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
         local whitelist = room.av_moderation[mediaType];
         if whitelist and remove_from_whitelist(whitelist, occupant_jid) then
-            -- notifies all moderators (including jicofo)
-            notify_whitelist_change(occupant.jid, true, room, mediaType, true);
+            -- notifies all moderators (including jicofo), the occupant is already gone from the room
+            notify_whitelist_change(nil, true, room, mediaType, true);
         end
     end
 end
