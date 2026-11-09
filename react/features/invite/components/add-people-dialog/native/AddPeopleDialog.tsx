@@ -199,18 +199,21 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
             placeholderKey = 'searchPeopleOnlyPlaceholder';
         }
 
+        const searchPlaceholder = this.props.t(`inviteDialog.${placeholderKey}`);
+
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
                 hasExtraHeaderHeight = { true }
                 style = { styles.addPeopleContainer }>
                 <Input
+                    accessibilityLabel = { searchPlaceholder }
                     autoFocus = { false }
                     clearable = { true }
                     customStyles = {{ container: styles.customContainer }}
                     icon = { this._renderIcon }
                     onChange = { this._onTypeQuery }
-                    placeholder = { this.props.t(`inviteDialog.${placeholderKey}`) }
+                    placeholder = { searchPlaceholder }
                     value = { this.state.fieldValue } />
                 { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
                     <FlatList
