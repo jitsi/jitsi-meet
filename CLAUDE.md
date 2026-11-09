@@ -95,6 +95,13 @@ The codebase uses a registry-based Redux architecture:
 - React Native for mobile applications
 - Webpack for bundling with development server
 
+### lib-jitsi-meet Version Pin
+- `package.json` pins `lib-jitsi-meet` to a release tarball (`.../releases/download/v<N>.0.0+<sha>/lib-jitsi-meet.tgz`). A merged lib-jitsi-meet PR has no effect on jitsi-meet until a jitsi-meet commit moves this pin, and that build is deployed.
+- To check if a lib-jitsi-meet commit is in the pin, run `git merge-base --is-ancestor <ljm-commit> <pin-sha>` in a lib-jitsi-meet checkout. `<pin-sha>` is the part after `+` in the pinned version.
+- To check if a change is in a deployed client, fetch `https://<deployment>/libs/lib-jitsi-meet.min.js` and search it for a string from the change. The served bundle is the real answer, not the pin on `master`.
+- To move the pin, use `resources/update-ljm.sh`. It needs a clean checkout on `master`. It takes the latest lib-jitsi-meet release, creates an `update-ljm-<epoch>` branch, and commits `chore(deps) lib-jitsi-meet@latest`. The diff touches only `package.json` and `package-lock.json`. The script also pushes the branch to `origin` and opens a PR with `gh pr create`.
+- A call to a new lib-jitsi-meet method with optional chaining (`p.newMethod?.()`) does nothing on an old pin and logs no error. If such a feature has no effect, check the pin first.
+
 ### TypeScript Configuration
 - `tsconfig.web.json` - Web platform TypeScript config (excludes native files)
 - `tsconfig.native.json` - React Native TypeScript config (excludes web files)
@@ -118,6 +125,11 @@ The codebase uses a registry-based Redux architecture:
 - Test files are located in `tests/specs/` and use page objects in `tests/pageobjects/`.
 - Environment configuration via `.env` files
 - Support for Chrome, Firefox, and grid testing
+- WebDriverIO runs the end-to-end tests with the Mocha framework. The web client has no unit tests. The only unit tests are busted specs for Prosody plugin Lua code, in `tests/prosody/lua/`.
+- `tests/` is a separate npm project. The `npm test` and `npm run test-*` scripts are in `tests/package.json`, not in the root `package.json`. Run `npm install` and the test commands from `tests/`.
+- Shared test helpers are in `tests/helpers/`.
+- Custom matchers (added with `expect.extend`) are in `tests/helpers/matchers.ts`.
+- Prosody plugin tests are in `tests/prosody/`, a separate Node project. They run Prosody 13 in Docker through testcontainers. See `tests/prosody/README.md` for setup. CI runs them only when `resources/prosody-plugins/**` or `tests/prosody/**` changes.
 
 ## Development Guidelines
 
@@ -167,6 +179,7 @@ The project uses WebDriver (WebdriverIO) for end-to-end testing. Test files are 
 - All code must pass `npm run lint:ci` and `npm run tsc:ci` with 0 warnings before committing
 - TypeScript strict mode enabled - avoid `any` type
 - ESLint config extends `@jitsi/eslint-config`
+- ESLint (8.x) ignores all files, with no error, when the checkout path is inside a dot-directory, for example a Claude Code worktree under `.claude/worktrees/`. Run lint from a checkout outside a dot-directory, or pass `--no-ignore` with an explicit file list.
 - Prefer TypeScript for new features, convert existing JavaScript when possible
 
 ## Code Style and Standards
