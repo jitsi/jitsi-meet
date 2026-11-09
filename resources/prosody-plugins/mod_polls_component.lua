@@ -17,6 +17,11 @@ local is_healthcheck_room = util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local table_compare = util.table_compare;
 
+-- Advertised on the main virtual host (with mod_features_identity), so clients show these options only where this
+-- module enforces them.
+local SINGLE_ANSWER_FEATURE = 'http://jitsi.org/protocol/polls#single_answer';
+local CLOSE_FEATURE = 'http://jitsi.org/protocol/polls#close';
+
 local POLLS_LIMIT = 128;
 local POLL_PAYLOAD_LIMIT = 1024;
 
@@ -702,7 +707,11 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, setup_muc_compone
 process_host_module('breakout.' .. main_virtual_host, setup_muc_component);
 
 process_host_module(main_virtual_host, function(host_module)
-    module:context(host_module.host):fire_event('jitsi-add-identity', {
+    local host_context = module:context(host_module.host);
+
+    host_context:fire_event('jitsi-add-identity', {
         name = 'polls'; host = module.host;
     });
+    host_context:fire_event('jitsi-add-feature', { feature = SINGLE_ANSWER_FEATURE });
+    host_context:fire_event('jitsi-add-feature', { feature = CLOSE_FEATURE });
 end);

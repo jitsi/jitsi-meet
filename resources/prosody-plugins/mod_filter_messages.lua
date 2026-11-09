@@ -54,9 +54,10 @@
 -- Every room has its own restrictions, a breakout room as well. A moderator sets
 -- them in the room they are in.
 --
--- Advertises CHAT_PERMISSIONS_FEATURE on the main virtual host (with
--- mod_features_identity), so clients show the moderator setting for these
--- restrictions only where this module enforces them.
+-- Advertises CHAT_PERMISSIONS_FEATURE and SHARED_VIDEO_PERMISSIONS_FEATURE on
+-- the main virtual host (with mod_features_identity), so clients show the
+-- moderator settings for these restrictions only where this module enforces
+-- them.
 --
 -- Load on the MUC component and on the breakout rooms MUC component.
 local util = module:require 'util';
@@ -66,6 +67,7 @@ local jid_bare = require 'util.jid'.bare;
 local st = require 'util.stanza';
 
 local CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+local SHARED_VIDEO_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#shared_video_permissions';
 
 local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 
@@ -234,5 +236,8 @@ module:hook('muc-occupant-pre-join', on_occupant_presence); -- shared video on j
 module:hook('muc-occupant-pre-change', on_occupant_presence); -- shared video on presence update
 
 process_host_module(main_virtual_host, function(host_module)
-    module:context(host_module.host):fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
+    local host_context = module:context(host_module.host);
+
+    host_context:fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
+    host_context:fire_event('jitsi-add-feature', { feature = SHARED_VIDEO_PERMISSIONS_FEATURE });
 end);

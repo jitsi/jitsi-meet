@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createPollEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
+import { isServerFeatureSupported } from '../../base/connection/functions';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { savePoll } from '../actions';
+import { POLLS_SINGLE_ANSWER_FEATURE } from '../constants';
 import { hasIdenticalAnswers } from '../functions';
 import { IAnswerData, IPollData } from '../types';
 
@@ -92,7 +94,8 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const [ singleAnswer, setSingleAnswer ] = useState(Boolean(editingPoll?.[1].singleAnswer));
 
     const showSingleAnswer = useSelector(
-        (state: IReduxState) => Boolean(state['features/base/config'].showPollSingleAnswerSetting));
+        (state: IReduxState) => Boolean(state['features/base/config'].showPollSingleAnswerSetting)
+            && isServerFeatureSupported(state, POLLS_SINGLE_ANSWER_FEATURE));
 
     const setAnswer = useCallback((i: number, answer: IAnswerData) => {
         setAnswers(currentAnswers => {

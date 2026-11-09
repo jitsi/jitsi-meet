@@ -11,11 +11,13 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
+import { BREAKOUT_ROOMS_JOIN_PERMISSIONS_FEATURE } from '../breakout-rooms/constants';
 import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { CHAT_PERMISSIONS_FEATURE } from '../chat/constants';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { SHARED_VIDEO_PERMISSIONS_FEATURE } from '../shared-video/constants';
 import { isSharedVideoEnabled } from '../shared-video/functions';
 import { areClosedCaptionsEnabled } from '../subtitles/functions.any';
 import { iAmVisitor } from '../visitors/functions';
@@ -179,7 +181,7 @@ export function getModeratorTabProps(stateful: IStateful) {
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
 
-    // Shown only when enabled in config.js and the server enforces the restriction.
+    // The restriction settings are shown only when enabled in config.js and the server enforces the restriction.
     const showChatWithPermissions = Boolean(showChatPermissionsModeratorSetting)
         && isServerFeatureSupported(state, CHAT_PERMISSIONS_FEATURE);
     const hideChatWithPermissions = !showChatWithPermissions || conferenceMetadata?.allownersEnabled;
@@ -187,6 +189,7 @@ export function getModeratorTabProps(stateful: IStateful) {
     // The restriction is a setting of the main room, a breakout room has its own metadata that the server ignores
     // for it. When everyone is an owner (allowners), nobody is restricted.
     const showBreakoutRoomJoinWithPermissions = Boolean(showBreakoutRoomJoinPermissionsModeratorSetting)
+        && isServerFeatureSupported(state, BREAKOUT_ROOMS_JOIN_PERMISSIONS_FEATURE)
         && Boolean(conference?.getBreakoutRooms()?.isSupported())
         && !hideJoinRoomButton
         && !isInBreakoutRoom(state)
@@ -205,6 +208,7 @@ export function getModeratorTabProps(stateful: IStateful) {
         privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
         sharedVideoWithPermissionsEnabled: Boolean(sharedVideoRestricted),
         showSharedVideoWithPermissions: Boolean(showSharedVideoPermissionsModeratorSetting)
+            && isServerFeatureSupported(state, SHARED_VIDEO_PERMISSIONS_FEATURE)
             && !conferenceMetadata?.allownersEnabled
             && isSharedVideoEnabled(state),
         showBreakoutRoomJoinWithPermissions,

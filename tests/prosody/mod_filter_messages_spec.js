@@ -2,14 +2,14 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { getServerFeatures } from './helpers/server_features.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
-const DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
-const SERVER_FEATURES_NS = 'http://jitsi.org/protocol/server-features';
 const CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+const SHARED_VIDEO_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#shared_video_permissions';
 
 let _counter = 0;
 const nextRoom = () => `filter-msg-${++_counter}@${CONFERENCE}`;
@@ -316,24 +316,17 @@ describe('mod_filter_messages', () => {
 
     // ── feature advertised to clients ─────────────────────────────────────────
 
-    it('advertises the chat permissions feature on the main virtual host', async () => {
+    it('advertises the chat and shared video permissions features on the main virtual host', async () => {
         const c = await createXmppClient();
 
         clients.push(c);
 
-        const jiconop = await c.waitForMessage(m => m.getChild('features', SERVER_FEATURES_NS) !== null);
-        const jiconopFeatures = jiconop.getChild('features', SERVER_FEATURES_NS)
-            .getChildren('feature')
-            .map(f => f.attrs.var);
+        const { disco, jiconop } = await getServerFeatures(c);
 
-        assert.ok(jiconopFeatures.includes(CHAT_PERMISSIONS_FEATURE), 'jiconop must contain the feature');
-
-        const reply = await c.sendDiscoInfo('localhost');
-        const features = reply.getChild('query', DISCO_INFO_NS)
-            .getChildren('feature')
-            .map(f => f.attrs.var);
-
-        assert.ok(features.includes(CHAT_PERMISSIONS_FEATURE), 'disco#info must contain the feature');
+        for (const feature of [ CHAT_PERMISSIONS_FEATURE, SHARED_VIDEO_PERMISSIONS_FEATURE ]) {
+            assert.ok(jiconop.includes(feature), `jiconop must contain ${feature}`);
+            assert.ok(disco.includes(feature), `disco#info must contain ${feature}`);
+        }
     });
 });
 
