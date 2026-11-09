@@ -103,7 +103,7 @@ const DisplayName = ({
     const nameInputRef = useRef<HTMLInputElement | null>(null);
     const displayNameRef = useRef<HTMLButtonElement>(null);
     const restoreFocusOnCloseRef = useRef(false);
-    const cancelEditingRef = useRef(false);
+    const isClosingRef = useRef(false);
 
     useEffect(() => {
         if (isEditing && nameInputRef.current) {
@@ -116,7 +116,7 @@ const DisplayName = ({
             return;
         }
 
-        cancelEditingRef.current = false;
+        isClosingRef.current = false;
 
         if (!restoreFocusOnCloseRef.current) {
             return;
@@ -135,11 +135,11 @@ const DisplayName = ({
     }, []);
 
     const onSubmit = useCallback(() => {
-        if (cancelEditingRef.current) {
+        if (isClosingRef.current) {
             return;
         }
 
-        cancelEditingRef.current = true;
+        isClosingRef.current = true;
 
         dispatch(updateSettings({
             displayName: editDisplayNameValue
@@ -158,7 +158,7 @@ const DisplayName = ({
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
-            cancelEditingRef.current = true;
+            isClosingRef.current = true;
             restoreFocusOnCloseRef.current = true;
             setEditDisplayNameValue('');
             setIsEditing(false);
@@ -185,6 +185,8 @@ const DisplayName = ({
         startEditing();
     }, [ startEditing ]);
 
+    // The Tooltip's Popover calls preventDefault() on the Enter keypress, which would cancel
+    // the button's click, so keep the keypress from reaching it.
     const onDisplayNameKeyPress = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
         e.stopPropagation();
     }, []);
