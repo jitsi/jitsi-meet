@@ -190,16 +190,15 @@ class Popover extends Component<IProps, IState> {
     }
 
     /**
-     * Sets up a touch event listener to attach.
+     * Attaches outside-click, touch, and Escape listeners while the popover is open.
      *
-     * @inheritdoc
+     * @private
      * @returns {void}
      */
-    override componentDidMount() {
+    _addVisibleListeners() {
         window.addEventListener('touchstart', this._onOutsideTouchStart);
-        if (this.props.visible) {
-            window.addEventListener('keydown', this._onEscKey);
-        }
+        window.addEventListener('keydown', this._onEscKey);
+
         if (this.props.trigger === 'click') {
             // @ts-ignore
             window.addEventListener('click', this._onOutsideClick);
@@ -207,7 +206,35 @@ class Popover extends Component<IProps, IState> {
     }
 
     /**
-     * Attaches/removes the global Escape key listener as visibility changes.
+     * Removes the listeners added in {@code _addVisibleListeners}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _removeVisibleListeners() {
+        window.removeEventListener('touchstart', this._onOutsideTouchStart);
+        window.removeEventListener('keydown', this._onEscKey);
+
+        if (this.props.trigger === 'click') {
+            // @ts-ignore
+            window.removeEventListener('click', this._onOutsideClick);
+        }
+    }
+
+    /**
+     * Sets up listeners when the popover mounts already open.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentDidMount() {
+        if (this.props.visible) {
+            this._addVisibleListeners();
+        }
+    }
+
+    /**
+     * Attaches or removes window listeners as visibility changes.
      *
      * @inheritdoc
      * @returns {void}
@@ -215,9 +242,9 @@ class Popover extends Component<IProps, IState> {
     override componentDidUpdate(prevProps: IProps) {
         if (prevProps.visible !== this.props.visible) {
             if (this.props.visible) {
-                window.addEventListener('keydown', this._onEscKey);
+                this._addVisibleListeners();
             } else {
-                window.removeEventListener('keydown', this._onEscKey);
+                this._removeVisibleListeners();
                 this._openedWithKeyboard = false;
                 this.setState({ enableFocusLock: false });
             }
@@ -225,18 +252,13 @@ class Popover extends Component<IProps, IState> {
     }
 
     /**
-     * Removes the listener set up in the {@code componentDidMount} method.
+     * Removes listeners that are still attached.
      *
      * @inheritdoc
      * @returns {void}
      */
     override componentWillUnmount() {
-        window.removeEventListener('touchstart', this._onOutsideTouchStart);
-        window.removeEventListener('keydown', this._onEscKey);
-        if (this.props.trigger === 'click') {
-            // @ts-ignore
-            window.removeEventListener('click', this._onOutsideClick);
-        }
+        this._removeVisibleListeners();
     }
 
     /**
