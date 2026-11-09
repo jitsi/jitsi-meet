@@ -229,6 +229,11 @@ const DialogWithTabs = ({
     }, []);
 
     const onTabKeyDown = useCallback((index: number) => (event: React.KeyboardEvent<HTMLDivElement>) => {
+        // Leave modified arrows (Cmd/Ctrl/Alt + arrow) to the browser and the OS.
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+            return;
+        }
+
         let newTab: IDialogTab<any> | null = null;
 
         if (event.key === 'ArrowUp') {
@@ -240,9 +245,12 @@ const DialogWithTabs = ({
         }
 
         if (newTab !== null) {
+            // The key is handled here, so stop the browser from also using it to scroll a scrollable
+            // ancestor.
+            event.preventDefault();
             onUserSelection(newTab.name);
         }
-    }, [ tabs.length ]);
+    }, [ tabs ]);
 
     const onMobileKeyDown = useCallback((tabName: string) => (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === ' ' || event.key === 'Enter') {
