@@ -1,3 +1,5 @@
+import { CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -55,6 +57,14 @@ ReducerRegistry.register<IFaceLandmarksState>('features/face-landmarks',
             }
         };
     }
+    case PARTICIPANT_LEFT: {
+        const { [action.participant.id]: removed, ...faceBoxes } = state.faceBoxes;
+
+        return removed ? { ...state,
+            faceBoxes } : state;
+    }
+    case CONFERENCE_LEFT:
+        return defaultState;
     }
 
     return state;
