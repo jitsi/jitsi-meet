@@ -69,15 +69,18 @@ const ConferenceSection = () => {
         dispatch(updateSettings({ [name]: enabled }));
     }, [ dispatch ]);
 
+    const serverURLLabel = t('settingsView.serverURL');
+
     return (
         <FormSection
             label = 'settingsView.conferenceSection'>
             <Input
+                accessibilityLabel = { serverURLLabel }
                 autoCapitalize = 'none'
                 customStyles = {{ container: styles.customContainer }}
                 editable = { serverURLChangeEnabled }
                 keyboardType = { 'url' }
-                label = { t('settingsView.serverURL') }
+                label = { serverURLLabel }
                 onBlur = { processServerURL }
                 onChange = { onChangeServerURL }
                 placeholder = { defaultServerURL }
