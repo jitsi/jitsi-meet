@@ -774,7 +774,7 @@
         "enterStreamKeyGeneric": "Canlı yayım açarınızı və ya RTMP URL-nizi buraya daxil edin.",
         "error": "Canlı Yayım uğursuz oldu. Zəhmət olmasa yenidən cəhd edin.",
         "errorAPI": "YouTube yayımlarınıza daxil olarkən xəta baş verdi. Zəhmət olmasa yenidən daxil olmağa çalışın.",
-        "errorGoogleApiLoad": "Google ilə daxil olma yüklənə bilmədi. Brauzeriniz və ya şəbəkəniz tərəfindən bloklanmadığını yoxlayın və təkrar cəhd edin və ya aşağıda canlı yayım açarınızı daxil edin."
+        "errorGoogleApiLoad": "Google ilə daxil olma yüklənə bilmədi. Brauzeriniz və ya şəbəkəniz tərəfindən bloklanmadığını yoxlayın və təkrar cəhd edin və ya aşağıda canlı yayım açarınızı daxil edin.",
         "errorLiveStreamNotEnabled": "{{email}} hesabında Canlı Yayım aktivləşdirilməyib. Zəhmət olmasa canlı yayımı aktivləşdirin və ya canlı yayım aktiv olan bir hesaba daxil olun.",
         "errorPopupBlocked": "Google giriş açılan pəncərəsi bloklandı. Bu sayt üçün pəncərələrə icazə verin və təkrar cəhd edin və ya canlı yayım açarınızı aşağıya daxil edin.",
         "expandedOff": "Canlı yayım dayandı",
