@@ -151,7 +151,7 @@ function _unregisterForScreenShareEvents() {
  */
 JMOngoingConference && !externalAPIEnabled && StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, previousConference) => {
+    (conference, _store, previousConference) => {
         if (!conference) {
             JMOngoingConference.abort();
         } else if (conference && !previousConference) {
