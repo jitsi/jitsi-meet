@@ -254,6 +254,9 @@ const DialogWithTabs = ({
 
     const onMobileKeyDown = useCallback((tabName: string) => (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === ' ' || event.key === 'Enter') {
+            // ContextMenuItem skips its own Space/Enter handling when onKeyDown is set, so consume the key
+            // here the same way, otherwise Space is left free to scroll.
+            event.preventDefault();
             onUserSelection(tabName);
         }
     }, [ classes.contentContainer ]);
