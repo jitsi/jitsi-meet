@@ -3,6 +3,8 @@ import { LOG_PREFIX } from '../helpers/browserLogger';
 
 import BasePageObject from './BasePageObject';
 
+type RequestOutcome = { state: 'pending' | 'rejected' | 'resolved'; value?: any; };
+
 /**
  * The Iframe API and helpers from iframeAPITest.html
  */
@@ -180,6 +182,40 @@ export default class IframeAPI extends BasePageObject {
      */
     stopRecording(mode: string) {
         return this.participant.execute(m => window.jitsiAPI.stopRecording(m), mode);
+    }
+
+    /**
+     * Calls a promise-returning method of the iframeAPI and reports how the promise ended. A promise that is still
+     * pending after the timeout is reported as 'pending', so that a request that never settles fails the test
+     * quickly instead of hanging it.
+     * @param method The name of the iframeAPI method.
+     * @param timeout How long to wait for the promise to settle, in milliseconds.
+     * @param args The arguments for the method.
+     */
+    async requestOutcome(method: string, timeout = 3000, ...args: any[]): Promise<RequestOutcome> {
+        return await this.participant.execute(
+            (name, ms, methodArgs) => new Promise(resolve => {
+                const timer = setTimeout(() => resolve({ state: 'pending' }), ms);
+
+                window.jitsiAPI[name](...methodArgs).then(
+                    (value: any) => {
+                        clearTimeout(timer);
+                        resolve({ state: 'resolved',
+                            value });
+                    },
+                    (error: any) => {
+                        clearTimeout(timer);
+                        resolve({ state: 'rejected',
+                            value: error?.message ?? String(error) });
+                    });
+            }), method, timeout, args) as RequestOutcome;
+    }
+
+    /**
+     * Returns whether the local participant is sharing their screen.
+     */
+    isSharingScreen(): Promise<boolean> {
+        return this.participant.execute(() => window.jitsiAPI.isSharingScreen());
     }
 
     /**

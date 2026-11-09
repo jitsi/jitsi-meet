@@ -133,7 +133,7 @@ import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../rea
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
-import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
+import { isScreenAudioSupported, isScreenVideoShared } from '../../react/features/screen-share/functions';
 import {
     openCameraCaptureDialog,
     toggleScreenshotCaptureSummary
@@ -314,6 +314,12 @@ function initCommands() {
                     password
                 ));
             } else {
+                if (!conference) {
+                    logger.error('Conference is not defined');
+
+                    return;
+                }
+
                 sendAnalytics(createApiEvent('password.changed'));
 
                 APP.store.dispatch(setPassword(
@@ -1100,6 +1106,7 @@ function initCommands() {
 
             if (!isMobileBrowser()) {
                 logger.error('This feature is only supported on mobile');
+                callback(undefined, 'This feature is only supported on mobile');
 
                 return;
             }
@@ -1110,6 +1117,13 @@ function initCommands() {
             break;
         }
         case 'connection-stats': {
+            if (!getCurrentConference(APP.store.getState())) {
+                logger.error('Conference is not defined');
+                callback(undefined, 'Conference is not defined');
+
+                return;
+            }
+
             callback({
                 ...APP.conference.getStats(),
                 iceConnected: APP.conference.getConnectionState() === 'connected'
@@ -1117,7 +1131,7 @@ function initCommands() {
             break;
         }
         case 'deployment-info':
-            callback(APP.store.getState()['features/base/config'].deploymentInfo);
+            callback(APP.store.getState()['features/base/config'].deploymentInfo ?? {});
             break;
         case 'invite': {
             const { invitees } = request;
@@ -1187,7 +1201,7 @@ function initCommands() {
             callback(videoAvailable);
             break;
         case 'is-sharing-screen':
-            callback(Boolean(APP.conference.isSharingScreen));
+            callback(Boolean(isScreenVideoShared(APP.store.getState())));
             break;
         case 'is-lobby-enabled':
             callback(Boolean(getLobbyEnabled(APP.store.getState())));
@@ -1237,9 +1251,9 @@ function initCommands() {
             break;
         }
         case 'get-shared-document-url': {
-            const { etherpad } = APP.store.getState()['features/etherpad'];
+            const { documentUrl } = APP.store.getState()['features/etherpad'];
 
-            callback(etherpad?.documentUrl || '');
+            callback(documentUrl || '');
             break;
         }
         case 'get-p2p-status': {

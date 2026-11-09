@@ -388,8 +388,6 @@ export default {
      */
     isCreatingLocalTrack: false,
 
-    isSharingScreen: false,
-
     /**
      * Returns an object containing a promise which resolves with the created tracks &
      * the errors resulting from that process.
