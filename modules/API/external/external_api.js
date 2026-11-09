@@ -96,6 +96,7 @@ const commands = {
     toggleNoiseSuppression: 'toggle-noise-suppression',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
@@ -604,6 +605,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                     this._tmpE2EEKey = undefined;
                 }
+
+                // The prejoin screen registers the local participant under the 'local' id. Now that the real id is
+                // known, drop that entry, otherwise getParticipantsInfo() lists the local user twice.
+                delete this._participants.local;
 
                 this._myUserID = userID;
                 this._participants[userID] = {
@@ -1557,7 +1562,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     resizeLargeVideo(width, height) {
-        if (width <= this._width && height <= this._height) {
+        // The size options can be percentages or any other CSS value, so compare with the real size of the iframe.
+        const { width: frameWidth, height: frameHeight } = this._frame.getBoundingClientRect();
+
+        if (width <= frameWidth && height <= frameHeight) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
     }
@@ -1698,7 +1706,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Sets the key and keyIndex for e2ee.
      *
      * @param {Object} keyInfo - Json containing key information.
-     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {CryptoKey} [keyInfo.key] - The encryption key. If it is not provided, the key is cleared.
      * @param {number} [keyInfo.index] - The index of the encryption key.
      * @returns {void}
      */
