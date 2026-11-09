@@ -167,6 +167,11 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateMessage": "Private message",
         "privateNotice": "Private message to {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Face with tears of joy",
+            "fire": "Fire",
+            "redHeart": "Red heart"
+        },
         "search": {
             "close": "Close search",
             "next": "Next match",
