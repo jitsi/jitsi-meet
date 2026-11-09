@@ -1086,7 +1086,8 @@ function initCommands() {
                     let error;
 
                     if (!dataURL) {
-                        error = new Error('No large video found!');
+                        // An Error object is serialized to {} by the transport, so send the message instead.
+                        error = 'No large video found!';
                     }
 
                     callback({
@@ -1124,7 +1125,7 @@ function initCommands() {
 
             if (!Array.isArray(invitees) || invitees.length === 0) {
                 callback({
-                    error: new Error('Unexpected format of invitees')
+                    error: 'Unexpected format of invitees'
                 });
 
                 break;
@@ -1139,7 +1140,8 @@ function initCommands() {
                     let result;
 
                     if (failedInvitees.length) {
-                        error = new Error('One or more invites failed!');
+                        // An Error object is serialized to {} by the transport, so send the message instead.
+                        error = 'One or more invites failed!';
                     } else {
                         result = true;
                     }
