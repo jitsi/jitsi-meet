@@ -274,7 +274,7 @@ describe('mod_polls_component s2s messages', function()
         assert.same({ 'voter1' }, voters(current_room, 2))
     end)
 
-    it('rejects a new poll from a connected visitor node', function()
+    it('rejects a new poll from a connected visitor node without replying over s2s', function()
         current_room = make_room({ ['v1.meet.jitsi'] = true })
 
         local replies = send_s2s(vnode_voter('visitor1'), {
@@ -290,7 +290,6 @@ describe('mod_polls_component s2s messages', function()
         assert.is_nil(current_room.polls.by_id.poll2)
         assert.equal(1, current_room.polls.count)
         assert.equal(0, #current_room.routed)
-        assert.equal(1, #replies)
-        assert.equal('not-allowed', replies[1].condition)
+        assert.equal(0, #replies)
     end)
 end)

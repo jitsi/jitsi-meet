@@ -107,6 +107,8 @@ local function get_vnode_room_and_voter(from)
         return nil;
     end
     local room = get_room_from_jid(jid.join(room_node, muc_domain_prefix..'.'..main_virtual_host));
+    -- mod_visitors_component keys _connected_vnodes as <vnode>.meet.jitsi (see connect_vnode_received), so this
+    -- finds only visitor nodes with that domain
     if not room or not room._connected_vnodes or room._connected_vnodes:get(host:sub(#prefix + 1)) == nil then
         return nil;
     end
@@ -224,7 +226,9 @@ end
             -- visitors cannot create polls, so visitor nodes only forward answers
             if is_visitor_prosody or session.type == 's2sin' then
                 module:log("error", "Poll cannot be created on visitor node.");
-                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                end
                 return true;
             end
 
