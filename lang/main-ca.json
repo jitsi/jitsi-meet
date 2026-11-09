@@ -167,6 +167,11 @@
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "privateMessage": "Missatge privat",
         "privateNotice": "Missatge privat per a {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Cara amb llàgrimes d'alegria",
+            "fire": "Foc",
+            "redHeart": "Cor vermell"
+        },
         "search": {
             "close": "Tanca la cerca",
             "next": "Coincidència següent",
@@ -769,7 +774,9 @@
         "enterStreamKeyGeneric": "Introduïu aquí la clau d'emissió en directe o l'URL RTMP.",
         "error": "La transmissió en directe ha fallat. Torneu-ho a intentar més tard.",
         "errorAPI": "S'ha produït un error en accedir a les vostres emissions de Youtube. Torneu a iniciar sessió una altra vegada.",
+        "errorGoogleApiLoad": "No s'ha pogut carregar l'inici de sessió de Google. Comproveu que no està bloquejat pel vostre navegador o xarxa i torneu-ho a provar, o introduïu la clau de transmissió en directe a continuació.",
         "errorLiveStreamNotEnabled": "La transmissió en directe no està activada a ̣{{email}}. Activeu-la o inicieu sessió en un compte que tingui la transmissió en directe activada.",
+        "errorPopupBlocked": "S'ha blocat la finestra emergent d'inici de sessió de Google. Permeteu finestres emergents per a aquest lloc i torneu-ho a provar, o introduïu la clau de transmissió en directe a continuació.",
         "expandedOff": "S'ha aturat la transmissió en directe",
         "expandedOn": "Ara mateix, la reunió s'està transmetent a Youtube.",
         "expandedPending": "S'ha iniciat la transmissió en directe…",
@@ -1105,8 +1112,15 @@
             "save": "Desa",
             "singleAnswer": "Permet només una resposta"
         },
+        "endPollDialog": {
+            "description": "La votació finalitza per a tothom i l'enquesta no es pot tornar a obrir.",
+            "title": "Voleu finalitzar aquesta enquesta?"
+        },
         "errors": {
-            "notUniqueOption": "Les opcions han de ser úniques"
+            "closeFailed": "No s'ha pogut finalitzar l'enquesta",
+            "notUniqueOption": "Les opcions han de ser úniques",
+            "voteFailed": "El vostre vot no s'ha comptat",
+            "voteNotCounted": "El vostre vot no s'ha comptat, l'enquesta ha finalitzat"
         },
         "notification": {
             "description": "Obre la pestanya de les enquestes per a votar",
@@ -1114,7 +1128,9 @@
         },
         "results": {
             "changeVote": "Canvia el vot",
+            "closed": "La votació ha finalitzat",
             "empty": "Encara no hi ha cap enquesta en la reunió. Comenceu una enquesta aquí!",
+            "endPoll": "Finalitza l'enquesta",
             "hideDetailedResults": "Amaga els detalls",
             "showDetailedResults": "Mostra els detalls",
             "vote": "Vota"
@@ -1171,6 +1187,7 @@
         "joinAudioByPhone": "Entra amb àudio de telèfon",
         "joinMeeting": "Entra a la reunió",
         "joinMeetingInLowBandwidthMode": "Entra-hi en mode de poca amplada de banda",
+        "joinOptions": "Opcions d'entrada",
         "joinWithoutAudio": "Entra sense àudio",
         "keyboardShortcuts": "Activa les dreceres del teclat",
         "linkCopied": "L'enllaç s'ha copiat al porta-retalls",
@@ -1284,6 +1301,7 @@
         "storageLocation": "Ubicació de l'emmagatzematge",
         "surfaceError": "Trieu la pestanya actual.",
         "title": "Enregistrament",
+        "transcriptionAlreadyOn": "La transcripció ja està activada",
         "transcriptionLanguage": "Llengua de la transcripció",
         "transcriptionOptions": "Opcions de transcripció",
         "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
