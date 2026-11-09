@@ -119,9 +119,8 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         }
 
         // if the poll exists, we update it with the incoming answer
-        for (let i = 0; i < poll.answers.length; i++) {
-            // if the answer was chosen, we add the senderId to the array of voters of this answer
-            let voters = Array.isArray(poll.answers[i].voters) ? poll.answers[i].voters as IVoterData[] : [];
+        const answers = poll.answers.map((existingAnswer, i) => {
+            let voters = Array.isArray(existingAnswer.voters) ? [ ...existingAnswer.voters ] as IVoterData[] : [];
 
             if (voters.find(user => user.id === answer.senderId)) {
                 if (!answer.answers[i]) {
@@ -134,8 +133,11 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 });
             }
 
-            poll.answers[i].voters = voters?.length ? voters : undefined;
-        }
+            return {
+                ...existingAnswer,
+                voters: voters.length ? voters : undefined
+            };
+        });
 
         // finally we update the state by returning the updated poll
         return {
@@ -144,7 +146,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 ...state.polls,
                 [pollId]: {
                     ...poll,
-                    answers: [ ...poll.answers ]
+                    answers
                 }
             }
         };
