@@ -145,12 +145,13 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (focusedTab === ChatTabs.CHAT) {
             unreadCount = 0;
-
-            if (typeof APP !== 'undefined') {
-                APP.API.notifyChatUpdated(unreadCount, false);
-            }
         } else if (focusedTab === ChatTabs.POLLS) {
             dispatch(resetUnreadPollsCount());
+        }
+
+        // The side panel is closed whatever tab was focused, so the embedder always needs to know.
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, false);
         }
         break;
     }
@@ -285,6 +286,12 @@ MiddlewareRegistry.register(store => next => action => {
         // CLOSED_CAPTIONS tab.
         } else if (focusedTab === ChatTabs.CLOSED_CAPTIONS && !isCCTabEnabled(state)) {
             return next(action);
+        }
+
+        // Opening the side panel on another tab than the chat one opens the panel too. The chat tab case above has
+        // already notified the embedder.
+        if (action.type === OPEN_CHAT && focusedTab !== ChatTabs.CHAT && typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, true);
         }
 
         break;
