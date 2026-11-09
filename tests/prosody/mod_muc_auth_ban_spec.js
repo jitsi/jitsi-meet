@@ -7,7 +7,7 @@ import { createXmppClient } from './helpers/xmpp_client.js';
 
 // VPaaS tenant prefix — mod_muc_auth_ban only calls the access manager for
 // sessions whose jitsi_web_query_prefix or token sub claim starts with this
-// string. The prefix is set from the ?prefix= WebSocket URL param by
+// string, ignoring case. The prefix is set from the ?prefix= WebSocket URL param by
 // mod_jitsi_session, the sub claim from the verified token by mod_auth_token.
 const VPAAS_PREFIX = 'vpaas-magic-cookie-test';
 
@@ -209,6 +209,20 @@ describe('mod_muc_auth_ban', () => {
 
         await assertBanned(freshToken({ sub: VPAAS_PREFIX }),
             'VPaaS token sub must be checked when the prefix param is empty', { prefix: '' });
+    });
+
+    it('upper-case VPaaS token sub without a prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX.toUpperCase() }),
+            'upper-case VPaaS token sub must be checked', { prefix: null });
+    });
+
+    it('upper-case VPaaS prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken(),
+            'upper-case VPaaS prefix param must be checked', { prefix: VPAAS_PREFIX.toUpperCase() });
     });
 
     it('token with a non-string sub and no prefix param is allowed without an HTTP check', async () => {

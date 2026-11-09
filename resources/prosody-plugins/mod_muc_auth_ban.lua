@@ -39,6 +39,11 @@ local cache_timer = module:add_timer(CACHE_DURATION, function()
     -- skipping return value stops the timer
 end);
 
+-- whether the tenant is a jaas one, case-insensitive as the room address is built from the lowercased sub
+local function is_jaas_tenant(tenant)
+    return type(tenant) == 'string' and starts_with(tenant:lower(), 'vpaas-magic-cookie-');
+end
+
 local function shouldAllow(session)
     local token = session.auth_token;
 
@@ -50,9 +55,7 @@ local function shouldAllow(session)
 
         -- jaas sessions are detected by the tenant from the verified token (sub claim) or by the tenant
         -- from the url, so a session is checked when either of them is a jaas one
-        local sub = session.jitsi_meet_domain;
-        local is_jaas_sub = type(sub) == 'string' and starts_with(sub, 'vpaas-magic-cookie-');
-        if not is_jaas_sub and not starts_with(session.jitsi_web_query_prefix, 'vpaas-magic-cookie-') then
+        if not is_jaas_tenant(session.jitsi_meet_domain) and not is_jaas_tenant(session.jitsi_web_query_prefix) then
             return true;
         end
 
@@ -63,9 +66,9 @@ local function shouldAllow(session)
 
                 local r = json.decode(content)
                 if r ~= nil and r['access'] == false then
-                    module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
+                    module:log("info", "User is banned room:%s tenant:%s sub:%s user_id:%s group:%s",
                         session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                        serialize(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
+                        tostring(session.jitsi_meet_domain), serialize(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
 
                     ban_check_users_banned_count();
 
@@ -80,9 +83,9 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s token:%s",
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s sub:%s token:%s",
                     code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                    tostring(util.strip_jwt_signature(token)));
+                    tostring(session.jitsi_meet_domain), tostring(util.strip_jwt_signature(token)));
             end
         end
 
