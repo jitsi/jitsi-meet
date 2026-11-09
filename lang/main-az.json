@@ -168,9 +168,9 @@
         "privateMessage": "Şəxsi mesaj",
         "privateNotice": "{{recipient}} üçün şəxsi mesaj",
         "reactions": {
-"faceWithTearsOfJoy": "Sevinc göz yaşları olan üz",
-"fire": "Alov",
-"redHeart": "Qırmızı ürək"
+            "faceWithTearsOfJoy": "Sevinc göz yaşları olan üz",
+            "fire": "Alov",
+            "redHeart": "Qırmızı ürək"
         },
         "search": {
             "close": "Axtarışı bağla",
