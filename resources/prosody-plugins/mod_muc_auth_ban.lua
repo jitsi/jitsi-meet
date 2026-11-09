@@ -48,7 +48,11 @@ local function shouldAllow(session)
             return false;
         end
 
-        if not starts_with(session.jitsi_web_query_prefix, 'vpaas-magic-cookie-') then
+        -- jaas sessions are detected by the tenant from the verified token (sub claim) or by the tenant
+        -- from the url, so a session is checked when either of them is a jaas one
+        local sub = session.jitsi_meet_domain;
+        local is_jaas_sub = type(sub) == 'string' and starts_with(sub, 'vpaas-magic-cookie-');
+        if not is_jaas_sub and not starts_with(session.jitsi_web_query_prefix, 'vpaas-magic-cookie-') then
             return true;
         end
 
