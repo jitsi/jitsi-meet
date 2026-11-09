@@ -598,14 +598,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const localParticipant = getLocalParticipant(state);
 
         if (localParticipant?.id !== id) {
-            return next(action);
+            break;
         }
 
         if (role === PARTICIPANT_ROLE.MODERATOR) {
             dispatch(showStartRecordingNotification());
         }
 
-        return next(action);
+        break;
     }
     }
 
