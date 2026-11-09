@@ -956,15 +956,12 @@ end
 
 module:hook('answer-poll', function(answerData)
     local room = answerData.room;
-    local room_jid = room_jid_match_rewrite(jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain));
 
-    -- now send it to the main prosody
+    -- now send it to the main prosody, which takes the room and the voter from the jid we send it from
     local data = {
         answers = answerData.data.answers;
         command = 'answer-poll';
         pollId = answerData.pollId;
-        roomJid = room_jid,
-        senderId = answerData.voterId;
         senderName = answerData.voterName;
         type = 'polls';
     };
@@ -975,10 +972,10 @@ module:hook('answer-poll', function(answerData)
     end
 
     local stanza = st.message({
-        from = module.host,
+        from = jid.join(jid.node(room.jid), module.host, answerData.voterId),
         to = 'polls.'..main_domain
     })
-    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet"; roomJid = room_jid; })
+    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
     :text(data_str)
     :up();
     room:route_stanza(stanza);

@@ -14,7 +14,6 @@ local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
 local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
-local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local table_compare = util.table_compare;
 
@@ -98,6 +97,24 @@ local function get_occupant_details(occupant)
     return { ["occupant_id"] = occupant_id, ["occupant_name"] = occupant_name }
 end
 
+--- Returns the room and the voter id of a vote forwarded by a visitor node, which sends it from the voter's
+--- jid in the room on the visitor node, e.g. room@conference.v1.meet.jitsi/<occupant-id> (see 'answer-poll' in mod_fmuc).
+--- Returns nil when the sender is not in a room the visitor node is connected to.
+local function get_vnode_room_and_voter(from)
+    local room_node, host, occupant_id = jid.split(from);
+    local prefix = muc_domain_prefix..'.';
+    if not room_node or not occupant_id or host:sub(1, #prefix) ~= prefix then
+        return nil;
+    end
+    local room = get_room_from_jid(jid.join(room_node, muc_domain_prefix..'.'..main_virtual_host));
+    -- mod_visitors_component keys _connected_vnodes as <vnode>.meet.jitsi (see connect_vnode_received), so this
+    -- finds only visitor nodes with that domain
+    if not room or not room._connected_vnodes or room._connected_vnodes:get(host:sub(#prefix + 1)) == nil then
+        return nil;
+    end
+    return room, occupant_id;
+end
+
 local function send_polls_message(room, data_str, to)
     local stanza = st.message({
         from = module.host,
@@ -138,12 +155,13 @@ end
 
         local room;
         local occupant;
+        local vnode_voter_id;
         if session.type == 's2sin' then
-            if not json_message.attr.roomJid then
-                module:log('warn', 'No room jid found in %s', stanza);
-                return;
+            room, vnode_voter_id = get_vnode_room_and_voter(stanza.attr.from);
+            if not room then
+                module:log('warn', 'Poll msg %s not from a visitor node connected to the room', stanza);
+                return true;
             end
-            room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
         else
             local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             local occupant_jid = stanza.attr.from;
@@ -200,14 +218,17 @@ end
                 return
             end
         else
-            -- this is a message from a visitor prosody, we will trust it
-            occupant_details = { occupant_id = data.senderId; occupant_name = data.senderName; };
+            -- this is a vote from a visitor node connected to the room, we will trust the name it sends
+            occupant_details = { occupant_id = vnode_voter_id; occupant_name = data.senderName; };
         end
 
         if data.command == "new-poll" then
-            if is_visitor_prosody then
+            -- visitors cannot create polls, so visitor nodes only forward answers
+            if is_visitor_prosody or session.type == 's2sin' then
                 module:log("error", "Poll cannot be created on visitor node.");
-                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                end
                 return true;
             end
 
