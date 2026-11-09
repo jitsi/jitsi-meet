@@ -1117,10 +1117,10 @@
             "title": "Bu səsverməyə son verilsin?"
         },
         "errors": {
-        "closeFailed": "Səsvermə sonlandırıla bilmədi",
-        "notUniqueOption": "Seçimlər unikal olmalıdır",
-        "voteFailed": "Səsiniz nəzərə alınmadı",
-        "voteNotCounted": "Səsiniz nəzərə alınmadı, səsvermə başa çatdı"
+            "closeFailed": "Səsvermə sonlandırıla bilmədi",
+            "notUniqueOption": "Seçimlər unikal olmalıdır",
+            "voteFailed": "Səsiniz nəzərə alınmadı",
+            "voteNotCounted": "Səsiniz nəzərə alınmadı, səsvermə başa çatdı"
         },
         "notification": {
             "description": "Səs vermək üçün sorğular vərəqini açın",
