@@ -118,6 +118,7 @@ const ProfileView = ({ isInWelcomePage }: {
     const emailLabel = t('settingsView.email');
     const emailPlaceholder = t('settingsView.emailPlaceholderText');
     const gavatarMessage = t('settingsView.gavatarMessage');
+    const applyProfileSettingsButtonLabel = 'settingsView.apply';
 
     return (
         <JitsiScreen
@@ -159,8 +160,8 @@ const ProfileView = ({ isInWelcomePage }: {
                     </FormSection>
                 </View>
                 <Button
-                    accessibilityLabel = 'settingsView.apply'
-                    labelKey = 'settingsView.apply'
+                    accessibilityLabel = { applyProfileSettingsButtonLabel }
+                    labelKey = { applyProfileSettingsButtonLabel }
                     onClick = { onApplySettings }
                     style = { styles.applyProfileSettingsButton }
                     type = { BUTTON_TYPES.PRIMARY } />
