@@ -28,7 +28,7 @@ function getYoutubeId(url: string) {
         return null;
     }
 
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
+    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:[?&#/]\S*)?$/;// eslint-disable-line max-len
     const result = url.match(p);
 
     return result ? result[1] : null;
