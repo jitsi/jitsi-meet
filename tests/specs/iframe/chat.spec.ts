@@ -181,7 +181,10 @@ describe('Chat', () => {
             timeoutMsg: 'chatUpdated was not received when closing the panel from the polls tab'
         });
 
-        expect(chatUpdatedEvent.isOpen).toBe(false);
+        expect(chatUpdatedEvent).toEqual({
+            isOpen: false,
+            unreadCount: 0
+        });
     });
 });
 

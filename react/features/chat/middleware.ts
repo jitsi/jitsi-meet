@@ -143,13 +143,13 @@ MiddlewareRegistry.register(store => next => action => {
     case CLOSE_CHAT: {
         const { focusedTab } = getState()['features/chat'];
 
-        if (focusedTab === ChatTabs.CHAT) {
-            unreadCount = 0;
-        } else if (focusedTab === ChatTabs.POLLS) {
+        // The reducer marks all the messages as read on close, whatever tab was focused.
+        unreadCount = 0;
+
+        if (focusedTab === ChatTabs.POLLS) {
             dispatch(resetUnreadPollsCount());
         }
 
-        // The side panel is closed whatever tab was focused, so the embedder always needs to know.
         if (typeof APP !== 'undefined') {
             APP.API.notifyChatUpdated(unreadCount, false);
         }
@@ -288,10 +288,10 @@ MiddlewareRegistry.register(store => next => action => {
             return next(action);
         }
 
-        // Opening the side panel on another tab than the chat one opens the panel too. The chat tab case above has
-        // already notified the embedder.
+        // Polls, Files and CC open the same panel, so the embedder needs to know too. The chat tab case is handled
+        // above. The chat messages are still unread here, so send the real count.
         if (action.type === OPEN_CHAT && focusedTab !== ChatTabs.CHAT && typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, true);
+            APP.API.notifyChatUpdated(getUnreadCount(state), true);
         }
 
         break;
