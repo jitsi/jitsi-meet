@@ -36,6 +36,25 @@ export default class LargeVideo extends BasePageObject {
     }
 
     /**
+     * Returns the name the avatar on the large video exposes to assistive technologies, or {@code null} when the
+     * avatar is decorative (hidden from them) or not shown at all. The avatar is an {@code img} when a picture is
+     * loaded and a {@code div} otherwise, so the name is read from whichever attribute carries it.
+     */
+    async getAvatarAccessibleName(): Promise<string | null> {
+        const avatar = this.participant.driver.$('#dominantSpeakerAvatar');
+
+        if (!await avatar.isExisting() || !await avatar.isDisplayed()) {
+            return null;
+        }
+
+        if (await avatar.getAttribute('aria-hidden') === 'true') {
+            return null;
+        }
+
+        return (await avatar.getAttribute('aria-label')) ?? (await avatar.getAttribute('alt')) ?? null;
+    }
+
+    /**
      * Returns resource part of the JID of the user who is currently displayed in the large video area.
      */
     getResource() {
