@@ -18,9 +18,13 @@
 --    it as read-only.
 --
 -- 3. Message display-name handling (MUC hooks):
+--    muc-occupant-groupchat (priority 45): strips the <nick> and <display-name>
+--    that the client added to a groupchat message, before the message is
+--    relayed, stored or delivered.
 --    muc-broadcast-message (priority -1): strips <nick> and <display-name> from
---    every message before it is broadcast to occupants, so message payloads
---    never carry identity information to live receivers.
+--    the stanza in the event. For a message that did not come through
+--    muc-occupant-groupchat, this is the stanza that the room delivers, unless
+--    muc-add-history replaced it with a clone.
 --    muc-add-history: injects <display-name source="token|guest"> into the
 --    history copy of each message (cloned from the broadcast stanza), sourced
 --    from session.jitsi_meet_context_user.name (token users) or the <nick>
@@ -107,11 +111,34 @@ function filter_stanza_in(stanza, session)
     return stanza;
 end
 
+-- A groupchat message from an occupant of the room: remove the nick and display-name elements that
+-- the client added. The server adds the display-name itself, to the history copy only, in
+-- 'muc-add-history'.
+-- This changes the stanza that the room delivers. It must run before any handler that copies the
+-- stanza. Today these are the relay to the visitor nodes in mod_visitors (default priority) and
+-- the history.
+-- mod_muc_meeting_id also removes the nick at this priority, the order between the two does not matter.
+-- A message that a visitor node relays has no occupant here. mod_visitors handles it at a higher
+-- priority than the prosody check of the sender and stops the event, so its display-name stays.
+-- The prosody check stops any other message that has no occupant, so the check below is only a guard.
+module:hook('muc-occupant-groupchat', function(event)
+    if not event.occupant then
+        return;
+    end
+
+    event.stanza:remove_children('nick', NICK_NS);
+    event.stanza:remove_children('display-name', DISPLAY_NAME_NS);
+end, 45); -- the prosody check of the sender is priority 50, we want to run after it
+
 -- 'muc-add-history' is called in 'muc-broadcast-message' with priority 0
 -- we want to clean up message after we have processed it for history, but do it for all messages
--- not only those that are added to history (as someone can forge a message and add 'no-store')
+-- not only those that are added to history (a message can have 'no-store').
+-- Note: when our 'muc-add-history' handler replaced event.stanza with a clone, this hook changes only
+-- that clone. It changes neither the stored history entry (the prosody history handler made its own
+-- clone before this hook) nor the stanza that the room delivers. A message from an occupant is
+-- already clean (see above).
 module:hook('muc-broadcast-message', function(event)
-    -- any message that is about to be delivered, clear up nick and display-name elements
+    -- clear up nick and display-name elements of the stanza in the event
     event.stanza:remove_children('nick', NICK_NS);
     event.stanza:remove_children('display-name', DISPLAY_NAME_NS);
 end, -1);
