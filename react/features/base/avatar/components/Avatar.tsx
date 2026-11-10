@@ -313,13 +313,13 @@ function _getAnnouncedName(state: IReduxState, participant: IParticipant | undef
  * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
-    const { colorBase, displayName, participantId } = ownProps;
+    const { accessibilityAnnounceName, colorBase, displayName, participantId } = ownProps;
     const _participant: IParticipant | undefined = participantId ? getParticipantById(state, participantId) : undefined;
     const _initialsBase = _participant?.name ?? displayName;
     const { corsAvatarURLs } = state['features/base/config'];
 
     return {
-        _announcedName: _getAnnouncedName(state, _participant, displayName),
+        _announcedName: accessibilityAnnounceName ? _getAnnouncedName(state, _participant, displayName) : undefined,
         _customAvatarBackgrounds: state['features/dynamic-branding'].avatarBackgrounds,
         _corsAvatarURLs: corsAvatarURLs,
         _initialsBase,
