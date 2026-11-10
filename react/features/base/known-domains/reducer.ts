@@ -50,7 +50,7 @@ function _addKnownDomains(state: IKnownDomainsState, knownDomains: Array<string>
     let nextState = Array.isArray(state) ? state : [];
 
     if (Array.isArray(knownDomains)) {
-        nextState = Array.from(state);
+        nextState = Array.from(nextState);
         for (let knownDomain of knownDomains) {
             knownDomain = knownDomain.toLowerCase();
             !nextState.includes(knownDomain) && nextState.push(knownDomain);

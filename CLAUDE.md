@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `make all` - Full build (compile + deploy)
 
 ### Testing
+- `npm run test:unit` - Run unit tests using Vitest
 - `npm test` - Run full test suite using WebDriverIO
 - `npm run test-single -- <spec-file>` - Run single test file
 - `npm run test-dev` - Run tests against development environment
@@ -121,11 +122,11 @@ The codebase uses a registry-based Redux architecture:
 - **Platform-Specific Components** - Separate implementations in `web/` and `native/` directories
 - **Hook-based patterns** - Modern React patterns for component logic
 ### Testing Framework
-- WebDriverIO for end-to-end testing
-- Test files are located in `tests/specs/` and use page objects in `tests/pageobjects/`.
+- **Unit Testing**: Vitest for unit tests colocated with source code under `react/features/` (e.g. `*.test.ts`, `*.test.tsx`). Run with `npm run test:unit`.
+- **End-to-End Testing**: WebDriverIO for end-to-end testing. Test files are located in `tests/specs/` and use page objects in `tests/pageobjects/`.
 - Environment configuration via `.env` files
 - Support for Chrome, Firefox, and grid testing
-- WebDriverIO runs the end-to-end tests with the Mocha framework. The web client has no unit tests. The only unit tests are busted specs for Prosody plugin Lua code, in `tests/prosody/lua/`.
+- WebDriverIO runs the end-to-end tests with the Mocha framework. Unit tests for the web client use Vitest in root (`npm run test:unit`), while unit tests for Prosody plugin Lua code use busted specs in `tests/prosody/lua/`.
 - `tests/` is a separate npm project. The `npm test` and `npm run test-*` scripts are in `tests/package.json`, not in the root `package.json`. Run `npm install` and the test commands from `tests/`.
 - Shared test helpers are in `tests/helpers/`.
 - Custom matchers (added with `expect.extend`) are in `tests/helpers/matchers.ts`.
@@ -149,7 +150,7 @@ The codebase uses a registry-based Redux architecture:
 5. Maintain type safety across the entire state tree
 
 ### Testing
-The project uses WebDriver (WebdriverIO) for end-to-end testing. Test files are located in `tests/specs/` and use page objects in `tests/pageobjects/`.
+The project uses Vitest for unit tests (`npm run test:unit`) colocated within `react/features/`, and WebDriver (WebdriverIO) for end-to-end testing (`npm test`) located in `tests/specs/`.
 
 ### Build System
 - **Webpack** - Main build system for web bundles
@@ -222,8 +223,9 @@ react/features/sample/
 ## Testing and Quality Assurance
 
 ### Tests
-- End-to-end tests are defined in the tests/
-- Tests run automatically for project member PRs via Jenkins
+- Unit tests are colocated next to source files under `react/features/` and run via `npm run test:unit`
+- End-to-end tests are defined in `tests/specs/` and run via `npm test`
+- Tests run automatically for project member PRs via GitHub Actions / Jenkins
 - Tests cover peer-to-peer, invites, iOS, Android, and web platforms
 - Beta testing available at https://beta.meet.jit.si/
 
