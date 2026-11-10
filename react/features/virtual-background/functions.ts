@@ -61,11 +61,11 @@ export const toDataURL = async (url: string) => {
 };
 
 /**
- * Resize image and adjust original aspect ratio.
+ * Resizes an image to fit within the specified bounding dimensions while maintaining its aspect ratio.
  *
  * @param {Object} base64image - Base64 image extraction.
- * @param {number} width - Value for resizing the image width.
- * @param {number} height - Value for resizing the image height.
+ * @param {number} width - Maximum width for the resized image.
+ * @param {number} height - Maximum height for the resized image.
  * @returns {Promise<string>}
  */
 export function resizeImage(base64image: any, width = 1920, height = 1080): Promise<string> {
@@ -80,23 +80,19 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
         img.onload = function() {
             // Create an off-screen canvas.
             const canvas = document.createElement('canvas');
-
-            // Set its dimension to target size.
             const context = canvas.getContext('2d');
 
-            canvas.width = width;
-            canvas.height = height;
-
-            // Draw source image into the off-screen canvas preserving aspect ratio (object-fit: cover).
+            // Scale down to fit within bounding box while preserving aspect ratio.
             const nw = img.naturalWidth || width;
             const nh = img.naturalHeight || height;
-            const scale = Math.max(width / nw, height / nh);
-            const sWidth = width / scale;
-            const sHeight = height / scale;
-            const sx = (nw - sWidth) / 2;
-            const sy = (nh - sHeight) / 2;
+            const scale = Math.min(1, width / nw, height / nh);
+            const targetWidth = Math.round(nw * scale);
+            const targetHeight = Math.round(nh * scale);
 
-            context?.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, width, height);
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            context?.drawImage(img, 0, 0, targetWidth, targetHeight);
 
             // Encode image to data-uri with base64 version of compressed image.
             resolve(canvas.toDataURL('image/jpeg', 0.5));

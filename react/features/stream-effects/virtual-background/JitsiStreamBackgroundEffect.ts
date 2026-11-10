@@ -10,7 +10,7 @@ import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
 import WebGLCompositor from './compositor/WebGLCompositor';
 import InsertableStreamsPipeline from './pipeline/InsertableStreamsPipeline';
-import { ICoverCropRect, getCoverCropRect } from './utils';
+import { ICoverCropCache, drawImageWithCover } from './utils';
 import {
     CLEAR_TIMEOUT,
     SET_TIMEOUT,
@@ -63,10 +63,13 @@ export interface IV2StartupConfig {
 export default class JitsiStreamBackgroundEffect {
     _backend: WorkerSegmentationBackend | null = null;
     _compositorName: string | null = null;
+    _coverCropCache: ICoverCropCache = {
+        rect: null,
+        targetHeight: 0,
+        targetWidth: 0
+    };
+
     _enableV2: boolean;
-    _imageCoverRect: ICoverCropRect | null = null;
-    _imageCoverTargetHeight = 0;
-    _imageCoverTargetWidth = 0;
     _inputVideoElement: HTMLVideoElement;
     _maskFrameTimerWorker: Worker | null = null;
     _model: any;
@@ -418,28 +421,14 @@ export default class JitsiStreamBackgroundEffect {
         // Draw the background.
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-            const targetWidth = this._outputCanvasElement.width;
-            const targetHeight = this._outputCanvasElement.height;
-
-            if (!this._imageCoverRect
-                || this._imageCoverTargetWidth !== targetWidth
-                || this._imageCoverTargetHeight !== targetHeight) {
-                const nw = this._virtualImage.naturalWidth;
-                const nh = this._virtualImage.naturalHeight;
-
-                if (nw && nh) {
-                    this._imageCoverRect = getCoverCropRect(nw, nh, targetWidth, targetHeight);
-                    this._imageCoverTargetWidth = targetWidth;
-                    this._imageCoverTargetHeight = targetHeight;
-                }
-            }
-
-            if (this._imageCoverRect) {
-                const { sx, sy, sw, sh } = this._imageCoverRect;
-
-                this._outputCanvasCtx?.drawImage(this._virtualImage, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
-            } else {
-                this._outputCanvasCtx?.drawImage(this._virtualImage, 0, 0, targetWidth, targetHeight);
+            if (this._outputCanvasCtx) {
+                drawImageWithCover(
+                    this._outputCanvasCtx,
+                    this._virtualImage,
+                    this._outputCanvasElement.width,
+                    this._outputCanvasElement.height,
+                    this._coverCropCache
+                );
             }
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
