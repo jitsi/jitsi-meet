@@ -14,6 +14,8 @@ local added_features = {};
 -- with the disco#info of the main virtual host (and with jiconop). A client can then enable an option only when the
 -- deployed modules support it, e.g. 'http://jitsi.org/protocol/polls#single_answer'.
 -- Name features 'http://jitsi.org/protocol/<module>#<feature>': jiconop and lib-jitsi-meet report only those.
+-- A feature added this way belongs to this module, not to the one that fired the event: it stays advertised after
+-- that module is unloaded.
 module:hook('jitsi-add-feature', function(event)
     if type(event.feature) ~= 'string' then
         module:log('warn', 'Ignoring jitsi-add-feature without a feature');

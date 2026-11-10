@@ -32,7 +32,8 @@ end
 local JITSI_FEATURE_PREFIX = 'http://jitsi.org/protocol/';
 
 -- The server features are sent in their own element, apart from the query that also carries the features of the room
--- in the connection URL (lobby, breakout rooms). Older lib-jitsi-meet versions read every <query> child and ignore it.
+-- in the connection URL (lobby, breakout rooms). Older lib-jitsi-meet versions take the features of every <query> as
+-- features of that room, and they ignore this element.
 local SERVER_FEATURES_NS = 'http://jitsi.org/protocol/server-features';
 
 -- we cache the query as server identities will not change dynamically, amd use its clone every time

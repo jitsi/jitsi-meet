@@ -235,9 +235,14 @@ module:hook('jitsi-visitor-private-message-pre-route', on_visitor_private_messag
 module:hook('muc-occupant-pre-join', on_occupant_presence); -- shared video on join
 module:hook('muc-occupant-pre-change', on_occupant_presence); -- shared video on presence update
 
-process_host_module(main_virtual_host, function(host_module)
-    local host_context = module:context(host_module.host);
+-- Without the main virtual host the restrictions are still enforced, only not advertised.
+if not main_virtual_host then
+    module:log('warn', 'No muc_mapper_domain_base option set, not advertising the permissions features.');
+else
+    process_host_module(main_virtual_host, function(host_module)
+        local host_context = module:context(host_module.host);
 
-    host_context:fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
-    host_context:fire_event('jitsi-add-feature', { feature = SHARED_VIDEO_PERMISSIONS_FEATURE });
-end);
+        host_context:fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
+        host_context:fire_event('jitsi-add-feature', { feature = SHARED_VIDEO_PERMISSIONS_FEATURE });
+    end);
+end
