@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
 
 import { _getTokenAuthState } from './functions.any';
@@ -80,3 +81,13 @@ export const getTokenAuthUrl = (
 
     return Promise.resolve(url.replace('{room}', roomName));
 };
+
+/**
+ * A JaaS tenant's own login service is only used on web.
+ *
+ * @param {IReduxState} _state - Unused.
+ * @returns {undefined}
+ */
+export function getTenantTokenAuthUrl(_state?: IReduxState): string | undefined {
+    return undefined;
+}

@@ -17,6 +17,7 @@ export interface IJwtState {
     refreshToken?: string;
     server?: string;
     tenant?: string;
+    tenantTokenAuthUrl?: string;
     user?: {
         id: string;
         name: string;
