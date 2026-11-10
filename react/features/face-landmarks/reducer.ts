@@ -58,13 +58,24 @@ ReducerRegistry.register<IFaceLandmarksState>('features/face-landmarks',
         };
     }
     case PARTICIPANT_LEFT: {
-        const { [action.participant.id]: removed, ...faceBoxes } = state.faceBoxes;
+        if (!(action.participant.id in state.faceBoxes)) {
+            return state;
+        }
 
-        return removed ? { ...state,
-            faceBoxes } : state;
+        const faceBoxes = { ...state.faceBoxes };
+
+        delete faceBoxes[action.participant.id];
+
+        return {
+            ...state,
+            faceBoxes
+        };
     }
     case CONFERENCE_LEFT:
-        return defaultState;
+        return {
+            ...state,
+            faceBoxes: {}
+        };
     }
 
     return state;
