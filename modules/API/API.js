@@ -189,6 +189,21 @@ let audioAvailable = true;
 let videoAvailable = true;
 
 /**
+ * Returns the error to reject an iframe API request with. The transport serializes its messages with
+ * JSON.stringify, which turns an Error object into {}, so a plain object with the same name and message is sent:
+ * the embedder can read error.message from it.
+ *
+ * @param {string} message - The error message.
+ * @returns {Object}
+ */
+function requestError(message) {
+    return {
+        name: 'Error',
+        message
+    };
+}
+
+/**
  * Initializes supported commands.
  *
  * @returns {void}
@@ -315,7 +330,7 @@ function initCommands() {
                 ));
             } else {
                 if (!conference) {
-                    logger.error('Conference is not defined');
+                    logger.error('The password can only be set after the conference is joined');
 
                     return;
                 }
@@ -1106,9 +1121,8 @@ function initCommands() {
 
             if (!isMobileBrowser()) {
                 logger.error('This feature is only supported on mobile');
-                callback(undefined, 'This feature is only supported on mobile');
-
-                return;
+                callback(undefined, requestError('This feature is only supported on mobile'));
+                break;
             }
 
             APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
@@ -1117,11 +1131,11 @@ function initCommands() {
             break;
         }
         case 'connection-stats': {
-            if (!getCurrentConference(APP.store.getState())) {
+            // getStats() reads the room of conference.js, which is only set while in a conference.
+            if (!APP.conference._room) {
                 logger.error('Conference is not defined');
-                callback(undefined, 'Conference is not defined');
-
-                return;
+                callback(undefined, requestError('Conference is not defined'));
+                break;
             }
 
             callback({

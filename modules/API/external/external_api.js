@@ -1036,6 +1036,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     * {@code password} - When the conference asks for a password (the {@code passwordRequired} event), joins with
+     * the password passed in the arguments array. Otherwise sets it as the password of the conference, which is only
+     * possible once joined: send it after the {@code videoConferenceJoined} event, before that it is ignored.
      *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.

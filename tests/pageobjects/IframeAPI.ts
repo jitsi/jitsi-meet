@@ -206,7 +206,7 @@ export default class IframeAPI extends BasePageObject {
                     (error: any) => {
                         clearTimeout(timer);
                         resolve({ state: 'rejected',
-                            value: error?.message ?? String(error) });
+                            value: error?.message });
                     });
             }), method, timeout, args) as RequestOutcome;
     }
