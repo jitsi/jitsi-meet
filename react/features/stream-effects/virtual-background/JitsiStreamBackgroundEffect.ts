@@ -10,6 +10,7 @@ import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
 import WebGLCompositor from './compositor/WebGLCompositor';
 import InsertableStreamsPipeline from './pipeline/InsertableStreamsPipeline';
+import { ICoverCropCache, drawImageWithCover } from './utils';
 import {
     CLEAR_TIMEOUT,
     SET_TIMEOUT,
@@ -62,6 +63,12 @@ export interface IV2StartupConfig {
 export default class JitsiStreamBackgroundEffect {
     _backend: WorkerSegmentationBackend | null = null;
     _compositorName: string | null = null;
+    _coverCropCache: ICoverCropCache = {
+        rect: null,
+        targetHeight: 0,
+        targetWidth: 0
+    };
+
     _enableV2: boolean;
     _inputVideoElement: HTMLVideoElement;
     _maskFrameTimerWorker: Worker | null = null;
@@ -414,14 +421,15 @@ export default class JitsiStreamBackgroundEffect {
         // Draw the background.
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-            this._outputCanvasCtx?.drawImage( // @ts-ignore
-                backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-                    ? this._virtualImage : this._virtualVideo,
-                0,
-                0,
-                this._outputCanvasElement.width,
-                this._outputCanvasElement.height
-            );
+            if (this._outputCanvasCtx) {
+                drawImageWithCover(
+                    this._outputCanvasCtx,
+                    this._virtualImage,
+                    this._outputCanvasElement.width,
+                    this._outputCanvasElement.height,
+                    this._coverCropCache
+                );
+            }
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
 

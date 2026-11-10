@@ -6,6 +6,7 @@ import { IVirtualBackground } from '../../virtual-background/reducer';
 import { BackendType } from './DeviceTierDetector';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import { ICompositor } from './compositor/ICompositor';
+import { ICoverCropCache, drawImageWithCover } from './utils';
 
 /** Benchmark log interval in frames. */
 const BENCHMARK_LOG_INTERVAL = 60;
@@ -88,6 +89,12 @@ export default class BackgroundFrameProcessor {
     _cachedMaskData: ImageData | null = null;
     _compositor: ICompositor;
     _consecutiveFailures = 0;
+    _coverCropCache: ICoverCropCache = {
+        rect: null,
+        targetHeight: 0,
+        targetWidth: 0
+    };
+
     _edgeHigh: number;
     _edgeLow: number;
     _firstMaskFrame = true;
@@ -364,8 +371,13 @@ export default class BackgroundFrameProcessor {
             ctx.filter = `blur(${this._options.blurValue ?? 8}px)`;
             ctx.drawImage(source, 0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
         } else if (this._options.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE && this._virtualImage) {
-            ctx.drawImage(this._virtualImage, 0, 0,
-                this._backgroundCanvas.width, this._backgroundCanvas.height);
+            drawImageWithCover(
+                ctx,
+                this._virtualImage,
+                this._backgroundCanvas.width,
+                this._backgroundCanvas.height,
+                this._coverCropCache
+            );
         } else {
             ctx.clearRect(0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
         }
