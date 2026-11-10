@@ -9,7 +9,6 @@ import { Provider } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../react/features/analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../react/features/analytics/functions';
-import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { getSsrcRewritingFeatureFlag } from '../../../react/features/base/config/functions.any';
 import i18next from '../../../react/features/base/i18n/i18next';
@@ -36,6 +35,7 @@ import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/fe
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
+import LargeVideoAvatar from '../../../react/features/large-video/components/LargeVideoAvatar.web';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
 import PresenceLabel from '../../../react/features/presence-status/components/PresenceLabel';
 import { shouldDisplayTileView } from '../../../react/features/video-layout/functions.any';
@@ -554,11 +554,7 @@ export default class LargeVideoManager {
         }
         this._avatarRoot.render(
             <Provider store = { APP.store }>
-                <Avatar
-                    accessibilityAnnounceName = { true }
-                    id = "dominantSpeakerAvatar"
-                    participantId = { this.id }
-                    size = { 200 } />
+                <LargeVideoAvatar participantId = { this.id } />
             </Provider>
         );
     }
