@@ -1,3 +1,11 @@
+/**
+ * Validates the entered video url.
+ *
+ * It returns a boolean to reflect whether the url matches the youtube regex.
+ *
+ * @param {string} url - The entered video link.
+ * @returns {string} The youtube video id if matched.
+ */
 export function getYoutubeId(url: string) {
     if (!url) {
         return null;
@@ -9,6 +17,12 @@ export function getYoutubeId(url: string) {
     return result ? result[1] : null;
 }
 
+/**
+ * Extracts a Youtube id or URL from the user input.
+ *
+ * @param {string} input - The user input.
+ * @returns {string|undefined}
+ */
 export function extractYoutubeIdOrURL(input: string) {
     if (!input) {
         return;
@@ -26,7 +40,9 @@ export function extractYoutubeIdOrURL(input: string) {
         return youtubeId;
     }
 
+    // Check if the URL is valid, native may crash otherwise.
     try {
+        // eslint-disable-next-line no-new
         new URL(trimmedLink);
     } catch (_) {
         return;
@@ -34,4 +50,3 @@ export function extractYoutubeIdOrURL(input: string) {
 
     return trimmedLink;
 }
-
