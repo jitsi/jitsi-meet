@@ -380,6 +380,8 @@ const ContextMenu = ({
     return _overflowDrawer
         ? <JitsiPortal>
             <Drawer
+                headingId = { aria['aria-labelledby'] }
+                headingLabel = { accessibilityLabel }
                 isOpen = { Boolean(isDrawerOpen && _overflowDrawer) }
                 onClose = { onDrawerClose }>
                 <div
