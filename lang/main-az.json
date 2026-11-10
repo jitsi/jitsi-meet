@@ -127,7 +127,7 @@
         "deletedMessage": "Bu mesaj silindi.",
         "deletedMessageByMe": "Bu mesajı siz sildiniz.",
         "disabled": "Söhbət mesajlarının göndərilməsi söndürülüb.",
-        "edit": "Redaktə et",
+        "edit": "Düzəliş et",
         "edited": "(redaktə edildi)",
         "editingMessage": "Redaktə olunur",
         "enter": "Otağa daxil ol",
@@ -167,6 +167,11 @@
         "noMessagesMessage": "Görüşdə hələ ki mesaj yoxdur. Söhbətə buralardan başlayın!",
         "privateMessage": "Şəxsi mesaj",
         "privateNotice": "{{recipient}} üçün şəxsi mesaj",
+        "reactions": {
+            "faceWithTearsOfJoy": "Sevinc göz yaşları olan üz",
+            "fire": "Alov",
+            "redHeart": "Qırmızı ürək"
+        },
         "search": {
             "close": "Axtarışı bağla",
             "next": "Növbəti uyğunluq",
@@ -758,6 +763,7 @@
         "showMeWhatImSharing": "Nə paylaşdığımı mənə göstər"
     },
     "liveStreaming": {
+        "badRequest": "Canlı yayım sorğusu etibarlı deyil. Yayım açarını və yayım tənzimləmələrini yoxlayın.",
         "busy": "Yayım resurslarını azad etmək üzərində işləyirik. Zəhmət olmasa bir neçə dəqiqə sonra yenidən cəhd edin.",
         "busyTitle": "Bütün yayımçılar hazırda məşğuldur",
         "changeSignIn": "Hesabları dəyişdirin.",
@@ -768,7 +774,9 @@
         "enterStreamKeyGeneric": "Canlı yayım açarınızı və ya RTMP URL-nizi buraya daxil edin.",
         "error": "Canlı Yayım uğursuz oldu. Zəhmət olmasa yenidən cəhd edin.",
         "errorAPI": "YouTube yayımlarınıza daxil olarkən xəta baş verdi. Zəhmət olmasa yenidən daxil olmağa çalışın.",
+        "errorGoogleApiLoad": "Google ilə daxil olma yüklənə bilmədi. Brauzeriniz və ya şəbəkəniz tərəfindən bloklanmadığını yoxlayın və təkrar cəhd edin və ya aşağıda canlı yayım açarınızı daxil edin.",
         "errorLiveStreamNotEnabled": "{{email}} hesabında Canlı Yayım aktivləşdirilməyib. Zəhmət olmasa canlı yayımı aktivləşdirin və ya canlı yayım aktiv olan bir hesaba daxil olun.",
+        "errorPopupBlocked": "Google giriş açılan pəncərəsi bloklandı. Bu sayt üçün pəncərələrə icazə verin və təkrar cəhd edin və ya canlı yayım açarınızı aşağıya daxil edin.",
         "expandedOff": "Canlı yayım dayandı",
         "expandedOn": "Görüş hazırda canlı yayımlanır",
         "expandedPending": "Canlı yayım başladılır…",
@@ -1104,16 +1112,25 @@
             "save": "Saxla",
             "singleAnswer": "Yalnız bir cavaba icazə ver"
         },
+        "endPollDialog": {
+            "description": "Səsvermə hər kəs üçün başa çatır və səsvermə yenidən açıla bilməz.",
+            "title": "Bu səsverməyə son verilsin?"
+        },
         "errors": {
-            "notUniqueOption": "Seçimlər unikal olmalıdır"
+            "closeFailed": "Səsvermə sonlandırıla bilmədi",
+            "notUniqueOption": "Seçimlər unikal olmalıdır",
+            "voteFailed": "Səsiniz nəzərə alınmadı",
+            "voteNotCounted": "Səsiniz nəzərə alınmadı, səsvermə başa çatdı"
         },
         "notification": {
             "description": "Səs vermək üçün sorğular vərəqini açın",
             "title": "Bu görüşə yeni sorğu əlavə edildi"
         },
         "results": {
-            "changeVote": "Səsi dəyişdir",
+            "changeVote": "Səsverməni dəyişdir",
+            "closed": "Səsvermə başa çatdı",
             "empty": "Görüşdə hələ ki sorğu yoxdur.",
+            "endPoll": "Səsverməni bitir",
             "hideDetailedResults": "Təfərrüatları gizlət",
             "showDetailedResults": "Təfərrüatları göstər",
             "vote": "Səs ver"
@@ -1156,7 +1173,7 @@
         "dialInMeeting": "Görüşə telefonla qoşulun",
         "dialInPin": "Görüşə telefonla zəng edin və PIN kodu daxil edin:",
         "dialing": "Zəng edilir",
-        "doNotShow": "Bu ekranı bir daha göstərmə",
+        "doNotShow": "Bu ekranı təkrar göstərmə",
         "errorDialOut": "Zəng etmək mümkün olmadı",
         "errorDialOutDisconnected": "Zəng etmək mümkün olmadı. Bağlantı kəsildi",
         "errorDialOutFailed": "Zəng etmək mümkün olmadı. Zəng uğursuz oldu",
@@ -1170,6 +1187,7 @@
         "joinAudioByPhone": "Telefon səsi ilə qoşul",
         "joinMeeting": "Görüşə qoşul",
         "joinMeetingInLowBandwidthMode": "Aşağı zolaq rejimində qoşul",
+        "joinOptions": "Qoşulma seçimləri",
         "joinWithoutAudio": "Səssiz qoşul",
         "keyboardShortcuts": "Klaviatura qısayollarını aktivləşdir",
         "linkCopied": "Keçid mübadilə buferinə kopyalandı",
@@ -1224,6 +1242,7 @@
         "alsoTranscribe": "Bu görüş də transkripsiya edilsin?",
         "authDropboxText": "Dropbox-a yüklə",
         "availableSpace": "Əlçatan sahə: {{spaceLeft}} MB (təxminən {{duration}} dəqiqəlik qeyd)",
+        "badRequest": "Bu görüşün qeydəalma tənzimləmələri dəstəklənmir.",
         "beta": "Sınaq",
         "busy": "Qeydəalma resurslarını azad etmək üzərində işləyirik. Zəhmət olmasa bir neçə dəqiqə sonra yenidən cəhd edin.",
         "busyTitle": "Bütün qeydəalıcılar hazırda məşğuldur",
@@ -1282,6 +1301,7 @@
         "storageLocation": "Saxlama yeri",
         "surfaceError": "Zəhmət olmasa cari vərəqi seçin.",
         "title": "Qeydəalma",
+        "transcriptionAlreadyOn": "Transkripsiya artıq aktivdir",
         "transcriptionLanguage": "Transkripsiya dili",
         "transcriptionOptions": "Transkripsiya seçimləri",
         "unavailable": "Xəta! {{serviceName}} hazırda əlçatan deyil. Problemi həll etmək üzərində işləyirik. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
