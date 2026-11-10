@@ -1,4 +1,4 @@
-import { CONFERENCE_LEFT, CONFERENCE_PROPERTIES_CHANGED } from '../base/conference/actionTypes';
+import { CONFERENCE_PROPERTIES_CHANGED, CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -45,8 +45,6 @@ export interface ITranscribingState {
 ReducerRegistry.register<ITranscribingState>('features/transcribing',
     (state = _getInitialState(), action): ITranscribingState => {
         switch (action.type) {
-        case CONFERENCE_LEFT:
-            return _getInitialState();
         case CONFERENCE_PROPERTIES_CHANGED: {
             const audioRecording = action.properties?.['audio-recording-enabled'];
 
@@ -63,6 +61,8 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
 
             return state;
         }
+        case CONFERENCE_WILL_JOIN:
+            return _getInitialState();
         case TRANSCRIBER_JOINED:
             return {
                 ...state,
