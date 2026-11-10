@@ -68,16 +68,25 @@ describe('File sharing', () => {
         await p1Panel.waitForFile(TEST_FILE_NAME);
 
         // Retrieve the specific file's message ID from chat history to scope assertions. This has to happen
-        // before the removal, which replaces the message's fileMetadata with just { isDeleted: true }.
-        const fileMessageId = await p1.execute((fileName: string) => {
-            const messages: Array<{ fileMetadata?: { fileName?: string; }; messageId?: string; }>
-                = APP.store.getState()['features/chat']?.messages || [];
-            const msg = messages.find(m => m.fileMetadata?.fileName === fileName);
+        // before the removal, which replaces the message's fileMetadata with just { isDeleted: true }. The file
+        // is listed as soon as its upload starts, but the chat message is only added once the upload completes,
+        // so wait for it.
+        let fileMessageId: string | undefined;
 
-            return msg?.messageId;
-        }, TEST_FILE_NAME);
+        await p1.driver.waitUntil(async () => {
+            fileMessageId = await p1.execute((fileName: string) => {
+                const messages: Array<{ fileMetadata?: { fileName?: string; }; messageId?: string; }>
+                    = APP.store.getState()['features/chat']?.messages || [];
+                const msg = messages.find(m => m.fileMetadata?.fileName === fileName);
 
-        expect(fileMessageId).toBeDefined();
+                return msg?.messageId;
+            }, TEST_FILE_NAME);
+
+            return Boolean(fileMessageId);
+        }, {
+            timeout: 15_000,
+            timeoutMsg: `No chat message for "${TEST_FILE_NAME}" after its upload`
+        });
 
         // p2 (joined earlier without file-upload) rejoins with file-upload to test deletion of p1's file
         p2 = await joinJaasMuc({
