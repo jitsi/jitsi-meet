@@ -67,6 +67,18 @@ describe('File sharing', () => {
         await p1Panel.uploadFile(TEST_FILE_PATH);
         await p1Panel.waitForFile(TEST_FILE_NAME);
 
+        // Retrieve the specific file's message ID from chat history to scope assertions. This has to happen
+        // before the removal, which replaces the message's fileMetadata with just { isDeleted: true }.
+        const fileMessageId = await p1.execute((fileName: string) => {
+            const messages: Array<{ fileMetadata?: { fileName?: string; }; messageId?: string; }>
+                = APP.store.getState()['features/chat']?.messages || [];
+            const msg = messages.find(m => m.fileMetadata?.fileName === fileName);
+
+            return msg?.messageId;
+        }, TEST_FILE_NAME);
+
+        expect(fileMessageId).toBeDefined();
+
         // p2 (joined earlier without file-upload) rejoins with file-upload to test deletion of p1's file
         p2 = await joinJaasMuc({
             name: 'p2',
@@ -84,17 +96,6 @@ describe('File sharing', () => {
         await p2Panel.removeFile(TEST_FILE_NAME);
 
         await p1Panel.waitForFileGone(TEST_FILE_NAME);
-
-        // Retrieve the specific file's message ID from chat history to scope assertions
-        const fileMessageId = await p1.execute((fileName: string) => {
-            const messages: Array<{ fileMetadata?: { fileName?: string; }; messageId?: string; }>
-                = APP.store.getState()['features/chat']?.messages || [];
-            const msg = messages.find(m => m.fileMetadata?.fileName === fileName);
-
-            return msg?.messageId;
-        }, TEST_FILE_NAME);
-
-        expect(fileMessageId).toBeDefined();
 
         // Verify the corresponding chat message transitions to the deleted placeholder without an edited label
         const p1ChatPanel = p1.getChatPanel();
