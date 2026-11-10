@@ -186,7 +186,7 @@ function Drawer({
                             isElementInTheViewport
                         }>
                         <div
-                            aria-label = { !headingId && headingLabel ? headingLabel : undefined }
+                            aria-label = { headingId ? undefined : headingLabel }
                             aria-labelledby = { headingId }
                             aria-modal = { true }
                             data-autofocus = { true }
