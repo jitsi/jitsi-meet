@@ -10,13 +10,14 @@ setTestProperties(__filename, {
  * A YouTube id, so remote participants play it without a confirmation dialog.
  */
 const VIDEO_ID = 'xvFZjo5PgG0';
+const YOUTUBE_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
 
 describe('Shared video', () => {
     let p1: Participant, p2: Participant;
     let p1Id: string, p2Id: string;
 
     it('setup', async () => {
-        await ensureTwoParticipants();
+        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
         p1 = ctx.p1;
         p2 = ctx.p2;
         p1Id = await p1.getEndpointId();
@@ -34,6 +35,53 @@ describe('Shared video', () => {
 
         await waitForSharedVideoParticipant(p1, true);
         await waitForSharedVideoParticipant(p2, true);
+    });
+
+    it('share and stop a video via iframe API commands', async () => {
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('startShareVideo', YOUTUBE_URL);
+
+        await p1.switchToIFrame();
+        await p2.switchToIFrame();
+
+        // Wait for the SharedVideo fake participant on both participants
+        await waitForSharedVideoParticipant(p1);
+        await waitForSharedVideoParticipant(p2);
+
+        // Stop via iframe API command
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('stopShareVideo');
+
+        await p1.switchToIFrame();
+        await p2.switchToIFrame();
+
+        await waitForSharedVideoParticipant(p1, true);
+        await waitForSharedVideoParticipant(p2, true);
+    });
+
+    it('handles startShareVideo with non-video domain by not adding fake participant on receivers', async () => {
+        const invalidUrl = 'https://invalid-non-video-domain.example.com/not-a-video';
+
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('startShareVideo', invalidUrl);
+
+        await p1.switchToIFrame();
+        await p2.switchToIFrame();
+
+        // The domain check applies to receivers: verify p2 does not register the shared video participant
+        await p2.driver.pause(2000);
+        const p2HasFakeParticipant = await p2.execute(() => {
+            const { remote } = APP.store.getState()['features/base/participants'];
+
+            return Array.from(remote.values()).some((p: any) => p.fakeParticipant === 'SharedVideo');
+        });
+
+        expect(p2HasFakeParticipant).toBe(false);
+
+        // Clean up the running video on p1
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('stopShareVideo');
+        await p1.switchToIFrame();
     });
 
     it('start with the id of a participant', async () => {
