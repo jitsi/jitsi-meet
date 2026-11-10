@@ -96,6 +96,9 @@ local function allow_promoted_visitor(room, from_vnode, from_jid)
         from = from_vnode;
         jid = from_jid;
     };
+    -- kept until the room is destroyed or the last vnode disconnects, as the client keeps customusername
+    -- in its connection url and sends it again on each reconnect, including stream resumption,
+    -- which needs the same node. The username is sent only to the promoted visitor.
     visitors_promotion_usernames[room.jid][username] = node;
 
     return username;
@@ -144,8 +147,6 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             -- we store where the request is coming from so we can send back the response
             local username = allow_promoted_visitor(room, from_vnode, from_jid);
 
-            local req_from = from_vnode;
-            local req_jid = from_jid;
             local focus_occupant = get_focus_occupant(room);
             local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
 
@@ -155,14 +156,14 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             local node = jid.node(room.jid);
 
             module:send(st.iq({
-                    type='set', to = req_from, from = module.host, id = iq_id })
+                    type='set', to = from_vnode, from = module.host, id = iq_id })
                 :tag('visitors', {
                     xmlns='jitsi:visitors',
-                    room = jid.join(node, muc_domain_prefix..'.'..req_from),
+                    room = jid.join(node, muc_domain_prefix..'.'..from_vnode),
                     focusjid = focus_jid })
                  :tag('promotion-response', {
                     xmlns='jitsi:visitors',
-                    jid = req_jid,
+                    jid = from_jid,
                     username = username ,
                     allow = 'true' }):up());
             return true;
