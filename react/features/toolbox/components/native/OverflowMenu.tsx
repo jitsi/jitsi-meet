@@ -156,7 +156,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         return (
             <BottomSheet
                 renderFooter = { this._renderReactionMenu }>
-                <Divider style = { styles.divider as ViewStyle } />
                 <OpenCarmodeButton { ...topButtonProps } />
                 <LowBandwidthModeButton { ...buttonProps } />
                 { this._renderRaiseHandButton(buttonProps) }
