@@ -1084,12 +1084,7 @@ function initCommands() {
             APP.store.dispatch(captureLargeVideoScreenshot())
                 .then(dataURL => {
                     if (!dataURL) {
-                        // An Error object is serialized to {} by the transport, so a plain object with the same
-                        // name and message is sent, and the embedder can read error.message.
-                        callback(undefined, {
-                            name: 'Error',
-                            message: 'No large video found!'
-                        });
+                        callback(undefined, transportError('No large video found!'));
 
                         return;
                     }
@@ -1125,10 +1120,7 @@ function initCommands() {
             const { invitees } = request;
 
             if (!Array.isArray(invitees) || invitees.length === 0) {
-                callback(undefined, {
-                    name: 'Error',
-                    message: 'Unexpected format of invitees'
-                });
+                callback(undefined, transportError('Unexpected format of invitees'));
 
                 break;
             }
@@ -1139,12 +1131,7 @@ function initCommands() {
                 invite(invitees, true))
                 .then(failedInvitees => {
                     if (failedInvitees.length) {
-                        // An Error object is serialized to {} by the transport, so a plain object with the same
-                        // name and message is sent, and the embedder can read error.message.
-                        callback(undefined, {
-                            name: 'Error',
-                            message: 'One or more invites failed!'
-                        });
+                        callback(undefined, transportError('One or more invites failed!'));
 
                         return;
                     }
@@ -1276,7 +1263,7 @@ function initCommands() {
             break;
         }
         default:
-            callback({ error: new Error('UnknownRequestError') });
+            callback(undefined, transportError('UnknownRequestError'));
 
             return false;
         }
@@ -1315,6 +1302,17 @@ function toggleScreenSharing(enable) {
     if (JitsiMeetJS.isDesktopSharingEnabled()) {
         APP.store.dispatch(startScreenShareFlow(enable));
     }
+}
+
+/**
+ * Builds an error that survives the transport, which serializes an Error object to {}.
+ *
+ * @param {string} message - The error message.
+ * @returns {{name: string, message: string}}
+ */
+function transportError(message) {
+    return { name: 'Error',
+        message };
 }
 
 /**
