@@ -139,7 +139,7 @@ jobs:
           OUT="$RUNNER_TEMP/pr-torture-reports"
           rm -rf "$OUT"
           mkdir -p "$OUT"
-          for p in test-reports.zip chrome-chrome-reports ff-chrome-reports; do
+          for p in test-reports.zip chrome-chrome-reports ff-chrome-reports verification-failures.txt; do
               if [ -e "$PR_TEST_WORKSPACE/release/$p" ] && [ ! -L "$PR_TEST_WORKSPACE/release/$p" ]; then
                   cp -R --no-dereference "$PR_TEST_WORKSPACE/release/$p" "$OUT/" || true
               fi
@@ -219,6 +219,9 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PAGES_TOKEN: ${{ steps.pages-token.outputs.token }}
           CHECK_RUN_ID_FILE: ${{ runner.temp }}/pr-check-id
+          # Fails the check also when all the tests passed, e.g. when the JVB/jicofo checks after the
+          # tests failed (their reasons are in verification-failures.txt)
+          TEST_JOB_RESULT: ${{ needs.pr-torture.result }}
         run: |
           if [ -n "$CHECK_ID" ]; then
               echo "$CHECK_ID" > "$CHECK_RUN_ID_FILE"
