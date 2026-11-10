@@ -142,10 +142,10 @@ const useStyles = makeStyles()(theme => {
             border: 0,
             borderRadius: Number(theme.shape.borderRadius) / 2,
 
-            // The options area sits flush with the button's right edge, so its outer corners must follow the
-            // button's radius, which can be customized through the theme.
-            borderTopRightRadius: 'inherit',
-            borderBottomRightRadius: 'inherit',
+            // The options button sits flush with the main button's right edge, so its outer corners must follow
+            // the main button's radius. The two are siblings now, so the value cannot be inherited.
+            borderTopRightRadius: theme.shape.borderRadius,
+            borderBottomRightRadius: theme.shape.borderRadius,
             alignItems: 'center',
             color: 'inherit',
             cursor: 'pointer',
