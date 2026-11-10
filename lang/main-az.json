@@ -628,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "Bu zəngdə Səsli və Videolu Əlaqə uclararası şifrələnib"
     },
+    "editDisplayName": "Ekran adına düzəliş et, {{name}}",
     "embedMeeting": {
         "title": "Bu görüşü daxil edin"
     },
