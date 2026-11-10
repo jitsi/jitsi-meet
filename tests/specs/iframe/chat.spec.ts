@@ -186,6 +186,29 @@ describe('Chat', () => {
             unreadCount: 0
         });
     });
+
+    it('chatUpdated is sent when the panel is opened on the polls tab', async () => {
+        await p2.getIframeAPI().clearEventResults('chatUpdated');
+
+        // The polls button opens the side panel directly on the polls tab, without going through the chat tab.
+        await p2.switchToIFrame();
+        await p2.getToolbar().clickPollsButton();
+        await p2.switchToMainFrame();
+
+        const chatUpdatedEvent: {
+            isOpen: boolean;
+            unreadCount: number;
+        } = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('chatUpdated'), {
+            timeout: 3000,
+            timeoutMsg: 'chatUpdated was not received when opening the panel on the polls tab'
+        });
+
+        // All the messages were read when the panel was closed in the previous test.
+        expect(chatUpdatedEvent).toEqual({
+            isOpen: true,
+            unreadCount: 0
+        });
+    });
 });
 
 /**

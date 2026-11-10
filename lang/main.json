@@ -1527,6 +1527,7 @@
             "participants": "Open participants panel. {{participantsCount}} participants",
             "pip": "Enter Picture-in-Picture mode",
             "pipClose": "Close Picture-in-Picture mode",
+            "polls": "Open polls",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise your hand",
