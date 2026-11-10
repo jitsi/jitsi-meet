@@ -96,6 +96,7 @@ const commands = {
     toggleNoiseSuppression: 'toggle-noise-suppression',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
@@ -604,6 +605,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                     this._tmpE2EEKey = undefined;
                 }
+
+                // The prejoin screen registers the local participant under the 'local' id. Now that the real id is
+                // known, drop that entry, otherwise getParticipantsInfo() lists the local user twice.
+                delete this._participants.local;
 
                 this._myUserID = userID;
                 this._participants[userID] = {
@@ -1557,7 +1562,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     resizeLargeVideo(width, height) {
-        if (width <= this._width && height <= this._height) {
+        // Numeric size options are what the embedder asked for, so keep comparing with them (they also work while
+        // the iframe is still hidden). Other values, such as the default '100%', can't be compared with a number, so
+        // use the layout size of the iframe. clientWidth/clientHeight are not affected by CSS transforms.
+        const optionWidth = Number(this._width);
+        const optionHeight = Number(this._height);
+        const maxWidth = Number.isFinite(optionWidth) ? optionWidth : this._frame.clientWidth;
+        const maxHeight = Number.isFinite(optionHeight) ? optionHeight : this._frame.clientHeight;
+
+        if (width <= maxWidth && height <= maxHeight) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
     }
@@ -1698,7 +1711,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Sets the key and keyIndex for e2ee.
      *
      * @param {Object} keyInfo - Json containing key information.
-     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {CryptoKey} [keyInfo.key] - The encryption key. If it is not provided, the key is cleared.
      * @param {number} [keyInfo.index] - The index of the encryption key.
      * @returns {void}
      */

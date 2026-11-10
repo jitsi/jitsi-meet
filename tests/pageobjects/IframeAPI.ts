@@ -79,6 +79,13 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns the information about the participants known to the iframeAPI.
+     */
+    getParticipantsInfo(): Promise<Array<{ displayName?: string; participantId: string; }>> {
+        return this.participant.execute(() => window.jitsiAPI.getParticipantsInfo());
+    }
+
+    /**
      * Returns the number of participants in the conference.
      */
     getNumberOfParticipants() {
