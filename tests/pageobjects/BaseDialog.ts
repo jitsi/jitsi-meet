@@ -45,6 +45,12 @@ export interface IFocusStop {
 }
 
 /**
+ * What one Tab press of a focus walk produced: a stop, 'wrapped' when focus is back on the first stop, or 'none'
+ * when nothing has focus, which is an error rather than the end of the walk.
+ */
+type FocusWalkResult = IFocusStop | 'none' | 'wrapped';
+
+/**
  * Base class for all dialogs.
  */
 export default class BaseDialog extends BasePageObject {
@@ -88,11 +94,11 @@ export default class BaseDialog extends BasePageObject {
         for (let i = 0; i < MAX_TAB_PRESSES; i++) {
             await this.participant.driver.keys('Tab');
 
-            const stop = await this.participant.execute((attribute: string, isFirst: boolean) => {
+            const stop = await this.participant.execute<FocusWalkResult, [ string, boolean ]>((attribute, isFirst) => {
                 const el = document.activeElement;
 
                 if (!el) {
-                    return undefined;
+                    return 'none';
                 }
 
                 if (isFirst) {
@@ -100,7 +106,7 @@ export default class BaseDialog extends BasePageObject {
                 } else if (el.hasAttribute(attribute)) {
                     el.removeAttribute(attribute);
 
-                    return undefined;
+                    return 'wrapped';
                 }
 
                 return {
@@ -110,7 +116,12 @@ export default class BaseDialog extends BasePageObject {
                 };
             }, FOCUS_WALK_START_ATTRIBUTE, order.length === 0);
 
-            if (!stop) {
+            if (stop === 'none') {
+                throw new Error(`Nothing has focus after Tab press ${i + 1}: ${
+                    order.map(recorded => recorded.name).join(' > ')}`);
+            }
+
+            if (stop === 'wrapped') {
                 return order;
             }
 
