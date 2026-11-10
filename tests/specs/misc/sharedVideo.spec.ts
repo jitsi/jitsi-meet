@@ -1,4 +1,4 @@
-import { extractYoutubeIdOrURL } from '../../../react/features/shared-video/functions';
+import { extractYoutubeIdOrURL } from '../../../react/features/shared-video/youtube';
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants, joinThirdParticipant } from '../../helpers/participants';
