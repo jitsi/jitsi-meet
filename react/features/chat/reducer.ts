@@ -509,9 +509,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 return {
                     ...m,
                     fileMetadata: {
-                        ...m.fileMetadata,
                         isDeleted: true
-                    }
+                    } as any
                 };
             }
 

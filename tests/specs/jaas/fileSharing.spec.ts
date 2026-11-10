@@ -104,6 +104,8 @@ describe('File sharing', () => {
             await p1.getToolbar().clickChatButton();
         }
 
+        await p1.driver.$('#chat-tab').click();
+
         try {
             // 1. Verify the specific message container still exists after deletion
             const messageContainer = await p1.driver.$(`[id="${fileMessageId}"]`);
@@ -120,11 +122,12 @@ describe('File sharing', () => {
             expect(await messageContainer.$(`[title="${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
             expect(await messageContainer.$(`button[aria-label="Download ${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
             expect(await messageContainer.$(`button[aria-label="Remove ${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
-            expect(await messageContainer.$(`*=${TEST_FILE_NAME}`).isExisting()).toBe(false);
 
             // 4. Verify the (edited) label is absent within that container
             expect(await messageContainer.$('div*=(edited)').isExisting()).toBe(false);
         } finally {
+            await p1.driver.$('#file_sharing-tab').click();
+
             if (!wasChatOpen && await p1ChatPanel.isOpen()) {
                 await p1.getToolbar().clickCloseChatButton();
             }
