@@ -1,6 +1,6 @@
-import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant } from '../../helpers/participants';
+import { CANCEL_BUTTON, CLOSE_BUTTON, OK_BUTTON } from '../../pageobjects/BaseDialog';
 
 setTestProperties(__filename, {
     description: 'Keyboard focus moves through the Settings dialog from the selected tab into its content and then '
@@ -9,22 +9,15 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1' ]
 });
 
-const CANCEL_BUTTON = 'modal-dialog-cancel-button';
-const CLOSE_BUTTON = 'modal-header-close-button';
-const OK_BUTTON = 'modal-dialog-ok-button';
-
-/**
- * Script that names the element that currently has focus. Falls back to the test id and then the tag name, so an
- * element without an id is still a distinct stop in the recorded order.
- */
-const ACTIVE_ELEMENT_NAME
-    = 'const el = document.activeElement; return el.id || el.getAttribute("data-testid") || el.tagName;';
-
 describe('Settings dialog focus order', () => {
     it('joining the meeting', () => ensureOneParticipant());
 
-    it('ends with Cancel, OK and Close', async () => {
+    it('starts at the selected tab and ends with Cancel, OK and Close', async () => {
         const { p1 } = ctx;
+
+        // The expected order holds for the desktop layout only. Below 608px the dialog switches to its mobile layout,
+        // where Close and Back come before the content, and only headless Chrome gets a fixed window size.
+        await p1.driver.setWindowSize(1280, 1024);
 
         await p1.getToolbar().clickSettingsButton();
 
@@ -32,46 +25,16 @@ describe('Settings dialog focus order', () => {
 
         await settings.waitForDisplay();
 
-        const order = await collectFocusOrder(p1);
+        const order = await settings.getFocusOrder();
+        const [ firstStop, secondStop ] = order;
 
         // The first stop is the selected tab and the next one is inside its panel, which is what the tabs pattern
         // promises. Everything after that up to the footer is tab content.
-        expect(order[0]).toMatch(/^dialogtab-button-/);
-        expect(order[1]).not.toMatch(/^dialogtab-button-|^modal-/);
-        expect(order.slice(-3)).toEqual([ CANCEL_BUTTON, OK_BUTTON, CLOSE_BUTTON ]);
+        expect(firstStop.name).toMatch(/^dialogtab-button-/);
+        expect(firstStop.selected).toBe(true);
+        expect(secondStop.inTabPanel).toBe(true);
+        expect(order.slice(-3).map(stop => stop.name)).toEqual([ CANCEL_BUTTON, OK_BUTTON, CLOSE_BUTTON ]);
 
         await settings.clickCloseButton();
     });
 });
-
-/**
- * Upper bound on Tab presses. The dialog's focus lock wraps focus around, so the loop normally stops much earlier;
- * the cap only keeps a broken wrap from running forever.
- */
-const MAX_TAB_PRESSES = 100;
-
-/**
- * Presses Tab repeatedly and returns the names of the elements that received focus, in order, until focus wraps
- * around to the first stop. The dialog's initial focus is skipped on purpose: it may sit on the dialog container
- * itself, which is not a stop a keyboard user tabs to.
- *
- * @param participant - The participant whose Settings dialog is open.
- * @returns The focus stops in the order they were reached.
- */
-async function collectFocusOrder(participant: Participant): Promise<string[]> {
-    const order: string[] = [];
-
-    for (let i = 0; i < MAX_TAB_PRESSES; i++) {
-        await participant.driver.keys('Tab');
-
-        const name: string = await participant.driver.execute(ACTIVE_ELEMENT_NAME);
-
-        if (order.length && name === order[0]) {
-            return order;
-        }
-
-        order.push(name);
-    }
-
-    throw new Error(`Focus did not wrap around after ${MAX_TAB_PRESSES} Tab presses: ${order.join(' > ')}`);
-}
