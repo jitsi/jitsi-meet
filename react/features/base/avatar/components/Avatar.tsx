@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { IconUser } from '../../icons/svg';
-import { getParticipantById } from '../../participants/functions';
+import { getParticipantById, getParticipantDisplayName } from '../../participants/functions';
 import { IParticipant } from '../../participants/types';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
 import { IAvatarProps as AbstractProps } from '../types';
@@ -11,6 +11,13 @@ import { IAvatarProps as AbstractProps } from '../types';
 import { StatelessAvatar } from './';
 
 export interface IProps {
+
+    /**
+     * The name assistive technologies announce when {@code accessibilityAnnounceName} is set. For a participant
+     * this is the name the rest of the UI shows for them, default names and screen share labels included, so the
+     * avatar never identifies a person differently from the badges and thumbnails around it.
+     */
+    _announcedName?: string;
 
     /**
      * The URL patterns for URLs that needs to be handled with CORS.
@@ -178,6 +185,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      */
     override render() {
         const {
+            _announcedName,
             _customAvatarBackgrounds,
             _initialsBase,
             _loadableAvatarUrl,
@@ -207,7 +215,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             accessibilityAnnounceName,
             className,
             color: undefined,
-            displayName: _initialsBase,
+            displayName: _announcedName,
             id,
             initials: undefined,
             onAvatarLoadError: undefined,
@@ -289,9 +297,15 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { colorBase, displayName, participantId } = ownProps;
     const _participant: IParticipant | undefined = participantId ? getParticipantById(state, participantId) : undefined;
     const _initialsBase = _participant?.name ?? displayName;
+
+    // A participant without a name is still shown everywhere under a default name, and a virtual screen share
+    // participant under its owner's name, so announce what the user sees rather than the raw name the initials
+    // are built from.
+    const _announcedName = _participant ? getParticipantDisplayName(state, _participant.id) : displayName;
     const { corsAvatarURLs } = state['features/base/config'];
 
     return {
+        _announcedName,
         _customAvatarBackgrounds: state['features/dynamic-branding'].avatarBackgrounds,
         _corsAvatarURLs: corsAvatarURLs,
         _initialsBase,
