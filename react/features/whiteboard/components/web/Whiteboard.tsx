@@ -143,16 +143,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     };
 
     const getExcalidrawAPI = useCallback(excalidrawAPI => {
-        if (excalidrawAPIRef.current) {
-            return;
-        }
         excalidrawAPIRef.current = excalidrawAPI;
     }, []);
 
     const getCollabAPI = useCallback(collabAPI => {
-        if (collabAPIRef.current) {
-            return;
-        }
         collabAPIRef.current = collabAPI;
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
@@ -197,6 +191,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 }}
                                 getCollabAPI = { getCollabAPI }
                                 getExcalidrawAPI = { getExcalidrawAPI }
+                                key = { `${collabDetails?.roomId}:${collabDetails?.roomKey}` }
                                 meetingDetails = { meetingDetails }
                                 storageBackendUrl = { storageBackendUrl } />
                         </Suspense>
