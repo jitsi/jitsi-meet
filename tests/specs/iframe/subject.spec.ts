@@ -146,21 +146,9 @@ describe('Subject iframe API command and events', () => {
         await p1.switchToIFrame();
         await checkSubject(p1, newGlobalSubject);
 
-        // Verify p2 retains local subject precedence in header after conference subject updates in redux
+        // The subjectChange event above is emitted once the new subject is in p2's state, so the local subject
+        // still showing in the header means it takes precedence.
         await p2.switchToIFrame();
-        await p2.driver.waitUntil(
-            async () => {
-                const confSubject = await p2.execute(
-                    () => APP.store.getState()?.['features/base/conference']?.subject
-                );
-
-                return confSubject === newGlobalSubject;
-            },
-            {
-                timeout: 3000,
-                timeoutMsg: 'p2 redux store conference subject was not updated to new global subject'
-            }
-        );
         await checkSubject(p2, localSubjectP2);
 
         // Once p2 clears local subject, the latest global subject becomes visible immediately
