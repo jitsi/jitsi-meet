@@ -110,6 +110,7 @@ export const RoomContextMenu = ({
 
     return (
         <ContextMenu
+            accessibilityLabel = { room?.name || t('breakoutRooms.mainRoom') }
             activateFocusTrap = { true }
             entity = { room }
             isDrawerOpen = { Boolean(room) }
