@@ -6,16 +6,18 @@ import { setAccessManagerResponse } from './helpers/test_observer.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 // VPaaS tenant prefix — mod_muc_auth_ban only calls the access manager for
-// sessions whose jitsi_web_query_prefix starts with this string.
-// The prefix is set from the ?prefix= WebSocket URL param by mod_jitsi_session.
+// sessions whose jitsi_web_query_prefix or token sub claim starts with this
+// string, ignoring case. The prefix is set from the ?prefix= WebSocket URL param by
+// mod_jitsi_session, the sub claim from the verified token by mod_auth_token.
 const VPAAS_PREFIX = 'vpaas-magic-cookie-test';
 
 // Tokens are RS256 (deterministic): same payload in the same second → same
 // token string. Use a per-test jti so each test gets a unique token and cannot
 // accidentally match a token that was cached as banned by an earlier test.
 let _tokenCounter = 0;
-const freshToken = () => mintAsapToken({ room: '*',
-    jti: `ban-test-${++_tokenCounter}` });
+const freshToken = (overrides = {}) => mintAsapToken({ room: '*',
+    jti: `ban-test-${++_tokenCounter}`,
+    ...overrides });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -27,12 +29,14 @@ const freshToken = () => mintAsapToken({ room: '*',
  *
  * @param {string} token  A valid login JWT (RS256 / HS256).
  * @param {object} [opts]  Extra createXmppClient options.
+ * @param {string|null} [opts.prefix]  The ?prefix= value (default VPAAS_PREFIX),
+ *   null to leave the param out.
  * @returns {Promise<XmppTestClient>}
  */
-function createVpaasClient(token, opts = {}) {
+function createVpaasClient(token, { prefix = VPAAS_PREFIX, ...opts } = {}) {
     return createXmppClient({
         ...opts,
-        params: { prefix: VPAAS_PREFIX,
+        params: prefix === null ? { token } : { prefix,
             token }
     });
 }
@@ -186,6 +190,52 @@ describe('mod_muc_auth_ban', () => {
             'session must be rejected by a ban that lands mid-restart', { restartDelay: 300 });
 
         assert.strictEqual(path, 'restart', 'ban must land between SASL success and resource binding');
+    });
+
+    // ── VPaaS token sub claim ─────────────────────────────────────────────────
+    //
+    // The session is also checked when the verified token has a VPaaS sub claim,
+    // whatever the ?prefix= param is.
+
+    it('VPaaS token sub without a prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX }),
+            'VPaaS token sub must be checked when the prefix param is missing', { prefix: null });
+    });
+
+    it('VPaaS token sub with an empty prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX }),
+            'VPaaS token sub must be checked when the prefix param is empty', { prefix: '' });
+    });
+
+    it('upper-case VPaaS token sub without a prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX.toUpperCase() }),
+            'upper-case VPaaS token sub must be checked', { prefix: null });
+    });
+
+    it('upper-case VPaaS prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken(),
+            'upper-case VPaaS prefix param must be checked', { prefix: VPAAS_PREFIX.toUpperCase() });
+    });
+
+    it('token with a non-string sub and no prefix param is allowed without an HTTP check', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        const c = await createVpaasClient(freshToken({ sub: 12345 }), { prefix: null });
+
+        // Stay connected past the point where a ban would have closed the session.
+        const disconnected = await c.waitForDisconnect(500).then(() => true, () => false);
+
+        await c.disconnect();
+
+        assert.strictEqual(disconnected, false, 'non-string sub must not trigger the access check');
     });
 
     // ── Cached ban ────────────────────────────────────────────────────────────
