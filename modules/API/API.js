@@ -1083,17 +1083,18 @@ function initCommands() {
         case 'capture-largevideo-screenshot' :
             APP.store.dispatch(captureLargeVideoScreenshot())
                 .then(dataURL => {
-                    let error;
-
                     if (!dataURL) {
-                        // An Error object is serialized to {} by the transport, so send the message instead.
-                        error = 'No large video found!';
+                        // An Error object is serialized to {} by the transport, so a plain object with the same
+                        // name and message is sent, and the embedder can read error.message.
+                        callback(undefined, {
+                            name: 'Error',
+                            message: 'No large video found!'
+                        });
+
+                        return;
                     }
 
-                    callback({
-                        error,
-                        dataURL
-                    });
+                    callback({ dataURL });
                 });
             break;
         case 'capture-camera-picture' : {
@@ -1124,8 +1125,9 @@ function initCommands() {
             const { invitees } = request;
 
             if (!Array.isArray(invitees) || invitees.length === 0) {
-                callback({
-                    error: 'Unexpected format of invitees'
+                callback(undefined, {
+                    name: 'Error',
+                    message: 'Unexpected format of invitees'
                 });
 
                 break;
@@ -1136,20 +1138,18 @@ function initCommands() {
             APP.store.dispatch(
                 invite(invitees, true))
                 .then(failedInvitees => {
-                    let error;
-                    let result;
-
                     if (failedInvitees.length) {
-                        // An Error object is serialized to {} by the transport, so send the message instead.
-                        error = 'One or more invites failed!';
-                    } else {
-                        result = true;
+                        // An Error object is serialized to {} by the transport, so a plain object with the same
+                        // name and message is sent, and the embedder can read error.message.
+                        callback(undefined, {
+                            name: 'Error',
+                            message: 'One or more invites failed!'
+                        });
+
+                        return;
                     }
 
-                    callback({
-                        error,
-                        result
-                    });
+                    callback({ result: true });
                 });
             break;
         }

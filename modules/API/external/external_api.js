@@ -977,9 +977,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Captures the screenshot of the large video.
      *
-     * @returns {Promise<{dataURL: string}|{error: string}>} - Resolves with an object. It contains the base64
-     * encoded image data of the screenshot in dataURL if the large video is detected, or an error message in
-     * error otherwise.
+     * @returns {Promise<{dataURL: string}>} - Resolves with an object that contains the base64 encoded image
+     * data of the screenshot in dataURL. Rejects with an error (it has a message) if no large video is detected.
      */
     captureLargeVideoScreenshot() {
         return this._transport.sendRequest({
@@ -1243,8 +1242,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Invite people to the call.
      *
      * @param {Array<Object>} invitees - The invitees.
-     * @returns {Promise<{result: boolean}|{error: string}>} - Resolves with an object. On success it is
-     * { result: true }, on failure it contains an error message in error.
+     * @returns {Promise<{result: boolean}>} - Resolves with { result: true } on success and rejects with an
+     * error (it has a message) on failure, for example when one or more of the invites failed.
      */
     invite(invitees) {
         if (!Array.isArray(invitees) || invitees.length === 0) {
