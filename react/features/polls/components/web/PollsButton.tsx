@@ -13,6 +13,7 @@ import { arePollsDisabled } from '../../../conference/functions.any';
  * @augments AbstractButton
  */
 class PollsButton extends AbstractButton<AbstractButtonProps> {
+    override accessibilityLabel = 'toolbar.accessibilityLabel.polls';
     override icon = IconInfo;
     override label = 'toolbar.polls';
     override tooltip = 'toolbar.polls';

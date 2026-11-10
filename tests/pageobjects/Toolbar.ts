@@ -18,6 +18,7 @@ const OVERFLOW = 'More actions';
 const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
 const PIP = 'Enter Picture-in-Picture mode';
+const POLLS = 'Open polls';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
 const LOWER_HAND = 'Lower your hand';
@@ -250,6 +251,13 @@ export default class Toolbar extends BasePageObject {
      */
     clickVideoQualityButton(): Promise<void> {
         return this.clickButtonInOverflowMenu(VIDEO_QUALITY);
+    }
+
+    /**
+     * Clicks on the polls toolbar button, which opens the side panel on the polls tab.
+     */
+    clickPollsButton(): Promise<void> {
+        return this.clickButtonInOverflowMenu(POLLS);
     }
 
     /**
