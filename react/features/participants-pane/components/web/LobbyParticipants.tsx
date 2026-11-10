@@ -121,6 +121,7 @@ export default function LobbyParticipants() {
                 participants = { participants } />
             <JitsiPortal>
                 <Drawer
+                    headingLabel = { drawerParticipant?.displayName }
                     isOpen = { Boolean(drawerParticipant && overflowDrawer) }
                     onClose = { closeDrawer }>
                     <ul className = { classes.drawerActions }>
