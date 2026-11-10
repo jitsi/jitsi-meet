@@ -5,6 +5,7 @@
 -- Stubs every Prosody dependency so no Prosody installation is needed.
 -- These focus on auto promotion (globally or per room): occupants are let in the main room by
 -- muc-occupant-pre-join and raised hands are auto-accepted only while the room is live.
+-- They also cover the jid node that pre-jitsi-authentication binds for a promoted visitor.
 
 -- ---------------------------------------------------------------------------
 -- Stubs for top-level `require`d Prosody libs
@@ -17,7 +18,13 @@ local stubs = {}
 stubs['util.array'] = function() return {} end
 stubs['net.http'] = function() return { request = function() end } end
 stubs['util.id'] = function() return { medium = function() return 'id' end } end
-stubs['util.uuid'] = function() return { generate = function() return 'uuid' end } end
+local uuid_count = 0
+stubs['util.uuid'] = function()
+    return { generate = function()
+        uuid_count = uuid_count + 1
+        return 'uuid-' .. uuid_count
+    end }
+end
 stubs['cjson.safe'] = function() return { encode = function() return '{}' end, decode = function() end } end
 stubs['util.serialization'] = function() return { new = function() return tostring end } end
 stubs['util.cache'] = function()
@@ -91,6 +98,7 @@ local util_stub = {
     room_jid_match_rewrite = function(j) return j end,
     internal_room_jid_match_rewrite = function(j) return j end,
     get_room_from_jid = function() return current_room end,
+    get_room_by_name_and_subdomain = function() return current_room end,
     get_focus_occupant = function() return nil end,
     respond_iq_result = function() end,
     is_healthcheck_room = function() return false end,
@@ -106,6 +114,8 @@ local util_stub = {
 local options
 local pre_join_fn
 local stanza_fn
+local authentication_fn
+local breakout_leaving_fn
 
 local function new_host_module(host)
     local host_module = {}
@@ -122,9 +132,15 @@ local function load_module(opts)
     options = opts
     pre_join_fn = nil
     stanza_fn = nil
+    authentication_fn = nil
+    breakout_leaving_fn = nil
     sent_stanzas = {}
 
-    _G.prosody = { version = 'test', platform = 'test', events = { add_handler = function() end } }
+    _G.prosody = { version = 'test', platform = 'test', events = {
+        add_handler = function(event, fn)
+            if event == 'pre-jitsi-authentication' then authentication_fn = fn end
+        end,
+    } }
     _G.socket = { gettime = function() return 0 end }
     _G.module = {
         host = 'visitors.example.com',
@@ -152,7 +168,9 @@ local function load_module(opts)
         hook = function(_, event, fn)
             if event == 'iq/host' then stanza_fn = fn end
         end,
-        hook_global = function() end,
+        hook_global = function(_, event, fn)
+            if event == 'jitsi-breakout-occupant-leaving' then breakout_leaving_fn = fn end
+        end,
         send = function(_, stanza) table.insert(sent_stanzas, stanza) end,
     }
 
@@ -172,6 +190,8 @@ local function load_module(opts)
     assert(ok, err)
     assert(pre_join_fn, "mod_visitors_component did not hook 'muc-occupant-pre-join'")
     assert(stanza_fn, "mod_visitors_component did not hook 'iq/host'")
+    assert(authentication_fn, "mod_visitors_component did not add a 'pre-jitsi-authentication' handler")
+    assert(breakout_leaving_fn, "mod_visitors_component did not hook 'jitsi-breakout-occupant-leaving'")
 end
 
 -- ---------------------------------------------------------------------------
@@ -295,6 +315,66 @@ local function join(room, role)
     })
 
     return result, sent
+end
+
+-- A visitor raises the hand in a room with autoPromote and is promoted. Returns the username sent to it.
+-- autoPromote is turned off after it, so the next joins go through the promotion check.
+local function promote(room)
+    room.jitsiMetadata.visitors.autoPromote = true
+    raise_hand(room)
+    room.jitsiMetadata.visitors.autoPromote = false
+
+    local responses = promotion_responses()
+    assert.equal(1, #responses)
+    return responses[1].username
+end
+
+-- Connects to the main prosody with the given customusername, returns the jid node to bind.
+local function authenticate(room, customusername)
+    current_room = room
+    return authentication_fn({ customusername = customusername, jitsi_web_query_room = 'room' })
+end
+
+-- The occupant leaves a breakout room to switch to the main room.
+local function return_from_breakout(room, bare_jid)
+    breakout_leaving_fn({
+        main_room = room,
+        occupant = { bare_jid = bare_jid },
+        stanza = { get_child_text = function(_, name) return name == 'status' and 'switch_room' or nil end },
+    })
+end
+
+-- Joins a room from a session bound to the given jid node, returns the hook result, the replies sent
+-- and the password added to the join.
+local function join_as(room, node)
+    local sent = {}
+    local x = {}
+    function x:tag() return self end
+    function x:text(text)
+        self.password = text
+        return self
+    end
+    local result = pre_join_fn({
+        room = room,
+        stanza = {
+            attr = { from = node .. '@example.com/res' },
+            get_child = function(_, name) return name == 'x' and x or nil end,
+        },
+        occupant = { bare_jid = node .. '@example.com', nick = room.jid .. '/abcd' },
+        origin = {
+            jitsi_meet_context_user = { id = 'user-1', role = 'participant' },
+            send = function(reply) table.insert(sent, reply) end,
+            log = function() end,
+        },
+    })
+
+    return result, sent, x.password
+end
+
+local function make_room_with_password()
+    local room = make_room({ live = true })
+    room.get_password = function() return 'secret' end
+    return room
 end
 
 local function assert_denied_no_main_participants(result, sent)
@@ -434,5 +514,74 @@ describe('mod_visitors_component raise hand', function()
         load_module({})
         raise_hand(make_room({ live = true }))
         assert_sent_to_moderators()
+    end)
+end)
+
+describe('mod_visitors_component promoted visitor', function()
+    before_each(function()
+        load_module({})
+    end)
+
+    it('binds the same jid node on each connect, different from the username', function()
+        local room = make_room_with_password()
+        local username = promote(room)
+        local node = authenticate(room, username)
+
+        assert.is_not_nil(node)
+        assert.are_not.equal(username, node)
+        assert.equal(node, authenticate(room, username))
+    end)
+
+    it('binds no jid node for the jid node of a promoted visitor', function()
+        local room = make_room_with_password()
+        local node = authenticate(room, promote(room))
+
+        assert.is_nil(authenticate(room, node))
+    end)
+
+    it('binds no jid node for an occupant back from a breakout room', function()
+        local room = make_room_with_password()
+        connect_vnode(room)
+        return_from_breakout(room, 'occupant1@example.com')
+
+        assert.is_nil(authenticate(room, 'occupant1'))
+    end)
+
+    it('binds no jid node for a username that was not sent', function()
+        local room = make_room_with_password()
+        promote(room)
+
+        assert.is_nil(authenticate(room, 'unknown'))
+    end)
+
+    it('binds no jid node when visitors are not enabled for the room', function()
+        assert.is_nil(authenticate(make_room_with_password(), 'unknown'))
+    end)
+
+    it('lets the promoted visitor join with the room password', function()
+        local room = make_room_with_password()
+        local node = authenticate(room, promote(room))
+        local result, sent, password = join_as(room, node)
+
+        assert_allowed(result, sent)
+        assert.equal('secret', password)
+    end)
+
+    it('lets an occupant back from a breakout room join with the room password', function()
+        local room = make_room_with_password()
+        connect_vnode(room)
+        return_from_breakout(room, 'occupant1@example.com')
+        local result, sent, password = join_as(room, 'occupant1')
+
+        assert_allowed(result, sent)
+        assert.equal('secret', password)
+    end)
+
+    it('denies a join from the username used as a jid node', function()
+        local room = make_room_with_password()
+        local result, sent, password = join_as(room, promote(room))
+
+        assert_denied_promotion_not_allowed(result, sent)
+        assert.is_nil(password)
     end)
 end)

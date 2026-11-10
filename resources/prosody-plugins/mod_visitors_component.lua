@@ -59,6 +59,11 @@ local http_headers = {
 -- automatically allowed or allowed by a moderator
 local visitors_promotion_map = {};
 
+-- A map with key room jid. The content is a map with key the username sent to a promoted visitor
+-- and the value is the jid node allowed to join for it. The visitor uses the username as customusername
+-- when connecting to the main prosody, and its session is bound to that node.
+local visitors_promotion_usernames = {};
+
 -- A map with key room jid. The content is a map with key jid from which the request is received
 -- and the value is a table that has the json message that needs to be sent to any future moderator that joins
 -- and the vnode from which the request is received and where the response will be sent
@@ -76,6 +81,24 @@ local function get_visitors_room_metadata(room)
         room.jitsiMetadata.visitors = {};
     end
     return room.jitsiMetadata.visitors;
+end
+
+-- Allows a promoted visitor to join the main room
+-- @param room the main room
+-- @param from_vnode the vnode the visitor is connected to
+-- @param from_jid the jid of the visitor on the vnode
+-- @returns the username to send to the visitor
+local function allow_promoted_visitor(room, from_vnode, from_jid)
+    -- the jid node is seen by the occupants in presence, so it is different from the username
+    local username, node = uuid_generate(), uuid_generate();
+
+    visitors_promotion_map[room.jid][node] = {
+        from = from_vnode;
+        jid = from_jid;
+    };
+    visitors_promotion_usernames[room.jid][username] = node;
+
+    return username;
 end
 
 -- Sends a json-message to the destination jid
@@ -119,14 +142,10 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
         if time and time > 0 and force_promote then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
-            local username = uuid_generate();
-            visitors_promotion_map[room.jid][username] = {
-                from = from_vnode;
-                jid = from_jid;
-            };
+            local username = allow_promoted_visitor(room, from_vnode, from_jid);
 
-            local req_from = visitors_promotion_map[room.jid][username].from;
-            local req_jid = visitors_promotion_map[room.jid][username].jid;
+            local req_from = from_vnode;
+            local req_jid = from_jid;
             local focus_occupant = get_focus_occupant(room);
             local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
 
@@ -202,6 +221,7 @@ local function connect_vnode_received(room, vnode)
     if not visitors_promotion_map[room.jid] then
         -- visitors is enabled
         visitors_promotion_map[room.jid] = {};
+        visitors_promotion_usernames[room.jid] = {};
         visitors_promotion_requests[room.jid] = {};
         room._connected_vnodes = cache.new(16); -- we up to 16 vnodes for this prosody
     end
@@ -219,6 +239,7 @@ local function disconnect_vnode_received(room, vnode)
 
     if room._connected_vnodes:count() == 0 then
         visitors_promotion_map[room.jid] = nil;
+        visitors_promotion_usernames[room.jid] = nil;
         visitors_promotion_requests[room.jid] = nil;
         room._connected_vnodes = nil;
     end
@@ -415,14 +436,10 @@ local function process_promotion_response(room, id, approved)
     end
 
     -- lets reply to participant that requested promotion
-    local username = uuid_generate();
-    visitors_promotion_map[room.jid][username] = {
-        from = visitors_promotion_requests[room.jid][id].from;
-        jid = id;
-    };
+    local req_from = visitors_promotion_requests[room.jid][id].from;
+    local req_jid = id;
+    local username = allow_promoted_visitor(room, req_from, req_jid);
 
-    local req_from = visitors_promotion_map[room.jid][username].from;
-    local req_jid = visitors_promotion_map[room.jid][username].jid;
     local focus_occupant = get_focus_occupant(room);
     local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
 
@@ -603,6 +620,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
     host_module:hook('muc-room-destroyed', function (event)
         visitors_promotion_map[event.room.jid] = nil;
+        visitors_promotion_usernames[event.room.jid] = nil;
         visitors_promotion_requests[event.room.jid] = nil;
     end, 1); -- prosody handles it at 0
 
@@ -764,10 +782,10 @@ prosody.events.add_handler('pre-jitsi-authentication', function(session)
         return nil;
     end
 
-    if visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][session.customusername] then
-        -- user was previously allowed to join, let him use the requested jid
-        return session.customusername;
-    end
+    -- user was previously promoted, bind the jid node that was allowed to join for it
+    -- the occupants coming back from breakout rooms are not in this map, they keep their connection
+    local usernames = visitors_promotion_usernames[room.jid];
+    return usernames and usernames[session.customusername];
 end);
 
 -- when occupant is leaving breakout to join the main room and visitors are enabled
