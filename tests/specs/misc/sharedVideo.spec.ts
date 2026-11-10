@@ -1,3 +1,4 @@
+import { extractYoutubeIdOrURL } from '../../../react/features/shared-video/youtube';
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants, joinThirdParticipant } from '../../helpers/participants';
@@ -14,6 +15,25 @@ const VIDEO_ID = 'xvFZjo5PgG0';
 describe('Shared video', () => {
     let p1: Participant, p2: Participant;
     let p1Id: string, p2Id: string;
+
+    it('extracts YouTube ID or URL from various formats', () => {
+        const tests = [
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10s' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://youtu.be/dQw4w9WgXcQ' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://youtu.be/dQw4w9WgXcQ?t=10s' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ?feature=share' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ#t=10' },
+            { expected: 'https://www.youtube.com/shorts/dQw4w9WgXcQ1', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ1' },
+            { expected: 'https://example.com/video.mp4', input: 'https://example.com/video.mp4' }
+        ];
+
+        for (const { expected, input } of tests) {
+            expect(extractYoutubeIdOrURL(input)).toBe(expected);
+        }
+    });
 
     it('setup', async () => {
         await ensureTwoParticipants();
