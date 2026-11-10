@@ -14,7 +14,10 @@ describe('Iframe API getParticipantsInfo', () => {
     let p1: Participant;
 
     it('joining the meeting', async () => {
-        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
+        // The 'local' entry only comes from the prejoin screen, so make sure it is shown.
+        await ensureOneParticipant(
+            { configOverwrite: { prejoinConfig: { enabled: true } } },
+            { name: 'p1', iFrameApi: true });
 
         p1 = ctx.p1;
 
@@ -33,5 +36,28 @@ describe('Iframe API getParticipantsInfo', () => {
         expect(ids).not.toContain('local');
         expect(ids).toContain(await p1.getEndpointId());
         expect(participants.length).toBe(1);
+    });
+
+    it('accepts the toggleShareAudio command', async () => {
+        // executeCommand() logs this error synchronously when a command is missing from its commands map.
+        const errors: string[] = await p1.execute(() => {
+            const logged: string[] = [];
+            const originalError = console.error;
+
+            console.error = (...args: any[]) => {
+                logged.push(args.join(' '));
+                originalError(...args);
+            };
+
+            try {
+                window.jitsiAPI.executeCommand('toggleShareAudio');
+            } finally {
+                console.error = originalError;
+            }
+
+            return logged;
+        });
+
+        expect(errors).not.toContain('Not supported command name.');
     });
 });

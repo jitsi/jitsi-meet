@@ -1562,10 +1562,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     resizeLargeVideo(width, height) {
-        // The size options can be percentages or any other CSS value, so compare with the real size of the iframe.
-        const { width: frameWidth, height: frameHeight } = this._frame.getBoundingClientRect();
+        // Numeric size options are what the embedder asked for, so keep comparing with them (they also work while
+        // the iframe is still hidden). Other values, such as the default '100%', can't be compared with a number, so
+        // use the layout size of the iframe. clientWidth/clientHeight are not affected by CSS transforms.
+        const optionWidth = Number(this._width);
+        const optionHeight = Number(this._height);
+        const maxWidth = Number.isFinite(optionWidth) ? optionWidth : this._frame.clientWidth;
+        const maxHeight = Number.isFinite(optionHeight) ? optionHeight : this._frame.clientHeight;
 
-        if (width <= frameWidth && height <= frameHeight) {
+        if (width <= maxWidth && height <= maxHeight) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
     }
