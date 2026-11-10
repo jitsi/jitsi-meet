@@ -24,11 +24,12 @@ describe('Iframe API requests answer with the documented result', () => {
                 skipWaitToJoin: true
             });
 
+        await p1.getPreJoinScreen().waitForLoading();
+
         if (!await checkIframeApi(p1)) {
             return;
         }
 
-        await p1.getPreJoinScreen().waitForLoading();
         await p1.switchToMainFrame();
     });
 
@@ -52,7 +53,7 @@ describe('Iframe API requests answer with the documented result', () => {
 
     it('joining the meeting', async () => {
         await p1.switchToIFrame();
-        await p1.getPreJoinScreen().clickJoinButtonFromPage();
+        await p1.clickPrejoinJoinButton(p1.getPreJoinScreen());
         await p1.waitForMucJoinedOrError();
         await p1.switchToMainFrame();
     });

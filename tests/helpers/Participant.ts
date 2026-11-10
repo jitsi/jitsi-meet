@@ -413,7 +413,7 @@ export class Participant {
 
                 await p1PreJoinScreen.waitForLoading();
 
-                await this._clickPrejoinJoinButton(p1PreJoinScreen);
+                await this.clickPrejoinJoinButton(p1PreJoinScreen);
             }
         }
 
@@ -492,7 +492,7 @@ export class Participant {
      * @param {PreJoinScreen} prejoinScreen - The prejoin screen page object.
      * @returns {Promise<void>}
      */
-    private async _clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
+    async clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
         const MAX_ATTEMPTS = 3;
         let previousElementId: string | undefined;
 
