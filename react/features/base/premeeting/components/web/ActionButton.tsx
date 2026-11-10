@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
@@ -203,6 +203,15 @@ function ActionButton({
 }: IProps) {
     const { classes, cx } = useStyles();
 
+    // The prejoin screen wraps this component in a Popover whose keypress handler calls preventDefault on
+    // Enter and Space. That cancels the click a native button fires for those keys, so the handlers below
+    // would never run. Keeping the keypress on the button lets the browser deliver the click as usual.
+    const onActivationKeyPress = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+        }
+    }, []);
+
     return (
         <div className = { cx(classes.container, className && className, type) }>
             <button
@@ -211,6 +220,7 @@ function ActionButton({
                 data-testid = { testId ? testId : undefined }
                 disabled = { disabled }
                 onClick = { onClick }
+                onKeyPress = { onActivationKeyPress }
                 type = 'button'>
                 {children}
             </button>
@@ -223,6 +233,7 @@ function ActionButton({
                     data-testid = 'prejoin.joinOptions'
                     disabled = { disabled }
                     onClick = { onOptionsClick }
+                    onKeyPress = { onActivationKeyPress }
                     type = 'button'>
                     <Icon
                         className = 'icon'
