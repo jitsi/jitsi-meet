@@ -23,7 +23,7 @@ export default createStyleSheet({
         color: ColorPalette.lightGrey,
         flexShrink: 1,
         fontSize: MD_FONT_SIZE,
-        marginLeft: MD_ITEM_MARGIN_PADDING,
+        marginLeft: BaseTheme.spacing[3],
         opacity: 0.90
     },
 
