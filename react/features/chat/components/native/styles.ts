@@ -1,3 +1,4 @@
+import { MD_ITEM_MARGIN_PADDING } from '../../../base/dialog/components/native/styles';
 import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
@@ -343,6 +344,19 @@ export default {
         ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
         flex: 1
+    },
+
+    messageMenuItem: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: BaseTheme.spacing[7],
+        paddingHorizontal: MD_ITEM_MARGIN_PADDING
+    },
+
+    messageMenuItemText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginLeft: BaseTheme.spacing[3]
     }
 };
 

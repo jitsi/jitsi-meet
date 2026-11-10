@@ -430,6 +430,7 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
         if (conference) {
+            logger.info(`Sending retraction for message ${action.message.messageId}`);
             if (action.message.lobbyChat) {
                 conference.sendLobbyMessageRetraction(action.message.messageId, action.message.recipientId);
             } else {
@@ -507,6 +508,7 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
 
         if (conference) {
+            logger.info(`Sending moderation for message ${action.message.messageId}, reason: ${Boolean(action.reason)}`);
             conference.moderateMessage(
                 action.message.messageId,
                 action.reason

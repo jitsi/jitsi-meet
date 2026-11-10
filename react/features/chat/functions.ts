@@ -10,7 +10,11 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getParticipantById, isPrivateChatEnabled } from '../base/participants/functions';
+import {
+    getParticipantById,
+    isLocalParticipantModerator,
+    isPrivateChatEnabled
+} from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
@@ -21,7 +25,13 @@ import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MAX_PENDING_ENTRIES, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import {
+    ChatTabs,
+    MAX_PENDING_ENTRIES,
+    MESSAGE_TYPE_ERROR,
+    MESSAGE_TYPE_LOCAL,
+    TIMESTAMP_FORMAT
+} from './constants';
 import { IMessage, IPendingMap } from './types';
 
 /**
@@ -295,6 +305,47 @@ export function getCanReplyToMessage(state: IReduxState, message: IMessage): boo
 
     // For non-visitor messages, use the regular participant
     return isPrivateChatEnabled(participant, state);
+}
+
+/**
+ * Returns the current chat message with the given id, if it is still in state.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} messageId - The message id.
+ * @returns {IMessage | undefined}
+ */
+export function getChatMessageById(state: IReduxState, messageId: string): IMessage | undefined {
+    return state['features/chat'].messages.find(m => m.messageId === messageId);
+}
+
+/**
+ * Whether the local participant can retract (delete) their own message. The server applies it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canRetractMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.isDeleted
+        && !message.isModerated
+        && state['features/chat'].messageModerationSupported;
+}
+
+/**
+ * Whether the local participant can moderate (remove) another participant's message.
+ * Same rules as the web MessageMenu, which is shown only for messages that are not deleted or moderated.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canModerateMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType !== MESSAGE_TYPE_LOCAL
+        && !message.isDeleted
+        && !message.isModerated
+        && state['features/chat'].messageModerationSupported
+        && isLocalParticipantModerator(state);
 }
 
 /**

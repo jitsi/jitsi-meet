@@ -73,9 +73,19 @@ export interface IChatMessageProps extends WithTranslation {
     canReply?: boolean;
 
     /**
+     * Redux dispatch, injected by connect on native.
+     */
+    dispatch?: IStore['dispatch'];
+
+    /**
      * Whether gifs are enabled or not.
      */
     gifEnabled?: boolean;
+
+    /**
+     * Whether a long press opens the message menu (native). False when the menu would be empty.
+     */
+    hasMenu?: boolean;
 
     /**
      * Case-insensitive search query whose matches in the message text should be highlighted.

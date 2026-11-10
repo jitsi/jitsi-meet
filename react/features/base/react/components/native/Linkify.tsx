@@ -20,6 +20,11 @@ interface IProps {
     linkStyle: StyleType;
 
     /**
+     * Whether the text is selectable. Defaults to true.
+     */
+    selectable?: boolean;
+
+    /**
      * The extra styles to be applied to text.
      */
     style?: StyleType;
@@ -50,7 +55,7 @@ export default class Linkify extends Component<IProps> {
             <ReactLinkify
                 componentDecorator = { this._componentDecorator }>
                 <Text
-                    selectable = { true }
+                    selectable = { this.props.selectable ?? true }
                     style = { this.props.style }>
                     { this.props.children }
                 </Text>

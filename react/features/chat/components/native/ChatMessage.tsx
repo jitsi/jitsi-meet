@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, ViewStyle } from 'react-native';
+import { Pressable, Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { openSheet } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
+    canModerateMessage,
+    canRetractMessage,
     getActiveChatSearchMatch,
     getCanReplyToMessage,
     getChatSearchQuery,
@@ -22,6 +25,7 @@ import {
 import { IChatMessageProps } from '../../types';
 
 import GifMessage from './GifMessage';
+import MessageMenu from './MessageMenu';
 import PrivateMessageButton from './PrivateMessageButton';
 import styles from './styles';
 
@@ -31,12 +35,23 @@ import styles from './styles';
  */
 class ChatMessage extends Component<IChatMessageProps> {
     /**
+     * Opens the message menu.
+     *
+     * @returns {void}
+     */
+    _onLongPress = () => {
+        const { dispatch, message } = this.props;
+
+        dispatch?.(openSheet(MessageMenu, { messageId: message.messageId }));
+    };
+
+    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
     override render() {
-        const { gifEnabled, message, knocking, isActiveMatch } = this.props;
+        const { gifEnabled, hasMenu, message, knocking, isActiveMatch } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
         const { privateMessage, lobbyChat } = message;
 
@@ -94,7 +109,10 @@ class ChatMessage extends Component<IChatMessageProps> {
                 style = { styles.messageWrapper as ViewStyle } >
                 { this._renderAvatar() }
                 <View style = { detailsWrapperStyle }>
-                    <View style = { messageBubbleStyle }>
+                    <Pressable
+                        disabled = { !hasMenu }
+                        onLongPress = { this._onLongPress }
+                        style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper as ViewStyle } >
                             { this._renderDisplayName() }
                             { gifEnabled && isGifMessage(messageText)
@@ -104,7 +122,7 @@ class ChatMessage extends Component<IChatMessageProps> {
                             { this._renderPrivateNotice() }
                         </View>
                         { !message.isDeleted && !message.isModerated && this._renderPrivateReplyButton() }
-                    </View>
+                    </Pressable>
                     { this._renderTimestamp() }
                 </View>
             </View>
@@ -158,13 +176,16 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React.ReactElement<*>}
      */
     _renderMessageTextComponent(messageText: string) {
-        const { highlightQuery, isActiveMatch } = this.props;
+        const { hasMenu, highlightQuery, isActiveMatch } = this.props;
+
+        // Selectable text takes the long press on iOS, so it is off when the long press opens the menu (it has Copy).
+        const selectable = !hasMenu;
 
         if (messageText.length >= CHAR_LIMIT) {
             if (highlightQuery && !isActiveMatch) {
                 return (
                     <Text
-                        selectable = { true }
+                        selectable = { selectable }
                         style = { styles.chatMessage }>
                         { this._renderHighlightedSegments(messageText, highlightQuery, isActiveMatch) }
                     </Text>
@@ -173,7 +194,7 @@ class ChatMessage extends Component<IChatMessageProps> {
 
             return (
                 <Text
-                    selectable = { true }
+                    selectable = { selectable }
                     style = { styles.chatMessage }>
                     { messageText }
                 </Text>
@@ -185,6 +206,7 @@ class ChatMessage extends Component<IChatMessageProps> {
         return (
             <Linkify
                 linkStyle = { styles.chatLink }
+                selectable = { selectable }
                 style = { styles.chatMessage }>
                 { highlightQuery && !isActiveMatch
                     ? this._renderHighlightedSegments(processedText, highlightQuery, isActiveMatch)
@@ -307,6 +329,7 @@ function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
     return {
         canReply: getCanReplyToMessage(state, message),
         gifEnabled: isGifEnabled(state),
+        hasMenu: canRetractMessage(state, message) || canModerateMessage(state, message),
         // A deleted or moderated message shows a placeholder, which is not searched, so do not highlight it.
         highlightQuery: message.isDeleted || message.isModerated ? '' : getChatSearchQuery(state),
         isActiveMatch: Boolean(activeMatch && activeMatch.messageId === message.messageId),
