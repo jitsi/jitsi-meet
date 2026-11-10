@@ -41,12 +41,16 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Die Audio-Übersetzung wurde für diese Konferenz deaktiviert.",
+        "errorBadRequest": "Der Server hat die Übersetzungsanfrage abgelehnt. Falls dies häufiger passiert, kontaktieren Sie bitte die Server-Administration.",
         "errorForbidden": "Sie haben nicht die Berechtigung die Audio-Übersetzung zu nutzen.",
         "errorGeneric": "Audio-Übersetzung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
         "errorLimitReached": "Nicht alle Anwesenden können übersetzt werden. Bitte schalten Sie die Audio-Übersetzung für einzelne Personen ein.",
         "errorRoomDisabled": "Audio-Übersetzung ist für diese Konferenz deaktiviert. Bitte in den Moderationseinstellungen aktivieren.",
         "errorSpeakerUnavailable": "Diese Person kann nicht übersetzt werden, sie ist nicht mehr Teil der Konferenz.",
-        "labelTooltip": "Übersetzung aktiv"
+        "labelTooltip": "Übersetzung aktiv",
+        "labelTooltipPlaying": "Übersetzung wird noch abgespielt — bitte warten Sie noch, bevor Sie sprechen",
+        "stoppedForE2EE": "Übersetzung wurde deaktiviert, da die Ende-zu-Ende-Verschlüsselung aktiv ist.",
+        "unavailableWithE2EE": "Übersetzung ist mit Ende-zu-Ende-Verschlüsselung nicht möglich."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "z.B. 10000000 für 10 Mbps",
@@ -102,6 +106,8 @@
         "permissionButton": "Einstellungen öffnen",
         "permissionMessage": "Die App benötigt Zugriff auf den Kalender, um Termine und Konferenzen anzuzeigen.",
         "refresh": "Kalender aktualisieren",
+        "signInAgain": "Wieder einloggen",
+        "signInAgainMessage": "Ihr Kalender ist noch verknüpft, aber Sie müssen sich wieder anmelden, um zukünftige Konferenzen zu sehen.",
         "today": "Heute"
     },
     "carmode": {
@@ -115,7 +121,15 @@
         }
     },
     "chat": {
+        "copy": "Kopieren",
+        "delete": "Löschen",
+        "deleteMessage": "Löschen",
+        "deletedMessage": "Diese Nachricht wurde gelöscht.",
+        "deletedMessageByMe": "Sie haben diese Nachricht gelöscht.",
         "disabled": "Chat-Nachrichten sind deaktiviert.",
+        "edit": "Bearbeiten",
+        "edited": "(bearbeitet)",
+        "editingMessage": "Bearbeiten",
         "enter": "Chat-Raum betreten",
         "error": "Fehler: Ihre Nachricht wurde nicht versendet. Grund: {{error}}",
         "everyone": "Alle",
@@ -128,8 +142,11 @@
         "message": "Nachricht",
         "messageAccessibleTitle": "{{user}} sagt:",
         "messageAccessibleTitleMe": "Ich sage:",
+        "messageCopied": "Nachricht kopiert",
         "messageTo": "Private Nachricht an {{recipient}}",
         "messagebox": "Nachricht eingeben",
+        "moderatedMessage": "Von der Moderation gelöscht.",
+        "moderationReason": "Grund: {{reason}}",
         "newMessages": "Neue Nachrichten",
         "nickname": {
             "featureChat": "Chat",
@@ -148,7 +165,22 @@
             "titleWithPollsAndCCAndFileSharing": "Geben Sie einen Alias zum Chatten, für Umfragen, Untertitel und Dateien ein"
         },
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
+        "privateMessage": "Private Nachricht",
         "privateNotice": "Private Nachricht an {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Gesicht mit Freudentränen",
+            "fire": "Feuer",
+            "redHeart": "Rotes Herz"
+        },
+        "search": {
+            "close": "Suche schließen",
+            "next": "Nächster Treffer",
+            "noResults": "Keine Ergebnisse",
+            "open": "Nachrichten durchsuchen",
+            "placeholder": "Suche im Chat",
+            "previous": "Vorheriger Treffer",
+            "resultsCount": "{{current}}/{{total}}"
+        },
         "sendButton": "Senden",
         "smileysPanel": "Emoji-Auswahl",
         "systemDisplayName": "System",
@@ -171,6 +203,13 @@
         "close": "Schließen",
         "dontShowAgain": "Hinweis nicht mehr anzeigen",
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365"
+    },
+    "clientRequirements": {
+        "rejectDescription": "Diese Version der App kann in dieser Konferenz kein Bild und Ton senden oder empfangen.",
+        "rejectTitle": "Ein Update ist notwendig",
+        "seeDetails": "Für mehr Details hier",
+        "warnDescription": "Dieser Version der App fehlt ein Feature, das in dieser Konferenz verwendet wird. Bitte App aktualisieren.",
+        "warnTitle": "Aktualisierung empfohlen"
     },
     "closedCaptionsTab": {
         "emptyState": "Die Untertitel sind verfügbar, sobald sie von der Moderation gestartet wurden",
@@ -234,7 +273,8 @@
         "yes": "Ja"
     },
     "customPanel": {
-        "close": "Schließen"
+        "close": "Schließen",
+        "title": "KI-Assistent"
     },
     "dateUtils": {
         "earlier": "Früher",
@@ -353,7 +393,10 @@
         "displayNameRequired": "Hallo! Wie ist Ihr Name?",
         "done": "Fertig",
         "e2eeDescription": "Ende-zu-Ende-Verschlüsselung ist derzeit noch EXPERIMENTELL. Bitte beachten Sie, dass das Aktivieren der Ende-zu-Ende-Verschlüsselung diverse serverseitige Funktionen deaktiviert: Aufnahmen, Livestreaming und Telefoneinwahl. Bitte beachten Sie außerdem, dass der Konferenz dann nur noch mit Browsern beigetreten werden kann, die Insertable Streams unterstützen.",
+        "e2eeDisabledDueToAgentDescription": "Ende-zu-Ende-Verschlüsselung kann nicht aktiviert werden, während ein KI-Assistent Teil der Konferenz ist.",
         "e2eeDisabledDueToMaxModeDescription": "Ende-zu-Ende-Verschlüsselung kann aufgrund der großen Zahl an Anwesenden nicht aktiviert werden.",
+        "e2eeDisabledDueToTranscriptionDescription": "Ende-zu-Ende-Verschlüsselung kann nicht aktiviert werden, wenn die Transkription aktiv ist.",
+        "e2eeDisabledDueToTranslationDescription": "Ende-zu-Ende-Verschlüsslung kann nicht aktiviert werden, solange die Live-Übersetzung genutzt wird.",
         "e2eeLabel": "Ende-zu-Ende-Verschlüsselung aktivieren",
         "e2eeWarning": "WARNUNG: Nicht alle Personen dieser Konferenz scheinen Ende-zu-Ende-Verschlüsselung zu unterstützen. Wenn Sie diese aktivieren, können die entsprechenden Personen nichts mehr sehen oder hören.",
         "e2eeWillDisableDueToMaxModeDescription": "WARNUNG: Ende-zu-Ende-Verschlüsselung wird automatisch deaktiviert, wenn weitere Anwesende an der Konferenz teilnehmen.",
@@ -388,6 +431,7 @@
         "lockTitle": "Sperren fehlgeschlagen",
         "login": "Anmelden",
         "loginFailed": "Anmeldung fehlgeschlagen.",
+        "loginNotCompleted": "Login war nicht erfolgreich, daher sind Sie nicht Teil der Konferenz.",
         "loginOnResume": "Ihre Anmeldung ist abgelaufen. Sie müssen sich neu anmelden, um weiter an der Konferenz teilzunehmen.",
         "loginPopupBlocked": "Das Popup für die Anmeldung wurde von Ihrem Browser blockiert.",
         "loginQuestion": "Sind Sie sicher, dass Sie sich anmelden und die Konferenz verlassen möchten?",
@@ -395,6 +439,8 @@
         "logoutTitle": "Abmelden",
         "maxUsersLimitReached": "Das Limit für die maximale Personenzahl ist erreicht. Die Konferenz ist voll. Bitte wenden Sie sich an die Konferenzleitung oder versuchen Sie es später noch einmal!",
         "maxUsersLimitReachedTitle": "Maximale Personenzahl erreicht",
+        "meetingTimeLimitReached": "Die Konferenz wurde beendet, da sie das Zeitlimit erreicht hat. Bitte beginnen Sie eine neue Konferenz.",
+        "meetingTimeLimitReachedTitle": "Zeitlimit der Konferenz erreicht",
         "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht.",
         "micNotFoundError": "Mikrofon nicht gefunden.",
         "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen",
@@ -516,11 +562,14 @@
         "sharedVideoLinkPlaceholder": "YouTube-URL oder direkte Video-URL",
         "show": "Anzeigen",
         "start": "Starten",
+        "startBoth": "Beide starten",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
         "startTranscribing": "Transkription starten",
         "startTranscription": "Transkription starten",
+        "stop": "Stoppen",
+        "stopBoth": "Beide stoppen",
         "stopLiveStreaming": "Livestream stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
@@ -579,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "Audio- und Videodaten dieser Unterhaltung sind jetzt zwischen den Personen verschlüsselt"
     },
+    "editDisplayName": "Anzeigename bearbeiten, {{name}}",
     "embedMeeting": {
         "title": "Diese Konferenz einbetten"
     },
@@ -714,6 +764,7 @@
         "showMeWhatImSharing": "Anzeigen, was freigegeben wird"
     },
     "liveStreaming": {
+        "badRequest": "Die Livestream-Konfiguration ist nicht gültig. Bitte Stream-Key und Einstellungen prüfen.",
         "busy": "Es werden Ressourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Streaming-Instanzen sind in Gebrauch",
         "changeSignIn": "Konten wechseln.",
@@ -721,9 +772,12 @@
         "chooseCTA": "Streaming-Option auswählen. Sie sind aktuell als {{email}} angemeldet.",
         "chooseCTAWithChangeSignIn": "Streaming-Option auswählen. Sie sind aktuell als {{email}} angemeldet. <0>Account wechseln.</0>",
         "enterStreamKey": "Streamschlüssel für den YouTube-Livestream hier eingeben.",
+        "enterStreamKeyGeneric": "Bitte geben Sie Ihre Stream-Key oder die RTMP-URL hier ein.",
         "error": "Der Livestream ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "errorAPI": "Beim Abrufen der YouTube-Livestreams ist ein Fehler aufgetreten. Bitte versuchen Sie, sich erneut anzumelden.",
+        "errorGoogleApiLoad": "Google-Login konnte nicht geladen werden. Prüfen Sie, dass dieser nicht von Ihrem Browser geblockt wird und versuchen es erneut, oder geben Ihren Stream-Key unten ein.",
         "errorLiveStreamNotEnabled": "Livestream ist für {{email}} nicht aktiviert. Aktivieren Sie den Livestream oder melden Sie sich bei einem Konto mit aktiviertem Livestream an.",
+        "errorPopupBlocked": "Das Google-Login-Popup wurde blockiert. Popups erlauben und nochmals versuchen oder unten den Stream-Key eingeben.",
         "expandedOff": "Livestream wurde angehalten",
         "expandedOn": "Die Konferenz wird momentan an YouTube gestreamt",
         "expandedPending": "Livestream wird gestartet …",
@@ -738,6 +792,7 @@
         "onBy": "{{name}} startete den Livestream",
         "pending": "Livestream wird gestartet …",
         "policyError": "Sie haben den Livestream zu schnell gestartet. Bitte versuchen Sie es später noch einmal!",
+        "privacyPolicy": "Datenschutzerklärung",
         "serviceName": "Livestream-Dienst",
         "sessionAlreadyActive": "Diese Konferenz wird bereits als Livestream übertragen.",
         "signIn": "Mit Google anmelden",
@@ -746,6 +801,7 @@
         "signedInAs": "Sie sind derzeit angemeldet als:",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
+        "terms": "Nutzungsbedingungen",
         "title": "Livestream",
         "unavailableTitle": "Livestream nicht verfügbar",
         "youTubeGoLiveWarning": "Denken Sie daran 'Go Live' im YouTube Studio auszuwählen, wenn Auto-Start/Auto-Stop deaktiviert ist. Ansonsten wird die Aufnahme nicht gestartet.",
@@ -833,6 +889,14 @@
     "me": "ich",
     "multiScreen": {
         "noParticipants": "Niemand anwesend",
+        "openFailed": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+        "openFailedTitle": "Zweiter Bildschirm konnte nicht geöffnet werden",
+        "permissionDenied": "Erlauben Sie dieser Webseite, Fenster zu verwalten und versuchen es erneut.",
+        "popupBlocked": "Popus erlauben und erneut versuchen.",
+        "removeFromSecondScreen": "Von zweitem Bildschirm entfernen",
+        "sendToSecondScreen": "Auf zweitem Bildschirm anzeigen",
+        "sharedVideoError": "Das geteilte Video konnte auf diesem Bildschirm nicht angezeigt werden",
+        "sharedVideoInactive": "Ein Video in dieser Konferenz teilen um es auf dem zweiten Bildschirm anzuzeigen",
         "showOnStage": "{{name}} auf dem zweiten Bildschirm anzeigen",
         "unpinFromStage": "{{name}} von zweitem Bildschirm entfernen",
         "whiteboardInactive": "Das Whiteboard in der Konferenz öffnen und auf dem zweiten Bildschirm anzeigen",
@@ -925,6 +989,8 @@
         "participantsWantToJoin": "Möchten an der Konferenz teilnehmen",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person entfernt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person gesetzt",
+        "pipOpenFailedDescription": "Ihr Browser hat die Anzeige des Bild-in-Bild-Fensters blockiert.",
+        "pipOpenFailedTitle": "Bild-in-Bild-Fenster konnte nicht geöffnet werden",
         "raiseHandAction": "Melden",
         "raisedHand": "möchte sprechen.",
         "raisedHands": "{{participantName}} und {{raisedHands}} weitere möchten sprechen",
@@ -935,6 +1001,9 @@
         "screenSharingAudioOnlyDescription": "Durch die Bildschirmfreigabe wird der Modus \"Beste Leistung\" beeinflusst und daher mehr Datenrate benötigt.",
         "screenSharingAudioOnlyTitle": "Modus \"Beste Leistung\"",
         "selfViewTitle": "Sie können die eigene Ansicht immer in den Einstellungen reaktivieren",
+        "settingsIncompleteDescription": "Einige Einstellungen der Konferenz konnten nicht geladen werden, daher werden Standardwerte verwendet.",
+        "settingsIncompleteTitle": "Einstellungen der Konferenz unvollständig",
+        "sharedVideoRestricted": "Die Moderation hat das Teilen von Videos für normale Teilnehmende deaktiviert",
         "somebody": "Jemand",
         "startSilentDescription": "Treten Sie der Konferenz noch einmal bei, um Ihr Audio zu aktivieren",
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
@@ -1003,6 +1072,14 @@
             "visitorsList": "Zuschauer ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
         },
+        "indicators": {
+            "audioDominantSpeaker": "sprechende Person",
+            "audioForceMuted": "Ton deaktiviert, kann nicht aktiviert werden",
+            "audioMuted": "Ton deaktiviert",
+            "raisedHand": "Hand gehoben",
+            "videoForceMuted": "Kamera deaktiviert, kann nicht aktiviert werden",
+            "videoMuted": "Kamera deaktiviert"
+        },
         "search": "Suche Anwesende",
         "searchDescription": "Tippen Sie um die Anwesendenliste zu filtern",
         "title": "Anwesende"
@@ -1015,6 +1092,7 @@
         "answer": {
             "edit": "Bearbeiten",
             "send": "Senden",
+            "singleAnswerHint": "Eine Antwort wählen",
             "skip": "Überspringen",
             "submit": "Speichern"
         },
@@ -1032,10 +1110,18 @@
             "pollQuestion": "Frage",
             "questionPlaceholder": "Eine Frage stellen",
             "removeOption": "Antwort entfernen",
-            "save": "Erstellen"
+            "save": "Erstellen",
+            "singleAnswer": "Nur eine Antwort erlauben"
+        },
+        "endPollDialog": {
+            "description": "Abstimmung für alle beenden, kann nicht wieder gestartet werden.",
+            "title": "Umfrage beenden?"
         },
         "errors": {
-            "notUniqueOption": "Optionen müssen einzigartig sein"
+            "closeFailed": "Die Umfrage konnte nicht beendet werden",
+            "notUniqueOption": "Optionen müssen einzigartig sein",
+            "voteFailed": "Ihre Stimme konnte nicht gezählt werden",
+            "voteNotCounted": "Ihre Stimme konnte nicht gezählt werden, die Umfrage ist schon beendet"
         },
         "notification": {
             "description": "Öffnen Sie das Umfragen-Tab, um abzustimmen",
@@ -1043,7 +1129,9 @@
         },
         "results": {
             "changeVote": "Antwort ändern",
+            "closed": "Umfrage beendet",
             "empty": "Es gibt bisher keine Umfragen in dieser Konferenz.",
+            "endPoll": "Umfrage beenden",
             "hideDetailedResults": "Details verbergen",
             "showDetailedResults": "Details anzeigen",
             "vote": "Abstimmen"
@@ -1100,6 +1188,7 @@
         "joinAudioByPhone": "Per Telefon teilnehmen",
         "joinMeeting": "Konferenz beitreten",
         "joinMeetingInLowBandwidthMode": "Konferenz im Datensparmodus beitreten",
+        "joinOptions": "Teilnahmeoptionen",
         "joinWithoutAudio": "Ohne Ton beitreten",
         "keyboardShortcuts": "Tastaturkurzbefehle aktivieren",
         "linkCopied": "Link in die Zwischenablage kopiert",
@@ -1154,10 +1243,13 @@
         "alsoTranscribe": "Auch Transkription starten?",
         "authDropboxText": "In Dropbox hochladen",
         "availableSpace": "Verfügbarer Speicherplatz: {{spaceLeft}} MB (ca. {{duration}} Minuten Aufzeichnung)",
+        "badRequest": "Die Aufnahmeeinstellungen von dieser Konferenz werden nicht unterstützt.",
         "beta": "BETA",
         "busy": "Es werden Ressourcen für eine Aufnahme bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Aufnahme-Instanzen sind in Gebrauch",
         "copyLink": "Link kopieren",
+        "dropbox": "Dropbox",
+        "dropboxSignInPrompt": "Anmelden, um Ihre Aufnahme abzuspeichern",
         "error": "Die Aufzeichnung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "errorFetchingLink": "Der Link zur Aufzeichnung konnte nicht geladen werden.",
         "expandedOff": "Aufzeichnung wurde gestoppt",
@@ -1172,6 +1264,9 @@
         "highlightMomentSucessDescription": "Ihr festgehaltener Moment wird zur Zusammenfassung der Konferenz hinzugefügt.",
         "inProgress": "Aufzeichnung gestartet",
         "linkGenerated": "Link zur Aufzeichnung wurde generiert.",
+        "linkNotShared": "Link wurde nicht geteilt",
+        "linkShared": "Link mit Teilnehmenden geteilt",
+        "localRecording": "Lokale Aufzeichnung",
         "localRecordingNoNotificationWarning": "Die Aufzeichnung wird anderen Anwesenden nicht mitgeteilt. Sie müssen diese selbst darauf hinweisen, dass die Konferenz aufgezeichnet wird.",
         "localRecordingNoVideo": "Videos werden nicht aufgenommen",
         "localRecordingStartWarning": "Bitte beenden Sie die Aufzeichnung vor dem Verlassen der Konferenz, um die Aufzeichnung zu speichern.",
@@ -1182,6 +1277,7 @@
         "loggedIn": "Als {{userName}} angemeldet",
         "noMicPermission": "Zugriff auf Mikrofon fehlgeschlagen. Bitte erlauben Sie den Zugriff auf das Mikrofon.",
         "noStreams": "Kein Ton oder Video erkannt.",
+        "notSignedIn": "Nicht angemeldet",
         "off": "Aufnahme gestoppt",
         "offBy": "{{name}} stoppte die Aufnahme",
         "offByWithTranscription": "{{name}} hat die Aufnahme und Transkription gestoppt",
@@ -1195,6 +1291,7 @@
         "policyError": "Sie haben die Aufzeichnung zu schnell gestartet. Bitte versuchen Sie es später noch einmal!",
         "recordAudioAndVideo": "Kamera und Ton aufzeichnen",
         "recordTranscription": "Transkription aufzeichnen",
+        "recordingOptions": "Aufnahmeoptionen",
         "saveLocalRecording": "Aufzeichnung lokal abspeichern",
         "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceDescriptionCloudInfo": "Aufzeichnungen werden 24 Stunden nach Aufzeichnungsende automatisch gelöscht.",
@@ -1202,8 +1299,12 @@
         "sessionAlreadyActive": "Diese Konferenz wird bereits aufgezeichnet.",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
+        "storageLocation": "Speicherorte",
         "surfaceError": "Bitte wählen Sie das aktuelle Tab aus.",
         "title": "Aufnahme",
+        "transcriptionAlreadyOn": "Transkription ist bereits aktiv",
+        "transcriptionLanguage": "Sprache der Transkription",
+        "transcriptionOptions": "Transkriptionsoptionen",
         "unavailable": "Oh! Der {{serviceName}} ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
         "unavailableTitle": "Aufnahme nicht verfügbar"
     },
@@ -1226,6 +1327,7 @@
     "settings": {
         "audio": "Audio",
         "audioTranslation": "Audio-Übersetzung einschalten",
+        "breakoutRoomJoinWithPermissions": "Breakout-Räume für normale Teilnehmende nicht auswählbar machen",
         "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -1239,6 +1341,8 @@
         "desktopShareHighFpsWarning": "Eine höhere Framerate könnte sich auf Ihre Datenrate auswirken. Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
         "desktopShareWarning": "Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
         "devices": "Geräte",
+        "enableCtrlAltReactionShortcuts": "Strg/Alt-Alternativen für Reaktionen einschalten",
+        "experimental": "Experimentell",
         "followMe": "Follow-me für alle Personen",
         "followMeRecorder": "Aufnahme folgt mir",
         "framesPerSecond": "FPS",
@@ -1256,13 +1360,17 @@
         "participantJoined": "Neue Person nimmt teil",
         "participantKnocking": "Person hat Lobby betreten",
         "participantLeft": "Person verlässt die Konferenz",
+        "pictureInPicture": "Bild-in-Bild",
+        "pictureInPictureDescription": "Die Konferenz in einem kleinen Fenster zeigen, wenn Sie in ein anderen Tab oder Fenster wechseln.",
         "playSounds": "Hinweistöne aktiviert",
+        "privateChatWithPermissions": "Direktnachrichten für normale Teilnehmende deaktivieren",
         "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "selfView": "Eigene Ansicht",
+        "sharedVideoWithPermissions": "Video teilen für normale Teilnehmende deaktivieren",
         "shortcuts": "Tastaturkürzel",
         "showSubtitlesOnStage": "Untertitel in Hauptansicht anzeigen",
         "speakers": "Lautsprecher",
@@ -1329,7 +1437,9 @@
         "seconds": "{{count}} Sek.",
         "speakerStats": "Sprechstatistik",
         "speakerTime": "Sprechzeit",
-        "surprised": "Überrascht"
+        "surprised": "Überrascht",
+        "timelineEnd": "Ende",
+        "timelineStart": "Anfang"
     },
     "startupoverlay": {
         "genericTitle": "Die Konferenz muss Ihr Mikrofon und Ihre Kamera verwenden.",
@@ -1340,6 +1450,10 @@
         "rejoinKeyTitle": "Erneut teilnehmen",
         "text": "„<i>Erneut teilnehmen</i>“-Schaltfläche betätigen, um erneut zu verbinden.",
         "title": "Die Konferenz wurde unterbrochen, weil der Standby-Modus aktiviert wurde."
+    },
+    "systemWideUserNotification": {
+        "button": "Mehr erfahren",
+        "dontShowAgain": "Nicht erneut anzeigen"
     },
     "termsView": {
         "title": "Nutzungsbedingungen"
@@ -1405,6 +1519,7 @@
             "mute": "Mikrofon deaktivieren",
             "muteEveryone": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
+            "muteEveryoneElsesDesktopStream": "Bildschirmfreigabe von allen anderen stoppen",
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
             "muteEveryonesVideoStream": "Alle Kameras ausschalten",
             "muteGUMPending": "Mikrofon verbinden",
@@ -1412,6 +1527,8 @@
             "openChat": "Chat öffnen",
             "participants": "Anwesenheitsliste öffnen. {{participantsCount}} anwesend",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
+            "pipClose": "Bild-in-Bild-Fenster schließen",
+            "polls": "Umfragen öffnen",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
             "raiseHand": "Hand heben",
@@ -1527,6 +1644,7 @@
         "openReactionsMenu": "Interaktionsmenü öffnen",
         "participants": "Anwesende",
         "pip": "Bild-in-Bild-Modus einschalten",
+        "pipClose": "Bild-in-Bild-Fenster schließen",
         "polls": "Umfragen",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
@@ -1572,6 +1690,7 @@
         "alsoRecord": "Diese Konferenz auch aufnehmen?",
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
+        "expandedOff": "Transkription wurde beendet",
         "failed": "Transkribieren fehlgeschlagen",
         "labelTooltip": "Die Konferenz wird transkribiert.",
         "labelTooltipExtra": "Zusätzlich wird das Transkript später verfügbar sein.",
@@ -1585,10 +1704,12 @@
         "sourceLanguageHere": "ändern",
         "start": "Anzeige der Untertitel starten",
         "stop": "Anzeige der Untertitel stoppen",
+        "stoppedForE2EE": "Untertitel wurden deaktiviert, da die Ende-zu-Ende-Verschlüsselung aktiv ist.",
         "subtitles": "Untertitel",
         "subtitlesOff": "Ausschalten",
         "tr": "TR",
-        "translateTo": "Übersetzen in"
+        "translateTo": "Übersetzen in",
+        "unavailableWithE2EE": "Transkription ist nicht verfügbar, da Ende-zu-Ende-Verschlüsselung aktiv ist."
     },
     "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {
@@ -1703,6 +1824,20 @@
             "title": "Sie sind Gast in der Konferenz"
         },
         "waitingMessage": "Sie werden der Konferenz beitreten, sobald sie gestartet ist!"
+    },
+    "voiceAgents": {
+        "allow": "Erlauben",
+        "consentDescription": "Der Agent kann nur Teilnehmende hören, die dies erlauben. Wenn Sie es erlauben, kann er Sie hören und Sie dessen Antworten.",
+        "consentDescriptionMuted": "Der Agent kann nur Teilnehmende hören, die dies erlauben. Wenn Sie es erlauben, kann er Sie hören und Sie dessen Antworten. Sie sind stummgeschaltet während Sie sich entscheiden.",
+        "consentTitle": "{{name}} ist als KI-Agent beigetreten",
+        "e2eeUnsupportedDescription": "KI-Agenden können an Ende-zu-Ende-verschlüsselten Konferenzen nicht teilnehmen. Ende-zu-Ende-Verschlüsselung deaktivieren, damit der Agent teilnehmen kann.",
+        "e2eeUnsupportedTitle": "{{name}} ist nicht verfügbar",
+        "labelTooltip": "KI-Agenten in der Konferenz: {{names}}",
+        "labelTooltipAllow": "KI-Agenten in der Konferenz: {{names}}. Anklicken, damit diese Sie hören können.",
+        "labelTooltipE2EE": "KI-Agenten in der Konferenz: {{names}}. Nicht verfügbar, solange die Konferenz Ende-zu-Ende-verschlüsselt ist.",
+        "nativeTitle": "KI-Agenten in der Konferenz",
+        "notNow": "Nicht jetzt",
+        "thumbnailTooltip": "KI-Agent"
     },
     "volumeSlider": "Lautstärkeregler",
     "welcomepage": {
