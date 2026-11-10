@@ -76,3 +76,17 @@ export function shouldDisplayStageParticipantBadge(state: IReduxState) {
         && (!isScreenShareParticipant(largeVideoParticipant) || toolboxVisible)
     );
 }
+
+/**
+ * Returns true if the stage participant name label is rendered, whether or not it is currently visible. A screen
+ * share participant's label stays in the DOM while the toolbox is hidden so it can fade back in, and assistive
+ * technologies still read it then, so anything that must not repeat the name has to follow this rather than
+ * {@link shouldDisplayStageParticipantBadge}.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isStageParticipantNameLabelRendered(state: IReduxState) {
+    return shouldDisplayStageParticipantBadge(state)
+        || (isScreenShareParticipant(getLargeVideoParticipant(state)) && !isLayoutTileView(state));
+}
