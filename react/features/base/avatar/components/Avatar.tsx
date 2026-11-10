@@ -287,6 +287,25 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
 }
 
 /**
+ * Returns the name to announce for an avatar. A remote participant without a name is shown everywhere under the
+ * default remote name, and a virtual screen share participant under its owner's name, so the avatar announces what
+ * the user sees rather than the raw name the initials are built from. The default local name ("me") is skipped:
+ * it does not identify anyone, and on the pre-join screen it would be announced before a name was typed.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @param {IParticipant|undefined} participant - The participant the avatar stands for, if any.
+ * @param {string|undefined} displayName - The name the caller passed for a non-participant avatar.
+ * @returns {string|undefined}
+ */
+function _getAnnouncedName(state: IReduxState, participant: IParticipant | undefined, displayName?: string) {
+    if (!participant || (participant.local && !participant.name)) {
+        return displayName;
+    }
+
+    return getParticipantDisplayName(state, participant.id);
+}
+
+/**
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
@@ -297,15 +316,10 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { colorBase, displayName, participantId } = ownProps;
     const _participant: IParticipant | undefined = participantId ? getParticipantById(state, participantId) : undefined;
     const _initialsBase = _participant?.name ?? displayName;
-
-    // A participant without a name is still shown everywhere under a default name, and a virtual screen share
-    // participant under its owner's name, so announce what the user sees rather than the raw name the initials
-    // are built from.
-    const _announcedName = _participant ? getParticipantDisplayName(state, _participant.id) : displayName;
     const { corsAvatarURLs } = state['features/base/config'];
 
     return {
-        _announcedName,
+        _announcedName: _getAnnouncedName(state, _participant, displayName),
         _customAvatarBackgrounds: state['features/dynamic-branding'].avatarBackgrounds,
         _corsAvatarURLs: corsAvatarURLs,
         _initialsBase,
