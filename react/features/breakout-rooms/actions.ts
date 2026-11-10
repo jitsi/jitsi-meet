@@ -230,7 +230,10 @@ export function moveToRoom(roomId?: string) {
                 await conference?.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
+            }
 
+            if (conference && getState()['features/base/conference'].leaving === conference) {
+                dispatch(conferenceTimestampChanged(0));
                 dispatch(conferenceLeft(conference));
             }
 
