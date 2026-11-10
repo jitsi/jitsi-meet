@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { Keyboard } from 'react-native';
 import { useDispatch, useStore } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -19,7 +20,17 @@ interface IProps {
 const ModerateMessageDialog = ({ messageId }: IProps) => {
     const dispatch = useDispatch();
     const store = useStore<IReduxState>();
+    // Close the keyboard before the dialog unmounts. On Android it stays open otherwise,
+    // and the chat input bar keeps its keyboard padding.
+    const onCancel = useCallback(() => {
+        Keyboard.dismiss();
+
+        return true;
+    }, []);
+
     const onSubmit = useCallback((reason?: string) => {
+        Keyboard.dismiss();
+
         // Check again on submit: the message or the moderator role can change while the dialog is open.
         const state = store.getState();
         const message = getChatMessageById(state, messageId);
@@ -36,6 +47,7 @@ const ModerateMessageDialog = ({ messageId }: IProps) => {
     return (
         <InputDialog
             descriptionKey = 'chat.moderateMessageReason'
+            onCancel = { onCancel }
             onSubmit = { onSubmit }
             titleKey = 'chat.moderateMessageTitle' />
     );
