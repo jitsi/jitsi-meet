@@ -216,6 +216,7 @@ const OverflowMenuButton = ({
                         onKeyDown = { onEscClick } />
                     <JitsiPortal>
                         <Drawer
+                            headingLabel = { t(toolbarAccLabel) }
                             isOpen = { isOpen }
                             onClose = { onCloseDialog }>
                             <>
