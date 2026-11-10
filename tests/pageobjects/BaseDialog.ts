@@ -17,6 +17,12 @@ const MAX_TAB_PRESSES = 100;
 const FOCUS_WALK_START_ATTRIBUTE = 'data-focus-walk-start';
 
 /**
+ * Matches the modal dialog container. Popovers such as the overflow menu also use role="dialog" on their content,
+ * so they are excluded: focus resting on the menu item that opened a dialog must not count as focus inside it.
+ */
+const DIALOG_SELECTOR = '[role="dialog"]:not(.popover-content)';
+
+/**
  * One element that received focus during a focus walk.
  */
 export interface IFocusStop {
@@ -62,7 +68,8 @@ export default class BaseDialog extends BasePageObject {
      */
     waitForFocusInside(): Promise<true | void> {
         return this.participant.driver.waitUntil(
-            () => this.participant.execute(() => Boolean(document.activeElement?.closest('[role="dialog"]'))),
+            () => this.participant.execute(
+                selector => Boolean(document.activeElement?.closest(selector)), DIALOG_SELECTOR),
             { timeoutMsg: 'Focus did not move inside the dialog.' });
     }
 
