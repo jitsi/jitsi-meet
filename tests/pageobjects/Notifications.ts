@@ -109,12 +109,12 @@ export default class Notifications extends BasePageObject {
      * Waits for the notification that a recording has started.
      */
     async waitForRecordingStartedNotification() {
-        await this.participant.driver.waitUntil(async () => {
+        const result = await this.participant.driver.waitUntil(async () => {
             for (const id of RECORDING_START_FAILURE_NOTIFICATION_IDS) {
                 const notification = this.participant.driver.$(`div[data-testid="${id}"]`);
 
                 if (await notification.isDisplayed()) {
-                    throw new Error(`Recording start failed: ${id}`);
+                    return { failed: id };
                 }
             }
 
@@ -122,7 +122,7 @@ export default class Notifications extends BasePageObject {
                 const notification = this.participant.driver.$(`div[data-testid="${id}"]`);
 
                 if (await notification.isDisplayed()) {
-                    return true;
+                    return { started: true };
                 }
             }
 
@@ -131,13 +131,17 @@ export default class Notifications extends BasePageObject {
             timeout: 120_000,
             timeoutMsg: 'Recording started notification not displayed'
         });
+
+        if ('failed' in result) {
+            throw new Error(`Recording start failed: ${result.failed}`);
+        }
     }
 
     /**
      * Closes the sticky recording link notification, if it is displayed.
      */
     async closeRecordingLinkGeneratedNotification() {
-        return this.closeNotification('recording.linkGenerated', true);
+        return this.closeNotification('recording.on', true);
     }
 
     /**

@@ -75,18 +75,24 @@ describe('Recording and live-streaming', () => {
         expect('RECORDING_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
 
-        const iFrameEvent = await p.driver.waitUntil(async () => {
+        const result = await p.driver.waitUntil(async () => {
             const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
 
             if (event?.error) {
-                throw new Error(`Recording failed to start: ${event.error}`);
+                return { error: event.error };
             }
 
-            return event?.mode === 'file' && event?.on === true ? event : false;
+            return event?.mode === 'file' && event?.on === true ? { event } : false;
         }, {
             timeout: 5000,
             timeoutMsg: 'recordingStatusChanged event with mode=file, on=true not received'
         });
+
+        if ('error' in result) {
+            throw new Error(`Recording failed to start: ${result.error}`);
+        }
+
+        const iFrameEvent = result.event;
 
         expect(iFrameEvent.mode).toBe('file');
         expect(iFrameEvent.on).toBe(true);
