@@ -252,6 +252,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
         <JitsiPortal>
             <Drawer
                 className = { styles.drawer }
+                headingLabel = { t('notify.gifsMenu') }
                 isOpen = { true }
                 onClose = { onDrawerClose }>
                 {gifMenu}
