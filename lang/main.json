@@ -887,6 +887,21 @@
         "lowBandwidthMode": "Low bandwidth"
     },
     "me": "me",
+    "mediaPermissions": {
+        "allowAudio": "Allow microphone",
+        "allowBoth": "Allow microphone and camera",
+        "allowVideo": "Allow camera",
+        "continueWithoutAudio": "Continue without microphone",
+        "continueWithoutBoth": "Continue without microphone and camera",
+        "continueWithoutVideo": "Continue without camera",
+        "notNow": "Not now",
+        "promptDescriptionAudio": "Your browser will ask for access to your microphone. You can turn it off at any time.",
+        "promptDescriptionBoth": "Your browser will ask for access to your microphone and camera. You can turn them off at any time.",
+        "promptDescriptionVideo": "Your browser will ask for access to your camera. You can turn it off at any time.",
+        "promptTitleAudio": "Do you want people to hear you in the meeting?",
+        "promptTitleBoth": "Do you want people to see and hear you in the meeting?",
+        "promptTitleVideo": "Do you want people to see you in the meeting?"
+    },
     "multiScreen": {
         "noParticipants": "No participants",
         "openFailed": "Something went wrong. Please try again.",

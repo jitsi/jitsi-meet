@@ -361,6 +361,7 @@ export interface IConfig {
     disableLocalVideoFlip?: boolean;
     disableModeratorIndicator?: boolean;
     disableNS?: boolean;
+    disablePermissionPromptDialog?: boolean;
     disablePolls?: boolean;
     disableProfile?: boolean;
     disableReactions?: boolean;

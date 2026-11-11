@@ -110,6 +110,7 @@ export default [
     'disableLocalVideoFlip',
     'disableModeratorIndicator',
     'disableNS',
+    'disablePermissionPromptDialog',
     'disablePolls',
     'disableProfile',
     'disableReactions',

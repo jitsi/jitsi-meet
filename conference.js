@@ -140,6 +140,7 @@ import { getLocalJitsiAudioTrackSettings } from './react/features/base/tracks/fu
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
+import { explainBeforePrompt } from './react/features/device-permissions/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
@@ -465,10 +466,25 @@ export default {
                     return [];
                 });
         } else if (requestedAudio || requestedVideo) {
-            tryCreateLocalTracks = APP.store.dispatch(createInitialAVTracks({
-                devices: initialDevices,
-                timeout
-            }, recordTimeMetrics)).then(({ tracks, errors: pErrors }) => {
+            const explained = isPrejoinPageVisible(APP.store.getState())
+                ? APP.store.dispatch(explainBeforePrompt(initialDevices))
+                : Promise.resolve(initialDevices);
+
+            tryCreateLocalTracks = explained.then(devices => {
+                // The devices that the user goes without stay off.
+                requestedAudio && !devices.includes(MEDIA_TYPE.AUDIO) && APP.store.dispatch(setAudioMuted(true));
+                requestedVideo && !devices.includes(MEDIA_TYPE.VIDEO) && APP.store.dispatch(setVideoMuted(true));
+
+                return devices.length
+                    ? APP.store.dispatch(createInitialAVTracks({
+                        devices,
+                        timeout
+                    }, recordTimeMetrics))
+                    : {
+                        errors: {},
+                        tracks: []
+                    };
+            }).then(({ tracks, errors: pErrors }) => {
                 Object.assign(errors, pErrors);
 
                 return tracks;
