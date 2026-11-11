@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
 import { IconImage } from '../../../../base/icons/svg';
+import { browser } from '../../../../base/lib-jitsi-meet';
 import { Video } from '../../../../base/media/components/index';
 import { equals } from '../../../../base/redux/functions';
 import { updateSettings } from '../../../../base/settings/actions';
@@ -61,6 +62,11 @@ export interface IProps {
      * All the camera device ids currently connected.
      */
     videoDeviceIds: string[];
+
+    /**
+     * The connected cameras, for the labels of the entries without a preview.
+     */
+    videoInputDevices: MediaDeviceInfo[];
 
     /**
     * Whether or not the virtual background is visible.
@@ -156,6 +162,7 @@ const VideoSettingsContent = ({
     setVideoInputDevice,
     toggleVideoSettings,
     videoDeviceIds,
+    videoInputDevices,
     visibleVirtualBackground
 }: IProps) => {
     const _componentWasUnmounted = useRef(false);
@@ -164,6 +171,7 @@ const VideoSettingsContent = ({
     }));
     const { t } = useTranslation();
     const videoDevicesRef = useRef(videoDeviceIds);
+    const selectedDeviceRef = useRef(currentCameraDeviceId);
     const trackDataRef = useRef(trackData);
     const { classes, cx } = useStyles();
 
@@ -196,7 +204,16 @@ const VideoSettingsContent = ({
     const _setTracks = async () => {
         _disposeTracks(trackData);
 
-        const newTrackData = await createLocalVideoTracks(videoDeviceIds, 5000);
+        // Firefox grants access per device, a preview of every camera would prompt for each of them.
+        const previewedIds = browser.isFirefox()
+            ? videoDeviceIds.filter(deviceId => deviceId === currentCameraDeviceId)
+            : videoDeviceIds;
+        const previewTracks = await createLocalVideoTracks(previewedIds, 5000);
+        const newTrackData = videoDeviceIds.map(deviceId =>
+            previewTracks.find(data => data.deviceId === deviceId) ?? {
+                deviceId,
+                jitsiTrack: null
+            });
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
@@ -250,7 +267,8 @@ const VideoSettingsContent = ({
             key,
             tabIndex
         };
-        const label = jitsiTrack?.getTrackLabel();
+        const label = jitsiTrack?.getTrackLabel()
+            || videoInputDevices.find(device => device.deviceId === deviceId)?.label;
 
         if (isSelected) {
             previewProps['aria-checked'] = true;
@@ -300,6 +318,13 @@ const VideoSettingsContent = ({
         }
     }, [ videoDeviceIds ]);
 
+    useEffect(() => {
+        if (browser.isFirefox() && currentCameraDeviceId !== selectedDeviceRef.current) {
+            _setTracks();
+        }
+        selectedDeviceRef.current = currentCameraDeviceId;
+    }, [ currentCameraDeviceId ]);
+
     return (
         <ContextMenu
             activateFocusTrap = { true }
@@ -339,6 +364,7 @@ const mapStateToProps = (state: IReduxState) => {
     return {
         disableLocalVideoFlip,
         localFlipX: Boolean(localFlipX),
+        videoInputDevices: state['features/base/devices'].availableDevices.videoInput ?? [],
         visibleVirtualBackground: checkBlurSupport()
         && checkVirtualBackgroundEnabled(state)
     };

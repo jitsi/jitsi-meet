@@ -258,7 +258,17 @@ const AudioSettingsContent = ({
 
         _disposeTracks(audioTracks);
 
-        const newAudioTracks = await createLocalAudioTracks(microphoneDevices, 5000);
+        // Firefox grants access per device, a meter for every microphone would prompt for each of them.
+        const previewedDevices = browser.isFirefox()
+            ? microphoneDevices.filter(({ deviceId }) => deviceId === currentMicDeviceId)
+            : microphoneDevices;
+        const previewTracks = await createLocalAudioTracks(previewedDevices, 5000);
+        const newAudioTracks = microphoneDevices.map(device =>
+            previewTracks.find(({ deviceId }) => deviceId === device.deviceId) ?? {
+                ...device,
+                hasError: false,
+                jitsiTrack: null
+            });
 
         if (_componentWasUnmounted.current) {
             _disposeTracks(newAudioTracks);
