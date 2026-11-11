@@ -50,10 +50,13 @@ const useStyles = makeStyles()(theme => {
         },
         footer: {
             display: 'flex',
-            justifyContent: 'flex-end'
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+            gap: theme.spacing(3)
         },
-        buttonMargin: {
-            marginRight: theme.spacing(3)
+        footerButton: {
+            flexShrink: 0,
+            whiteSpace: 'nowrap'
         }
     };
 });
@@ -127,7 +130,7 @@ const PollAnswer = ({
                     pollSaved ? <>
                         <Button
                             accessibilityLabel = { t('polls.answer.edit') }
-                            className = { classes.buttonMargin }
+                            className = { classes.footerButton }
                             labelKey = { 'polls.answer.edit' }
                             onClick = { () => {
                                 setCreateMode(true);
@@ -136,25 +139,27 @@ const PollAnswer = ({
                             type = { BUTTON_TYPES.SECONDARY } />
                         <Button
                             accessibilityLabel = { t('polls.create.accessibilityLabel.send') }
+                            className = { classes.footerButton }
                             labelKey = { 'polls.answer.send' }
                             onClick = { sendPoll } />
                     </> : <>
                         {
                             canClose && <Button
                                 accessibilityLabel = { t('polls.results.endPoll') }
-                                className = { classes.buttonMargin }
+                                className = { classes.footerButton }
                                 labelKey = { 'polls.results.endPoll' }
                                 onClick = { closePoll }
                                 type = { BUTTON_TYPES.TERTIARY } />
                         }
                         <Button
                             accessibilityLabel = { t('polls.answer.skip') }
-                            className = { classes.buttonMargin }
+                            className = { classes.footerButton }
                             labelKey = { 'polls.answer.skip' }
                             onClick = { changingVote ? skipChangeVote : skipAnswer }
                             type = { BUTTON_TYPES.SECONDARY } />
                         <Button
                             accessibilityLabel = { t('polls.answer.submit') }
+                            className = { classes.footerButton }
                             disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                             labelKey = { 'polls.answer.submit' }
                             onClick = { submitAnswer } />
