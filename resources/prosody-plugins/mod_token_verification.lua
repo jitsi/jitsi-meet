@@ -2,7 +2,9 @@
 -- on the MUC component. For each join or room-create, calls
 -- token_util:verify_room() to check that the token's room claim matches the
 -- target room JID. Admins and domains listed in token_verification_allowlist
--- are exempt. Anonymous users (no token) are allowed through. When
+-- are exempt. On a visitor node (main_domain is set) the main participants that
+-- come over s2s are exempt too. On the main prosody a join or room-create over
+-- s2s is refused. Anonymous users (no token) are allowed through. When
 -- token_verification_require_token_for_moderation is set, also blocks room
 -- config IQs (e.g. granting moderator status) from unauthenticated users.
 -- Records the verified conferences on the session (jitsi_meet_verified_rooms)
@@ -56,9 +58,12 @@ module:log("debug",
 local require_token_for_moderation;
 -- option to allow domains to skip token verification
 local allowlist;
+-- the domain of the main prosody, set only on a visitor node
+local main_domain;
 local function load_config()
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
     allowlist = module:get_option_set('token_verification_allowlist', {});
+    main_domain = module:get_option_string('main_domain');
 end
 load_config();
 
@@ -82,12 +87,24 @@ local function verify_user(session, stanza)
 
     -- allowlist for participants, jigasi (sip & transcriber), jibri (recorder & sip)
     if allowlist:contains(user_domain)
-        or allowlist:contains(user_bare_jid)
-
-        -- allow main participants in visitor mode
-        or session.type == 's2sin' then
+        or allowlist:contains(user_bare_jid) then
         if DEBUG then module:log("debug", "Token not required from user in allow list: %s", user_jid); end
         return true;
+    end
+
+    if session.type == 's2sin' then
+        -- On a visitor node the main participants come over s2s from the main prosody, which
+        -- checked them when they joined the main room. Every s2s session is let through here:
+        -- it is the s2s_whitelist of the visitor node that limits them to the main prosody.
+        if main_domain then
+            return true;
+        end
+
+        -- On the main prosody nothing joins over s2s: the visitor nodes send the main room
+        -- only messages and iqs.
+        module:log('warn', 'User %s not allowed to join %s over s2s', user_jid, tostring(stanza.attr.to));
+        session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Joining over s2s is not allowed'));
+        return false;
     end
 
     if DEBUG then module:log("debug", "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to); end
