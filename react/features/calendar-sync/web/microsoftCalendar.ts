@@ -71,7 +71,7 @@ let popupAuthWindow: Window | null = null;
  * @private
  * @type {number}
  */
-const REFRESH_AUTH_TIMEOUT = 30000;
+const REFRESH_AUTH_TIMEOUT = 10000;
 
 /**
  * A stateless collection of action creators that implements the expected
@@ -527,16 +527,18 @@ function refreshAuthToken() {
                 REFRESH_AUTH_TIMEOUT);
 
             iframe.onload = () => {
-                clearTimeout(timeout);
+                let hash;
 
-                // The iframe stays on another origin when the request is
-                // blocked or doesn't redirect back, and then its location
-                // can't be read.
                 try {
-                    resolve(iframe.contentWindow?.location.hash ?? '');
-                } catch (error) {
-                    reject(error);
+                    hash = iframe.contentWindow?.location.hash;
+                } catch {
+                    // Still on another origin, for example an intermediate
+                    // sign in page, wait for the redirect or the timeout.
+                    return;
                 }
+
+                clearTimeout(timeout);
+                resolve(hash ?? '');
             };
         });
 
