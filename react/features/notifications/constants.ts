@@ -91,6 +91,9 @@ export const LOBBY_NOTIFICATION_ID = 'LOBBY_NOTIFICATION';
  */
 export const LOCAL_RECORDING_NOTIFICATION_ID = 'LOCAL_RECORDING_NOTIFICATION_ID';
 
+/** Shared by all the media connectivity statuses, so that a status change replaces the shown notification. */
+export const MEDIA_CONNECTIVITY_NOTIFICATION_ID = 'MEDIA_CONNECTIVITY_NOTIFICATION_ID';
+
 /**
  * The identifier of the raise hand notification.
  *
