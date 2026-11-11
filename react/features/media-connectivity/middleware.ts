@@ -58,16 +58,16 @@ let status: string | undefined;
 
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference: IJitsiConference | undefined, { dispatch, getState }: IStore, previousConference?: IJitsiConference) => {
+    (conference: IJitsiConference | undefined, store: IStore, previousConference?: IJitsiConference) => {
         if (previousConference) {
-            _clear(dispatch);
+            _clear(store.dispatch);
         }
 
         conference?.on(
             JitsiConferenceEvents.MEDIA_CONNECTIVITY_CHANGED,
             (connectivity: { status: string; }) => {
-                if (getCurrentConference(getState()) === conference) {
-                    _onStatusChanged(dispatch, connectivity.status);
+                if (getCurrentConference(store.getState()) === conference) {
+                    _onStatusChanged(store, connectivity.status);
                 }
             });
     });
@@ -98,23 +98,31 @@ function _notify(dispatch: IStore['dispatch']) {
     }
 
     const { timeout, ...props } = NOTIFICATIONS[status];
-
-    notifiedStatus = status;
-    dispatch(showNotification({
+    const notification = dispatch(showNotification({
         ...props,
         uid: MEDIA_CONNECTIVITY_NOTIFICATION_ID
     }, timeout));
+
+    // A disabled notification would leave the previous one showing a status that no longer applies.
+    notification || dispatch(hideNotification(MEDIA_CONNECTIVITY_NOTIFICATION_ID));
+    notifiedStatus = notification ? status : undefined;
 }
 
 /**
- * Notifies a status once it lasted {@link NOTIFICATION_DELAY}, then follows its changes right away until the
- * connectivity is good again.
+ * Notifies a status once it lasted {@link NOTIFICATION_DELAY}, then follows its changes right away while the
+ * notification is shown.
  *
- * @param {Function} dispatch - The redux dispatch function.
+ * @param {Store} store - The redux store.
  * @param {string} newStatus - The media connectivity status of the active media session.
  * @returns {void}
  */
-function _onStatusChanged(dispatch: IStore['dispatch'], newStatus: string) {
+function _onStatusChanged({ dispatch, getState }: IStore, newStatus: string) {
+    // Once the notification timed out or was dismissed, the next status has to last the delay again.
+    if (notifiedStatus && !getState()['features/notifications'].notifications.some(
+            n => n.uid === MEDIA_CONNECTIVITY_NOTIFICATION_ID)) {
+        notifiedStatus = undefined;
+    }
+
     if (!NOTIFICATIONS[newStatus]) {
         const restored = notifiedStatus === 'failed' || notifiedStatus === 'interrupted';
 
@@ -128,11 +136,14 @@ function _onStatusChanged(dispatch: IStore['dispatch'], newStatus: string) {
         return;
     }
 
+    const changed = newStatus !== status;
+
     status = newStatus;
 
     if (notifiedStatus) {
         _notify(dispatch);
-    } else if (delayTimeout === undefined) {
+    } else if (changed) {
+        window.clearTimeout(delayTimeout);
         delayTimeout = window.setTimeout(() => {
             delayTimeout = undefined;
             _notify(dispatch);
