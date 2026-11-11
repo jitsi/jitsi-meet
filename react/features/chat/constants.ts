@@ -4,6 +4,17 @@
 export const CHAR_LIMIT = 500;
 
 /**
+ * The quick reactions offered on a chat message, on web and native.
+ */
+export const QUICK_REACTIONS = [
+    { name: 'thumbsUp', emoji: '👍', labelKey: 'toolbar.accessibilityLabel.like' },
+    { name: 'redHeart', emoji: '❤️', labelKey: 'chat.reactions.redHeart' },
+    { name: 'faceWithTearsOfJoy', emoji: '😂', labelKey: 'chat.reactions.faceWithTearsOfJoy' },
+    { name: 'faceWithOpenMouth', emoji: '😮', labelKey: 'toolbar.accessibilityLabel.surprised' },
+    { name: 'fire', emoji: '🔥', labelKey: 'chat.reactions.fire' }
+] as const;
+
+/**
  * The initial size of the chat.
  */
 export const CHAT_SIZE = 315;
