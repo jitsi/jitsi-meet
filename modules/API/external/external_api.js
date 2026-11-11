@@ -853,7 +853,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the connection stats of the conference.
      *
-     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc).
+     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc). Rejects if there is no
+     * conference at the moment (before joining or after leaving).
      */
     getConnectionStats() {
         return this._transport.sendRequest({
@@ -995,9 +996,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Captures a picture through OS camera.
      *
      * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
-     * @param {string} descriptionText - The OS camera facing mode (environment/user).
-     * @param {string} titleText - The OS camera facing mode (environment/user).
-     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
+     * @param {string} descriptionText - The description shown in the camera capture dialog.
+     * @param {string} titleText - The title shown in the camera capture dialog.
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the picture. Rejects when the
+     * browser is not a mobile one, because the feature is only supported there.
      */
     captureCameraPicture(
             cameraFacingMode,
@@ -1039,6 +1041,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     * {@code password} - When the conference asks for a password (the {@code passwordRequired} event), joins with
+     * the password passed in the arguments array. Otherwise sets it as the password of the conference, which is only
+     * possible once joined: send it after the {@code videoConferenceJoined} event, before that it is ignored.
      *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
@@ -1385,7 +1390,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Gets the deployment info.
      *
-     * @returns {Promise} - Resolves with the deployment info object.
+     * @returns {Promise} - Resolves with the deployment info object. The object is empty until the
+     * information is received from the server.
      */
     getDeploymentInfo() {
         return this._transport.sendRequest({

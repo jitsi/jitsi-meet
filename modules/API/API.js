@@ -133,7 +133,7 @@ import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../rea
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
-import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
+import { isScreenAudioSupported, isScreenVideoShared } from '../../react/features/screen-share/functions';
 import {
     openCameraCaptureDialog,
     toggleScreenshotCaptureSummary
@@ -187,6 +187,21 @@ let audioAvailable = true;
  * @type {boolean}
  */
 let videoAvailable = true;
+
+/**
+ * Returns the error to reject an iframe API request with. The transport serializes its messages with
+ * JSON.stringify, which turns an Error object into {}, so a plain object with the same name and message is sent:
+ * the embedder can read error.message from it.
+ *
+ * @param {string} message - The error message.
+ * @returns {Object}
+ */
+function requestError(message) {
+    return {
+        name: 'Error',
+        message
+    };
+}
 
 /**
  * Initializes supported commands.
@@ -314,6 +329,12 @@ function initCommands() {
                     password
                 ));
             } else {
+                if (!conference) {
+                    logger.error('The password can only be set after the conference is joined');
+
+                    return;
+                }
+
                 sendAnalytics(createApiEvent('password.changed'));
 
                 APP.store.dispatch(setPassword(
@@ -1097,8 +1118,8 @@ function initCommands() {
 
             if (!isMobileBrowser()) {
                 logger.error('This feature is only supported on mobile');
-
-                return;
+                callback(undefined, requestError('This feature is only supported on mobile'));
+                break;
             }
 
             APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
@@ -1107,6 +1128,13 @@ function initCommands() {
             break;
         }
         case 'connection-stats': {
+            // getStats() reads the room of conference.js, which is only set while in a conference.
+            if (!APP.conference._room) {
+                logger.error('Conference is not defined');
+                callback(undefined, requestError('Conference is not defined'));
+                break;
+            }
+
             callback({
                 ...APP.conference.getStats(),
                 iceConnected: APP.conference.getConnectionState() === 'connected'
@@ -1114,7 +1142,7 @@ function initCommands() {
             break;
         }
         case 'deployment-info':
-            callback(APP.store.getState()['features/base/config'].deploymentInfo);
+            callback(APP.store.getState()['features/base/config'].deploymentInfo ?? {});
             break;
         case 'invite': {
             const { invitees } = request;
@@ -1176,7 +1204,7 @@ function initCommands() {
             callback(videoAvailable);
             break;
         case 'is-sharing-screen':
-            callback(Boolean(APP.conference.isSharingScreen));
+            callback(Boolean(isScreenVideoShared(APP.store.getState())));
             break;
         case 'is-lobby-enabled':
             callback(Boolean(getLobbyEnabled(APP.store.getState())));
@@ -1226,9 +1254,9 @@ function initCommands() {
             break;
         }
         case 'get-shared-document-url': {
-            const { etherpad } = APP.store.getState()['features/etherpad'];
+            const { documentUrl } = APP.store.getState()['features/etherpad'];
 
-            callback(etherpad?.documentUrl || '');
+            callback(documentUrl || '');
             break;
         }
         case 'get-p2p-status': {
