@@ -856,6 +856,10 @@ var config = {
     // This is useful for scenarios where users might want to start a conference for screensharing only
     // disableInitialGUM: false,
 
+    // Disables the dialog that guides the user through unblocking the microphone or camera, in the browser or in the
+    // OS settings, after access was denied.
+    // disablePermissionGuidanceDialog: false,
+
     // Disables the dialog that explains why the microphone and camera are needed before the browser asks for
     // access, on the pre-join screen and when unmuting.
     // disablePermissionPromptDialog: false,

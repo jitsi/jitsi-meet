@@ -140,7 +140,7 @@ import { getLocalJitsiAudioTrackSettings } from './react/features/base/tracks/fu
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
-import { explainBeforePrompt } from './react/features/device-permissions/actions';
+import { explainBeforePrompt, ignoreTrackEnd } from './react/features/device-permissions/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
@@ -2022,6 +2022,7 @@ export default {
         // to the new one, so the mic keeps sending if the new track can't be created or used. For a changed default mic
         // gUM gets the real device id (see hasDefaultMicChanged below), or is skipped if it can't be resolved.
         if (requestedInput.video && localVideo) {
+            ignoreTrackEnd(localVideo);
             localVideo.stopStream();
         }
 

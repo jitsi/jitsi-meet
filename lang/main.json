@@ -891,16 +891,56 @@
         "allowAudio": "Allow microphone",
         "allowBoth": "Allow microphone and camera",
         "allowVideo": "Allow camera",
+        "blockedTitleBrowser": "Your browser is blocking your {{device}}",
+        "blockedTitleMac": "Your Mac is blocking your {{device}}",
+        "blockedTitleOther": "Your computer is blocking your {{device}}",
+        "blockedTitleWindows": "Windows is blocking your {{device}}",
         "continueWithoutAudio": "Continue without microphone",
         "continueWithoutBoth": "Continue without microphone and camera",
         "continueWithoutVideo": "Continue without camera",
+        "deviceAudio": "microphone",
+        "deviceBoth": "microphone and camera",
+        "deviceVideo": "camera",
+        "embedded": "This meeting is embedded in another site, so allow access for {{domain}}.",
         "notNow": "Not now",
+        "openSettings": "Open Settings",
+        "openSystemSettings": "Open System Settings",
+        "paneAudio": "Microphone",
+        "paneBoth": "Microphone and Camera",
+        "paneVideo": "Camera",
         "promptDescriptionAudio": "Your browser will ask for access to your microphone. You can turn it off at any time.",
         "promptDescriptionBoth": "Your browser will ask for access to your microphone and camera. You can turn them off at any time.",
         "promptDescriptionVideo": "Your browser will ask for access to your camera. You can turn it off at any time.",
         "promptTitleAudio": "Do you want people to hear you in the meeting?",
         "promptTitleBoth": "Do you want people to see and hear you in the meeting?",
-        "promptTitleVideo": "Do you want people to see you in the meeting?"
+        "promptTitleVideo": "Do you want people to see you in the meeting?",
+        "steps": {
+            "browserChromium": {
+                "1": "Select the site controls icon next to the address bar and allow the {{device}} for {{domain}}.",
+                "2": "Select Try again."
+            },
+            "browserFirefox": {
+                "1": "Select the crossed-out {{device}} icon in the address bar and remove the block.",
+                "2": "Select Try again."
+            },
+            "browserSafari": {
+                "1": "Choose Safari, then Settings for {{domain}}, and set {{pane}} to Allow. \"Ask\" won't show the prompt again.",
+                "2": "Select Try again."
+            },
+            "osMac": {
+                "1": "Open System Settings, then Privacy & Security, then {{pane}}.",
+                "2": "Turn on your browser.",
+                "3": "Quit and reopen your browser when macOS asks, then join the meeting again."
+            },
+            "osOther": {
+                "1": "Allow your browser to use the {{device}} in your system settings, then select Try again."
+            },
+            "osWindows": {
+                "1": "Open Settings, then Privacy & security, then {{pane}}.",
+                "2": "Turn on access and \"Let desktop apps access your {{device}}\", then select Try again."
+            }
+        },
+        "tryAgain": "Try again"
     },
     "multiScreen": {
         "noParticipants": "No participants",
