@@ -1,5 +1,13 @@
 /* eslint-disable lines-around-comment */
 
+/**
+ * The permission status of a capture device, as reported by lib-jitsi-meet.
+ */
+export interface IPermissionStatus {
+    reason?: 'browser' | 'os' | 'user';
+    state: 'denied' | 'granted' | 'prompt';
+}
+
 export interface IDevicesState {
     availableDevices: {
         // @ts-ignore
@@ -10,6 +18,10 @@ export interface IDevicesState {
         videoInput?: MediaDeviceInfo[];
     };
     pendingRequests: any[];
+    permissionStatus: {
+        audio?: IPermissionStatus;
+        video?: IPermissionStatus;
+    };
     permissions: {
         audio: boolean;
         video: boolean;

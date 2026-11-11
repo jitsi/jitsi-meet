@@ -1845,6 +1845,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the permission status of the camera or the microphone
+     * changed.
+     *
+     * @param {Object} permissions - The status by media type, audio and video: {@code { state, reason }} where state
+     * is granted, denied or prompt, and reason (user, browser or os) says why access was denied.
+     * @returns {void}
+     */
+    notifyDevicePermissionsChanged(permissions) {
+        this._sendEvent({
+            name: 'device-permissions-changed',
+            permissions
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that user changed their
      * nickname.
      *

@@ -1,5 +1,7 @@
 import { AnyAction } from 'redux';
 
+import { createDevicePermissionDeniedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
 import { processExternalDeviceRequest } from '../../device-selection/functions';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
@@ -16,6 +18,7 @@ import { getLocalTrack } from '../tracks/functions';
 
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    DEVICE_PERMISSION_STATUS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     SET_AUDIO_INPUT_DEVICE,
@@ -23,6 +26,7 @@ import {
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import {
+    devicePermissionStatusChanged,
     devicePermissionsChanged,
     removePendingDeviceRequests,
     setAudioInputDevice,
@@ -34,6 +38,7 @@ import {
     formatDeviceLabel,
     logDevices
 } from './functions';
+import { IDevicesState } from './types';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -57,6 +62,7 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
  * A listener for device permissions changed reported from lib-jitsi-meet.
  */
 let permissionsListener: Function | undefined;
+let permissionStatusListener: Function | undefined;
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -88,6 +94,32 @@ MiddlewareRegistry.register(store => next => action => {
         .catch(() => {
             // Ignore errors.
         });
+
+        // Older lib-jitsi-meet versions only report whether the permissions were granted.
+        if (JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED) {
+            let statusReceived = false;
+            const _permissionStatusListener = (permissionStatus: IDevicesState['permissionStatus']) => {
+                statusReceived = true;
+                store.dispatch(devicePermissionStatusChanged(permissionStatus));
+            };
+
+            permissionStatusListener = _permissionStatusListener;
+            mediaDevices.addEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED, permissionStatusListener);
+            Promise.all([
+                mediaDevices.getPermissionStatus('audio'),
+                mediaDevices.getPermissionStatus('video')
+            ])
+
+            // A status reported while reading is newer than the one read.
+            .then(([ audio, video ]) => !statusReceived && _permissionStatusListener({
+                audio,
+                video
+            }))
+            .catch(() => {
+                // Ignore errors.
+            });
+        }
         break;
     }
     case APP_WILL_UNMOUNT:
@@ -96,7 +128,25 @@ MiddlewareRegistry.register(store => next => action => {
                 JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
             permissionsListener = undefined;
         }
+        if (typeof permissionStatusListener === 'function') {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED, permissionStatusListener);
+            permissionStatusListener = undefined;
+        }
         break;
+    case DEVICE_PERMISSION_STATUS_CHANGED: {
+        const previous = store.getState()['features/base/devices'].permissionStatus;
+
+        for (const mediaType of [ 'audio', 'video' ] as const) {
+            const status = action.permissionStatus[mediaType];
+
+            if (status?.state === 'denied'
+                    && (previous[mediaType]?.state !== 'denied' || previous[mediaType]?.reason !== status.reason)) {
+                sendAnalytics(createDevicePermissionDeniedEvent(mediaType, status.reason));
+            }
+        }
+        break;
+    }
     case NOTIFY_CAMERA_ERROR: {
         if (!action.error) {
             break;

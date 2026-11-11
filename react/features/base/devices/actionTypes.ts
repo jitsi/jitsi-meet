@@ -94,3 +94,14 @@ export const CHECK_AND_NOTIFY_FOR_NEW_DEVICE = 'CHECK_AND_NOTIFY_FOR_NEW_DEVICE'
  * }
  */
 export const DEVICE_PERMISSIONS_CHANGED = 'DEVICE_PERMISSIONS_CHANGED';
+
+/**
+ * The type of Redux action which signals that the permission status (granted, denied or prompt, and the reason for
+ * a denial) of the camera or the microphone changed.
+ *
+ * {
+ *     type: DEVICE_PERMISSION_STATUS_CHANGED
+ *     permissionStatus: Object
+ * }
+ */
+export const DEVICE_PERMISSION_STATUS_CHANGED = 'DEVICE_PERMISSION_STATUS_CHANGED';

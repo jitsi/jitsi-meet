@@ -12,6 +12,7 @@ import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     DEVICE_PERMISSIONS_CHANGED,
+    DEVICE_PERMISSION_STATUS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
@@ -32,6 +33,7 @@ import {
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
+import { IDevicesState } from './types';
 
 /**
  * Maps the WebRTC string for device type to the keys used to store configure,
@@ -451,5 +453,21 @@ export function devicePermissionsChanged(permissions: Object) {
     return {
         type: DEVICE_PERMISSIONS_CHANGED,
         permissions
+    };
+}
+
+/**
+ * Signals that the permission status of the camera or the microphone changed.
+ *
+ * @param {Object} permissionStatus - The status by media type, audio and video.
+ * @returns {{
+ *      type: DEVICE_PERMISSION_STATUS_CHANGED,
+ *      permissionStatus: Object
+ * }}
+ */
+export function devicePermissionStatusChanged(permissionStatus: IDevicesState['permissionStatus']) {
+    return {
+        type: DEVICE_PERMISSION_STATUS_CHANGED,
+        permissionStatus
     };
 }
