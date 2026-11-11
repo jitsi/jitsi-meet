@@ -57,8 +57,14 @@ const useStyles = makeStyles()(theme => {
         },
         endPollContainer: {
             display: 'flex',
-            justifyContent: 'flex-start',
-            marginTop: theme.spacing(3)
+            marginTop: theme.spacing(3),
+
+            '& button': {
+                border: 0,
+                backgroundColor: 'transparent',
+                ...theme.typography.bodyShortRegular,
+                color: theme.palette.link01
+            }
         }
     };
 });
@@ -160,11 +166,11 @@ const PollAnswer = ({
             </div>
             {
                 !pollSaved && canClose && <div className = { classes.endPollContainer }>
-                    <Button
-                        accessibilityLabel = { t('polls.results.endPoll') }
-                        labelKey = { 'polls.results.endPoll' }
+                    <button
                         onClick = { closePoll }
-                        type = { BUTTON_TYPES.TERTIARY } />
+                        type = 'button'>
+                        {t('polls.results.endPoll')}
+                    </button>
                 </div>
             }
         </div>
