@@ -470,6 +470,12 @@ MiddlewareRegistry.register(store => next => action => {
         ) {
             const trimmedMessage = String(action.message).trim();
 
+            // An unchanged text is not an edit: send nothing and do not mark the message as edited.
+            if (trimmedMessage === messageToEdit.message) {
+                logger.info(`Skipping edit for message ${action.messageId}: the text did not change`);
+                break;
+            }
+
             if (messageToEdit.privateMessage && messageToEdit.recipientId) {
                 conference.sendMessageCorrection(
                     action.messageId,
