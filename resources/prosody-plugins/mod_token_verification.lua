@@ -5,6 +5,8 @@
 -- are exempt. Anonymous users (no token) are allowed through. When
 -- token_verification_require_token_for_moderation is set, also blocks room
 -- config IQs (e.g. granting moderator status) from unauthenticated users.
+-- On a visitor node (main_domain is set) the main participants that come over
+-- s2s are exempt too. On the main prosody an s2s join is verified like any other.
 -- Records the verified conferences on the session (jitsi_meet_verified_rooms)
 -- and answers the 'jitsi-verify-session-rooms' event, so that a session whose
 -- JWT claims are refreshed after the join (mod_auth_token, on stream
@@ -56,9 +58,12 @@ module:log("debug",
 local require_token_for_moderation;
 -- option to allow domains to skip token verification
 local allowlist;
+-- the domain of the main prosody, set only on a visitor node
+local main_domain;
 local function load_config()
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
     allowlist = module:get_option_set('token_verification_allowlist', {});
+    main_domain = module:get_option_string('main_domain');
 end
 load_config();
 
@@ -84,8 +89,9 @@ local function verify_user(session, stanza)
     if allowlist:contains(user_domain)
         or allowlist:contains(user_bare_jid)
 
-        -- allow main participants in visitor mode
-        or session.type == 's2sin' then
+        -- allow main participants in visitor mode: on a visitor node they come over s2s
+        -- from the main prosody, which verified their token when they joined the main room
+        or (main_domain and session.type == 's2sin') then
         if DEBUG then module:log("debug", "Token not required from user in allow list: %s", user_jid); end
         return true;
     end
