@@ -114,6 +114,7 @@ export interface IDesktopDownloadConfig {
 export interface IDeeplinkingDesktopConfig extends IDeeplinkingPlatformConfig {
     download?: IDesktopDownloadConfig;
     enabled: boolean;
+    platforms?: Array<keyof IDesktopDownloadConfig>;
 }
 
 export interface IDeeplinkingConfig {
