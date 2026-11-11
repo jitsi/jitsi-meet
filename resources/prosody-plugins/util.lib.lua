@@ -399,14 +399,16 @@ function is_healthcheck_room(room_jid)
 end
 
 --- Returns true when the given occupant nick is the Jitsi focus participant.
--- The focus occupant always has a nick ending in "/focus".
--- @param nick the full occupant nick (resource part of the MUC JID)
+-- The focus occupant always joins with the resource "focus". The resource must
+-- match exactly: a resource such as "x/focus" belongs to another occupant.
+-- @param nick the full occupant nick (the MUC JID, e.g. room@conference.example.com/focus)
 -- @return boolean
 function is_focus(nick)
     if nick == nil then
         return false;
     end
-    return string.sub(nick, -string.len("/focus")) == "/focus";
+    local _, _, resource = jid.split(nick);
+    return resource == 'focus';
 end
 
 --- Returns true when the given bare resource/nick string is the focus nick.

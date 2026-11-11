@@ -87,7 +87,7 @@ function filter_stanza_in(stanza, session)
     end
 
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from or '') then
+        or stanza.attr.type == 'unavailable' then
         return stanza;
     end
 
