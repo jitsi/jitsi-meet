@@ -26,11 +26,14 @@ class MuteEveryonesDesktopDialog extends AbstractMuteEveryonesDesktopDialog<IPro
      * @returns {React$Component}
      */
     _renderSwitch() {
+        const moderationDesktopLabel = this.props.t('dialog.moderationDesktopLabel');
+
         return (
             this.props.isModerationSupported
             && this.props.exclude.length === 0
             && <Dialog.Switch
-                label = { this.props.t('dialog.moderationDesktopLabel') }
+                accessibilityLabel = { moderationDesktopLabel }
+                label = { moderationDesktopLabel }
                 onValueChange = { this._onToggleModeration }
                 value = { !this.state.moderationEnabled } />
         );
