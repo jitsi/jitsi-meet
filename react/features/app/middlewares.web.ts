@@ -5,6 +5,7 @@ import '../base/connection/middleware';
 import '../base/devices/middleware';
 import '../base/media/middleware';
 import '../deep-linking/middleware.web';
+import '../device-permissions/middleware.web';
 import '../dynamic-branding/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';

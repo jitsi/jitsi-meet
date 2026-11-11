@@ -3,6 +3,8 @@ import { AnyAction } from 'redux';
 import { createDevicePermissionDeniedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
+import { ignoreTrackEnd } from '../../device-permissions/actions.web';
+import { shouldShowGuidance } from '../../device-permissions/functions';
 import { processExternalDeviceRequest } from '../../device-selection/functions';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
@@ -163,11 +165,14 @@ MiddlewareRegistry.register(store => next => action => {
         const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
             ? 'deviceError.cameraPermission' : 'deviceError.cameraError';
 
-        store.dispatch(showWarningNotification({
-            description: additionalCameraErrorMsg,
-            descriptionKey: cameraErrorMsg,
-            titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        // The guidance dialog explains a denial instead.
+        if (name !== JitsiTrackErrors.PERMISSION_DENIED || !shouldShowGuidance(store.getState(), 'video')) {
+            store.dispatch(showWarningNotification({
+                description: additionalCameraErrorMsg,
+                descriptionKey: cameraErrorMsg,
+                titleKey
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));
@@ -192,11 +197,14 @@ MiddlewareRegistry.register(store => next => action => {
             ? 'deviceError.microphonePermission'
             : 'deviceError.microphoneError';
 
-        store.dispatch(showWarningNotification({
-            description: additionalMicErrorMsg,
-            descriptionKey: micErrorMsg,
-            titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        // The guidance dialog explains a denial instead.
+        if (name !== JitsiTrackErrors.PERMISSION_DENIED || !shouldShowGuidance(store.getState(), 'audio')) {
+            store.dispatch(showWarningNotification({
+                description: additionalMicErrorMsg,
+                descriptionKey: micErrorMsg,
+                titleKey
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));
@@ -216,6 +224,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         // on mobile devices the video stream has to be stopped before replacing it
         if (isMobileBrowser() && localTrack && !localTrack.muted) {
+            ignoreTrackEnd(localTrack.jitsiTrack);
             localTrack.jitsiTrack.stopStream();
         }
         if (isPrejoinPageVisible(store.getState())) {
@@ -289,10 +298,18 @@ function _processPendingRequests({ dispatch, getState }: IStore, next: Function,
 function _checkAndNotifyForNewDevice(store: IStore, newDevices: MediaDeviceInfo[], oldDevices: MediaDeviceInfo[]) {
     const { dispatch } = store;
 
+    // Without access to a kind of device, the browser lists it without ids. The devices listed once access is granted
+    // aren't new.
+    const listedWithoutIds = (kind: string) => {
+        const old = oldDevices.filter(device => device.kind === kind);
+
+        return old.length > 0 && old.every(device => !device.deviceId);
+    };
+
     // let's intersect both newDevices and oldDevices and handle thew newly
     // added devices
     const onlyNewDevices = newDevices.filter(
-        nDevice => !oldDevices.find(
+        nDevice => !listedWithoutIds(nDevice.kind) && !oldDevices.find(
             device => device.deviceId === nDevice.deviceId));
 
     // we group devices by groupID which normally is the grouping by physical device

@@ -366,7 +366,7 @@
         "cameraNotFoundError": "Camera was not found.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to reload the application.",
         "cameraNotSendingDataTitle": "Unable to access camera",
-        "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
+        "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you.",
         "cameraTimeoutError": "Could not start video source. Timeout occurred!",
         "cameraUnknownError": "Cannot use camera for an unknown reason.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
@@ -445,7 +445,7 @@
         "micNotFoundError": "Microphone was not found.",
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
         "micNotSendingDataTitle": "Your mic is muted by your system settings",
-        "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
+        "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you.",
         "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "moderationAudioLabel": "Allow non-moderators to unmute themselves",
@@ -891,16 +891,56 @@
         "allowAudio": "Allow microphone",
         "allowBoth": "Allow microphone and camera",
         "allowVideo": "Allow camera",
+        "blockedTitleBrowser": "Your browser is blocking your {{device}}",
+        "blockedTitleMac": "Your Mac is blocking your {{device}}",
+        "blockedTitleOther": "Your computer is blocking your {{device}}",
+        "blockedTitleWindows": "Windows is blocking your {{device}}",
         "continueWithoutAudio": "Continue without microphone",
         "continueWithoutBoth": "Continue without microphone and camera",
         "continueWithoutVideo": "Continue without camera",
+        "deviceAudio": "microphone",
+        "deviceBoth": "microphone and camera",
+        "deviceVideo": "camera",
+        "embedded": "This meeting is embedded in another site, so allow access for {{domain}}.",
         "notNow": "Not now",
+        "openSettings": "Open Settings",
+        "openSystemSettings": "Open System Settings",
+        "paneAudio": "Microphone",
+        "paneBoth": "Microphone and Camera",
+        "paneVideo": "Camera",
         "promptDescriptionAudio": "Your browser will ask for access to your microphone. You can turn it off at any time.",
         "promptDescriptionBoth": "Your browser will ask for access to your microphone and camera. You can turn them off at any time.",
         "promptDescriptionVideo": "Your browser will ask for access to your camera. You can turn it off at any time.",
         "promptTitleAudio": "Do you want people to hear you in the meeting?",
         "promptTitleBoth": "Do you want people to see and hear you in the meeting?",
-        "promptTitleVideo": "Do you want people to see you in the meeting?"
+        "promptTitleVideo": "Do you want people to see you in the meeting?",
+        "steps": {
+            "browserChromium": {
+                "1": "Select the site controls icon next to the address bar and allow the {{device}} for {{domain}}.",
+                "2": "Select Try again."
+            },
+            "browserFirefox": {
+                "1": "Select the crossed-out {{device}} icon in the address bar and remove the block.",
+                "2": "Select Try again."
+            },
+            "browserSafari": {
+                "1": "Choose Safari, then Settings for {{domain}}, and set {{pane}} to Allow. \"Ask\" won't show the prompt again.",
+                "2": "Select Try again."
+            },
+            "osMac": {
+                "1": "Open System Settings, then Privacy & Security, then {{pane}}.",
+                "2": "Turn on your browser.",
+                "3": "Quit and reopen your browser when macOS asks, then join the meeting again."
+            },
+            "osOther": {
+                "1": "Allow your browser to use the {{device}} in your system settings, then select Try again."
+            },
+            "osWindows": {
+                "1": "Open Settings, then Privacy & security, then {{pane}}.",
+                "2": "Turn on access and \"Let desktop apps access your {{device}}\", then select Try again."
+            }
+        },
+        "tryAgain": "Try again"
     },
     "multiScreen": {
         "noParticipants": "No participants",
