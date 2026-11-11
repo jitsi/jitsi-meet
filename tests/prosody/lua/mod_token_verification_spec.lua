@@ -3,8 +3,8 @@
 --   busted ../../tests/prosody/lua/
 --
 -- Stubs every Prosody dependency so no Prosody installation is needed.
--- These cover which s2s joins skip the room check: on a visitor node (main_domain is set) the
--- main participants that come over s2s skip it, on the main prosody every join is verified.
+-- These cover the joins over s2s: on a visitor node (main_domain is set) the main participants
+-- that come over s2s skip the room check, on the main prosody every join over s2s is refused.
 
 -- ---------------------------------------------------------------------------
 -- Stubs for top-level `require`d Prosody libs
@@ -52,12 +52,15 @@ local ROOM_JID = 'room@' .. MUC_HOST
 local verified
 local pre_join_fn
 local pre_create_fn
+-- Set to true for a token_util that lets a session without a token through, as with
+-- allow_empty_token = true.
+local allow_empty_token
 
--- A session without a token does not match any room, as with allow_empty_token = false.
+-- By default a session without a token does not match any room, as with allow_empty_token = false.
 local token_util_stub = {
     verify_room = function(_, session, room_jid)
         table.insert(verified, room_jid)
-        return session.auth_token ~= nil
+        return allow_empty_token or session.auth_token ~= nil
     end,
 }
 
@@ -70,6 +73,7 @@ local function load_module(options)
     verified = {}
     pre_join_fn = nil
     pre_create_fn = nil
+    allow_empty_token = options.allow_empty_token
 
     _G.prosody = { hosts = {} }
     _G.module = {
@@ -80,8 +84,10 @@ local function load_module(options)
         context = function() return {} end,
         get_option_boolean = function(_, key) return options[key] end,
         get_option_string = function(_, key) return options[key] end,
-        get_option_set = function()
-            return { contains = function() return false end }
+        get_option_set = function(_, key)
+            local values = {}
+            for _, v in ipairs(options[key] or {}) do values[v] = true end
+            return { contains = function(_, v) return values[v] == true end }
         end,
         require = function(_, name)
             if name == 'util' then return util_stub end
@@ -140,24 +146,73 @@ describe('mod_token_verification', function()
     describe('on the main prosody', function()
         before_each(function() load_module({}) end)
 
-        it('verifies the room of a join that comes over s2s', function()
+        it('refuses a join that comes over s2s', function()
             local session = new_session('s2sin')
 
             assert.is_true(join(pre_join_fn, session, 'visitor@v0.meet.jitsi/res'))
-            assert.are.same({ ROOM_JID .. '/nick' }, verified)
+            assert.are.equal(0, #verified)
             assert.are.equal('not-allowed', session.sent[1].condition)
         end)
 
-        it('verifies the room of a room create that comes over s2s', function()
+        it('refuses a room create that comes over s2s', function()
             local session = new_session('s2sin')
 
             assert.is_true(join(pre_create_fn, session, 'visitor@v0.meet.jitsi/res'))
-            assert.are.equal(1, #verified)
+            assert.are.equal('not-allowed', session.sent[1].condition)
+        end)
+
+        it('verifies the room of a join from a client', function()
+            local session = new_session('c2s')
+
+            assert.is_true(join(pre_join_fn, session, 'user@example.com/res'))
+            assert.are.same({ ROOM_JID .. '/nick' }, verified)
+            assert.are.equal('not-allowed', session.sent[1].condition)
         end)
 
         it('does not verify the room for an admin', function()
             assert.is_nil(join(pre_join_fn, new_session('c2s'), FOCUS_JID .. '/focus'))
             assert.are.equal(0, #verified)
+        end)
+    end)
+
+    describe('on the main prosody with allow_empty_token', function()
+        before_each(function() load_module({ allow_empty_token = true }) end)
+
+        it('lets a client without a token join after the room check', function()
+            local session = new_session('c2s')
+
+            assert.is_nil(join(pre_join_fn, session, 'user@example.com/res'))
+            assert.are.equal(1, #verified)
+            assert.are.equal(0, #session.sent)
+        end)
+
+        it('still refuses a join without a token that comes over s2s', function()
+            local session = new_session('s2sin')
+
+            assert.is_true(join(pre_join_fn, session, 'visitor@v0.meet.jitsi/res'))
+            assert.are.equal(0, #verified)
+            assert.are.equal('not-allowed', session.sent[1].condition)
+        end)
+    end)
+
+    describe('with an allowlist', function()
+        before_each(function()
+            load_module({ token_verification_allowlist = { 'recorder.example.com' } })
+        end)
+
+        it('lets a client from an allowlisted domain join without a room check', function()
+            local session = new_session('c2s')
+
+            assert.is_nil(join(pre_join_fn, session, 'jibri@recorder.example.com/res'))
+            assert.are.equal(0, #verified)
+            assert.are.equal(0, #session.sent)
+        end)
+
+        it('verifies the room of a client from another domain', function()
+            local session = new_session('c2s')
+
+            assert.is_true(join(pre_join_fn, session, 'user@example.com/res'))
+            assert.are.equal(1, #verified)
         end)
     end)
 

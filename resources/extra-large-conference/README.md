@@ -89,9 +89,10 @@ s2s_whitelist = {
 
 - Make sure s2s is not in modules_disabled
 - Add `"s2s_whitelist";` to the `modules_enabled` of the main MUC component (`Component "conference.jitmeet.example.com" "muc"`).
-  A Prosody component loads only a few of the global modules (tls, dialback, s2s, s2s_bidi, ...), so the `s2s_whitelist`
-  entry in the global `modules_enabled` applies only to the virtual hosts. Without it, the main MUC accepts s2s connections
-  from domains that are not in `s2s_whitelist`, for example the client domains of the visitor nodes (`v1.meet.jitsi`).
+  This step is required. A component inherits only a small fixed set of the global modules, and `s2s_whitelist` is not one
+  of them, so the entry in the global `modules_enabled` applies only to the virtual hosts. With the module loaded, the main
+  MUC accepts s2s connections only from the domains in `s2s_whitelist`, and sends over s2s only to them. Without it, the
+  main MUC accepts s2s connections from any domain, for example the client domains of the visitor nodes (`v1.meet.jitsi`).
 - Enable `"visitors";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
   You can add under main virtual host the config: `visitors_ignore_list = { "recorder.jitmeet.example.com" }` to ignore jibri and transcribers from the visitor logic and use them only in the main prosody conference.
 - Create the visitors component in /etc/prosody/conf.d/jitmeet.example.com.cfg.lua:
