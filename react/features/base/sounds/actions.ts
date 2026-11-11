@@ -1,4 +1,5 @@
 import { IStore } from '../../app/types';
+import { REACTION_SOUND } from '../../reactions/constants';
 import { getConferenceState } from '../conference/functions';
 import { Sounds } from '../config/configType';
 import { AudioElement } from '../media/components/AbstractAudio';
@@ -72,9 +73,16 @@ export function playSound(soundId: string) {
         const state = getState();
         const disabledSounds = getDisabledSounds(state);
         const { leaving } = getConferenceState(state);
+        const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
         // Skip playing sounds when leaving, to avoid hearing that recording has stopped and so on.
         if (leaving) {
+            return;
+        }
+
+        // The recorder plays no sounds, as they would end up in the recording or the stream. The reaction
+        // sounds are kept, they go with the reaction animations the recorder shows. A SIP gateway plays all.
+        if (iAmRecorder && !iAmSipGateway && !soundId.startsWith(REACTION_SOUND)) {
             return;
         }
 
