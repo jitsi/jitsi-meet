@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createTestContext } from './helpers/test_context.js';
 import { getRoomState } from './helpers/test_observer.js';
 import { joinWithTranscriber } from './helpers/xmpp_client.js';
@@ -211,6 +212,34 @@ describe('mod_muc_meeting_id', () => {
 
             assert.strictEqual(state.occupant_count, 1,
                 'kicked regular user should be gone, only focus remains');
+        });
+
+        it('a nick that only ends in /focus is handled as a regular occupant', async () => {
+            const r = room();
+
+            // muc_resource_validate rejects a '/' in the nick, so unload it to
+            // let such a nick into the room, as on a deployment without it.
+            await prosodyShell(`module:unload("muc_resource_validate", "${CONFERENCE}")`);
+
+            try {
+                const focus = await ctx.connectFocus(r);
+                const user = await ctx.connect();
+
+                await user.joinRoom(r, 'probe/focus');
+
+                const resp = await focus.sendMucAdmin(r, { nick: 'probe/focus',
+                    role: 'none' });
+
+                assert.strictEqual(resp.attrs.type, 'result',
+                    'the admin set must be processed like for any other occupant');
+
+                const state = await getRoomState(r);
+
+                assert.strictEqual(state.occupant_count, 1,
+                    'the user should be gone, only focus remains');
+            } finally {
+                await prosodyShell(`module:load("muc_resource_validate", "${CONFERENCE}")`);
+            }
         });
     });
 

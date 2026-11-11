@@ -123,14 +123,16 @@ export async function joinWithFocus(roomJid) {
  * @param {string} [opts.username]            SASL username for PLAIN auth. When omitted,
  *                                            ANONYMOUS auth is used.
  * @param {string} [opts.password]            SASL password for PLAIN auth.
- * @param {number} [opts.restartDelay]        Milliseconds to hold the stream restart that
+ * @param {string} [opts.resource]            Resource to request at bind. When omitted,
+ *                                            the server assigns one.
+ * @param {number} [opts.restartDelay]       Milliseconds to hold the stream restart that
  *                                            follows SASL success, so a server-side close
  *                                            can be made to land before resource binding.
  * @returns {Promise<XmppTestClient>} If start() fails after the server closed the
  *                                    stream, the rejection has `streamClosed: true`.
  */
 export async function createXmppClient({ host = 'localhost', domain, params, username, password,
-    restartDelay } = {}) {
+    resource, restartDelay } = {}) {
     const url = new URL(`ws://${host}:5280/xmpp-websocket`);
 
     if (params) {
@@ -142,6 +144,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     const xmpp = client({
         service: url.toString(),
         domain: domain ?? host,
+        resource,
         ...username === undefined ? {} : { username,
             password }
     });

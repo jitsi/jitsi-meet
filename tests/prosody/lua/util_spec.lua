@@ -901,8 +901,16 @@ describe("util.lib", function()
 
     describe("is_focus", function()
 
-        it("nick ending in /focus returns true", function()
+        it("nick with resource focus returns true", function()
             assert.is_true(M.is_focus("room@conference.example.com/focus"))
+        end)
+
+        it("nick whose resource only ends in /focus returns false", function()
+            assert.is_false(M.is_focus("room@conference.example.com/probe/focus"))
+        end)
+
+        it("nil returns false", function()
+            assert.is_false(M.is_focus(nil))
         end)
 
         it("plain /focus string returns true", function()

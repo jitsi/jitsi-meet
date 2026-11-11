@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
@@ -20,8 +21,9 @@ const nextRoom = () => `displayname-${++_counter}@${CONFERENCE}`;
  * @param {string} roomJid
  * @param {object} [contextUser]  JWT context.user claims (e.g. { name: 'Alice' })
  * @param {object} [features]     JWT context.features claims
+ * @param {string} [resource]     resource to bind instead of a server-assigned one
  */
-function connect(roomJid, { contextUser, features } = {}) {
+function connect(roomJid, { contextUser, features, resource } = {}) {
     const roomName = roomJid.split('@')[0];
     const context = {};
 
@@ -35,7 +37,8 @@ function connect(roomJid, { contextUser, features } = {}) {
         context });
 
     return createXmppClient({ params: { room: roomName,
-        token } });
+        token },
+    resource });
 }
 
 const connectModerator = roomJid => connect(roomJid, { contextUser: { moderator: true } });
@@ -87,6 +90,41 @@ describe('mod_muc_displayname — name-readonly', () => {
         await alice.joinRoom(r, undefined, { displayName: 'WrongName' });
 
         // The observer sees Alice's join presence; nick must be "Alice" (from token).
+        const presence = await waitForOtherPresence(observer, r, alice.nick);
+        const nick = presence.getChild('nick', NICK_NS);
+
+        assert.ok(nick, 'presence must contain a <nick> element');
+        assert.strictEqual(nick.getText(), 'Alice',
+            'nick must be the token name, not the client-supplied name');
+    });
+
+    it('enforces token name for a session that bound the resource "focus"', async () => {
+        const r = nextRoom();
+
+        const focus = await joinWithFocus(r);
+        const observer = await createXmppClient({ params: { room: r.split('@')[0] } });
+
+        clients.push(focus, observer);
+        await observer.joinRoom(r);
+
+        // Only the real JID's resource is "focus"; the session is still a regular
+        // token user, so the token name applies.
+        const alice = await connect(r, {
+            contextUser: { name: 'Alice' },
+            features: { 'name-readonly': true },
+            resource: 'focus'
+        });
+
+        clients.push(alice);
+        assert.ok(alice.jid.endsWith('/focus'), `expected a bound resource of focus, got ${alice.jid}`);
+
+        // The inbound filter runs before prosody stamps 'from' on the stanza, so
+        // set it explicitly, as a client may.
+        await alice.sendRaw(xml('presence', { from: alice.jid,
+            to: `${r}/${alice.nick}` },
+        xml('x', { xmlns: 'http://jabber.org/protocol/muc' }),
+        xml('nick', { xmlns: NICK_NS }, 'WrongName')));
+
         const presence = await waitForOtherPresence(observer, r, alice.nick);
         const nick = presence.getChild('nick', NICK_NS);
 
