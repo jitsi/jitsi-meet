@@ -79,6 +79,7 @@ import {
     MODERATE_CHAT_MESSAGE
 } from './constants';
 import {
+    canModerateMessage,
     getDisplayNameSuffix,
     getFocusedTab,
     getUnreadCount,
@@ -504,6 +505,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (conference) {
             const { reaction, messageId, receiverId } = action;
 
+            logger.info(`Sending reaction ${reaction} to message ${messageId}`);
             conference.sendReaction(reaction, messageId, receiverId);
         }
         break;
@@ -512,6 +514,12 @@ MiddlewareRegistry.register(store => next => action => {
     case SEND_MESSAGE_MODERATION: {
         const state = store.getState();
         const conference = getCurrentConference(state);
+
+        // Same guard as the UI. The role or the message can change after the UI checked it.
+        if (!canModerateMessage(state, action.message)) {
+            logger.warn(`Ignoring moderation request for message ${action.message.messageId}: not allowed.`);
+            break;
+        }
 
         if (conference) {
             logger.info(`Sending moderation for message ${action.message.messageId}, reason: ${Boolean(action.reason)}`);

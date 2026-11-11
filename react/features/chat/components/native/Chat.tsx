@@ -1,6 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import { Route, useIsFocused } from '@react-navigation/native';
 import React, { Component, useEffect } from 'react';
+import { Platform, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -9,14 +10,26 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { pollsStyles } from '../../../polls/components/native/styles';
+import { sendMessageEdit } from '../../actions.any';
 import { clearChatSearch, closeChat, sendMessage } from '../../actions.native';
 import { ChatTabs } from '../../constants';
-import { IChatProps as AbstractProps } from '../../types';
+import { IChatProps as AbstractProps, IMessage } from '../../types';
 
 import ChatInputBar from './ChatInputBar';
 import ChatSearchBar from './ChatSearchBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import styles from './styles';
+
+/**
+ * How long the "Message copied" hint shows.
+ */
+const COPIED_HINT_TIMEOUT = 2000;
+
+/**
+ * Android 13 (API 33) and later shows its own clipboard confirmation, so the hint would show twice.
+ */
+const SHOW_COPIED_HINT = Platform.OS !== 'android' || Number(Platform.Version) < 33;
 
 interface IProps extends AbstractProps {
 
@@ -36,11 +49,25 @@ interface IProps extends AbstractProps {
     route: Route<'', { privateMessageRecipient: { name: string; }; }>;
 }
 
+interface IState {
+
+    /**
+     * The id of the local message being edited, as on web.
+     */
+    editingMessageId?: string;
+
+    /**
+     * Whether the "Message copied" hint shows, as on web.
+     */
+    showCopiedHint?: boolean;
+}
+
 /**
  * Implements a React native component that renders the chat window (modal) of
  * the mobile client.
  */
-class Chat extends Component<IProps> {
+class Chat extends Component<IProps, IState> {
+    _copiedHintTimeout?: ReturnType<typeof setTimeout>;
 
     /**
      * Initializes a new {@code AbstractChat} instance.
@@ -51,9 +78,82 @@ class Chat extends Component<IProps> {
     constructor(props: IProps) {
         super(props);
 
+        this.state = {};
+
         // Bind event handlers so they are only bound once per instance.
+        this._onCancelEdit = this._onCancelEdit.bind(this);
+        this._onEditMessage = this._onEditMessage.bind(this);
+        this._onMessageCopied = this._onMessageCopied.bind(this);
         this._onSendMessage = this._onSendMessage.bind(this);
         this._renderFooter = this._renderFooter.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillUnmount()}.
+     *
+     * @inheritdoc
+     */
+    override componentWillUnmount() {
+        clearTimeout(this._copiedHintTimeout);
+    }
+
+    /**
+     * Shows the "Message copied" hint, from the message menu. A new copy restarts the timeout.
+     *
+     * @returns {void}
+     */
+    _onMessageCopied() {
+        if (!SHOW_COPIED_HINT) {
+            return;
+        }
+
+        clearTimeout(this._copiedHintTimeout);
+        this.setState({ showCopiedHint: true });
+        this._copiedHintTimeout = setTimeout(() => this.setState({ showCopiedHint: false }), COPIED_HINT_TIMEOUT);
+    }
+
+    /**
+     * Leaves edit mode when the edited message is retracted or moderated meanwhile.
+     *
+     * @inheritdoc
+     */
+    override componentDidUpdate() {
+        if (this.state.editingMessageId && !this._getEditingMessage()) {
+            this._onCancelEdit();
+        }
+    }
+
+    /**
+     * Returns the message being edited, if it can still be edited.
+     *
+     * @returns {IMessage | undefined}
+     */
+    _getEditingMessage(): IMessage | undefined {
+        const { editingMessageId } = this.state;
+        const message = editingMessageId
+            ? this.props._messages.find(m => m.messageId === editingMessageId)
+            : undefined;
+
+        return message && !message.isDeleted && !message.isModerated ? message : undefined;
+    }
+
+    /**
+     * Leaves edit mode.
+     *
+     * @returns {void}
+     */
+    _onCancelEdit() {
+        this.setState({ editingMessageId: undefined });
+    }
+
+    /**
+     * Enters edit mode for a message, from the message menu.
+     *
+     * @param {string} messageId - The id of the message.
+     * @returns {void}
+     */
+    _onEditMessage(messageId: string) {
+        this.setState({ editingMessageId: messageId });
     }
 
     /**
@@ -73,8 +173,23 @@ class Chat extends Component<IProps> {
                 hasExtraHeaderHeight = { true }
                 style = { pollsStyles.pollPaneContainer as StyleType }>
                 <ChatSearchBar />
-                {/* @ts-ignore */}
-                <MessageContainer messages = { _messages } />
+                <View style = { styles.messageListArea as ViewStyle }>
+                    <MessageContainer
+
+                        // @ts-ignore
+                        messages = { _messages }
+                        onEditMessage = { this._onEditMessage }
+                        onMessageCopied = { this._onMessageCopied } />
+                    { this.state.showCopiedHint && (
+                        <View
+                            pointerEvents = 'none'
+                            style = { styles.copiedHint as ViewStyle }>
+                            <Text style = { styles.copiedHintText as TextStyle }>
+                                { this.props.t('chat.messageCopied') }
+                            </Text>
+                        </View>
+                    ) }
+                </View>
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
             </JitsiScreen>
         );
@@ -87,11 +202,16 @@ class Chat extends Component<IProps> {
      * @returns {React$Element<*>}
      */
     _renderFooter() {
-        return <ChatInputBar onSend = { this._onSendMessage } />;
+        return (
+            <ChatInputBar
+                editingMessage = { this._getEditingMessage() }
+                onCancelEdit = { this._onCancelEdit }
+                onSend = { this._onSendMessage } />
+        );
     }
 
     /**
-    * Sends a text message.
+    * Sends a text message, or the new text of the message being edited.
     *
     * @private
     * @param {string} text - The text message to be sent.
@@ -99,6 +219,15 @@ class Chat extends Component<IProps> {
     * @type {Function}
     */
     _onSendMessage(text: string) {
+        const editingMessage = this._getEditingMessage();
+
+        if (editingMessage) {
+            this.props.dispatch(sendMessageEdit(editingMessage.messageId, text));
+            this._onCancelEdit();
+
+            return;
+        }
+
         this.props.dispatch(sendMessage(text));
     }
 }

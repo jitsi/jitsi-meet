@@ -73,11 +73,6 @@ export interface IChatMessageProps extends WithTranslation {
     canReply?: boolean;
 
     /**
-     * Redux dispatch, injected by connect on native.
-     */
-    dispatch?: IStore['dispatch'];
-
-    /**
      * Whether gifs are enabled or not.
      */
     gifEnabled?: boolean;
@@ -99,14 +94,39 @@ export interface IChatMessageProps extends WithTranslation {
     isActiveMatch?: boolean;
 
     /**
+     * Hides the row while the message menu draws its copy, so the message does not show twice (native).
+     */
+    isHidden?: boolean;
+
+    /**
+     * Renders the copy drawn above the message menu backdrop (native): outlined and not interactive.
+     */
+    isPreview?: boolean;
+
+    /**
      * Whether current participant is currently knocking in the lobby room.
      */
     knocking?: boolean;
 
     /**
+     * Changes when the message list changes. The hidden row then measures itself again (native).
+     */
+    measureKey?: number;
+
+    /**
      * The representation of a chat message.
      */
     message: IMessage;
+
+    /**
+     * Opens the message menu for this message (native).
+     */
+    onLongPress?: (props: IMessageMenuProps) => void;
+
+    /**
+     * Gets the new window frame of the hidden row, after the list changed (native).
+     */
+    onRemeasure?: (anchor: IMessageAnchor) => void;
 
     /**
      * Whether or not the avatar image of the participant which sent the message
@@ -124,6 +144,30 @@ export interface IChatMessageProps extends WithTranslation {
      * Whether or not the time at which the message was sent should be
      * displayed.
      */
+    showTimestamp: boolean;
+}
+
+/**
+ * Window frame of a long-pressed message row, so the menu can redraw the row above its backdrop.
+ */
+export interface IMessageAnchor {
+    height: number;
+    width: number;
+    x: number;
+    y: number;
+}
+
+/**
+ * The props of the native message menu.
+ */
+export interface IMessageMenuProps {
+    anchor?: IMessageAnchor;
+    messageId: string;
+    onCopy?: () => void;
+    onEdit?: (messageId: string) => void;
+    onLift?: (height: number) => void;
+    showAvatar?: boolean;
+    showDisplayName: boolean;
     showTimestamp: boolean;
 }
 

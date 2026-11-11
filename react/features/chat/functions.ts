@@ -30,6 +30,7 @@ import {
     MAX_PENDING_ENTRIES,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
+    MESSAGE_TYPE_REMOTE,
     TIMESTAMP_FORMAT
 } from './constants';
 import { IMessage, IPendingMap } from './types';
@@ -333,15 +334,64 @@ export function canRetractMessage(state: IReduxState, message: IMessage): boolea
 }
 
 /**
- * Whether the local participant can moderate (remove) another participant's message.
- * Same rules as the web MessageMenu, which is shown only for messages that are not deleted or moderated.
+ * Whether the local participant can still send to the target of a message: its private recipient, or the group.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+function canSendToMessageTarget(state: IReduxState, message: IMessage): boolean {
+    return message.privateMessage ? !isSendPrivateChatDisabled(state) : !isSendGroupChatDisabled(state);
+}
+
+/**
+ * Whether the local participant can edit their own text message. The server applies the edit,
+ * and the participant must still be allowed to send to the message target.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canEditMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isFromVisitor
+        && !message.isDeleted
+        && !message.isModerated
+        && !isFileMessage(message)
+        && state['features/chat'].messageModerationSupported
+        && canSendToMessageTarget(state, message);
+}
+
+/**
+ * Whether the local participant can react to a message: a group message of another participant,
+ * not lobby, deleted or moderated, in a room where the participant can send to the group.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canReactToMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_REMOTE
+        && !message.privateMessage
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isDeleted
+        && !message.isModerated
+        && !isSendGroupChatDisabled(state);
+}
+
+/**
+ * Whether the local participant can moderate (remove) a message of another participant.
+ * Only remote messages: system and error bubbles have a local id that the server does not know.
  *
  * @param {IReduxState} state - The redux state.
  * @param {IMessage} message - The message.
  * @returns {boolean}
  */
 export function canModerateMessage(state: IReduxState, message: IMessage): boolean {
-    return message.messageType !== MESSAGE_TYPE_LOCAL
+    return message.messageType === MESSAGE_TYPE_REMOTE
         && !message.isDeleted
         && !message.isModerated
         && state['features/chat'].messageModerationSupported

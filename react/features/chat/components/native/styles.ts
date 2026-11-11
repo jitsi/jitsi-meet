@@ -91,6 +91,17 @@ export default {
         backgroundColor: BaseTheme.palette.warning02
     },
 
+    hiddenMessageWrapper: {
+        opacity: 0
+    },
+
+    // Outline, not border, so the copy keeps the original's size.
+    previewMessageBubble: {
+        outlineColor: BaseTheme.palette.action01,
+        outlineStyle: 'solid',
+        outlineWidth: 2
+    },
+
     chatMessageHighlight: {
         backgroundColor: BaseTheme.palette.action02,
         color: BaseTheme.palette.text01
@@ -357,6 +368,104 @@ export default {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
         marginLeft: BaseTheme.spacing[3]
+    },
+
+    emojiSelector: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: BaseTheme.spacing[2],
+        paddingHorizontal: MD_ITEM_MARGIN_PADDING
+    },
+
+    emojiSelectorItem: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui03,
+        borderRadius: 26,
+        height: 52,
+        justifyContent: 'center',
+        width: 52
+    },
+
+    emojiSelectorEmoji: {
+        fontSize: 26
+    },
+
+    // Overlaps the bubble's bottom edge, as in the spec.
+    reactionsChip: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui03,
+        borderColor: BaseTheme.palette.ui01,
+        borderRadius: 14,
+        borderWidth: 2,
+        flexDirection: 'row',
+        height: 28,
+        marginLeft: BaseTheme.spacing[2],
+        marginTop: -6,
+        paddingHorizontal: BaseTheme.spacing[2]
+    },
+
+    reactionsChipEmoji: {
+        fontSize: 14
+    },
+
+    reactionsChipCount: {
+        color: BaseTheme.palette.text02,
+        fontSize: 12,
+        marginLeft: BaseTheme.spacing[1]
+    },
+
+    editedLabel: {
+        color: BaseTheme.palette.text03,
+        fontSize: 12,
+        marginTop: BaseTheme.spacing[1]
+    },
+
+    messageListArea: {
+        flex: 1
+    },
+
+    // Floats over the bottom of the message list, above the input bar.
+    copiedHint: {
+        alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.shape.borderRadius,
+        bottom: BaseTheme.spacing[2],
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingVertical: BaseTheme.spacing[2],
+        position: 'absolute'
+    },
+
+    copiedHintText: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01
+    },
+
+    editingBanner: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui02,
+        borderBottomRightRadius: BaseTheme.shape.borderRadius,
+        borderLeftColor: BaseTheme.palette.action01,
+        borderLeftWidth: 3,
+        borderTopRightRadius: BaseTheme.shape.borderRadius,
+        flexDirection: 'row',
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[2]
+    },
+
+    editingBannerText: {
+        flex: 1,
+        marginHorizontal: BaseTheme.spacing[2]
+    },
+
+    editingBannerTitle: {
+        ...BaseTheme.typography.labelBold,
+        color: BaseTheme.palette.action01
+    },
+
+    editingBannerMessage: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text02
     }
 };
 
