@@ -56,14 +56,12 @@ const useStyles = makeStyles()(theme => {
             bottom: 0,
             display: 'flex',
             justifyContent: 'flex-end',
-            gap: theme.spacing(3),
             padding: '24px',
             width: '100%',
             boxSizing: 'border-box'
         },
-        footerButton: {
-            flexShrink: 0,
-            whiteSpace: 'nowrap'
+        buttonMargin: {
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -275,7 +273,7 @@ const PollCreate = ({
         <div className = { classes.footer }>
             <Button
                 accessibilityLabel = { t('polls.create.cancel') }
-                className = { classes.footerButton }
+                className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
                 onClick = { () => {
                     setCreateMode(false);
@@ -286,7 +284,6 @@ const PollCreate = ({
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
                 accessibilityLabel = { t('polls.create.save') }
-                className = { classes.footerButton }
                 disabled = { isSubmitDisabled }
                 isSubmit = { true }
                 labelKey = { 'polls.create.save' } />
