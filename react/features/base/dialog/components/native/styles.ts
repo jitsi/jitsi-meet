@@ -69,7 +69,7 @@ export const bottomSheetStyles = {
     },
 
     /**
-     * Default space around the sheet rows. The bottom clears the home indicator.
+     * Space above and below the sheet rows, for sheets with addScrollViewPadding.
      */
     scrollViewContent: {
         paddingBottom: BaseTheme.spacing[3],
