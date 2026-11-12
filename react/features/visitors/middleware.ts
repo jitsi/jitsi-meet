@@ -10,7 +10,6 @@ import {
     UPDATE_CONFERENCE_METADATA
 } from '../base/conference/actionTypes';
 import { IConferenceMetadata } from '../base/conference/reducer';
-import { SET_CONFIG } from '../base/config/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
@@ -238,16 +237,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         _handleQueueAndNotification(dispatch, getState, metadata);
 
         break;
-    }
-    case SET_CONFIG: {
-        const result = next(action);
-        const { preferVisitor } = action.config;
-
-        if (preferVisitor !== undefined) {
-            setPreferVisitor(preferVisitor);
-        }
-
-        return result;
     }
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
