@@ -24,9 +24,11 @@ export default class ChatPanel extends BasePageObject {
         if (!await this.isOpen()) {
             await this.pressShortcut();
         }
-        if (!await this.isOpen()) {
-            throw new Error('Chat panel failed to open');
-        }
+
+        await this.participant.driver.$('#sideToolbarContainer').waitForExist({
+            timeout: 3000,
+            timeoutMsg: 'Chat panel failed to open'
+        });
 
         const inputField = this.participant.driver.$('#chat-input');
 
