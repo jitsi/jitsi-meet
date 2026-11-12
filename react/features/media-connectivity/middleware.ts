@@ -1,7 +1,7 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiMediaConnectivityStatus } from '../base/lib-jitsi-meet';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { hideNotification, showNotification } from '../notifications/actions';
 import {
@@ -16,6 +16,8 @@ import {
  */
 const NOTIFICATION_DELAY = 5000;
 
+const { AT_RISK, DEGRADED, FAILED, INTERRUPTED } = JitsiMediaConnectivityStatus;
+
 /**
  * The notifications of the lib-jitsi-meet media connectivity statuses that are notified. Any other status, i.e.
  * good, clears the notification.
@@ -26,25 +28,25 @@ const NOTIFICATIONS: Record<string, {
     timeout: NOTIFICATION_TIMEOUT_TYPE;
     titleKey: string;
 }> = {
-    'at-risk': {
+    [AT_RISK]: {
         appearance: NOTIFICATION_TYPE.WARNING,
         descriptionKey: 'notify.mediaConnectivityAtRiskDescription',
         timeout: NOTIFICATION_TIMEOUT_TYPE.STICKY,
         titleKey: 'notify.mediaConnectivityAtRisk'
     },
-    degraded: {
+    [DEGRADED]: {
         appearance: NOTIFICATION_TYPE.WARNING,
         descriptionKey: 'notify.mediaConnectivityDegradedDescription',
         timeout: NOTIFICATION_TIMEOUT_TYPE.LONG,
         titleKey: 'notify.mediaConnectivityDegraded'
     },
-    failed: {
+    [FAILED]: {
         appearance: NOTIFICATION_TYPE.ERROR,
         descriptionKey: 'notify.mediaConnectivityFailedDescription',
         timeout: NOTIFICATION_TIMEOUT_TYPE.STICKY,
         titleKey: 'notify.mediaConnectivityFailed'
     },
-    interrupted: {
+    [INTERRUPTED]: {
         appearance: NOTIFICATION_TYPE.WARNING,
         descriptionKey: 'notify.mediaConnectivityInterruptedDescription',
         timeout: NOTIFICATION_TIMEOUT_TYPE.STICKY,
@@ -61,6 +63,11 @@ StateListenerRegistry.register(
     (conference: IJitsiConference | undefined, store: IStore, previousConference?: IJitsiConference) => {
         if (previousConference) {
             _clear(store.dispatch);
+        }
+
+        // The recorder would show them in the recording and the live stream.
+        if (store.getState()['features/base/config'].iAmRecorder) {
+            return;
         }
 
         conference?.on(
@@ -123,15 +130,19 @@ function _onStatusChanged({ dispatch, getState }: IStore, newStatus: string) {
         notifiedStatus = undefined;
     }
 
-    if (!NOTIFICATIONS[newStatus]) {
-        const restored = notifiedStatus === 'failed' || notifiedStatus === 'interrupted';
+    const restored = (notifiedStatus === FAILED || notifiedStatus === INTERRUPTED)
+        && (!NOTIFICATIONS[newStatus] || newStatus === DEGRADED);
 
+    if (restored || !NOTIFICATIONS[newStatus]) {
         _clear(dispatch);
         restored && dispatch(showNotification({
             appearance: NOTIFICATION_TYPE.SUCCESS,
             titleKey: 'notify.mediaConnectivityRestored',
             uid: MEDIA_CONNECTIVITY_NOTIFICATION_ID
         }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+
+        // Media coming back over TCP isn't followed by a limited connection, that would only confuse after the drop.
+        status = restored && newStatus === DEGRADED ? newStatus : undefined;
 
         return;
     }
