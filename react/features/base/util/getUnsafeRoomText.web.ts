@@ -1,4 +1,7 @@
-import { translateToHTML } from '../i18n/functions';
+import React from 'react';
+
+import TranslationWithMarkup from '../i18n/components/web/TranslationWithMarkup';
+import { createTranslationLink } from '../i18n/functions';
 
 import { SECURITY_URL } from './contants';
 
@@ -7,14 +10,16 @@ import { SECURITY_URL } from './contants';
  *
  * @param {Function} t - The translation function.
  * @param {'meeting'|'prejoin'|'welcome'} context - The given context of the warning.
- * @returns {string}
+ * @returns {ReactElement}
  */
 export default function getUnsafeRoomText(t: Function, context: 'meeting' | 'prejoin' | 'welcome') {
     const securityUrl = APP.store.getState()['features/base/config'].legalUrls?.security ?? SECURITY_URL;
-    const options = {
-        recommendAction: t(`security.unsafeRoomActions.${context}`),
-        securityUrl
-    };
 
-    return translateToHTML(t, 'security.insecureRoomNameWarningWeb', options);
+    return React.createElement(TranslationWithMarkup, {
+        components: [ createTranslationLink(securityUrl) ],
+        i18nKey: 'security.insecureRoomNameWarningWeb',
+        values: {
+            recommendAction: t(`security.unsafeRoomActions.${context}`)
+        }
+    });
 }

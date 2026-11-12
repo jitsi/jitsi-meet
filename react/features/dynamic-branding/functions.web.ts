@@ -14,7 +14,9 @@ const DEFAULT_FONT_SIZE = 16;
  * @returns {string} The sanitized SVG string.
  */
 export function cleanSvg(svg: string): string {
-    return DOMPurify.sanitize(svg);
+    // DOMPurify lets data-* attributes through by default. An icon does not need them, and scripts which read their
+    // instructions from data attributes would run on markup that is supposed to be inert.
+    return DOMPurify.sanitize(svg, { ALLOW_DATA_ATTR: false });
 }
 
 /**

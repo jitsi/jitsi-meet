@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
-import { translate, translateToHTML } from '../../base/i18n/functions';
+import TranslationWithMarkup from '../../base/i18n/components/web/TranslationWithMarkup';
+import { createTranslationLink, translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
 import Watermarks from '../../base/react/components/web/Watermarks';
@@ -271,10 +272,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                         {_moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
-                                {
-                                    translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                }
+                                <TranslationWithMarkup
+                                    components = { [ createTranslationLink(_moderatedRoomServiceUrl) ] }
+                                    i18nKey = 'welcomepage.moderatedMessage' />
                             </div>)}
                     </div>
                 </div>

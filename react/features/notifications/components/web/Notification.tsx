@@ -222,9 +222,7 @@ const Notification = ({
 
         description && typeof description === 'string' && descriptionArray.push(description);
 
-        // Keeping in mind that:
-        // - Notifications that use the `translateToHtml` function get an element-based description array with one entry
-        // - Message notifications receive string-based description arrays that might need additional parsing
+        // Message notifications receive string-based description arrays that might need additional parsing.
         // We look for ready-to-render elements, and if present, we roll with them
         // Otherwise, we use the Message component that accepts a string `text` prop
         const shouldRenderHtml = descriptionArray.length === 1 && isValidElement(descriptionArray[0]);

@@ -7,7 +7,7 @@ import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
 import { connect } from '../../../base/connection/actions.web';
 import { toJid } from '../../../base/connection/functions';
-import { translate, translateToHTML } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
@@ -207,7 +207,7 @@ class LoginDialog extends Component<IProps, IState> {
         if (messageKey) {
             return (
                 <span>
-                    { translateToHTML(t, messageKey, messageOptions) }
+                    { t(messageKey, messageOptions) }
                 </span>
             );
         }

@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify';
 import React from 'react';
 
 import languageDetector, { migrateLegacyLanguage } from './languageDetector';
@@ -6,67 +5,55 @@ import languageDetector, { migrateLegacyLanguage } from './languageDetector';
 export { changeLanguageBundle, translate } from './functions.any';
 export { storeUserSelectedLanguage } from './languageDetector';
 
-const SANITIZE_CONFIG = {
-    ALLOWED_TAGS: [ 'a', 'b', 'br', 'span' ],
-
-    // `target` and `rel` are intentionally not allowed here: they are forced to
-    // safe values by the hook below so a translation cannot control them.
-    ALLOWED_ATTR: [ 'href' ],
-    ALLOWED_URI_REGEXP: /^https?:\/\//i
-};
-
-// A dedicated DOMPurify instance so the link-hardening hook below stays scoped
-// to translated HTML and does not leak into other consumers of the shared
-// instance (e.g. branding SVG sanitizing).
-const purify = DOMPurify(window);
-
-// Force links produced from (potentially translator-supplied) strings to open
-// in a new browsing context. This prevents a translation from navigating the
-// user out of an ongoing meeting via target="_self" (or "_top"/"_parent", or by
-// omitting target, which defaults to same-context navigation) and pairs the new
-// tab with rel="noopener noreferrer" to prevent reverse tabnabbing.
-purify.addHook('afterSanitizeAttributes', (node: Element) => {
-    if (node.tagName === 'A') {
-        node.setAttribute('target', '_blank');
-        node.setAttribute('rel', 'noopener noreferrer');
-    }
-});
+/**
+ * The URLs a link in a translation is allowed to point to.
+ */
+const LINK_URL_REGEXP = /^https?:\/\//i;
 
 /**
- * Escapes a string for safe inclusion in HTML.
+ * A line break which accepts children, and ignores them. A plain br element given children makes React throw, so a
+ * translation which wrongly puts text in the tag of a line break would break the rendering.
  *
- * @param {string} value - The string to escape.
- * @returns {string} The escaped string.
+ * @returns {ReactElement}
  */
-function escapeHTML(value: string): string {
-    const el = document.createElement('span');
-
-    el.textContent = value;
-
-    return el.innerHTML;
+function LineBreak() {
+    return <br />;
 }
 
 /**
- * Translates a specific key to text containing HTML via a specific translate
- * function.
+ * Creates the element for a link in a translation which is rendered with TranslationWithMarkup. The
+ * translation marks the text of the link with an index tag, for example "Read more <0>here</0>.", and this element is
+ * given in its components at that index.
  *
- * @param {Function} t - The translate function.
- * @param {string} key - The key to translate.
- * @param {Record<string, unknown>} options - The options, if any, to pass to {@link t}.
- * @returns {ReactElement} A ReactElement which depicts the translated HTML
- * text.
+ * The translation provides the text of the link, nothing else. The destination comes from the code and the link always
+ * opens in a new browsing context, so it cannot navigate the user out of an ongoing meeting.
+ *
+ * @param {string} url - The URL the link points to. The text is not rendered as a link when it is missing or it is not
+ * an http(s) URL.
+ * @returns {ReactElement}
  */
-export function translateToHTML(t: Function, key: string, options: Record<string, unknown> = {}) {
-    const escapedOptions: Record<string, unknown> = {};
-
-    for (const [ k, v ] of Object.entries(options)) {
-        escapedOptions[k] = typeof v === 'string' ? escapeHTML(v) : v;
+export function createTranslationLink(url?: string) {
+    if (url && LINK_URL_REGEXP.test(url)) {
+        return (
+            <a
+                href = { url }
+                rel = 'noopener noreferrer'
+                target = '_blank' />
+        );
     }
 
-    const html = purify.sanitize(t(key, escapedOptions), SANITIZE_CONFIG);
+    return <span />;
+}
 
-    // eslint-disable-next-line react/no-danger
-    return <span dangerouslySetInnerHTML = {{ __html: html }} />;
+/**
+ * Creates the element for a line break in a translation which is rendered with TranslationWithMarkup.
+ * The translation marks the line break with an index tag, for example "One.<0/>Two.", and this element is given in its
+ * components at that index.
+ *
+ * @returns {ReactElement}
+ */
+export function createTranslationLineBreak() {
+    return <LineBreak />;
 }
 
 /**

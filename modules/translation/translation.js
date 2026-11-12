@@ -1,61 +1,34 @@
-import $ from 'jquery';
-import jqueryI18next from 'jquery-i18next';
-
 import i18next from '../../react/features/base/i18n/i18next';
 
 /**
- * Notifies that the {@link i18next} instance has finished its initialization.
+ * Sets the language of the document to the language of {@link i18next}.
  *
  * @returns {void}
  * @private
  */
-function _onI18nInitialized() {
-
-    const documentElement
-        = document.documentElement || {};
-
-    $('[data-i18n]').localize();
-    documentElement.lang = i18next.language;
+function _updateDocumentLanguage() {
+    document.documentElement.lang = i18next.language;
 }
 
 /**
+ * Keeps the language of the document in sync with the language of the app.
  *
+ * NOTE: Do not translate DOM elements from here. A document-wide pass which
+ * reads translation keys from element attributes lets any markup that reaches
+ * the DOM (translations, branding) inject HTML.
  */
 class Translation {
     /**
      *
      */
     constructor() {
-        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
-
         if (i18next.isInitialized) {
-            _onI18nInitialized();
+            _updateDocumentLanguage();
         } else {
-            i18next.on('initialized', _onI18nInitialized);
+            i18next.on('initialized', _updateDocumentLanguage);
         }
 
-        i18next.on('languageChanged', _onI18nInitialized);
-    }
-
-    /**
-     *
-     */
-    generateTranslationHTML(key, options) {
-        const optAttr
-            = options ? ` data-i18n-options='${JSON.stringify(options)}'` : '';
-
-        // XXX i18next expects undefined if options are missing.
-        const text = i18next.t(key, options ? options : undefined);
-
-        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
-    }
-
-    /**
-     *
-     */
-    translateElement(selector, options) {
-        // XXX i18next expects undefined if options are missing.
-        selector.localize(options ? options : undefined);
+        i18next.on('languageChanged', _updateDocumentLanguage);
     }
 }
 
