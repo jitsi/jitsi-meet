@@ -1,8 +1,8 @@
 import React from 'react';
-import { Trans } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
+import TranslationWithMarkup from '../../base/i18n/components/web/TranslationWithMarkup';
 import { createTranslationLink, translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
@@ -272,10 +272,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                         {_moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
-                                <Trans
+                                <TranslationWithMarkup
                                     components = { [ createTranslationLink(_moderatedRoomServiceUrl) ] }
-                                    i18nKey = 'welcomepage.moderatedMessage'
-                                    t = { t } />
+                                    i18nKey = 'welcomepage.moderatedMessage' />
                             </div>)}
                     </div>
                 </div>

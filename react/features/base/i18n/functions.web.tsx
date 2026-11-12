@@ -21,9 +21,9 @@ function LineBreak() {
 }
 
 /**
- * Creates the element for a link in a translation which is rendered with the Trans component of react-i18next. The
+ * Creates the element for a link in a translation which is rendered with TranslationWithMarkup. The
  * translation marks the text of the link with an index tag, for example "Read more <0>here</0>.", and this element is
- * given in the components of Trans at that index.
+ * given in its components at that index.
  *
  * The translation provides the text of the link, nothing else. The destination comes from the code and the link always
  * opens in a new browsing context, so it cannot navigate the user out of an ongoing meeting.
@@ -46,9 +46,9 @@ export function createTranslationLink(url?: string) {
 }
 
 /**
- * Creates the element for a line break in a translation which is rendered with the Trans component of react-i18next.
- * The translation marks the line break with an index tag, for example "One.<0/>Two.", and this element is given in the
- * components of Trans at that index.
+ * Creates the element for a line break in a translation which is rendered with TranslationWithMarkup.
+ * The translation marks the line break with an index tag, for example "One.<0/>Two.", and this element is given in its
+ * components at that index.
  *
  * @returns {ReactElement}
  */

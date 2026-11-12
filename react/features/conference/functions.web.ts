@@ -1,10 +1,9 @@
 import React from 'react';
-import { Trans } from 'react-i18next';
 
 import { IStore } from '../app/types';
 import { isSuboptimalBrowser } from '../base/environment/environment';
+import TranslationWithMarkup from '../base/i18n/components/web/TranslationWithMarkup';
 import { createTranslationLink } from '../base/i18n/functions';
-import i18next from '../base/i18n/i18next';
 import { showWarningNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -26,9 +25,8 @@ export function maybeShowSuboptimalExperienceNotification(dispatch: IStore['disp
             showWarningNotification(
                 {
                     titleKey: 'notify.suboptimalExperienceTitle',
-                    description: React.createElement(Trans, {
+                    description: React.createElement(TranslationWithMarkup, {
                         components: [ createTranslationLink(recommendedBrowserPageLink) ],
-                        i18n: i18next,
                         i18nKey: 'notify.suboptimalBrowserWarning'
                     })
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG
@@ -47,9 +45,8 @@ export function maybeShowSuboptimalExperienceNotification(dispatch: IStore['disp
  * @returns {ReactElement}
  */
 export function getDisabledIframeDescription(translationKey: string, domain: string, jaasDomain?: string) {
-    return React.createElement(Trans, {
+    return React.createElement(TranslationWithMarkup, {
         components: [ createTranslationLink(jaasDomain) ],
-        i18n: i18next,
         i18nKey: translationKey,
         values: {
             domain,

@@ -1,8 +1,7 @@
 import React from 'react';
-import { Trans } from 'react-i18next';
 
+import TranslationWithMarkup from '../i18n/components/web/TranslationWithMarkup';
 import { createTranslationLink } from '../i18n/functions';
-import i18next from '../i18n/i18next';
 
 import { SECURITY_URL } from './contants';
 
@@ -16,9 +15,8 @@ import { SECURITY_URL } from './contants';
 export default function getUnsafeRoomText(t: Function, context: 'meeting' | 'prejoin' | 'welcome') {
     const securityUrl = APP.store.getState()['features/base/config'].legalUrls?.security ?? SECURITY_URL;
 
-    return React.createElement(Trans, {
+    return React.createElement(TranslationWithMarkup, {
         components: [ createTranslationLink(securityUrl) ],
-        i18n: i18next,
         i18nKey: 'security.insecureRoomNameWarningWeb',
         values: {
             recommendAction: t(`security.unsafeRoomActions.${context}`)

@@ -1,11 +1,11 @@
-import i18next from 'i18next';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Trans } from 'react-i18next';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
+import TranslationWithMarkup from './components/web/TranslationWithMarkup';
 import { REACT_I18NEXT_OPTIONS } from './constants';
 import { createTranslationLineBreak, createTranslationLink } from './functions.web';
+import i18n from './i18next';
 
 vi.mock('./functions.any', () => {
     return {};
@@ -14,25 +14,29 @@ vi.mock('./languageDetector', () => {
     return { default: {} };
 });
 
-// An instance with the options the app gives to react-i18next and to the interpolation.
-const i18n = i18next.createInstance();
+// The instance of the app needs the globals of the app. The test gives this one the same options for react-i18next
+// and for the interpolation.
+vi.mock('./i18next', async () => {
+    const { default: i18next } = await import('i18next');
+
+    return { default: i18next.createInstance() };
+});
 
 const LINK = '<a href="https://example.com/a?b=c" rel="noopener noreferrer" target="_blank">';
 
 /**
- * Renders a translation with Trans, as the app does, and returns the resulting HTML.
+ * Renders a translation as the app does, and returns the resulting HTML.
  *
  * @param {string} translation - The translated text, as a language bundle would provide it.
- * @param {Record<string, unknown>} values - The interpolation values, if any.
+ * @param {Object} values - The interpolation values, if any.
  * @returns {string}
  */
-function render(translation: string, values?: Record<string, unknown>) {
+function render(translation: string, values?: { [name: string]: number | string | undefined; }) {
     i18n.addResourceBundle('en', 'main', { test: { key: translation } }, true, true);
 
     return renderToStaticMarkup(
-        <Trans
+        <TranslationWithMarkup
             components = { [ createTranslationLink('https://example.com/a?b=c'), createTranslationLineBreak() ] }
-            i18n = { i18n }
             i18nKey = 'test.key'
             values = { values } />
     );
@@ -53,7 +57,7 @@ describe('createTranslationLink', () => {
     });
 });
 
-describe('translations rendered with Trans', () => {
+describe('TranslationWithMarkup', () => {
     beforeAll(async () => {
         await i18n.init({
             defaultNS: 'main',
@@ -84,10 +88,33 @@ describe('translations rendered with Trans', () => {
         expect(html).toBe(`here ${LINK}there</a>`);
     });
 
-    it('does not create elements for the tags in the interpolation values', () => {
+    it('renders the interpolation values as text', () => {
         const html = render('Hello {{name}}!', { name: '<img src="x" onerror="alert(1)"><b>bold</b>' });
 
-        expect(html).toBe('Hello bold!');
+        expect(html).toBe('Hello &lt;img src=&quot;x&quot; onerror=&quot;alert(1)&quot;&gt;&lt;b&gt;bold&lt;/b&gt;!');
+    });
+
+    it('keeps the text and the elements which follow a value with markup characters', () => {
+        for (const [ value, text ] of [
+            [ 'A < B', 'A &lt; B' ],
+            [ 'A <x> B', 'A &lt;x&gt; B' ],
+            [ 'Use <b>x', 'Use &lt;b&gt;x' ],
+            [ '<0>x</0>', '&lt;0&gt;x&lt;/0&gt;' ],
+            [ 'A & B > C', 'A &amp; B &gt; C' ]
+        ]) {
+            expect(render('Open {{app}} now.<1/><1/>Or read <0>this</0>.', { app: value }))
+                .toBe(`Open ${text} now.<br/><br/>Or read ${LINK}this</a>.`);
+        }
+    });
+
+    it('keeps a value which is in an index tag', () => {
+        expect(render('Read <0>about {{topic}}</0>.<1/>Bye.', { topic: 'a < b' }))
+            .toBe(`Read ${LINK}about a &lt; b</a>.<br/>Bye.`);
+    });
+
+    it('renders the values which are not strings', () => {
+        expect(render('Wait {{timeout}} minutes for {{name}}.', { name: undefined,
+            timeout: 5 })).toBe('Wait 5 minutes for .');
     });
 
     it('does not break on text in the tag of a line break', () => {

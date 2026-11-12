@@ -1,9 +1,9 @@
 import i18next from 'i18next';
 import React, { useCallback } from 'react';
-import { Trans } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { openDialog } from '../../../base/dialog/actions';
+import TranslationWithMarkup from '../../../base/i18n/components/web/TranslationWithMarkup';
 import { createTranslationLineBreak, translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { RecordingTranscriptionDialog } from '../../../recording/components/Recording';
@@ -63,7 +63,7 @@ const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => 
             ok = {{ hidden: true }}
             titleKey = 'transcribing.subtitles'>
             <p className = { styles.paragraphWrapper } >
-                <Trans
+                <TranslationWithMarkup
                     components = { [ <b key = 'source-language' />, createTranslationLineBreak() ] }
                     i18nKey = 'transcribing.sourceLanguageDesc'
                     values = {{ sourceLanguage: t(`languages:${i18next.language}`).toLowerCase() }} /><span
