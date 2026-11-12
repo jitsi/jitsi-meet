@@ -34,6 +34,14 @@ import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
 
+let pageUnloadEventType: 'unload' | 'beforeunload' | undefined;
+
+function onPageUnload() {
+    APP.API.notifyConferenceLeft(APP.conference.roomName);
+    APP.API.dispose();
+    getJitsiMeetTransport().dispose();
+}
+
 /**
  * The middleware of the feature {@code external-api}.
  *
@@ -241,15 +249,19 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_CONFIG: {
         const state = store.getState();
         const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+        const eventType = disableBeforeUnloadHandlers ? 'unload' : 'beforeunload';
 
-        /**
-         * Disposing the API when the user closes the page.
-         */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
-            APP.API.notifyConferenceLeft(APP.conference.roomName);
-            APP.API.dispose();
-            getJitsiMeetTransport().dispose();
-        });
+        if (eventType !== pageUnloadEventType) {
+            if (pageUnloadEventType) {
+                window.removeEventListener(pageUnloadEventType, onPageUnload);
+            }
+
+            /**
+             * Disposing the API when the user closes the page.
+             */
+            window.addEventListener(eventType, onPageUnload);
+            pageUnloadEventType = eventType;
+        }
 
         break;
     }

@@ -12,6 +12,8 @@ import { REMOTE_CONTROL_MESSAGE_NAME } from './constants';
 import { onRemoteControlAPIEvent } from './functions';
 import './subscriber';
 
+const transportsWithListener = new WeakSet<object>();
+
 /**
  * The redux middleware for the remote control feature.
  *
@@ -47,7 +49,9 @@ MiddlewareRegistry.register(store => next => action => {
         const { getState } = store;
         const { transport } = getState()['features/remote-control'].receiver;
 
-        if (transport) {
+        if (transport && !transportsWithListener.has(transport)) {
+            transportsWithListener.add(transport);
+
             // We expect here that even if we receive the supported event earlier
             // it will be cached and we'll receive it.
             transport.on('event', (event: { name: string; type: string; }) => {
