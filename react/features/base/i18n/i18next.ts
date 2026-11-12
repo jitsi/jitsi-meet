@@ -8,6 +8,7 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 import TRANSLATION_LANGUAGES_RESOURCES from '../../../../lang/translation-languages.json';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
+import { REACT_I18NEXT_OPTIONS } from './constants';
 import languageDetector from './languageDetector';
 
 /**
@@ -90,12 +91,7 @@ const options: i18next.InitOptions = {
     },
     load: 'all',
     ns: SUPPORTED_NS,
-    react: {
-        // re-render when a new resource bundle is added
-        // @ts-expect-error. Fixed in i18next 19.6.1.
-        bindI18nStore: 'added',
-        useSuspense: false
-    },
+    react: REACT_I18NEXT_OPTIONS,
     returnEmptyString: false,
     returnNull: false,
 

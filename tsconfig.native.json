@@ -40,6 +40,8 @@
         "react/features/whiteboard",
         "**/web/*",
         "**/*.web.ts",
-        "**/*.web.tsx"
+        "**/*.web.tsx",
+        "**/*.web.test.ts",
+        "**/*.web.test.tsx"
     ]
 }

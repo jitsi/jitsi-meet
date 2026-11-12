@@ -450,13 +450,13 @@ class Conference extends AbstractConference<IProps, any> {
         FULL_SCREEN_EVENTS.forEach(name =>
             document.addEventListener(name, this._onFullScreenChange));
 
-        const { dispatch, t } = this.props;
+        const { dispatch } = this.props;
 
         // if we will be showing prejoin we don't want to call connect from init.
         // Connect will be dispatched from prejoin screen.
         dispatch(init(!shouldShowPrejoin(this.props)));
 
-        maybeShowSuboptimalExperienceNotification(dispatch, t);
+        maybeShowSuboptimalExperienceNotification(dispatch);
     }
 }
 

@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
-import { WithTranslation } from 'react-i18next';
+import { Trans, WithTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -10,7 +10,7 @@ import { IReduxState } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
-import { translate, translateToHTML } from '../../base/i18n/functions';
+import { createTranslationLineBreak, createTranslationLink, translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
@@ -138,7 +138,11 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
                 <div className = { styles.descriptionLabel }>
                     {
                         isSupportedBrowser()
-                            ? translateToHTML(t, `${_TNS}.descriptionNew`, { app: desktop?.appName })
+                            ? <Trans
+                                components = { [ createTranslationLineBreak() ] }
+                                i18nKey = { `${_TNS}.descriptionNew` }
+                                t = { t }
+                                values = {{ app: desktop?.appName }} />
                             : t(`${_TNS}.descriptionWithoutWeb`, { app: desktop?.appName })
                     }
                 </div>
@@ -165,9 +169,11 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
 
                 </div>
                 <div className = { styles.separator } />
-                <div className = { styles.label }> {translateToHTML(t, 'deepLinking.termsAndConditions', {
-                    termsAndConditionsLink: legalUrls.terms
-                })}
+                <div className = { styles.label }>
+                    <Trans
+                        components = { [ createTranslationLink(legalUrls.terms) ] }
+                        i18nKey = 'deepLinking.termsAndConditions'
+                        t = { t } />
                 </div>
             </div>
         </div>

@@ -1,9 +1,10 @@
 import i18next from 'i18next';
 import React, { useCallback } from 'react';
+import { Trans } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { openDialog } from '../../../base/dialog/actions';
-import { translate, translateToHTML } from '../../../base/i18n/functions';
+import { createTranslationLineBreak, translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { RecordingTranscriptionDialog } from '../../../recording/components/Recording';
 import { openSettingsDialog } from '../../../settings/actions.web';
@@ -62,11 +63,10 @@ const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => 
             ok = {{ hidden: true }}
             titleKey = 'transcribing.subtitles'>
             <p className = { styles.paragraphWrapper } >
-                {
-                    translateToHTML(t, 'transcribing.sourceLanguageDesc', {
-                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
-                    })
-                }<span
+                <Trans
+                    components = { [ <b key = 'source-language' />, createTranslationLineBreak() ] }
+                    i18nKey = 'transcribing.sourceLanguageDesc'
+                    values = {{ sourceLanguage: t(`languages:${i18next.language}`).toLowerCase() }} /><span
                     className = { styles.spanWrapper }
                     onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
             </p>

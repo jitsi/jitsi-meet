@@ -1,7 +1,6 @@
 /* global APP */
 /* eslint-disable no-unused-vars */
 import Logger from '@jitsi/logger';
-import $ from 'jquery';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
@@ -152,6 +151,20 @@ export default class LargeVideoManager {
             = this._onVideoResolutionUpdate.bind(this);
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
+
+        /**
+         * The translation key and options of the message which describes that
+         * the remote user is having connectivity issues.
+         *
+         * @type {{ msgKey: string, msgOptions: Object }|undefined}
+         */
+        this._remoteConnectionMessage = undefined;
+
+        this._renderRemoteConnectionMessage
+            = this._renderRemoteConnectionMessage.bind(this);
+
+        // Translate the message again when the language changes.
+        i18next.on('languageChanged', this._renderRemoteConnectionMessage);
     }
 
     /**
@@ -162,6 +175,7 @@ export default class LargeVideoManager {
      */
     destroy() {
         this.videoContainer.removeResizeListener(this._onVideoResolutionUpdate);
+        i18next.off('languageChanged', this._renderRemoteConnectionMessage);
 
         // Remove track streaming status listener.
         // TODO: when this class is converted to a function react component,
@@ -668,11 +682,29 @@ export default class LargeVideoManager {
      */
     _setRemoteConnectionMessage(msgKey, msgOptions) {
         if (msgKey) {
-            $('#remoteConnectionMessage')
-                .attr('data-i18n', msgKey)
-                .attr('data-i18n-options', JSON.stringify(msgOptions));
-            APP.translation.translateElement(
-                $('#remoteConnectionMessage'), msgOptions);
+            this._remoteConnectionMessage = {
+                msgKey,
+                msgOptions
+            };
+            this._renderRemoteConnectionMessage();
+        }
+    }
+
+    /**
+     * Renders the text which describes that the remote user is having
+     * connectivity issues, in the current language. The translation is set as
+     * text, never as HTML.
+     *
+     * @private
+     * @returns {void}
+     */
+    _renderRemoteConnectionMessage() {
+        const element = document.getElementById('remoteConnectionMessage');
+
+        if (element && this._remoteConnectionMessage) {
+            const { msgKey, msgOptions } = this._remoteConnectionMessage;
+
+            element.textContent = i18next.t(msgKey, msgOptions);
         }
     }
 
