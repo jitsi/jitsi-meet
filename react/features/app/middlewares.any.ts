@@ -35,6 +35,7 @@ import '../invite/middleware';
 import '../jaas/middleware';
 import '../large-video/middleware';
 import '../lobby/middleware';
+import '../media-connectivity/middleware';
 import '../notifications/middleware';
 import '../overlay/middleware';
 import '../participants-pane/middleware';

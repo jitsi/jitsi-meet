@@ -1966,6 +1966,11 @@ var config = {
     //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.localRecordingStarted', // shown when the local recording has been started
     //     'notify.localRecordingStopped', // shown when the local recording has been stopped
+    //     'notify.mediaConnectivityAtRisk', // shown when connecting takes long or the network may be blocking the call
+    //     'notify.mediaConnectivityDegraded', // shown when the call is carried over TCP, so media may lag
+    //     'notify.mediaConnectivityFailed', // shown when audio and video could not be connected
+    //     'notify.mediaConnectivityInterrupted', // shown when audio and video dropped during the call
+    //     'notify.mediaConnectivityRestored', // shown when audio and video are back after dropping or failing
     //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
