@@ -628,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "La comunicació d'àudio i vídeo en aquesta trucada és xifrada d'extrem a extrem"
     },
+    "editDisplayName": "Edita el nom a mostrar, {{name}}",
     "embedMeeting": {
         "title": "Insereix aquesta reunió"
     },
@@ -1527,6 +1528,7 @@
             "participants": "Obre el tauler de participants. {{participantsCount}} participants",
             "pip": "Activa o desactiva el mode imatge en imatge",
             "pipClose": "Tanca el mode Imatge en imatge",
+            "polls": "Obre les enquestes",
             "privateMessage": "Envia un missatge privat",
             "profile": "Edita el perfil",
             "raiseHand": "Alça o abaixa la mà",
