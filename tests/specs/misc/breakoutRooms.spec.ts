@@ -526,6 +526,13 @@ describe('Breakout rooms', () => {
                     timeout: 5000,
                     timeoutMsg: 'P2 did not leave breakout room before chat test'
                 });
+
+            // p1 sees p2 leave the breakout room before p2 has joined the main room
+            await p2.driver.waitUntil(
+                async () => await p2.isInMuc() && !await p2.isInBreakoutRoom(), {
+                    timeout: 10_000,
+                    timeoutMsg: 'P2 did not join the main room before chat test'
+                });
         }
 
         // 3. p2 sets initial display name and sends a message while in the main room
