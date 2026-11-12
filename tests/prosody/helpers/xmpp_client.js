@@ -114,6 +114,7 @@ export async function joinWithFocus(roomJid) {
  *
  * @param {object} opts
  * @param {string} [opts.host='localhost']    TCP host to connect to.
+ * @param {number} [opts.port=5280]           HTTP port of the WebSocket endpoint.
  * @param {string} [opts.domain]              XMPP domain (stream header). Defaults to host.
  *                                            Set to a different VirtualHost name (e.g.
  *                                            'whitelist.localhost') to get a JID on that
@@ -131,9 +132,9 @@ export async function joinWithFocus(roomJid) {
  * @returns {Promise<XmppTestClient>} If start() fails after the server closed the
  *                                    stream, the rejection has `streamClosed: true`.
  */
-export async function createXmppClient({ host = 'localhost', domain, params, username, password,
+export async function createXmppClient({ host = 'localhost', port = 5280, domain, params, username, password,
     resource, restartDelay } = {}) {
-    const url = new URL(`ws://${host}:5280/xmpp-websocket`);
+    const url = new URL(`ws://${host}:${port}/xmpp-websocket`);
 
     if (params) {
         for (const [ k, v ] of Object.entries(params)) {
