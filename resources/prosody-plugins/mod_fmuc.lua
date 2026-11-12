@@ -567,9 +567,32 @@ local function history_message_handler(event)
 end
 module:hook('message/host', history_message_handler);
 
+-- The clients of this vnode never address the main prosody. Everything that goes there (messages for the main
+-- room, promotion requests, poll answers) is sent by this vnode itself, from a component or the virtual host.
+-- A stanza that a client addresses to the main domain or to one of its subdomains (the main muc component,
+-- tenant muc domains and the other components) is dropped here, before it is routed over s2s.
+local function route_client_stanza(event)
+    local origin, stanza, to_host = event.origin, event.stanza, event.to_host;
+
+    if not origin or origin.type ~= 'c2s'
+        or not to_host or (to_host ~= main_domain and not ends_with(to_host, '.'..main_domain)) then
+        return; -- continue with hook listeners
+    end
+
+    module:log('debug', 'Dropping %s from client %s to %s', stanza.name, stanza.attr.from, stanza.attr.to);
+
+    if stanza.attr.type ~= 'error' and stanza.attr.type ~= 'result' then
+        origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Not allowed from a visitor node'));
+    end
+
+    return true;
+end
+
 process_host_module(local_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
     host_module:hook('message/full', message_handler);
+    -- mod_s2s routes on -1 and -10
+    host_module:hook('route/remote', route_client_stanza, 10);
 end);
 
 -- add to message stanza display name for the visitor
