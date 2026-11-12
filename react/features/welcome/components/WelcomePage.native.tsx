@@ -286,13 +286,20 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
 
         if (this.state.joining) {
+            const joinLabel = t('welcomepage.accessibilityLabel.join');
+
             // TouchableHighlight is picky about what its children can be, so
             // wrap it in a native component, i.e. View to avoid having to
             // modify non-native children.
             joinButton = (
                 <TouchableHighlight
-                    accessibilityLabel =
-                        { t('welcomepage.accessibilityLabel.join') }
+                    accessibilityLabel = { joinLabel }
+                    accessibilityRole = 'button'
+                    accessibilityState = {{
+                        busy: true,
+                        disabled: true
+                    }}
+                    disabled = { true }
                     onPress = { this._onJoin }
                     style = { styles.button as ViewStyle }>
                     <View>
