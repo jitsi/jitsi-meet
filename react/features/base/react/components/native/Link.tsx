@@ -9,6 +9,11 @@ import Text from './Text';
 interface IProps {
 
     /**
+     * The accessibility label for this Link.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * The children to be displayed within this Link.
      */
     children: React.ReactNode;
@@ -55,6 +60,8 @@ export default class Link extends Component<IProps> {
     override render() {
         return (
             <Text
+                accessibilityLabel = { this.props.accessibilityLabel }
+                accessibilityRole = 'link'
                 onPress = { this._onPress }
                 style = { this.props.style }>
                 { this.props.children }
