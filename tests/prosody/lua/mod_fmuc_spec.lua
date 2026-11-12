@@ -190,6 +190,13 @@ describe('mod_fmuc route/remote on the vnode virtual host', function()
         assert.are.equal(0, #session.sent)
     end)
 
+    it('drops a presence from a client to another vnode that is a subdomain of the main domain', function()
+        local session = new_session('c2s')
+
+        assert.is_true(route(session, 'presence', 'room@conference.v2.' .. MAIN_DOMAIN .. '/nick'))
+        assert.are.equal('not-allowed', session.sent[1].condition)
+    end)
+
     it('routes a stanza that the vnode sends to the main prosody', function()
         local component = new_session('component')
 

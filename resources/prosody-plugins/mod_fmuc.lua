@@ -571,6 +571,9 @@ module:hook('message/host', history_message_handler);
 -- room, promotion requests, poll answers) is sent by this vnode itself, from a component or the virtual host.
 -- A stanza that a client addresses to the main domain or to one of its subdomains (the main muc component,
 -- tenant muc domains and the other components) is dropped here, before it is routed over s2s.
+-- When the vnode domains are subdomains of the main domain (as in docker-jitsi-meet: vN.meet.jitsi for meet.jitsi),
+-- this also drops a stanza to another vnode. That is intended: a client has nothing to send to another vnode either.
+-- The hosts of this vnode are local, so a stanza to them is never routed here.
 local function route_client_stanza(event)
     local origin, stanza, to_host = event.origin, event.stanza, event.to_host;
 
