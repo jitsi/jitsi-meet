@@ -448,7 +448,8 @@ export default {
         borderLeftWidth: 3,
         borderTopRightRadius: BaseTheme.shape.borderRadius,
         flexDirection: 'row',
-        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[2],
+        marginHorizontal: BaseTheme.spacing[4],
         marginTop: BaseTheme.spacing[2],
         paddingLeft: BaseTheme.spacing[2]
     },
