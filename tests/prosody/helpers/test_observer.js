@@ -534,6 +534,23 @@ export async function getJibriIqs() {
 }
 
 /**
+ * Returns what a default-priority muc-occupant-groupchat handler saw for the
+ * latest groupchat messages with a body, as recorded by mod_test_observer.
+ * Handlers at this priority copy the stanza before the room delivers it.
+ *
+ * @returns {Promise<Array<{room: string, id: string, body: string, has_nick: boolean, has_display_name: boolean}>>}
+ */
+export async function getGroupchats() {
+    const res = await fetch(`${BASE}/groupchats`);
+
+    if (!res.ok) {
+        throw new Error(`GET /groupchats failed: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+/**
  * Clears the Jibri IQs recorded by mod_test_observer.
  *
  * @returns {Promise<void>}

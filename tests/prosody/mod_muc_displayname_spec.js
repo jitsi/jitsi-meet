@@ -2,7 +2,7 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { setHideDisplayNameForGuests, setRoomMaxOccupants } from './helpers/test_observer.js';
+import { getGroupchats, setHideDisplayNameForGuests, setRoomMaxOccupants } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -386,6 +386,129 @@ describe('mod_muc_displayname — message display-name handling', () => {
         assert.ok(!msg.getChild('display-name', DISPLAY_NAME_NS),
             'live message must not contain <display-name>');
     });
+
+    it('live broadcast strips a client-supplied <nick> and <display-name> from a message with a body', async () => {
+        const r = nextRoom();
+        const roomName = r.split('@')[0];
+
+        const focus = await joinWithFocus(r);
+
+        const alice = await createXmppClient({ params: { room: roomName } });
+        const bob = await createXmppClient({ params: { room: roomName } });
+
+        clients.push(focus, alice, bob);
+
+        // The body and the name in the presence make the room add the message to the history
+        // with a display-name. In this case the muc-broadcast-message hook of the module does
+        // not change the stanza that the room delivers.
+        await alice.joinRoom(r, undefined, { displayName: 'Alice' });
+        await bob.joinRoom(r);
+
+        // Alice adds her own name elements to the message. mod_muc_meeting_id also removes the nick.
+        await alice.sendGroupchat(r, 'hello-with-name', [
+            xml('nick', { xmlns: NICK_NS }, 'OtherName'),
+            xml('display-name', { xmlns: DISPLAY_NAME_NS,
+                source: 'visitor' }, 'OtherName')
+        ]);
+
+        const msg = await bob.waitForMessage(
+            s => s.attrs.type === 'groupchat' && s.getChildText('body') === 'hello-with-name'
+        );
+
+        assert.ok(!msg.getChild('nick', NICK_NS),
+            'live message must not contain the client-supplied <nick>');
+        assert.ok(!msg.getChild('display-name', DISPLAY_NAME_NS),
+            'live message must not contain the client-supplied <display-name>');
+    });
+
+    it('a default-priority muc-occupant-groupchat handler sees no client-supplied <nick> or <display-name>',
+        async () => {
+            const r = nextRoom();
+            const roomName = r.split('@')[0];
+
+            const focus = await joinWithFocus(r);
+
+            const alice = await createXmppClient({ params: { room: roomName } });
+
+            clients.push(focus, alice);
+            await alice.joinRoom(r, undefined, { displayName: 'Alice' });
+
+            // The reflection arrives after all the muc-occupant-groupchat handlers ran.
+            await alice.sendGroupchat(r, 'relay-with-name', [
+                xml('nick', { xmlns: NICK_NS }, 'OtherName'),
+                xml('display-name', { xmlns: DISPLAY_NAME_NS,
+                    source: 'visitor' }, 'OtherName')
+            ]);
+
+            // mod_test_observer records the stanza at the default priority. The handlers that copy
+            // the stanza before the room delivers it (the relay to the visitor nodes) run there.
+            const seen = (await getGroupchats()).filter(g => g.room === r && g.body === 'relay-with-name');
+
+            assert.deepStrictEqual(
+                // eslint-disable-next-line camelcase
+                seen.map(({ has_nick, has_display_name }) => [ has_nick, has_display_name ]),
+                [ [ false, false ] ],
+                'the handler must see the message once, with no <nick> and no <display-name>');
+        });
+
+    // 'visitor' is the only source that the module reads from a message (one with no occupant).
+    // 'token' is the source that the server adds for the token user.
+    for (const { label, connectSender, joinOptions, clientSource, expected } of [
+        {
+            label: 'a guest with a name',
+            connectSender: r => createXmppClient({ params: { room: r.split('@')[0] } }),
+            joinOptions: { displayName: 'Alice' },
+            clientSource: 'visitor',
+            expected: [ [ 'guest', 'Alice' ] ]
+        },
+        {
+            label: 'a guest with no name',
+            connectSender: r => createXmppClient({ params: { room: r.split('@')[0] } }),
+            joinOptions: undefined,
+            clientSource: 'visitor',
+            expected: []
+        },
+        {
+            label: 'a token user',
+            connectSender: r => connect(r, { contextUser: { name: 'Alice',
+                id: 'alice-id' } }),
+            joinOptions: undefined,
+            clientSource: 'token',
+            expected: [ [ 'token', 'Alice' ] ]
+        }
+    ]) {
+        it(`history message of ${label} carries only the <display-name> that the server adds`, async () => {
+            const r = nextRoom();
+
+            const focus = await joinWithFocus(r);
+            const alice = await connectSender(r);
+
+            clients.push(focus, alice);
+            await alice.joinRoom(r, undefined, joinOptions);
+            await alice.sendGroupchat(r, 'history-with-name', [
+                xml('display-name', { xmlns: DISPLAY_NAME_NS,
+                    source: clientSource }, 'OtherName')
+            ]);
+
+            // Bob joins after the message and receives it as history (with <delay>).
+            const bob = await createXmppClient({ params: { room: r.split('@')[0] } });
+
+            clients.push(bob);
+            await bob.joinRoom(r);
+
+            const historyMsg = await bob.waitForMessage(
+                s => s.attrs.type === 'groupchat'
+                    && s.getChildText('body') === 'history-with-name'
+                    && s.getChild('delay') !== undefined
+            );
+            const displayNames = historyMsg.getChildren('display-name', DISPLAY_NAME_NS);
+
+            assert.deepStrictEqual(
+                displayNames.map(d => [ d.attrs.source, d.getText() ]),
+                expected,
+                'history message must contain only the <display-name> that the server adds');
+        });
+    }
 
     it('history message contains <display-name> injected from token name', async () => {
         const r = nextRoom();

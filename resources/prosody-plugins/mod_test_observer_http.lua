@@ -264,6 +264,19 @@ module:provides("http", {
             return { status_code = 204 };
         end;
 
+        -- GET /test-observer/groupchats
+        -- Returns what a default-priority muc-occupant-groupchat handler saw for the
+        -- latest groupchat messages with a body (room, id, body, has_nick, has_display_name).
+        ["GET /groupchats"] = function()
+            local groupchats = shared.groupchats or {};
+            local body = #groupchats == 0 and "[]" or json.encode(groupchats);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
         -- POST /test-observer/sessions/context
         -- Body: { "jid": "node@localhost/resource", "user_id": "...", "features": { "flip": true } }
         -- Sets jitsi_meet_context_user / jitsi_meet_context_features on the c2s session so that
