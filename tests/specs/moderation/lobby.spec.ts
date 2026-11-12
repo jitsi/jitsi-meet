@@ -377,7 +377,7 @@ describe('Lobby', () => {
         await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
 
-    it('moderator moves to a breakout room while a participant is knocking', async () => {
+    it('moderator sees the knocking participant once after moving to a breakout room', async () => {
         await hangupAllParticipants();
 
         await ensureTwoParticipants();
@@ -415,16 +415,25 @@ describe('Lobby', () => {
                 timeoutMsg: 'p1 did not join the breakout room'
             });
 
-        await p1.getNotifications().waitForHideOfKnockingParticipants();
+        await p1.getNotifications().getKnockingParticipantName();
 
         if (!await p1.getParticipantsPane().isOpen()) {
             await p1.getParticipantsPane().open();
         }
 
         await p1.driver.waitUntil(
+            async () => await p1.driver.$$(lobbyParticipants).length === 1, {
+                timeout: 5000,
+                timeoutMsg: 'The knocking participant is not listed exactly once in the breakout room'
+            });
+
+        await ctx.p3.hangup();
+
+        await p1.getNotifications().waitForHideOfKnockingParticipants();
+        await p1.driver.waitUntil(
             async () => await p1.driver.$$(lobbyParticipants).length === 0, {
                 timeout: 5000,
-                timeoutMsg: 'The knocking participant is still in the lobby list of p1 in the breakout room'
+                timeoutMsg: 'The knocking participant is still listed after leaving the lobby'
             });
     });
 });
