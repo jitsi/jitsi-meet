@@ -53,6 +53,7 @@ Component "conference.v0.meet.jitsi" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     modules_enabled = {
+        "fmuc";
         "s2s_bidi";
         "s2s_whitelist";
         "s2sout_override";

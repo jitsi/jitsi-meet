@@ -12,7 +12,9 @@ import { createXmppClient } from './helpers/xmpp_client.js';
 //   - s2s_whitelist on the main muc accepts s2s streams only from the visitor components,
 //     not from the client domain of the visitor node;
 //   - token_verification on the main muc refuses a join over s2s from any domain.
-// Each check is tested on its own, with the other one unloaded.
+// Each check is tested on its own, with the other one unloaded. Before any of it, mod_fmuc on the
+// visitor node drops a stanza that one of its clients addresses to the main prosody, so the
+// checks of the main muc are tested with mod_fmuc unloaded.
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -131,16 +133,28 @@ describe('visitor node s2s to the main prosody', () => {
     }
 
     /**
-     * Unloads a module of the main muc. Fails if it is not loaded, so that the after hook that loads it
+     * Unloads a module from a host. Fails if it is not loaded, so that the after hook that loads it
      * again does not load a module that the config does not have.
+     *
+     * @param {object} container - The prosody container.
+     * @param {string} host - The host.
+     * @param {string} name - The module.
+     * @returns {Promise<void>}
+     */
+    async function unloadModule(container, host, name) {
+        assert.equal(await runLua(container, `return prosody.hosts["${host}"].modules["${name}"] ~= nil`), 'true',
+            `${name} is not loaded on ${host}`);
+        await prosodyShell(`module:unload("${name}", "${host}")`, container);
+    }
+
+    /**
+     * Unloads a module of the main muc, see unloadModule.
      *
      * @param {string} name - The module.
      * @returns {Promise<void>}
      */
-    async function unloadFromMainMuc(name) {
-        assert.equal(await runLua(main, `return prosody.hosts["${MAIN_MUC}"].modules["${name}"] ~= nil`), 'true',
-            `${name} is not loaded on ${MAIN_MUC}`);
-        await prosodyShell(`module:unload("${name}", "${MAIN_MUC}")`, main);
+    function unloadFromMainMuc(name) {
+        return unloadModule(main, MAIN_MUC, name);
     }
 
     /**
@@ -223,11 +237,15 @@ describe('visitor node s2s to the main prosody', () => {
         clients = [];
     });
 
-    it('refuses a join from a client of the visitor node', async () => {
+    it('mod_fmuc drops the join of a client of the visitor node', async () => {
         const { room, participant } = await createMainRoom();
         const { nick, presence } = await joinFromVisitorNode(room);
 
         assert.equal(presence.attrs.type, 'error', `expected an error, got ${presence}`);
+        const error = presence.getChild('error');
+
+        assert.ok(error?.getChild('not-allowed', STANZAS_NS), `expected not-allowed: ${presence}`);
+        assert.equal(error.getChildText('text', STANZAS_NS), 'Not allowed from a visitor node');
         await assert.rejects(presenceSeenBy(participant, room, nick), 'the participant saw the join');
     });
 
@@ -258,60 +276,76 @@ describe('visitor node s2s to the main prosody', () => {
         await assert.rejects(presenceSeenBy(participant, room, 'component'), 'the participant saw the join');
     });
 
-    describe('with s2s_whitelist not loaded on the main muc', () => {
-        before(() => unloadFromMainMuc('s2s_whitelist'));
+    describe('with mod_fmuc not loaded on the visitor node', () => {
+        before(() => unloadModule(visitor, VISITOR_MUC, 'fmuc'));
 
-        after(() => prosodyShell(`module:load("s2s_whitelist", "${MAIN_MUC}")`, main));
+        after(() => prosodyShell(`module:load("fmuc", "${VISITOR_MUC}")`, visitor));
 
-        it('token_verification refuses the join of a client of the visitor node', async () => {
+        it('the main muc refuses the join of a client of the visitor node', async () => {
             const { room, participant } = await createMainRoom();
             const { nick, presence } = await joinFromVisitorNode(room);
 
             assert.equal(presence.attrs.type, 'error', `expected an error, got ${presence}`);
-            const error = presence.getChild('error');
-
-            assert.ok(error?.getChild('not-allowed', STANZAS_NS), `expected not-allowed: ${presence}`);
-            assert.equal(error.getChildText('text', STANZAS_NS), 'Joining over s2s is not allowed');
+            assert.notEqual(presence.getChild('error')?.getChildText('text', STANZAS_NS),
+                'Not allowed from a visitor node', 'mod_fmuc is still loaded');
             await assert.rejects(presenceSeenBy(participant, room, nick), 'the participant saw the join');
         });
 
-        describe('and token_verification not loaded', () => {
+        describe('with s2s_whitelist not loaded on the main muc', () => {
+            before(() => unloadFromMainMuc('s2s_whitelist'));
+
+            after(() => prosodyShell(`module:load("s2s_whitelist", "${MAIN_MUC}")`, main));
+
+            it('token_verification refuses the join of a client of the visitor node', async () => {
+                const { room, participant } = await createMainRoom();
+                const { nick, presence } = await joinFromVisitorNode(room);
+
+                assert.equal(presence.attrs.type, 'error', `expected an error, got ${presence}`);
+                const error = presence.getChild('error');
+
+                assert.ok(error?.getChild('not-allowed', STANZAS_NS), `expected not-allowed: ${presence}`);
+                assert.equal(error.getChildText('text', STANZAS_NS), 'Joining over s2s is not allowed');
+                await assert.rejects(presenceSeenBy(participant, room, nick), 'the participant saw the join');
+            });
+
+            describe('and token_verification not loaded', () => {
+                before(() => unloadFromMainMuc('token_verification'));
+
+                after(() => prosodyShell(`module:load("token_verification", "${MAIN_MUC}")`, main));
+
+                // Shows that the tests above are refused by these two checks and by nothing else in the setup.
+                it('lets a client of the visitor node join the main room', async () => {
+                    const { room, participant } = await createMainRoom();
+                    const { nick, presence } = await joinFromVisitorNode(room);
+
+                    assert.notEqual(presence.attrs.type, 'error', `expected a join, got ${presence}`);
+                    await presenceSeenBy(participant, room, nick);
+                });
+            });
+        });
+
+        describe('with token_verification not loaded on the main muc', () => {
             before(() => unloadFromMainMuc('token_verification'));
 
             after(() => prosodyShell(`module:load("token_verification", "${MAIN_MUC}")`, main));
 
-            // Shows that the tests above are refused by these two checks and by nothing else in the setup.
-            it('lets a client of the visitor node join the main room', async () => {
+            it('s2s_whitelist refuses the join of a client of the visitor node', async () => {
                 const { room, participant } = await createMainRoom();
                 const { nick, presence } = await joinFromVisitorNode(room);
 
-                assert.notEqual(presence.attrs.type, 'error', `expected a join, got ${presence}`);
-                await presenceSeenBy(participant, room, nick);
+                assert.equal(presence.attrs.type, 'error', `expected an error, got ${presence}`);
+                await assert.rejects(presenceSeenBy(participant, room, nick), 'the participant saw the join');
             });
-        });
-    });
 
-    describe('with token_verification not loaded on the main muc', () => {
-        before(() => unloadFromMainMuc('token_verification'));
+            // s2s_whitelist accepts the stream of the visitor muc component, so it is token_verification
+            // that refuses this join (see 'refuses a join from a JID of the visitor muc component').
+            it('lets a JID of the visitor muc component join the main room', async () => {
+                const { room, participant } = await createMainRoom();
 
-        after(() => prosodyShell(`module:load("token_verification", "${MAIN_MUC}")`, main));
+                await joinFromVisitorMuc(room, 'component');
 
-        it('s2s_whitelist refuses the join of a client of the visitor node', async () => {
-            const { room, participant } = await createMainRoom();
-            const { nick, presence } = await joinFromVisitorNode(room);
-
-            assert.equal(presence.attrs.type, 'error', `expected an error, got ${presence}`);
-            await assert.rejects(presenceSeenBy(participant, room, nick), 'the participant saw the join');
-        });
-
-        // s2s_whitelist accepts the stream of the visitor muc component, so it is token_verification
-        // that refuses this join (see 'refuses a join from a JID of the visitor muc component').
-        it('lets a JID of the visitor muc component join the main room', async () => {
-            const { room, participant } = await createMainRoom();
-
-            await joinFromVisitorMuc(room, 'component');
-
-            await presenceSeenBy(participant, room, 'component');
+                await presenceSeenBy(participant, room, 'component');
+            });
         });
     });
 });
