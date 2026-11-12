@@ -207,7 +207,14 @@ async function _toggleScreenSharing(
             // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
             await dispatch(setNoiseSuppressionEnabled(false));
-            _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
+            try {
+                await _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
+            } catch (error) {
+                dispatch(handleScreenSharingError(error));
+
+                return;
+            }
+
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
 
             // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
