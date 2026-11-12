@@ -243,11 +243,11 @@ describe('visitor node s2s to the main prosody', () => {
         // The same stream, with a join from the client domain of the visitor node.
         await runLua(visitor, 'local st = require "util.stanza";'
             + ` local s = prosody.hosts["${VISITOR_MUC}"].s2sout["${MAIN_MUC}"];`
-            + ` s.sends2s(st.presence({ from = "someone@v0.meet.jitsi/r", to = "${room}/spoofed" })`
+            + ` s.sends2s(st.presence({ from = "someone@v0.meet.jitsi/r", to = "${room}/other-host" })`
             + ':tag("x", { xmlns = "http://jabber.org/protocol/muc" })); return "sent"');
 
         await waitUntil(async () => await visitorMucStream() === 'none', 'the stream to be closed');
-        await assert.rejects(presenceSeenBy(participant, room, 'spoofed'), 'the participant saw the join');
+        await assert.rejects(presenceSeenBy(participant, room, 'other-host'), 'the participant saw the join');
     });
 
     it('refuses a join from a JID of the visitor muc component', async () => {
