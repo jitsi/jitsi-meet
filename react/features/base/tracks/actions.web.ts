@@ -9,7 +9,7 @@ import { isNoiseSuppressionEnabled } from '../../noise-suppression/functions';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { stopReceiver } from '../../remote-control/actions';
-import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share/actions';
+import { setNsEnabledBeforeShare, setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share/actions';
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
@@ -47,8 +47,7 @@ import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, ITogg
 export * from './actions.any';
 
 /**
- * Signals that the local participant is ending screensharing or beginning the screensharing flow.
- *
+ * Signals that the local participant is ending screensharing or beginning the screensharing flow. *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} audioOnly - Only share system audio.
  * @param {Object} shareOptions - The options to be passed for capturing screenshare.
@@ -86,12 +85,6 @@ export function toggleScreensharing(
  * @returns {void}
  */
 
-
-/**
- * Tracks whether noise suppression was active before audio-only screen sharing
- * started, so we can restore it when sharing ends.
- */
-let _noiseSuppressionStateBeforeShare: boolean | undefined;
 
 /**
  * Applies the AudioMixer effect on the local audio track if applicable. If there is no local audio track, the desktop
@@ -213,7 +206,7 @@ async function _toggleScreenSharing(
         if (desktopAudioTrack) {
             // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
-            _noiseSuppressionStateBeforeShare = isNoiseSuppressionEnabled(state);
+            dispatch(setNsEnabledBeforeShare(isNoiseSuppressionEnabled(state)));
             await dispatch(setNoiseSuppressionEnabled(false));
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
@@ -237,7 +230,7 @@ async function _toggleScreenSharing(
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
     } else {
-        const { desktopAudioTrack } = state['features/screen-share'];
+        const { desktopAudioTrack, nsEnabledBeforeShare } = state['features/screen-share'];
 
         dispatch(stopReceiver());
 
@@ -249,30 +242,38 @@ async function _toggleScreenSharing(
         dispatch(setScreenshareMuted(true));
         if (desktopAudioTrack) {
             if (localAudio) {
-                localAudio.setEffect(undefined);
+                // Wait for the mixer effect to be removed before applying any new effect. Without this await,
+                // a subsequent setNoiseSuppressionEnabled call would fail because setEffect is still in progress.
+                await localAudio.setEffect(undefined);
             } else {
                 await conference?.replaceTrack(desktopAudioTrack, null);
             }
             desktopAudioTrack.dispose();
             dispatch(setScreenshareAudioTrack(null));
+
+            // For audio-only sharing, isSharingAudio must be cleared before restoring noise suppression,
+            // otherwise canEnableNoiseSuppression sees it as still active and blocks the re-enable.
+            if (audioOnly) {
+                dispatch(setScreenAudioShareState(false));
+            }
+
+            if (nsEnabledBeforeShare) {
+                await dispatch(setNoiseSuppressionEnabled(true));
+            }
+            dispatch(setNsEnabledBeforeShare(undefined));
         }
     }
 
     if (audioOnly) {
-        dispatch(setScreenAudioShareState(enable));
+        // Only dispatch the state update if it was not already handled inside the desktopAudioTrack stop block above.
+        const { isSharingAudio } = getState()['features/screen-share'];
+
+        if (isSharingAudio !== enable) {
+            dispatch(setScreenAudioShareState(enable));
+        }
     } else {
         // Notify the external API.
         APP.API.notifyScreenSharingStatusChanged(enable, screensharingDetails);
-    }
-
-    // Restore noise suppression state once audio-only sharing ends. This must run after
-    // setScreenAudioShareState(false) is dispatched above so that canEnableNoiseSuppression
-    // does not see isSharingAudio as true and block the re-enable.
-    if (!enable && audioOnly) {
-        if (_noiseSuppressionStateBeforeShare) {
-            await dispatch(setNoiseSuppressionEnabled(true));
-        }
-        _noiseSuppressionStateBeforeShare = undefined;
     }
 }
 
