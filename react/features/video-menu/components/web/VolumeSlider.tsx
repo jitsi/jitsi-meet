@@ -83,7 +83,6 @@ const VolumeSlider = ({
 
     return (
         <div
-            aria-label = { t('volumeSlider') }
             className = { cx('popupmenu__contents', classes.container) }
             onClick = { _onClick }>
             <span className = { classes.icon }>
@@ -93,6 +92,7 @@ const VolumeSlider = ({
             </span>
             <div className = { classes.sliderContainer }>
                 <input
+                    aria-label = { t('volumeSlider') }
                     aria-valuemax = { VOLUME_SLIDER_SCALE }
                     aria-valuemin = { 0 }
                     aria-valuenow = { volumeLevel }
