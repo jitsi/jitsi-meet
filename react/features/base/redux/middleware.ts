@@ -19,7 +19,9 @@ const throttledPersistState = throttle(state => PersistenceRegistry.persistState
 // We need the <tt>if</tt> because it appears that on mobile the polyfill is not
 // executed yet.
 if (typeof window.addEventListener === 'function') {
-    window.addEventListener('unload', () => {
+    // The pending state is persisted on pagehide and not on unload. Browsers are removing the unload event (Chrome
+    // no longer fires it by default), so a change made right before the page goes away would otherwise be lost.
+    window.addEventListener('pagehide', () => {
         throttledPersistState.flush();
     });
 }
