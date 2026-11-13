@@ -521,6 +521,11 @@ export function toggleCamera() {
         const state = getState();
         const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+
+        if (!localVideoTrack) {
+            return;
+        }
+
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
         const { localFlipX } = state['features/base/settings'];
         const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
