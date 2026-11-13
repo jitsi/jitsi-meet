@@ -42,6 +42,19 @@ const counterReducer: Reducer<ICounterState, AnyAction> = (state = { count: 0 },
 
 describe('state persistence middleware', () => {
     const persistState = vi.spyOn(PersistenceRegistry, 'persistState');
+    const visibilityState = vi.spyOn(document, 'visibilityState', 'get');
+
+    /**
+     * Makes the document report the given visibility and announces the change, as the browser does when the tab is
+     * hidden or shown.
+     *
+     * @param {DocumentVisibilityState} state - The new visibility of the document.
+     * @returns {void}
+     */
+    function changeVisibility(state: DocumentVisibilityState) {
+        visibilityState.mockReturnValue(state);
+        document.dispatchEvent(new Event('visibilitychange'));
+    }
 
     beforeAll(() => {
         // One clock for all the tests. The throttle of the middleware lives as long as the module and remembers when
@@ -76,5 +89,29 @@ describe('state persistence middleware', () => {
 
         expect(persistState).toHaveBeenCalledTimes(2);
         expect(persistState).toHaveBeenLastCalledWith({ count: 3 });
+    });
+
+    it('persists a pending state change when the tab is hidden', () => {
+        const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
+
+        store.dispatch({ type: 'INCREMENT' });
+        store.dispatch({ type: 'INCREMENT' });
+
+        changeVisibility('hidden');
+
+        expect(persistState).toHaveBeenCalledTimes(2);
+        expect(persistState).toHaveBeenLastCalledWith({ count: 2 });
+    });
+
+    it('leaves a pending state change to the delay when the tab is shown again', () => {
+        const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
+
+        store.dispatch({ type: 'INCREMENT' });
+        store.dispatch({ type: 'INCREMENT' });
+
+        changeVisibility('visible');
+
+        expect(persistState).toHaveBeenCalledTimes(1);
+        expect(persistState).toHaveBeenLastCalledWith({ count: 1 });
     });
 });
