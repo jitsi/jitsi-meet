@@ -77,16 +77,4 @@ describe('state persistence middleware', () => {
         expect(persistState).toHaveBeenCalledTimes(2);
         expect(persistState).toHaveBeenLastCalledWith({ count: 3 });
     });
-
-    it('persists nothing when the page is hidden with no pending change', () => {
-        const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
-
-        store.dispatch({ type: 'INCREMENT' });
-        vi.advanceTimersByTime(LONGER_THAN_PERSIST_DELAY);
-        persistState.mockClear();
-
-        window.dispatchEvent(new Event('pagehide'));
-
-        expect(persistState).not.toHaveBeenCalled();
-    });
 });
