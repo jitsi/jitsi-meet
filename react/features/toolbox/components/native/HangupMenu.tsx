@@ -49,7 +49,7 @@ function HangupMenu() {
     }, [ hideSheet ]);
 
     return (
-        <BottomSheet>
+        <BottomSheet addScrollViewPadding = { false }>
             <View style = { _styles.hangupMenuContainer }>
                 { isModerator && <Button
                     accessibilityLabel = 'toolbar.endConference'

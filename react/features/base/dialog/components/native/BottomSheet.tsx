@@ -1,5 +1,5 @@
 import React, { PureComponent, ReactNode } from 'react';
-import { ScrollView, View, ViewStyle } from 'react-native';
+import { LayoutChangeEvent, ScrollView, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
@@ -46,6 +46,11 @@ type Props = {
     renderHeader?: Function;
 
     /**
+     * Content drawn above the backdrop and below the sheet. Gets the sheet's top edge, once laid out.
+     */
+    renderOverlay?: (sheetTop?: number) => ReactNode;
+
+    /**
      * Whether to show sliding view or not.
      */
     showSlidingView?: boolean;
@@ -56,10 +61,18 @@ type Props = {
     style?: Object;
 };
 
+interface IState {
+
+    /**
+     * Top edge of the sheet rows, in backdrop coordinates.
+     */
+    sheetTop?: number;
+}
+
 /**
  * A component emulating Android's BottomSheet.
  */
-class BottomSheet extends PureComponent<Props> {
+class BottomSheet extends PureComponent<Props, IState> {
     /**
      * Default values for {@code BottomSheet} component's properties.
      *
@@ -79,7 +92,30 @@ class BottomSheet extends PureComponent<Props> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {};
+
         this._onCancel = this._onCancel.bind(this);
+        this._onSheetLayout = this._onSheetLayout.bind(this);
+        this._renderOverlay = this._renderOverlay.bind(this);
+    }
+
+    /**
+     * Stores the sheet's top edge. The container fills the backdrop, and layout ignores the slide transform.
+     *
+     * @param {LayoutChangeEvent} event - The layout event.
+     * @returns {void}
+     */
+    _onSheetLayout(event: LayoutChangeEvent) {
+        this.setState({ sheetTop: event.nativeEvent.layout.y });
+    }
+
+    /**
+     * Renders the overlay content, if any.
+     *
+     * @returns {ReactNode}
+     */
+    _renderOverlay() {
+        return this.props.renderOverlay?.(this.state.sheetTop);
     }
 
     /**
@@ -106,6 +142,7 @@ class BottomSheet extends PureComponent<Props> {
             addScrollViewPadding,
             renderHeader,
             renderFooter,
+            renderOverlay,
             showSlidingView,
             style
         } = this.props;
@@ -114,6 +151,7 @@ class BottomSheet extends PureComponent<Props> {
             <SlidingView
                 onHide = { this._onCancel }
                 position = 'bottom'
+                renderOverlay = { renderOverlay ? this._renderOverlay : undefined }
                 show = { Boolean(showSlidingView) }>
                 <View
                     pointerEvents = 'box-none'
@@ -124,6 +162,7 @@ class BottomSheet extends PureComponent<Props> {
                     { renderHeader?.() }
                     <SafeAreaView
                         edges = { [ ] }
+                        onLayout = { renderOverlay ? this._onSheetLayout : undefined }
                         style = { [
                             styles.sheetItemContainer,
                             renderHeader
@@ -134,6 +173,7 @@ class BottomSheet extends PureComponent<Props> {
                         ] }>
                         <ScrollView
                             bounces = { false }
+                            contentContainerStyle = { addScrollViewPadding ? styles.scrollViewContent : undefined }
                             showsVerticalScrollIndicator = { false }
                             style = { [
                                 renderFooter && styles.sheet,
