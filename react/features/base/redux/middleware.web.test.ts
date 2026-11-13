@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { AnyAction, Reducer, createStore } from 'redux';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import MiddlewareRegistry from './MiddlewareRegistry';
 import PersistenceRegistry from './PersistenceRegistry';
@@ -10,7 +10,7 @@ import './middleware';
 
 /**
  * Longer than the delay with which the middleware persists the state, so that advancing the clock by it leaves no
- * persist pending.
+ * persist pending and the throttle idle.
  */
 const LONGER_THAN_PERSIST_DELAY = 10000;
 
@@ -43,31 +43,39 @@ const counterReducer: Reducer<ICounterState, AnyAction> = (state = { count: 0 },
 describe('state persistence middleware', () => {
     const persistState = vi.spyOn(PersistenceRegistry, 'persistState');
 
-    beforeEach(() => {
+    beforeAll(() => {
+        // One clock for all the tests. The throttle of the middleware lives as long as the module and remembers when
+        // it was last called, so a clock that starts over in every test would make its behaviour depend on the order
+        // of the tests.
         vi.useFakeTimers();
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
+    });
+
+    beforeEach(() => {
+        // Nothing is pending and the throttle is idle, so the first state change of a test is persisted right away.
+        vi.advanceTimersByTime(LONGER_THAN_PERSIST_DELAY);
         persistState.mockReset();
         persistState.mockImplementation(() => undefined);
     });
 
-    afterEach(() => {
-        // The throttle of the middleware outlives a test, so nothing is left pending for the next one.
-        vi.advanceTimersByTime(LONGER_THAN_PERSIST_DELAY);
-        vi.useRealTimers();
-    });
-
-    it('persists a pending state change when the page is hidden', () => {
+    it('persists a pending state change when the page is left', () => {
         const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
 
-        // Several changes in a row: at most the first one is persisted right away, the rest wait for the delay.
         store.dispatch({ type: 'INCREMENT' });
         store.dispatch({ type: 'INCREMENT' });
         store.dispatch({ type: 'INCREMENT' });
 
-        expect(persistState).not.toHaveBeenLastCalledWith(store.getState());
+        // The first change is persisted right away, the other two wait for the delay.
+        expect(persistState).toHaveBeenCalledTimes(1);
+        expect(persistState).toHaveBeenLastCalledWith({ count: 1 });
 
         window.dispatchEvent(new Event('pagehide'));
 
-        expect(persistState).toHaveBeenLastCalledWith(store.getState());
+        expect(persistState).toHaveBeenCalledTimes(2);
+        expect(persistState).toHaveBeenLastCalledWith({ count: 3 });
     });
 
     it('persists nothing when the page is hidden with no pending change', () => {
