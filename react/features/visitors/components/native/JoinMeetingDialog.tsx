@@ -19,21 +19,27 @@ export default function JoinMeetingDialog() {
         setVisible(false);
     }, []);
 
+    const description = t('visitors.joinMeeting.description');
+    const okLabel = t('dialog.Ok');
+    const title = t('visitors.joinMeeting.title');
+    const wishToSpeak = t('visitors.joinMeeting.wishToSpeak');
+
     return (
         <Dialog.Container
             coverScreen = { false }
             visible = { visible }>
-            <Dialog.Title>{ t('visitors.joinMeeting.title') }</Dialog.Title>
+            <Dialog.Title>{ title }</Dialog.Title>
             <Dialog.Description>
-                { t('visitors.joinMeeting.description') }
+                { description }
                 <View style = { styles.raiseHandButton as ViewStyle }>
                     {/* @ts-ignore */}
                     <RaiseHandButton disableClick = { true } />
                 </View>
             </Dialog.Description>
-            <Dialog.Description>{t('visitors.joinMeeting.wishToSpeak')}</Dialog.Description>
+            <Dialog.Description>{ wishToSpeak }</Dialog.Description>
             <Dialog.Button
-                label = { t('dialog.Ok') }
+                accessibilityLabel = { okLabel }
+                label = { okLabel }
                 onPress = { closeDialog } />
         </Dialog.Container>
     );
