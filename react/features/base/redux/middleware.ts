@@ -24,6 +24,14 @@ if (typeof window.addEventListener === 'function') {
     window.addEventListener('pagehide', () => {
         throttledPersistState.flush();
     });
+
+    // A hidden page can be discarded without a pagehide, which is common on mobile once the browser is in the
+    // background. Its timers are suspended as well, so the throttled write would not run either.
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            throttledPersistState.flush();
+        }
+    });
 }
 
 /**
