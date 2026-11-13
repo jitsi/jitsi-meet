@@ -37,6 +37,7 @@ class AlertDialog extends AbstractDialog<IProps> {
             = typeof contentKey === 'string'
                 ? t(contentKey)
                 : renderHTML(t(contentKey.key, contentKey.params));
+        const okLabel = t('dialog.Ok');
 
         return (
             <Dialog.Container
@@ -46,7 +47,8 @@ class AlertDialog extends AbstractDialog<IProps> {
                     { content }
                 </Dialog.Description>
                 <Dialog.Button
-                    label = { t('dialog.Ok') }
+                    accessibilityLabel = { okLabel }
+                    label = { okLabel }
                     onPress = { this._onSubmit } />
             </Dialog.Container>
         );
