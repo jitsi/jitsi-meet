@@ -89,20 +89,23 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: I
     /**
      * Copies the conference invitation to the clipboard.
      *
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    function _onCopyText() {
-        copyText(inviteText);
-        dispatch(showSuccessNotification({
-            titleKey: 'dialog.copied'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-        setIsClicked(true);
-        setTimeout(() => {
-            // avoid: Can't perform a React state update on an unmounted component
-            if (mounted) {
-                setIsClicked(false);
-            }
-        }, 2500);
+    async function _onCopyText() {
+        const isCopied = await copyText(inviteText);
+
+        if (isCopied) {
+            dispatch(showSuccessNotification({
+                titleKey: 'dialog.copied'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            setIsClicked(true);
+            setTimeout(() => {
+                // avoid: Can't perform a React state update on an unmounted component
+                if (mounted) {
+                    setIsClicked(false);
+                }
+            }, 2500);
+        }
     }
 
     /**
