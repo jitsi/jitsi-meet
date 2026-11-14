@@ -222,7 +222,10 @@ export function getConferenceOptions(stateful: IStateful) {
     const { defaultTranscriptionLanguage } = state['features/dynamic-branding'];
     const { tenant } = state['features/base/jwt'];
     const { email, name: nick } = getLocalParticipant(state) ?? {};
-    const options: any = { ...config };
+    const options: any = {
+        ...config,
+        analytics: config.analytics && { ...config.analytics }
+    };
 
     if (tenant) {
         options.siteID = tenant;
@@ -246,8 +249,8 @@ export function getConferenceOptions(stateful: IStateful) {
 
     // Disable analytics, if requested.
     if (options.disableThirdPartyRequests) {
-        delete config.analytics?.scriptURLs;
-        delete config.analytics?.amplitudeAPPKey;
+        delete options.analytics?.scriptURLs;
+        delete options.analytics?.amplitudeAPPKey;
     }
 
     return options;
