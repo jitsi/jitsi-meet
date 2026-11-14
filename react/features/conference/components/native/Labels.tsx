@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.native';
@@ -18,37 +19,41 @@ interface IProps {
 
 /**
  * A container that renders the conference indicators, if any.
+ *
+ * @param {IProps} props - The React props passed to this component.
+ * @returns {JSX.Element}
  */
-class Labels extends Component<IProps> {
+const Labels = ({ createOnPress }: IProps) => {
+    const { t } = useTranslation();
 
-    /**
-     * Implements React {@code Component}'s render.
-     *
-     * @inheritdoc
-     */
-    override render() {
-        return (
-            <View pointerEvents = 'box-none'>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.indicatorContainer as ViewStyle }>
-                    <TouchableOpacity
-                        hitSlop = { LabelHitSlop }
-                        onPress = {
-                            this.props.createOnPress(LABEL_ID_INSECURE_ROOM_NAME)
-                        } >
-                        <InsecureRoomNameLabel />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        hitSlop = { LabelHitSlop }
-                        onPress = {
-                            this.props.createOnPress(LABEL_ID_QUALITY) } >
-                        <VideoQualityLabel />
-                    </TouchableOpacity>
-                </View>
+    const insecureRoomNameLabel = t('security.title');
+    const qualityLabel = t('videoStatus.labelTooltipLowBandwidthMode');
+
+    return (
+        <View pointerEvents = 'box-none'>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.indicatorContainer as ViewStyle }>
+                <TouchableOpacity
+                    accessibilityLabel = { insecureRoomNameLabel }
+                    accessibilityRole = 'button'
+                    hitSlop = { LabelHitSlop }
+                    onPress = {
+                        createOnPress(LABEL_ID_INSECURE_ROOM_NAME)
+                    } >
+                    <InsecureRoomNameLabel />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    accessibilityLabel = { qualityLabel }
+                    accessibilityRole = 'button'
+                    hitSlop = { LabelHitSlop }
+                    onPress = {
+                        createOnPress(LABEL_ID_QUALITY) } >
+                    <VideoQualityLabel />
+                </TouchableOpacity>
             </View>
-        );
-    }
-}
+        </View>
+    );
+};
 
 export default Labels;
