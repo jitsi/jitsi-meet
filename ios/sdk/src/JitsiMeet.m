@@ -19,6 +19,7 @@
 #import "Orientation.h"
 
 #import "JitsiMeet+Private.h"
+#import "JitsiBackgroundEffects+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "ReactUtils.h"
@@ -62,6 +63,10 @@
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
+        [WebRTCModuleOptions sharedInstance].cameraVideoProcessorFactory =
+            ^id<RTCVideoCapturerDelegate>(RTCVideoSource *source) {
+                return [JitsiBackgroundEffects makeProcessorWithVideoSource:source];
+            };
 
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
