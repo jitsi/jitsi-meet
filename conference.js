@@ -2037,9 +2037,10 @@ export default {
         }
 
         // check for video
-        if (requestedInput.video) {
-            APP.store.dispatch(checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
-        }
+        APP.store.dispatch(checkAndNotifyForNewDevice(
+            newAvailDevices.videoInput,
+            oldDevices.videoInput
+        ));
 
         // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of 'default'
         // in order to get the correct MediaStreamTrack from chrome because of the following bug.
