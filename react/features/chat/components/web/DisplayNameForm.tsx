@@ -157,9 +157,15 @@ class DisplayNameForm extends Component<IProps, IState> {
     _onSubmit(event: any) {
         event?.preventDefault?.();
 
+        const trimmed = this.state.displayName.trim();
+
+        if (!trimmed) {
+            return;
+        }
+
         // Store display name in settings
         this.props.dispatch(updateSettings({
-            displayName: this.state.displayName
+            displayName: trimmed
         }));
     }
 
