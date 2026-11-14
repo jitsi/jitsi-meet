@@ -91,6 +91,23 @@ describe('state persistence middleware', () => {
         expect(persistState).toHaveBeenLastCalledWith({ count: 3 });
     });
 
+    it('persists a state change that a capturing listener makes when the page is left', () => {
+        const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
+
+        store.dispatch({ type: 'INCREMENT' });
+        store.dispatch({ type: 'INCREMENT' });
+
+        // The cleanup of a conference is such a listener. It is added long after the middleware was loaded and it
+        // changes the state (the duration in the recent list) on the same event.
+        window.addEventListener('pagehide', () => store.dispatch({ type: 'INCREMENT' }), {
+            capture: true,
+            once: true
+        });
+        window.dispatchEvent(new Event('pagehide'));
+
+        expect(persistState).toHaveBeenLastCalledWith({ count: 3 });
+    });
+
     it('persists a pending state change when the tab is hidden', () => {
         const store = createStore(counterReducer, MiddlewareRegistry.applyMiddleware());
 
