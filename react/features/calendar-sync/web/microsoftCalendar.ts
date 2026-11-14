@@ -65,6 +65,15 @@ const MS_API_CONFIGURATION = {
 let popupAuthWindow: Window | null = null;
 
 /**
+ * How long to wait for a silent token refresh before giving up, in
+ * milliseconds.
+ *
+ * @private
+ * @type {number}
+ */
+const REFRESH_AUTH_TIMEOUT = 10000;
+
+/**
  * A stateless collection of action creators that implements the expected
  * interface for interacting with the Microsoft API in order to get calendar
  * data.
@@ -505,12 +514,6 @@ function refreshAuthToken() {
         iframe.setAttribute('style', 'display: none');
         iframe.setAttribute('src', refreshAuthUrl);
 
-        const signInPromise = new Promise(resolve => {
-            iframe.onload = () => {
-                resolve(iframe.contentWindow?.location.hash);
-            };
-        });
-
         // The check for body existence is done for flow, which also runs
         // against native where document.body may not be defined.
         if (!document.body) {
@@ -518,21 +521,44 @@ function refreshAuthToken() {
                 'Cannot refresh auth token in this environment');
         }
 
+        const signInPromise = new Promise<string>((resolve, reject) => {
+            const timeout = setTimeout(
+                () => reject(new Error('Timed out refreshing the auth token')),
+                REFRESH_AUTH_TIMEOUT);
+
+            iframe.onload = () => {
+                let hash;
+
+                try {
+                    hash = iframe.contentWindow?.location.hash;
+                } catch {
+                    // Still on another origin, for example an intermediate
+                    // sign in page, wait for the redirect or the timeout.
+                    return;
+                }
+
+                clearTimeout(timeout);
+                resolve(hash ?? '');
+            };
+        });
+
         document.body.appendChild(iframe);
 
-        return signInPromise.then(hash => {
-            const params = getParamsFromHash(hash as string);
+        return signInPromise
+            .finally(() => iframe.remove())
+            .then(hash => {
+                const params = getParamsFromHash(hash);
 
-            if (!params.access_token) {
-                return Promise.reject('Refreshing the auth token failed');
-            }
+                if (!params.access_token) {
+                    return Promise.reject('Refreshing the auth token failed');
+                }
 
-            dispatch(setCalendarAPIAuthState({
-                accessToken: params.access_token,
-                idToken: params.id_token,
-                tokenExpires: params.tokenExpires
-            }));
-        });
+                dispatch(setCalendarAPIAuthState({
+                    accessToken: params.access_token,
+                    idToken: params.id_token,
+                    tokenExpires: params.tokenExpires
+                }));
+            });
     };
 }
 
