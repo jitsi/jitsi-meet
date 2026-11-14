@@ -7,7 +7,6 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { appNavigate } from '../../../app/actions';
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import { endConference } from '../../../base/conference/actions';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
@@ -16,6 +15,7 @@ import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { moveToRoom } from '../../../breakout-rooms/actions';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+import { openEndConferenceDialog } from '../../../conference/actions.native';
 
 /**
  * Menu presenting options to leave a room or meeting and to end meeting.
@@ -33,8 +33,8 @@ function HangupMenu() {
     const handleEndConference = useCallback(() => {
         dispatch(hideSheet());
         sendAnalytics(createToolbarEvent('endmeeting'));
-        dispatch(endConference());
-    }, [ hideSheet ]);
+        dispatch(openEndConferenceDialog());
+    }, [ dispatch, hideSheet ]);
 
     const handleLeaveConference = useCallback(() => {
         dispatch(hideSheet());
