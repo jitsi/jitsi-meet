@@ -2,11 +2,14 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { getServerFeatures } from './helpers/server_features.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
+const CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+const SHARED_VIDEO_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#shared_video_permissions';
 
 let _counter = 0;
 const nextRoom = () => `filter-msg-${++_counter}@${CONFERENCE}`;
@@ -309,6 +312,21 @@ describe('mod_filter_messages', () => {
 
         assert.notEqual(reply.attrs.type, 'error',
             'body-less message must pass through even when chat is restricted');
+    });
+
+    // ── feature advertised to clients ─────────────────────────────────────────
+
+    it('advertises the chat and shared video permissions features on the main virtual host', async () => {
+        const c = await createXmppClient();
+
+        clients.push(c);
+
+        const { disco, jiconop } = await getServerFeatures(c);
+
+        for (const feature of [ CHAT_PERMISSIONS_FEATURE, SHARED_VIDEO_PERMISSIONS_FEATURE ]) {
+            assert.ok(jiconop.includes(feature), `jiconop must contain ${feature}`);
+            assert.ok(disco.includes(feature), `disco#info must contain ${feature}`);
+        }
     });
 });
 

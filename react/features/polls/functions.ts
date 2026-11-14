@@ -1,9 +1,11 @@
 import { IReduxState } from '../app/types';
+import { isServerFeatureSupported } from '../base/connection/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import { iAmVisitor } from '../visitors/functions';
 
+import { POLLS_CLOSE_FEATURE } from './constants';
 import { IAnswerData } from './types';
 
 /**
@@ -106,7 +108,7 @@ export function canClosePoll(state: IReduxState, pollId: string) {
     const poll = state['features/polls'].polls[pollId];
     const { conference } = state['features/base/conference'];
 
-    if (!state['features/base/config'].showEndPollButton) {
+    if (!state['features/base/config'].showEndPollButton || !isServerFeatureSupported(state, POLLS_CLOSE_FEATURE)) {
         return false;
     }
 

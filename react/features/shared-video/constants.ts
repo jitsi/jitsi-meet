@@ -1,4 +1,9 @@
 /**
+ * The feature the server advertises when it enforces the shared video restriction (mod_filter_messages).
+ */
+export const SHARED_VIDEO_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#shared_video_permissions';
+
+/**
  * Fixed name of the video player fake participant.
  *
  * @type {string}

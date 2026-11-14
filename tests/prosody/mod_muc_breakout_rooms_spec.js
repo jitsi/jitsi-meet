@@ -2,12 +2,14 @@ import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { getServerFeatures } from './helpers/server_features.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const BREAKOUT_MUC = 'breakout.conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
+const JOIN_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/breakout_rooms#join_permissions';
 
 // JSON message type constants (must match mod_muc_breakout_rooms.lua)
 const BREAKOUT_ROOMS_TYPE = 'breakout_rooms';
@@ -124,6 +126,19 @@ describe('mod_muc_breakout_rooms', () => {
 
     afterEach(async () => {
         await Promise.all(clients.map(c => c.disconnect()));
+    });
+
+    it('advertises the join permissions feature on the main virtual host', async () => {
+        const c = await createXmppClient();
+
+        clients.push(c);
+
+        const { disco, jiconop } = await getServerFeatures(c);
+
+        for (const feature of [ JOIN_PERMISSIONS_FEATURE ]) {
+            assert.ok(jiconop.includes(feature), `jiconop must contain ${feature}`);
+            assert.ok(disco.includes(feature), `disco#info must contain ${feature}`);
+        }
     });
 
     // -------------------------------------------------------------------------

@@ -2,6 +2,7 @@ import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { getServerFeatures } from './helpers/server_features.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 // mod_polls_component is loaded as the "polls.localhost" component (see
@@ -13,6 +14,8 @@ import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 const CONFERENCE = 'conference.localhost';
 const POLLS_COMPONENT = 'polls.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
+const SINGLE_ANSWER_FEATURE = 'http://jitsi.org/protocol/polls#single_answer';
+const CLOSE_FEATURE = 'http://jitsi.org/protocol/polls#close';
 
 let _roomCounter = 0;
 const nextRoom = () => `polls-${++_roomCounter}@${CONFERENCE}`;
@@ -91,6 +94,19 @@ describe('mod_polls_component', () => {
 
     afterEach(async () => {
         await Promise.all(clients.map(c => c.disconnect()));
+    });
+
+    it('advertises the single answer and close features on the main virtual host', async () => {
+        const c = await createXmppClient();
+
+        clients.push(c);
+
+        const { disco, jiconop } = await getServerFeatures(c);
+
+        for (const feature of [ SINGLE_ANSWER_FEATURE, CLOSE_FEATURE ]) {
+            assert.ok(jiconop.includes(feature), `jiconop must contain ${feature}`);
+            assert.ok(disco.includes(feature), `disco#info must contain ${feature}`);
+        }
     });
 
     /**

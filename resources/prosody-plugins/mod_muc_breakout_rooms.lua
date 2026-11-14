@@ -44,6 +44,9 @@ local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- Available breakout room functionality
 local RENAME_FEATURE = 'http://jitsi.org/protocol/breakout_rooms#rename';
+-- Advertised on the main virtual host, where this module is loaded, so clients show the setting that restricts joining
+-- a breakout room only where this module enforces it.
+local JOIN_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/breakout_rooms#join_permissions';
 -- only send at most this often updates on breakout rooms to avoid flooding.
 local BROADCAST_ROOMS_INTERVAL = .3;
 -- close conference after this amount of seconds if all leave.
@@ -909,6 +912,10 @@ function process_main_muc_loaded(main_muc, host_module)
         end
     end);
 end
+
+-- Added directly, not with jitsi-add-feature: mod_features_identity may load after this module on the same host, and
+-- the feature is then removed when this module is unloaded.
+module:add_feature(JOIN_PERMISSIONS_FEATURE);
 
 -- process or waits to process the main muc component
 process_host_module(main_muc_component_config, function(host_module, host)
