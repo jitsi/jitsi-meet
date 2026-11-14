@@ -8,6 +8,7 @@ import {
     KICKED_OUT
 } from '../base/conference/actionTypes';
 import { SET_CONFIG } from '../base/config/actionTypes';
+import { getPageUnloadEventName } from '../base/config/functions.any';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices/actionTypes';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
@@ -239,13 +240,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CONFIG: {
-        const state = store.getState();
-        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
-
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+        window.addEventListener(getPageUnloadEventName(store.getState()), () => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             APP.API.dispose();
             getJitsiMeetTransport().dispose();

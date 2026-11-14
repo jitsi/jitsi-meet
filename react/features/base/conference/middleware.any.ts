@@ -32,7 +32,7 @@ import LocalRecordingManager from '../../recording/components/Recording/LocalRec
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
 import { configWillLoad, overwriteConfig, setConfig } from '../config/actions';
-import { buildConfigURL } from '../config/functions.any';
+import { buildConfigURL, getPageUnloadEventName } from '../config/functions.any';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect, setPreferVisitor } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
@@ -398,10 +398,7 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const {
-        disableBeforeUnloadHandlers = false,
-        requireDisplayName
-    } = getState()['features/base/config'];
+    const { requireDisplayName } = getState()['features/base/config'];
 
     retryAsVisitorOnMaxError = true;
     settingsIncompleteNotificationShown = false;
@@ -432,7 +429,7 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    window.addEventListener(getPageUnloadEventName(getState()), beforeUnloadHandler);
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -850,9 +847,7 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
  */
 function _removeUnloadHandler(getState: IStore['getState']) {
     if (typeof beforeUnloadHandler !== 'undefined') {
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
-
-        window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.removeEventListener(getPageUnloadEventName(getState()), beforeUnloadHandler);
         beforeUnloadHandler = undefined;
     }
 }
