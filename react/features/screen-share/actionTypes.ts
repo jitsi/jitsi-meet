@@ -1,4 +1,14 @@
 /**
+ * Type of action which saves the noise suppression state before desktop audio sharing disables it.
+ *
+ * {
+ *     type: SET_NS_ENABLED_BEFORE_SHARE,
+ *     nsEnabledBeforeShare: boolean
+ * }
+ */
+export const SET_NS_ENABLED_BEFORE_SHARE = 'SET_NS_ENABLED_BEFORE_SHARE';
+
+/**
  * Type of action which sets the current state of screen audio sharing.
  *
  * {

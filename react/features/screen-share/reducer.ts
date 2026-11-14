@@ -2,6 +2,7 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
+    SET_NS_ENABLED_BEFORE_SHARE,
     SET_SCREENSHARE_CAPTURE_FRAME_RATE,
     SET_SCREENSHARE_TRACKS,
     SET_SCREEN_AUDIO_SHARE_STATE
@@ -11,6 +12,7 @@ export interface IScreenShareState {
     captureFrameRate?: number;
     desktopAudioTrack?: any;
     isSharingAudio?: boolean;
+    nsEnabledBeforeShare?: boolean;
 }
 
 /**
@@ -24,6 +26,12 @@ ReducerRegistry.register<IScreenShareState>('features/screen-share', (state = {}
         return {
             ...state,
             isSharingAudio
+        };
+
+    case SET_NS_ENABLED_BEFORE_SHARE:
+        return {
+            ...state,
+            nsEnabledBeforeShare: action.nsEnabledBeforeShare
         };
 
     case SET_SCREENSHARE_CAPTURE_FRAME_RATE:
