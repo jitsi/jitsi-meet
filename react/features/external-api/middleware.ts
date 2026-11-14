@@ -243,8 +243,18 @@ MiddlewareRegistry.register(store => next => action => {
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener(getPageUnloadEventName(store.getState()), () => {
+        window.addEventListener(getPageUnloadEventName(store.getState()), (event: Event) => {
+            // The conference is left on every one of these events, also when the page may come back:
+            // lib-jitsi-meet disconnects on each of them.
             APP.API.notifyConferenceLeft(APP.conference.roomName);
+
+            // A pagehide with persisted set means that the page may go into the back/forward cache and be shown
+            // again later, together with the page that embeds it. Nothing creates the API and the transport again
+            // then, so they are kept and the embedder can still talk to the restored page.
+            if ('persisted' in event && event.persisted) {
+                return;
+            }
+
             APP.API.dispose();
             getJitsiMeetTransport().dispose();
         });
