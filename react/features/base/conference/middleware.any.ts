@@ -429,7 +429,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(getPageUnloadEventName(getState()), beforeUnloadHandler);
+    const pageUnloadEventName = getPageUnloadEventName(getState());
+
+    window.addEventListener(pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -840,6 +842,22 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
+ * Returns the options with which the unload handler is added to the window and removed from it.
+ *
+ * On {@code pagehide} the handler captures the event, so that it runs before the listener that persists the redux
+ * state. That listener is on the window since the app was loaded and would otherwise run first. The duration that
+ * {@code conferenceWillLeave} puts in the recent list would then not be written for a tab that is closed while it is
+ * in the background. On {@code beforeunload} the state is persisted later, so the order of the listeners stays as it
+ * was.
+ *
+ * @param {string} eventName - The name of the event the handler is registered on.
+ * @returns {Object} The options for {@code addEventListener} and {@code removeEventListener}.
+ */
+function _getUnloadHandlerOptions(eventName: string) {
+    return { capture: eventName === 'pagehide' };
+}
+
+/**
  * Removes the unload handler.
  *
  * @param {Function} getState - The redux getState function.
@@ -847,7 +865,10 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
  */
 function _removeUnloadHandler(getState: IStore['getState']) {
     if (typeof beforeUnloadHandler !== 'undefined') {
-        window.removeEventListener(getPageUnloadEventName(getState()), beforeUnloadHandler);
+        const pageUnloadEventName = getPageUnloadEventName(getState());
+
+        window.removeEventListener(
+            pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
         beforeUnloadHandler = undefined;
     }
 }
