@@ -1557,6 +1557,8 @@
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
             "showWhiteboard": "Show whiteboard",
+            "pdfSharing": "Share PDF presentation",
+            "stopPdfSharing": "Stop PDF presentation",
             "silence": "Silence",
             "speakerStats": "Toggle participants statistics",
             "stopScreenSharing": "Stop sharing your screen",
@@ -1677,6 +1679,8 @@
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
         "showWhiteboard": "Show whiteboard",
+        "pdfSharing": "Share PDF presentation",
+        "stopPdfSharing": "Stop PDF presentation",
         "silence": "Silence",
         "speakerStats": "Participants stats",
         "startScreenSharing": "Start screen sharing",
@@ -1906,5 +1910,11 @@
             "heading": "Whiteboard"
         },
         "screenTitle": "Whiteboard"
+    },
+    "pdfSharing": {
+        "defaultTitle": "Shared PDF Document",
+        "loading": "Loading PDF document...",
+        "reFollowPresenter": "Re-follow Presenter",
+        "stopSharing": "Stop sharing"
     }
 }

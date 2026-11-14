@@ -21,6 +21,8 @@ import { areClosedCaptionsEnabled } from '../../subtitles/functions.any';
 import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';
+import PdfViewer from '../../pdf-sharing/components/web/PdfViewer';
+import { isPdfPresentationOpen } from '../../pdf-sharing/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
 import { getLargeVideoParticipant } from '../functions';
 
@@ -84,6 +86,11 @@ interface IProps {
      * video element.
      */
     _noAutoPlayVideo: boolean;
+
+    /**
+     * Whether or not the PDF presentation is open.
+     */
+    _isPdfOpen: boolean;
 
     /**
      * Whether or not the filmstrip is resizable.
@@ -203,6 +210,7 @@ class LargeVideo extends Component<IProps> {
             _displayScreenSharingPlaceholder,
             _isChatOpen,
             _isDisplayNameVisible,
+            _isPdfOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled,
@@ -219,6 +227,7 @@ class LargeVideo extends Component<IProps> {
                 style = { style }>
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
+                {_isPdfOpen && <PdfViewer />}
                 <div id = 'etherpad' />
 
                 <Watermarks />
@@ -387,6 +396,7 @@ function _mapStateToProps(state: IReduxState) {
         _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isDisplayNameVisible: isDisplayNameVisible(state),
+        _isPdfOpen: isPdfPresentationOpen(state),
         _isScreenSharing: Boolean(isLocalScreenshareOnLargeVideo),
         _largeVideoParticipantId: largeVideoParticipant?.id ?? '',
         _localParticipantId: localParticipantId ?? '',
