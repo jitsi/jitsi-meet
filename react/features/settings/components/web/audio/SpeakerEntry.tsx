@@ -130,9 +130,9 @@ const SpeakerEntry = (props: IProps) => {
 
         try {
             await audioRef.current?.setSinkId(props.deviceId);
-            audioRef.current?.play();
+            await audioRef.current?.play();
         } catch (err) {
-            logger.log('Could not set sink id', err);
+            logger.warn(`Could not play the test sound on ${props.deviceId}`, err);
         }
     }
 

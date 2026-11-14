@@ -1,4 +1,6 @@
 import { IStore } from '../../app/types';
+import { showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
 import { getUserSelectedOutputDeviceId } from '../settings/functions.web';
@@ -255,16 +257,30 @@ export function setAudioInputDeviceAndUpdateSettings(deviceId: string) {
 }
 
 /**
- * Updates the output device id.
+ * Updates the output device id selected by the user. A failure is logged and shown to the user.
  *
  * @param {string} deviceId - The id of the new output device.
- * @returns {Function}
+ * @returns {Function} - Resolves with whether the output device was changed.
  */
 export function setAudioOutputDevice(deviceId: string) {
-    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<boolean> {
         const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioOutput');
 
-        return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel);
+        // setAudioOutputDeviceId resolves without switching where the browser cannot change outputs.
+        if (!JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
+            return Promise.resolve(false);
+        }
+
+        return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel)
+            .then(() => true, error => {
+                logger.warn(`Failed to change the audio output device to ${deviceLabel}[${deviceId}]`, error);
+                dispatch(showWarningNotification({
+                    descriptionKey: 'notify.audioOutputChangeFailedDescription',
+                    titleKey: 'notify.audioOutputChangeFailedTitle'
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+                return false;
+            });
     };
 }
 
