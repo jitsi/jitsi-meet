@@ -11,7 +11,9 @@ import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { showErrorNotification } from '../../../../notifications/actions';
 import { setLiveStreamKey } from '../../../actions';
+import logger from '../../../logger';
 import AbstractStartLiveStreamDialog, { IProps, _mapStateToProps } from '../AbstractStartLiveStreamDialog';
 
 import GoogleSigninForm from './GoogleSigninForm';
@@ -48,6 +50,8 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
      * @returns {void}
      */
     override componentDidMount() {
+        super.componentDidMount();
+
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -126,8 +130,6 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
      * A callback to be invoked when an authenticated user changes, so
      * then we can get (or clear) the YouTube stream key.
      *
-     * TODO: Handle errors by showing some indication to the user.
-     *
      * @private
      * @param {Object} response - The retrieved signin response.
      * @returns {void}
@@ -138,19 +140,39 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
                 .then((tokens: any) => {
                     googleApi.getYouTubeLiveStreams(tokens.accessToken)
                         .then((broadcasts: any) => {
-                            this.setState({
+                            this._setStateIfMounted({
                                 broadcasts
+                            });
+                        })
+                        .catch((error: any) => {
+                            logger.error('Failed to get YouTube live streams', error);
+
+                            this.props.dispatch(showErrorNotification({
+                                descriptionKey: 'liveStreaming.errorAPI',
+                                titleKey: 'liveStreaming.unavailableTitle'
+                            }));
+
+                            this._setStateIfMounted({
+                                broadcasts: undefined,
+                                streamKey: undefined
                             });
                         });
                 })
-                .catch(() => {
-                    this.setState({
+                .catch((error: any) => {
+                    logger.error('Failed to get Google OAuth tokens', error);
+
+                    this.props.dispatch(showErrorNotification({
+                        descriptionKey: 'liveStreaming.error',
+                        titleKey: 'liveStreaming.unavailableTitle'
+                    }));
+
+                    this._setStateIfMounted({
                         broadcasts: undefined,
                         streamKey: undefined
                     });
                 });
         } else {
-            this.setState({
+            this._setStateIfMounted({
                 broadcasts: undefined,
                 streamKey: undefined
             });
