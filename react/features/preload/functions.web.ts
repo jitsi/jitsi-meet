@@ -20,9 +20,13 @@ function takePreloadedResource<K extends keyof IJitsiMeetPreload>(
         return undefined;
     }
 
+    if (resource.url !== url) {
+        return undefined;
+    }
+
     delete preload[key];
 
-    return resource.url === url ? resource.promise : undefined;
+    return resource.promise;
 }
 
 /**
