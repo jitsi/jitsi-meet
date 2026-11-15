@@ -119,11 +119,21 @@ body.welcome-page {
 
         #enter_room {
             display: $welcomePageEnterRoomDisplay;
-            align-items: center;
+            flex-direction: column;
+            align-items: stretch;
             max-width: 480px;
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
             height: fit-content;
+
+            .enter-room-label {
+                color: $welcomePageTitleColor;
+                font-size: 0.875rem;
+                font-weight: 600;
+                line-height: 1.25rem;
+                margin-bottom: 8px;
+                text-align: left;
+            }
 
             .join-meeting-container {
                 margin: $welcomePageEnterRoomMargin;
