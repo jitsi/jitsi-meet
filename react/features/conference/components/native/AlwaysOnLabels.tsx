@@ -11,6 +11,7 @@ import RecordingLabel from '../../../recording/components/native/RecordingLabel'
 import TranscribingLabel from '../../../recording/components/native/TranscribingLabel';
 import { isLiveStreamingRunning } from '../../../recording/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
+import { getVisitorsCount } from '../../../visitors/functions';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import TimeTimerLabel from './TimeTimerLabel';
@@ -37,6 +38,7 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const isStreaming = useSelector(isLiveStreamingRunning);
+    const visitorsCount = useSelector(getVisitorsCount);
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
 
@@ -46,7 +48,7 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const highlightLabel = t('recording.highlight');
     const raisedHandsLabel = t('raisedHandsLabel');
     const translationLabel = t('audioTranslation.labelTooltip');
-    const visitorsLabel = t('visitors.labelTooltip');
+    const visitorsLabel = t('visitors.labelTooltip', { count: visitorsCount });
 
     return (<>
         <TouchableOpacity
