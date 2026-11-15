@@ -226,6 +226,7 @@ const SpeakerStats = () => {
     return (
         <Dialog
             cancel = {{ hidden: true }}
+            disableEnter = { true }
             ok = {{ hidden: true }}
             size = { showFaceExpressions ? 'large' : 'medium' }
             titleKey = 'speakerStats.speakerStats'>
