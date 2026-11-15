@@ -149,9 +149,8 @@ export class NoiseSuppressionEffect {
             // @ts-ignore
             this._noiseSuppressorNode?.disable();
         } else {
-            // Technically after this process the Audio Worklet along with it's resources should be garbage collected,
-            // however on chrome there seems to be a problem as described here:
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=1298955
+            // Signal the AudioWorklet to clean up and destroy all allocated WebAssembly RNNoise contexts.
+            this._noiseSuppressorNode?.port?.postMessage({ action: 'destroy' });
             this._noiseSuppressorNode?.port?.close();
         }
 
@@ -272,6 +271,9 @@ async function _initializeKRnnoise(): Promise<AudioWorkletNode | undefined> {
     }
 
     // After the resolution of module loading, an AudioWorkletNode can be constructed.
-
-    return new AudioWorkletNode(audioContext, 'NoiseSuppressorWorklet');
+    // Configure with channelCountMode 'max' to dynamically adapt to mono and stereo tracks.
+    return new AudioWorkletNode(audioContext, 'NoiseSuppressorWorklet', {
+        channelCountMode: 'max',
+        channelInterpretation: 'speakers'
+    });
 }
