@@ -204,16 +204,7 @@ const VideoSettingsContent = ({
     const _setTracks = async () => {
         _disposeTracks(trackData);
 
-        // Firefox grants access per device, a preview of every camera would prompt for each of them.
-        const previewedIds = browser.isFirefox()
-            ? videoDeviceIds.filter(deviceId => deviceId === currentCameraDeviceId)
-            : videoDeviceIds;
-        const previewTracks = await createLocalVideoTracks(previewedIds, 5000);
-        const newTrackData = videoDeviceIds.map(deviceId =>
-            previewTracks.find(data => data.deviceId === deviceId) ?? {
-                deviceId,
-                jitsiTrack: null
-            });
+        const newTrackData = await createLocalVideoTracks(videoDeviceIds, currentCameraDeviceId, 5000);
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
