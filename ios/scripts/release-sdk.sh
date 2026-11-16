@@ -12,6 +12,12 @@ echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
 
 pushd ${RELEASE_REPO}
 
+# Update the releases repo if upstream has new commits
+git fetch
+if [[ -n $(git rev-list HEAD..@{u}) ]]; then
+    git pull --ff-only
+fi
+
 # Generate podspec file
 cat JitsiMeetSDK.podspec.tpl | sed -e s/VERSION/${SDK_VERSION}/g > JitsiMeetSDK.podspec
 
