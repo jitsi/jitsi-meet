@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
 import { IconImage } from '../../../../base/icons/svg';
-import { browser } from '../../../../base/lib-jitsi-meet';
 import { Video } from '../../../../base/media/components/index';
 import { equals } from '../../../../base/redux/functions';
 import { updateSettings } from '../../../../base/settings/actions';
@@ -171,7 +170,6 @@ const VideoSettingsContent = ({
     }));
     const { t } = useTranslation();
     const videoDevicesRef = useRef(videoDeviceIds);
-    const selectedDeviceRef = useRef(currentCameraDeviceId);
     const trackDataRef = useRef(trackData);
     const { classes, cx } = useStyles();
 
@@ -308,13 +306,6 @@ const VideoSettingsContent = ({
             videoDevicesRef.current = videoDeviceIds;
         }
     }, [ videoDeviceIds ]);
-
-    useEffect(() => {
-        if (browser.isFirefox() && currentCameraDeviceId !== selectedDeviceRef.current) {
-            _setTracks();
-        }
-        selectedDeviceRef.current = currentCameraDeviceId;
-    }, [ currentCameraDeviceId ]);
 
     return (
         <ContextMenu
