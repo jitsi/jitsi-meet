@@ -650,7 +650,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         -- as we will handle it in occupant_joined
         local actor, affiliation, jid, room = event.actor, event.affiliation, event.jid, event.room;
 
-        if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not affiliation == 'owner' -- luacheck: ignore
+        if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or affiliation ~= 'owner'
             or not visitors_promotion_requests[event.room.jid] then
             return;
         end
