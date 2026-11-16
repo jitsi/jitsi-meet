@@ -101,6 +101,7 @@ export const RecordListItem = ({
                     </View>
                 ) : (
                     <Button
+                        accessibilityLabel = { actionLabelKey }
                         disabled = { disabled }
                         labelKey = { actionLabelKey }
                         onClick = { onAction }
