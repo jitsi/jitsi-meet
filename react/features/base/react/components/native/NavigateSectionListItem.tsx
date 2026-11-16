@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { GestureResponderEvent } from 'react-native';
 
+import { translate } from '../../../i18n/functions.native';
 import { IconPlus } from '../../../icons/svg';
 import IconButton from '../../../ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../ui/constants.any';
@@ -10,7 +12,7 @@ import AvatarListItem from './AvatarListItem';
 import Text from './Text';
 import styles from './styles';
 
-interface IProps {
+interface IProps extends WithTranslation {
 
     /**
      * Item containing data to be rendered.
@@ -39,7 +41,7 @@ interface IProps {
  *
  * @augments Component
  */
-export default class NavigateSectionListItem extends Component<IProps> {
+class NavigateSectionListItem extends Component<IProps> {
     /**
      * Constructor of the NavigateSectionList component.
      *
@@ -93,10 +95,12 @@ export default class NavigateSectionListItem extends Component<IProps> {
      * @returns {React$Node}
      */
     _renderSecondaryAction() {
-        const { secondaryAction } = this.props;
+        const { secondaryAction, t } = this.props;
+        const addMeetingUrlLabel = t('calendarSync.addMeetingURL');
 
         return (
             <IconButton
+                accessibilityLabel = { addMeetingUrlLabel }
                 onPress = { secondaryAction }
                 src = { IconPlus }
                 type = { BUTTON_TYPES.PRIMARY } />
@@ -121,3 +125,5 @@ export default class NavigateSectionListItem extends Component<IProps> {
         );
     }
 }
+
+export default translate(NavigateSectionListItem);
