@@ -810,7 +810,7 @@ describe('mod_voice_agent_component', function()
         end)
 
         it('rejects an unknown policy and a non-string', function()
-            for _, bad in ipairs({ 'loudest', 'Dominant', 42, { 'dominant' } }) do
+            for _, bad in ipairs({ 'loudest', 'Dominant', 'Mix', 42, { 'dominant' } }) do
                 assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot'; fanIn = bad }).status_code);
             end
             assert.are.equal(0, #agent_ids(mock_room));
@@ -825,6 +825,127 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
             assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
                 fanIn = 'dominant' }).status_code);
+        end)
+    end)
+
+    describe('the mix fan-in and its options', function()
+        local function dial_body()
+            assert.are.equal(200, dial('conference=r&agentId=agent-support').status_code);
+            return encoded[#encoded];
+        end
+        local function invite_mix(extra)
+            local payload = { conference = 'r'; displayName = 'Bot'; agentId = 'support'; fanIn = 'mix' };
+            for key, value in pairs(extra or {}) do
+                payload[key] = value;
+            end
+            return invite(payload);
+        end
+
+        it('carries mix to the dial response, with no options when none are given', function()
+            assert.are.equal(200, invite_mix().status_code);
+            assert.are.equal('mix', dial_body().fanIn);
+            assert.is_nil(dial_body().mix);
+        end)
+
+        it('carries the options to the dial response as given, and keeps them out of the client-facing entry', function()
+            assert.are.equal(200, invite_mix({ mix = { bufferMs = 80; continuous = true; gain = 'sqrt';
+                limiterKneeDb = -4.5 } }).status_code);
+            assert.are.same({ bufferMs = 80; continuous = true; gain = 'sqrt'; limiterKneeDb = -4.5 }, dial_body().mix);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].mix);
+        end)
+
+        it('does not judge the names or the values: the media relay does, when it dials', function()
+            assert.are.equal(200, invite_mix({ mix = { bufferMs = 100000; someLaterOption = 'x' } }).status_code);
+            assert.are.same({ bufferMs = 100000; someLaterOption = 'x' }, dial_body().mix);
+        end)
+
+        it('treats an empty object as no options', function()
+            assert.are.equal(200, invite_mix({ mix = {} }).status_code);
+            assert.is_nil(dial_body().mix);
+        end)
+
+        it('rejects anything but a flat object of numbers, booleans and short strings', function()
+            local too_many = {};
+            for i = 1, 17 do
+                too_many['option' .. i] = i;
+            end
+            -- cjson gives a JSON null as a userdata, not as nil.
+            local json_null = io.stdout;
+            for i, bad in ipairs({ 'fast', 42, { 1, 2 }, { bufferMs = { 80 } }, { bufferMs = { ms = 80 } },
+                    { [string.rep('k', 65)] = 1 }, { gain = string.rep('v', 65) }, { gain = 'a\nb' },
+                    { ['buffer-ms'] = 80 }, { buffer_ms = 80 }, { ['1st'] = 80 }, { ['8'] = 80 },
+                    { ['__proto__'] = 1 }, { [''] = 1 }, { bufferMs = 0 / 0 }, { bufferMs = math.huge },
+                    { bufferMs = -math.huge }, json_null, { bufferMs = json_null }, too_many }) do
+                assert.are.equal(400, invite_mix({ mix = bad }).status_code, 'bad input ' .. i);
+            end
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('says which rule a name broke', function()
+            invite_mix({ mix = { [string.rep('k', 65)] = 1 } });
+            assert.is_truthy(encoded[#encoded].error:find('too long', 1, true));
+            invite_mix({ mix = { buffer_ms = 1 } });
+            assert.is_truthy(encoded[#encoded].error:find('letters and digits', 1, true));
+        end)
+
+        it('takes what is exactly at the limits: 16 options, a 64 character name and a 64 character value', function()
+            local full = { [string.rep('k', 64)] = string.rep('v', 64) };
+            for i = 1, 15 do
+                full['option' .. i] = i;
+            end
+            assert.are.equal(200, invite_mix({ mix = full }).status_code);
+            assert.are.same(full, dial_body().mix);
+        end)
+
+        it('rejects mix with Opus on the agent leg: a mix is decoded audio', function()
+            assert.are.equal(400, invite_mix({ mediaFormat = { encoding = 'audio/opus' } }).status_code);
+            assert.are.equal(200, invite_mix({ mediaFormat = { encoding = 'audio/l16' } }).status_code);
+        end)
+
+        it('checks the options of another fan-in but does not keep them', function()
+            assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'dominant'; mix = 'fast' }).status_code);
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'dominant'; mix = { bufferMs = 80 } }).status_code);
+            assert.is_nil(dial_body().mix);
+            assert.is_nil(mock_room._data.voice_agents['agent-support'].mix);
+        end)
+
+        it('takes Opus with another fan-in also when mix options are sent', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mediaFormat = { encoding = 'audio/opus' }; mix = { bufferMs = 80 } }).status_code);
+            assert.is_nil(mock_room._data.voice_agents['agent-support'].mix);
+        end)
+
+        it('leaves the options of another fan-in out of the idempotency check: a retry is still the same invite', function()
+            local base = { conference = 'r'; displayName = 'Bot'; agentId = 'support'; fanIn = 'dominant' };
+            assert.are.equal(200, invite(base).status_code);
+            base.mix = { bufferMs = 80 };
+            assert.are.equal(200, invite(base).status_code);
+            base.mix = { bufferMs = 60 };
+            assert.are.equal(200, invite(base).status_code);
+        end)
+
+        it('is part of the idempotency check', function()
+            assert.are.equal(200, invite_mix({ mix = { bufferMs = 80; continuous = true } }).status_code);
+            assert.are.equal(200, invite_mix({ mix = { bufferMs = 80; continuous = true } }).status_code);
+            assert.are.equal(409, invite_mix({ mix = { bufferMs = 60; continuous = true } }).status_code);
+            assert.are.equal(409, invite_mix({ mix = { bufferMs = 80 } }).status_code);
+            assert.are.equal(409, invite_mix().status_code);
+        end)
+
+        it('conflicts when options are added to an agent invited without any', function()
+            assert.are.equal(200, invite_mix().status_code);
+            assert.are.equal(200, invite_mix({ mix = {} }).status_code);
+            assert.are.equal(409, invite_mix({ mix = { bufferMs = 80 } }).status_code);
+            assert.is_nil(dial_body().mix);
+        end)
+
+        it('tells an option that is false from one that is absent', function()
+            assert.are.equal(200, invite_mix({ mix = { continuous = false } }).status_code);
+            assert.are.equal(409, invite_mix().status_code);
+            assert.are.equal(409, invite_mix({ mix = { continuous = true } }).status_code);
+            assert.are.equal(200, invite_mix({ mix = { continuous = false } }).status_code);
         end)
     end)
 
