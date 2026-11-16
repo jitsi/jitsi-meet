@@ -32,7 +32,9 @@ export default class NavigateSectionListSectionHeader extends Component<IProps> 
 
         return (
             <Container style = { styles.listSection }>
-                <Text style = { styles.listSectionText as TextStyle }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.listSectionText as TextStyle }>
                     { section.title }
                 </Text>
             </Container>
