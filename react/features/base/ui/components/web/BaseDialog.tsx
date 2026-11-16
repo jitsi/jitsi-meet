@@ -59,12 +59,14 @@ const useStyles = makeStyles()(theme => {
             border: `1px solid ${theme.palette.dialogBorder}`,
             boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
             borderRadius: `${theme.shape.borderRadius}px`,
+            boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
             height: 'auto',
             minHeight: '200px',
             maxHeight: '80vh',
             marginTop: '64px',
+            maxWidth: 'calc(100vw - 32px)',
             animation: `${keyframes`
                 0% {
                     margin-top: 85px
@@ -95,6 +97,7 @@ const useStyles = makeStyles()(theme => {
 
             '@media (max-width: 448px)': {
                 width: '100% !important',
+                maxWidth: 'none',
                 maxHeight: 'initial',
                 height: '100%',
                 margin: 0,
@@ -125,7 +128,10 @@ const useStyles = makeStyles()(theme => {
         },
 
         focusLock: {
-            zIndex: 1
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            maxWidth: '100%'
         }
     };
 });
