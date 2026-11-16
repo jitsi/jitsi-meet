@@ -113,6 +113,7 @@ local util_stub = {
 
 local options
 local pre_join_fn
+local set_affiliation_fn
 local stanza_fn
 local authentication_fn
 local breakout_leaving_fn
@@ -121,6 +122,7 @@ local function new_host_module(host)
     local host_module = {}
     function host_module:hook(event, fn) -- luacheck: ignore 212
         if host == MUC_HOST and event == 'muc-occupant-pre-join' then pre_join_fn = fn end
+        if host == MUC_HOST and event == 'muc-set-affiliation' then set_affiliation_fn = fn end
     end
     function host_module:context() return host_module end -- luacheck: ignore 212
     return host_module
@@ -131,6 +133,7 @@ util_stub.process_host_module = function(host, cb) cb(new_host_module(host), hos
 local function load_module(opts)
     options = opts
     pre_join_fn = nil
+    set_affiliation_fn = nil
     stanza_fn = nil
     authentication_fn = nil
     breakout_leaving_fn = nil
@@ -189,6 +192,7 @@ local function load_module(opts)
     end
     assert(ok, err)
     assert(pre_join_fn, "mod_visitors_component did not hook 'muc-occupant-pre-join'")
+    assert(set_affiliation_fn, "mod_visitors_component did not hook 'muc-set-affiliation'")
     assert(stanza_fn, "mod_visitors_component did not hook 'iq/host'")
     assert(authentication_fn, "mod_visitors_component did not add a 'pre-jitsi-authentication' handler")
     assert(breakout_leaving_fn, "mod_visitors_component did not hook 'jitsi-breakout-occupant-leaving'")
@@ -583,5 +587,38 @@ describe('mod_visitors_component promoted visitor', function()
 
         assert_denied_promotion_not_allowed(result, sent)
         assert.is_nil(password)
+    end)
+end)
+
+describe('mod_visitors_component muc-set-affiliation', function()
+    before_each(function()
+        load_module({})
+    end)
+
+    -- Fires the hook with the given affiliation and returns the number of promotion
+    -- messages the module sent to the moderator.
+    local function set_affiliation(room, affiliation)
+        sent_stanzas = {}
+        set_affiliation_fn({
+            room = room,
+            actor = 'actor@example.com',
+            affiliation = affiliation,
+            jid = MODERATOR.bare_jid,
+        })
+        return #moderator_messages()
+    end
+
+    it('does not send the pending promotion request when the affiliation is not owner', function()
+        local room = make_room({ live = true })
+        raise_hand(room)
+
+        assert.equal(0, set_affiliation(room, 'member'))
+    end)
+
+    it('sends the pending promotion request when the affiliation becomes owner', function()
+        local room = make_room({ live = true })
+        raise_hand(room)
+
+        assert.equal(1, set_affiliation(room, 'owner'))
     end)
 end)
