@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 
+import { MD_ITEM_MARGIN_PADDING } from '../../../base/dialog/components/native/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
@@ -47,7 +48,7 @@ const contextMenuItem = {
     display: 'flex',
     flexDirection: 'row',
     height: BaseTheme.spacing[7],
-    marginLeft: BaseTheme.spacing[3]
+    marginLeft: MD_ITEM_MARGIN_PADDING
 };
 
 /**
@@ -220,7 +221,7 @@ export default {
         borderTopRightRadius: BaseTheme.spacing[3],
         flexDirection: 'row',
         height: BaseTheme.spacing[7],
-        paddingLeft: BaseTheme.spacing[3]
+        paddingLeft: MD_ITEM_MARGIN_PADDING
     },
 
     contextMenuItemText: {

@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { EmitterSubscription, Keyboard, Platform, TextStyle, View, ViewStyle } from 'react-native';
+import { EmitterSubscription, Keyboard, Platform, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions.native';
-import { IconSend } from '../../../base/icons/svg';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCheck, IconCloseLarge, IconEdit, IconSend } from '../../../base/icons/svg';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isSendGroupChatDisabled, isSendPrivateChatDisabled } from '../../functions';
+import { IMessage } from '../../types';
 
 import styles from './styles';
 
@@ -35,6 +37,16 @@ interface IProps extends WithTranslation {
      * Application's aspect ratio.
      */
     aspectRatio: Symbol;
+
+    /**
+     * The local message being edited, if any. Its text fills the input.
+     */
+    editingMessage?: IMessage;
+
+    /**
+     * Callback to leave edit mode.
+     */
+    onCancelEdit?: () => void;
 
     /**
      * Callback to invoke on message send.
@@ -79,6 +91,8 @@ function _isSendDisabled({
  * Implements the chat input bar with text field and action(s).
  */
 class ChatInputBar extends Component<IProps, IState> {
+    _draft = '';
+    _inputRef = createRef<TextInput>();
     _keyboardSubscriptions: EmitterSubscription[] = [];
 
     /**
@@ -95,8 +109,42 @@ class ChatInputBar extends Component<IProps, IState> {
             showSend: false
         };
 
+        this._onCancelEdit = this._onCancelEdit.bind(this);
         this._onChangeText = this._onChangeText.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+    }
+
+    /**
+     * Fills the input with the text of the message to edit, and clears it when edit mode ends.
+     *
+     * @inheritdoc
+     */
+    override componentDidUpdate(prevProps: IProps) {
+        const prevId = prevProps.editingMessage?.messageId;
+        const id = this.props.editingMessage?.messageId;
+
+        if (prevId === id) {
+            return;
+        }
+
+        // Keeps what the user was typing before the edit, and restores it after the edit.
+        if (!prevId) {
+            this._draft = this.state.message;
+        }
+
+        const message = id ? this.props.editingMessage?.message ?? '' : this._draft;
+
+        if (!id) {
+            this._draft = '';
+        }
+
+        this.setState({
+            message,
+            showSend: Boolean(message)
+        });
+
+        // Opens the keyboard on the text to edit.
+        id && this._inputRef.current?.focus();
     }
 
     /**
@@ -146,9 +194,48 @@ class ChatInputBar extends Component<IProps, IState> {
             );
         }
 
+        const { editingMessage } = this.props;
         const messageInputLabel = t('chat.fieldPlaceHolder');
-        const sendButtonLabel = t('chat.sendButton');
+        const sendButtonLabel = editingMessage ? t('chat.edit') : t('chat.sendButton');
 
+        return (
+            <View>
+                { editingMessage && (
+                    <View style = { styles.editingBanner as ViewStyle }>
+                        <Icon
+                            color = { styles.editingBannerTitle.color }
+                            size = { 20 }
+                            src = { IconEdit } />
+                        <View style = { styles.editingBannerText as ViewStyle }>
+                            <Text style = { styles.editingBannerTitle as TextStyle }>
+                                { t('chat.editingMessage') }
+                            </Text>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { styles.editingBannerMessage as TextStyle }>
+                                { editingMessage.message }
+                            </Text>
+                        </View>
+                        <IconButton
+                            accessibilityLabel = { t('dialog.Cancel') }
+                            onPress = { this._onCancelEdit }
+                            src = { IconCloseLarge }
+                            type = { BUTTON_TYPES.TERTIARY } />
+                    </View>
+                ) }
+                { this._renderInputBar(messageInputLabel, sendButtonLabel) }
+            </View>
+        );
+    }
+
+    /**
+     * Renders the text field and the send button. The button saves the edit in edit mode.
+     *
+     * @param {string} messageInputLabel - The input label.
+     * @param {string} sendButtonLabel - The send button label.
+     * @returns {React.ReactElement}
+     */
+    _renderInputBar(messageInputLabel: string, sendButtonLabel: string) {
         return (
             <View
                 id = 'chat-input'
@@ -165,6 +252,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     onChange = { this._onChangeText }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { messageInputLabel }
+                    ref = { this._inputRef }
                     returnKeyType = 'send'
                     value = { this.state.message } />
                 <IconButton
@@ -172,11 +260,20 @@ class ChatInputBar extends Component<IProps, IState> {
                     disabled = { !this.state.message }
                     id = { sendButtonLabel }
                     onPress = { this._onSubmit }
-                    src = { IconSend }
+                    src = { this.props.editingMessage ? IconCheck : IconSend }
                     style = { styles.sendButton }
                     type = { BUTTON_TYPES.PRIMARY } />
             </View>
         );
+    }
+
+    /**
+     * Leaves edit mode. The draft goes back in the input in componentDidUpdate.
+     *
+     * @returns {void}
+     */
+    _onCancelEdit() {
+        this.props.onCancelEdit?.();
     }
 
     /**

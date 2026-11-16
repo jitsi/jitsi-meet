@@ -83,7 +83,6 @@ export const ContextMenuMore = () => {
 
     return (
         <BottomSheet
-            addScrollViewPadding = { false }
             showSlidingView = { true }>
             <TouchableOpacity
                 accessibilityLabel = { t('participantsPane.actions.stopEveryonesVideo') }

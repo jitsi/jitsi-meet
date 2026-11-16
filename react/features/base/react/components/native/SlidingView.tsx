@@ -35,6 +35,11 @@ interface IProps {
     position: string;
 
     /**
+     * Content drawn above the backdrop and below the sliding view.
+     */
+    renderOverlay?: () => ReactNode;
+
+    /**
      * Whether the {@code SlidingView} is to be displayed/rendered/shown or not.
      */
     show: boolean;
@@ -175,6 +180,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
                     onPress = { this._onHide } >
                     <View style = { styles.sliderViewShadow } />
                 </TouchableWithoutFeedback>
+                { this.props.renderOverlay?.() }
                 <Animated.View
                     pointerEvents = 'box-none'
                     style = { this._getContentStyle() as ViewStyle }>

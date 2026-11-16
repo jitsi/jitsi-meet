@@ -10,7 +10,17 @@ import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 // AFTER
-import { getActiveChatSearchMatch, getChatSearchQuery, getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
+import {
+    canEditMessage,
+    canReactToMessage,
+    getActiveChatSearchMatch,
+    getChatSearchQuery,
+    getDisplayNameSuffix,
+    getFormattedTimestamp,
+    getMessageText,
+    getPrivateNoticeMessage,
+    isFileMessage
+} from '../../functions';
 import { IChatMessageProps } from '../../types';
 
 import FileMessage from './FileMessage';
@@ -479,11 +489,9 @@ const ChatMessage = ({
     // A removed file message shows the text placeholder instead of the file.
     const showFile = !message.isDeleted && !message.isModerated && isFileMessage(message);
 
-    const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
-        && !message.lobbyChat
-        && !message.isReaction
-        && !message.isFromVisitor
-        && !isFileMessage(message);
+    // Shared with native, including the send permission for the message target.
+    const canEdit = Boolean(state && canEditMessage(state, message));
+    const canReact = Boolean(state && canReactToMessage(state, message));
 
     return (
         <div
@@ -571,8 +579,7 @@ const ChatMessage = ({
                 </div>
                 {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && !message.lobbyChat
-                        && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
+                        {canReact && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 <ReactButton
                                     messageId = { message.messageId }

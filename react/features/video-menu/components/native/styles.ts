@@ -23,7 +23,7 @@ export default createStyleSheet({
         color: ColorPalette.lightGrey,
         flexShrink: 1,
         fontSize: MD_FONT_SIZE,
-        marginLeft: MD_ITEM_MARGIN_PADDING,
+        marginLeft: BaseTheme.spacing[3],
         opacity: 0.90
     },
 
@@ -52,16 +52,17 @@ export default createStyleSheet({
         margin: BaseTheme.spacing[3]
     },
 
+    // Same inset as the sheet rows, so the icon lines up with theirs.
     volumeSliderContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: MD_ITEM_MARGIN_PADDING,
         marginVertical: BaseTheme.spacing[2]
     },
 
     sliderContainer: {
-        marginLeft: BaseTheme.spacing[3],
-        minWidth: '80%'
+        flex: 1,
+        marginLeft: BaseTheme.spacing[3]
     },
 
     divider: {

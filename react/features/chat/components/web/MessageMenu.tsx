@@ -6,14 +6,14 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
-import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
+import { getParticipantById } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
 import { sendMessageModeration, sendMessageRetraction } from '../../actions.any';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
-import { MESSAGE_TYPE_LOCAL } from '../../constants';
+import { canModerateMessage, canRetractMessage } from '../../functions';
 import logger from '../../logger';
 import { IMessage } from '../../types';
 
@@ -80,7 +80,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
+const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -95,14 +95,10 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     const restoreTriggerFocus = useRef(false);
     const focusMessageOnClose = useRef(false);
 
-    const isModerator = useSelector(isLocalParticipantModerator);
-    const messageModerationSupported = useSelector(
-        (state: IReduxState) => state['features/chat'].messageModerationSupported);
+    // Shared with native. Editing and deleting are applied by the server, so these also need a room that handles them.
+    const canModerate = useSelector((state: IReduxState) => canModerateMessage(state, message));
+    const canRetract = useSelector((state: IReduxState) => canRetractMessage(state, message));
     const participant = useSelector((state: IReduxState) => getParticipantById(state, message.participantId));
-
-    // Editing and deleting are applied by the server, so only offer them where the
-    // room says it handles them.
-    const canEditMessage = canEdit && messageModerationSupported;
 
     useFocusFirstItem(menuPanelRef, isPopoverOpen, '[role="menuitem"]');
 
@@ -271,7 +267,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     }, [ handleMenuTab ]);
 
     // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
+    if (!enablePrivateChat && isFileMessage && !canEdit) {
         return null;
     }
 
@@ -281,7 +277,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
             onKeyDown = { handleMenuKeyDown }
             ref = { menuPanelRef }
             role = 'menu'>
-            {canEditMessage && (
+            {canEdit && (
                 <button
                     className = { classes.menuItem }
                     onClick = { handleEditClick }
@@ -308,10 +304,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                     {t('chat.copy')}
                 </button>
             )}
-            {isModerator
-                && !isModerated
-                && messageModerationSupported
-                && message.messageType !== MESSAGE_TYPE_LOCAL
+            {canModerate
                 && (
                     <button
                         className = { classes.menuItem }
@@ -321,10 +314,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                         {t('chat.delete')}
                     </button>
                 )}
-            {message.messageType === MESSAGE_TYPE_LOCAL
-                && !message.isDeleted
-                && !message.isModerated
-                && messageModerationSupported
+            {canRetract
                 && (
                     <button
                         className = { classes.menuItem }

@@ -79,6 +79,7 @@ import {
     MODERATE_CHAT_MESSAGE
 } from './constants';
 import {
+    canModerateMessage,
     getDisplayNameSuffix,
     getFocusedTab,
     getUnreadCount,
@@ -430,6 +431,7 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
         if (conference) {
+            logger.info(`Sending retraction for message ${action.message.messageId}`);
             if (action.message.lobbyChat) {
                 conference.sendLobbyMessageRetraction(action.message.messageId, action.message.recipientId);
             } else {
@@ -469,6 +471,12 @@ MiddlewareRegistry.register(store => next => action => {
         ) {
             const trimmedMessage = String(action.message).trim();
 
+            // An unchanged text is not an edit: send nothing and do not mark the message as edited.
+            if (trimmedMessage === messageToEdit.message) {
+                logger.info(`Skipping edit for message ${action.messageId}: the text did not change`);
+                break;
+            }
+
             if (messageToEdit.privateMessage && messageToEdit.recipientId) {
                 conference.sendMessageCorrection(
                     action.messageId,
@@ -497,6 +505,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (conference) {
             const { reaction, messageId, receiverId } = action;
 
+            logger.info(`Sending reaction ${reaction} to message ${messageId}`);
             conference.sendReaction(reaction, messageId, receiverId);
         }
         break;
@@ -506,7 +515,14 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const conference = getCurrentConference(state);
 
+        // Same guard as the UI. The role or the message can change after the UI checked it.
+        if (!canModerateMessage(state, action.message)) {
+            logger.warn(`Ignoring moderation request for message ${action.message.messageId}: not allowed.`);
+            break;
+        }
+
         if (conference) {
+            logger.info(`Sending moderation for message ${action.message.messageId}, reason: ${Boolean(action.reason)}`);
             conference.moderateMessage(
                 action.message.messageId,
                 action.reason

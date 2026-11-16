@@ -147,6 +147,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
 
         return (
             <BottomSheet
+                addScrollViewPadding = { false }
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }>
                 <View style = { styles.statsWrapper as ViewStyle }>
