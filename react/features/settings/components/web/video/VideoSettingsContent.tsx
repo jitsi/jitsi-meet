@@ -220,7 +220,9 @@ const VideoSettingsContent = ({
      * @param {string} deviceId - The id of the camera device.
      * @returns {Function}
      */
-    const _onEntryClick = (deviceId: string) => () => {
+    const _onEntryClick = (deviceId: string) => (e?: React.MouseEvent) => {
+        // The popover toggles on any click inside it, which would open the popup again.
+        e?.stopPropagation();
         setVideoInputDevice(deviceId);
         toggleVideoSettings();
     };
