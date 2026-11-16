@@ -1,0 +1,18 @@
+{
+    "name": "jitsi-meet-unit-tests",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Standalone unit tests for jitsi-meet utilities.",
+    "scripts": {
+        "test": "NODE_PATH=\"$(pwd)/node_modules\" node --import tsx node_modules/mocha/bin/mocha.js \"*.spec.ts\""
+    },
+    "devDependencies": {
+        "@jitsi/js-utils": "6.3.2",
+        "mocha": "10.8.2",
+        "tsx": "4.23.13"
+    },
+    "engines": {
+        "node": ">=24.0.0",
+        "npm": ">=11.0.0"
+    }
+}
