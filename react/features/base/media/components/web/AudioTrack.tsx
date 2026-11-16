@@ -27,8 +27,9 @@ import logger from '../../logger';
 // original entirely while its translation plays. `element.muted` IS honoured on iOS.
 const IS_IOS_BROWSER = browser.isIosBrowser();
 
-// The events that give the page user activation (a touch pointerdown does not), which lifts the autoplay block.
-const ACTIVATION_EVENTS = [ 'keydown', 'mousedown', 'touchend' ];
+// The events that give the page user activation (a touch pointerdown does not), which lifts the autoplay block. A
+// click into an iframe (shared video, Etherpad) activates the page too, but only shows up here as a blur.
+const ACTIVATION_EVENTS = [ 'blur', 'keydown', 'mousedown', 'touchend' ];
 
 // The elements the autoplay policy blocks; the one notification about them stays until none is left.
 const blockedTracks = new Set<AudioTrack>();
@@ -356,9 +357,20 @@ class AudioTrack extends Component<IProps> {
     /**
      * Retries playback blocked by the autoplay policy, now that the page has user activation.
      *
+     * @param {Event} event - The event that may have activated the page.
      * @returns {void}
      */
-    _onUserActivation() {
+    _onUserActivation(event: Event) {
+        // A blur that doesn't move focus into an iframe, or Escape and other keys that don't activate the page, would
+        // only be blocked again.
+        const activated = event.type === 'blur'
+            ? document.activeElement instanceof HTMLIFrameElement
+            : navigator.userActivation?.isActive !== false;
+
+        if (!activated) {
+            return;
+        }
+
         this._listenForUserActivation(false);
         this._play();
     }
@@ -366,11 +378,13 @@ class AudioTrack extends Component<IProps> {
     /**
      * Records that the autoplay policy blocks this element and tells the user how to lift it.
      *
+     * @param {Error} error - The error play() was rejected with.
      * @returns {void}
      */
-    _block() {
-        // A non-activating key (Escape) retries and lands here again.
+    _block(error: Error) {
+        // A retry that is blocked again lands here too.
         if (!blockedTracks.has(this)) {
+            logger.warn(`Autoplay blocks audio element ${this.props.id} until the user interacts with the page`, error);
             sendAnalytics(createAudioPlayErrorEvent(this.props.id));
             blockedTracks.size || this.props.dispatch(showWarningNotification({
                 descriptionKey: 'notify.audioPlaybackBlockedDescription',
@@ -434,14 +448,14 @@ class AudioTrack extends Component<IProps> {
                     return;
                 }
 
-                logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
-
                 // Retrying cannot succeed until the user interacts with the page.
                 if (e?.name === 'NotAllowedError') {
-                    this._block();
+                    this._block(e);
 
                     return;
                 }
+
+                logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
                     this._retryTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
