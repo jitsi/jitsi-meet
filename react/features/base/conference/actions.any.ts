@@ -77,12 +77,12 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    _sendReadyToClose,
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
     getConferenceState,
     getCurrentConference,
-    _sendReadyToClose,
     getVisitorOptions,
     sendLocalParticipant,
     updateTrackMuteState
