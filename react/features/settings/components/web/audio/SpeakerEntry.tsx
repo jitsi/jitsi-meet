@@ -129,7 +129,8 @@ const SpeakerEntry = (props: IProps) => {
         e.stopPropagation();
 
         try {
-            await audioRef.current?.setSinkId(props.deviceId);
+            // Only Chromium accepts 'default', the Audio Output Devices API uses '' for the default device.
+            await audioRef.current?.setSinkId(props.deviceId === 'default' ? '' : props.deviceId);
             audioRef.current?.play();
         } catch (err) {
             logger.log('Could not set sink id', err);

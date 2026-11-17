@@ -108,9 +108,10 @@ export default class AbstractAudio extends Component<IProps> {
      * @returns {void}
      */
     setSinkId(sinkId: string) {
+        // Only Chromium accepts 'default', the Audio Output Devices API uses '' for the default device.
         this._audioElementImpl
             && typeof this._audioElementImpl.setSinkId === 'function'
-            && this._audioElementImpl.setSinkId(sinkId)
+            && this._audioElementImpl.setSinkId(sinkId === 'default' ? '' : sinkId)
                 .catch(error => logger.error('Error setting sink', error));
     }
 
