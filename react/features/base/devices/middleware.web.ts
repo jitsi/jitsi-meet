@@ -26,15 +26,14 @@ import {
     devicePermissionsChanged,
     removePendingDeviceRequests,
     setAudioInputDevice,
+    setAudioOutputDevice,
     setVideoInputDevice
 } from './actions';
 import {
     areDeviceLabelsInitialized,
     formatDeviceLabel,
-    logDevices,
-    setAudioOutputDeviceId
+    logDevices
 } from './functions';
-import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -327,19 +326,7 @@ function _useDevice({ dispatch }: IStore, devices: MediaDeviceInfo[]) {
             break;
         }
         case 'audiooutput': {
-            setAudioOutputDeviceId(
-                device.deviceId,
-                dispatch,
-                true,
-                device.label)
-                .then(() => logger.log('changed audio output device'))
-                .catch(err => {
-                    logger.warn(
-                        'Failed to change audio output device.',
-                        'Default or previously set audio output device will',
-                        ' be used instead.',
-                        err);
-                });
+            dispatch(setAudioOutputDevice(device.deviceId, true, device.label));
             break;
         }
         }

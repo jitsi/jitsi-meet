@@ -3,10 +3,13 @@ import { connect } from 'react-redux';
 
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-import { IReduxState } from '../../../../app/types';
+import { IReduxState, IStore } from '../../../../app/types';
 import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
 import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
     from '../../../../audio-translation/functions';
+import { showWarningNotification } from '../../../../notifications/actions';
+import { AUDIO_OUTPUT_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
+import { isAudioOutputManagerEnabled } from '../../../devices/functions.web';
 import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
@@ -47,6 +50,11 @@ interface IProps {
      * audio element.
      */
     autoPlay: boolean;
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
 
     /**
      * The value of the id attribute of the audio element.
@@ -259,6 +267,13 @@ class AudioTrack extends Component<IProps> {
                     }, 1000);
                 } else {
                     logger.error(`Failed to attach audio track on element ${id} after ${retryCount} retries`);
+
+                    // The attach only fails when the element could not be switched to the selected speaker.
+                    isAudioOutputManagerEnabled() && this.props.dispatch(showWarningNotification({
+                        descriptionKey: 'notify.audioOutputAttachFailedDescription',
+                        titleKey: 'notify.audioOutputAttachFailedTitle',
+                        uid: AUDIO_OUTPUT_NOTIFICATION_ID
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                 }
             });
     }
