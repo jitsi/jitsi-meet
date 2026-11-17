@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import { IReduxState, IStore } from '../../app/types';
 import ParticipantView from '../../base/participants/components/ParticipantView.native';
 import { getParticipantById, isLocalScreenshareParticipant } from '../../base/participants/functions';
+import Container from '../../base/react/components/native/Container';
+import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant, isLocalVideoTrackDesktop } from '../../base/tracks/functions.native';
 import { useTrackStreamingStatus } from '../../base/tracks/hooks.any';
 import { ITrack } from '../../base/tracks/types';
 
-import { AVATAR_SIZE } from './styles';
+import styles, { AVATAR_SIZE } from './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
@@ -24,6 +26,11 @@ interface IProps {
      * Application's viewport height.
      */
     _height: number;
+
+    /**
+     * Whether the local participant is on stage while self view is hidden.
+     */
+    _hideSelfView: boolean;
 
     /**
      * The ID of the participant (to be) depicted by LargeVideo.
@@ -130,9 +137,19 @@ class LargeVideo extends PureComponent<IProps, IState> {
         } = this.state;
         const {
             _disableVideo,
+            _hideSelfView,
             _participantId,
             onClick
         } = this.props;
+
+        if (_hideSelfView) {
+            return (
+                <Container
+                    onClick = { onClick }
+                    style = { styles.emptyStage }
+                    touchFeedback = { false } />
+            );
+        }
 
         return (
             <ParticipantView
@@ -171,6 +188,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _disableVideo: disableVideo,
         _height: height,
+        _hideSelfView: Boolean(participant?.local) && getHideSelfView(state),
         _participantId: participantId ?? '',
         _videoTrack: videoTrack,
         _width: width
