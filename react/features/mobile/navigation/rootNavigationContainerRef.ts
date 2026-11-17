@@ -5,7 +5,7 @@ import { IStore } from '../../app/types';
 import { IStateful } from '../../base/app/types';
 import { toState } from '../../base/redux/functions';
 import { isWelcomePageEnabled } from '../../welcome/functions';
-import { _sendReadyToClose } from '../external-api/functions';
+import { _sendReadyToClose } from '../../base/conference/functions';
 
 import { screen } from './routes';
 

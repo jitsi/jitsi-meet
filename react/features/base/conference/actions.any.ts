@@ -1,7 +1,6 @@
 import { maybeRedirectToTokenAuthUrl } from '../../app/actions.any';
 import { IReduxState, IStore } from '../../app/types';
 import { isTokenAuthInline } from '../../authentication/functions.any';
-import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
@@ -83,6 +82,7 @@ import {
     getConferenceOptions,
     getConferenceState,
     getCurrentConference,
+    _sendReadyToClose,
     getVisitorOptions,
     sendLocalParticipant,
     updateTrackMuteState
@@ -162,7 +162,9 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                 }));
 
                 dispatch(conferenceLeft(conference));
-                dispatch(readyToClose());
+
+                // Debounced, so a host hang-up on CONFERENCE_TERMINATED can't send a second READY_TO_CLOSE.
+                _sendReadyToClose(dispatch);
             } else {
                 dispatch(kickedOut(conference, participant));
             }

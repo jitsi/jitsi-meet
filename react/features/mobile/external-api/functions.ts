@@ -1,9 +1,6 @@
-import { debounce } from 'lodash-es';
 import { NativeModules } from 'react-native';
 
 import { IParticipant } from '../../base/participants/types';
-
-import { readyToClose } from './actions';
 
 
 /**
@@ -19,28 +16,6 @@ import { readyToClose } from './actions';
  */
 export function sendEvent(store: Object, name: string, data: Object) {
     NativeModules.ExternalAPI.sendEvent(name, data);
-}
-
-/**
- * Per-store `readyToClose` senders, so one app's teardown can't drop another's.
- */
-const _readyToCloseSenders = new WeakMap<Function, Function>();
-
-/**
- * Sends `readyToClose` once per burst of calls, with no trailing call to avoid a close() re-trigger loop.
- *
- * @param {Function} dispatch - The redux dispatch of the store sending the event.
- * @returns {void}
- */
-export function _sendReadyToClose(dispatch: Function) {
-    let send = _readyToCloseSenders.get(dispatch);
-
-    if (!send) {
-        send = debounce(() => dispatch(readyToClose()), 2500, { leading: true, trailing: false });
-        _readyToCloseSenders.set(dispatch, send);
-    }
-
-    send();
 }
 
 /**
