@@ -161,6 +161,7 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                     isReplaced
                 }));
 
+                dispatch(conferenceLeft(conference));
                 dispatch(readyToClose());
             } else {
                 dispatch(kickedOut(conference, participant));
