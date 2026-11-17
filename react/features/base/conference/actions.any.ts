@@ -162,8 +162,6 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                 }));
 
                 dispatch(conferenceLeft(conference));
-
-                // Debounced, so a host hang-up on CONFERENCE_TERMINATED can't send a second READY_TO_CLOSE.
                 _sendReadyToClose(dispatch);
             } else {
                 dispatch(kickedOut(conference, participant));
