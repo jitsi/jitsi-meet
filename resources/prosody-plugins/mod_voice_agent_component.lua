@@ -18,7 +18,7 @@
 --   }
 -- Prosody-only (never broadcast):
 --   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl,
---       mediaFormat = { encoding }, fanIn }
+--       mediaFormat = { encoding }, fanIn, mix }
 -- The dial config stays here: jicofo's connect carries only the conference and
 -- agent id, and the media relay fetches the endpoint by id (GET /voice-agent/dial)
 -- when the bridge connects, so no customer secret travels through room metadata,
@@ -36,10 +36,13 @@
 -- response, webhook and the dial config name it the public way, as the meeting URL spells it; never by JID.
 --
 --   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
---                                customParameters?, callbackUrl?, mediaFormat?{encoding}, fanIn? }
+--                                customParameters?, callbackUrl?, mediaFormat?{encoding}, fanIn?, mix? }
 --     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
---     fanIn: 'per-source' (every participant's audio as its own stream, the default) or 'dominant'
---       (only the dominant speaker's, as the bridge ranks them)
+--     fanIn: 'per-source' (every participant's audio as its own stream, the default), 'dominant'
+--       (only the dominant speaker's, as the bridge ranks them) or 'mix' (one stream, the sum of the
+--       participants; needs audio/l16)
+--     mix: options of the mix fan-in, a flat object of numbers, booleans and strings; the media relay owns
+--       their names and values and checks them when it dials
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
 --       returns the existing agent, a different one is 409; 409 too while anyone has E2EE on
 --   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
@@ -52,8 +55,8 @@
 --     acknowledged and ignored; 404 once the agent is gone
 --     auth: ASAP, or the voice_agent_status_secret (jicofo) / voice_agent_dial_secret (relay) shared secrets
 --   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
---     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat, fanIn }
---     when dialing;
+--     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat, fanIn,
+--     mix } when dialing;
 --     auth: ASAP or voice_agent_dial_secret (falls back to voice_agent_status_secret when no dial secret is
 --     set, which lets whoever holds jicofo's secret read customer credentials; set both in production)
 --   GET  /voice-agent/events[?conference=<room>]
@@ -500,7 +503,8 @@ end
 
 -- How the media relay fans several participants' audio in to the agent.
 local DEFAULT_FAN_IN = 'per-source';
-local FAN_INS = { ['per-source'] = true; ['dominant'] = true };
+local FAN_INS = { ['per-source'] = true; ['dominant'] = true; ['mix'] = true };
+local MIX_FAN_IN = 'mix';
 
 -- Validates the optional fanIn; returns the policy (the default when absent), or nil plus an error.
 local function validate_fan_in(fan_in)
@@ -508,12 +512,60 @@ local function validate_fan_in(fan_in)
         return DEFAULT_FAN_IN;
     end
     if not FAN_INS[fan_in] then
-        return nil, 'fanIn must be per-source or dominant';
+        return nil, 'fanIn must be per-source, dominant or mix';
     end
     return fan_in;
 end
 
--- Shallow equality for string maps; nil and {} compare equal.
+local MAX_MIX_OPTIONS = 16;
+local MAX_MIX_NAME_LENGTH = 64;
+local MAX_MIX_VALUE_LENGTH = 64;
+
+-- Validates the optional options of the mix fan-in; returns a bounded copy (nil when there are none), or nil plus
+-- an error. Only the shape is checked here, a flat object of numbers, booleans and short strings: the media relay
+-- owns the names and the values, and fails the dial on one it cannot use, so a new option needs no change here.
+local function validate_mix(mix)
+    if mix == nil then
+        return nil;
+    end
+    if type(mix) ~= 'table' then
+        return nil, 'mix must be an object';
+    end
+    local copy = {};
+    local entries = 0;
+    for name, value in pairs(mix) do
+        if type(name) ~= 'string' or not name:match('^%a%w*$') then
+            return nil, 'mix option names must be letters and digits, starting with a letter';
+        end
+        if #name > MAX_MIX_NAME_LENGTH then
+            return nil, 'mix option name too long';
+        end
+        local value_type = type(value);
+        if value_type == 'string' then
+            if #value > MAX_MIX_VALUE_LENGTH or value:find('[%c]') then
+                return nil, 'mix.' .. name .. ' is too long or has control characters';
+            end
+        elseif value_type == 'number' then
+            -- NaN and the infinities have no JSON form.
+            if value ~= value or value == math.huge or value == -math.huge then
+                return nil, 'mix.' .. name .. ' must be a finite number';
+            end
+        elseif value_type ~= 'boolean' then
+            return nil, 'mix.' .. name .. ' must be a number, a boolean or a string';
+        end
+        entries = entries + 1;
+        if entries > MAX_MIX_OPTIONS then
+            return nil, 'mix has too many options';
+        end
+        copy[name] = value;
+    end
+    if entries == 0 then
+        return nil;
+    end
+    return copy;
+end
+
+-- Shallow equality for flat maps of strings, numbers and booleans; nil and {} compare equal.
 local function maps_equal(a, b)
     a = a or {};
     b = b or {};
@@ -1000,6 +1052,19 @@ local function handle_invite(event)
     if fan_in_error then
         return error_response(400, fan_in_error);
     end
+    local mix, mix_error = validate_mix(payload.mix);
+    if mix_error then
+        return error_response(400, mix_error);
+    end
+    if fan_in == MIX_FAN_IN then
+        -- A mix is decoded audio; the relay does not encode it again.
+        if media_format.encoding ~= DEFAULT_MEDIA_ENCODING then
+            return error_response(400, 'fanIn mix needs mediaFormat.encoding audio/l16');
+        end
+    else
+        -- The options belong to the mix fan-in: checked all the same, so a mistake is heard about, but not kept.
+        mix = nil;
+    end
     room.jitsiMetadata = room.jitsiMetadata or {};
     local agents = room.jitsiMetadata.agents or {};
     local voice_agents = room._data.voice_agents or {};
@@ -1015,6 +1080,7 @@ local function handle_invite(event)
                 and maps_equal(jicofo_entry.customParameters, custom_params)
                 and (jicofo_entry.mediaFormat or { encoding = DEFAULT_MEDIA_ENCODING }).encoding == media_format.encoding
                 and (jicofo_entry.fanIn or DEFAULT_FAN_IN) == fan_in
+                and maps_equal(jicofo_entry.mix, mix)
                 and jicofo_entry.callbackUrl == callback_url then
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
         end
@@ -1057,6 +1123,7 @@ local function handle_invite(event)
         callbackUrl = callback_url;
         mediaFormat = media_format;
         fanIn = fan_in;
+        mix = mix;
     };
 
     room.jitsiMetadata.agents = agents;
@@ -1328,6 +1395,7 @@ local function handle_dial(event)
         customParameters = jicofo_entry.customParameters;
         mediaFormat = jicofo_entry.mediaFormat;
         fanIn = jicofo_entry.fanIn;
+        mix = jicofo_entry.mix;
     }) };
 end
 
