@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { GestureResponderEvent } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
@@ -57,7 +58,7 @@ interface IProps {
     /**
      * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
      */
-    onClick?: Function;
+    onClick?: (e?: GestureResponderEvent) => void;
 }
 
 /**
