@@ -112,7 +112,7 @@
     "react-native-video": "6.19.1",
     "react-native-webrtc": "155.0.1",
     "react-native-webview": "13.16.0",
-    "react-native-worklets-core": "https://github.com/jitsi/react-native-worklets-core.git#8b20145466186a369d13dd38e979642035a9bda1",
+    "react-native-worklets-core": "https://github.com/jitsi/react-native-worklets-core.git#fad63bad3229041d8b28b1ffce11499df81c6ecd",
     "react-native-youtube-iframe": "2.3.0",
     "react-redux": "7.2.9",
     "react-textarea-autosize": "8.3.0",
