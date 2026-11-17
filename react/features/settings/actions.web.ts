@@ -35,6 +35,7 @@ import {
 } from './actionTypes';
 import LogoutDialog from './components/web/LogoutDialog';
 import SettingsDialog from './components/web/SettingsDialog';
+import { SETTINGS_TABS } from './constants';
 import {
     getModeratorTabProps,
     getMoreTabProps,
@@ -110,6 +111,15 @@ export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage
         defaultTab,
         isDisplayedOnWelcomePage
     });
+}
+
+/**
+ * Opens the settings tab that holds the self view toggle.
+ *
+ * @returns {Function}
+ */
+export function openSelfViewSettings() {
+    return openSettingsDialog(SETTINGS_TABS.MORE);
 }
 
 /**

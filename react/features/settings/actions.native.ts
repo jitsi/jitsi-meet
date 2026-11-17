@@ -4,8 +4,19 @@ import { IStore } from '../app/types';
 import { isTokenAuthEnabled } from '../authentication/functions';
 import { hangup } from '../base/connection/actions.native';
 import { openDialog } from '../base/dialog/actions';
+import { navigate } from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../mobile/navigation/routes';
 
 import LogoutDialog from './components/native/LogoutDialog';
+
+/**
+ * Opens the settings screen that holds the self view toggle.
+ *
+ * @returns {Function}
+ */
+export function openSelfViewSettings() {
+    return () => navigate(screen.settings.main);
+}
 
 
 /**
