@@ -257,7 +257,8 @@ function Util:set_asap_key_server(asapKeyServer)
     if not starts_with(self.signatureAlgorithm, "RS") then
         self.signatureAlgorithm = "RS256";
     end
-    self:clear_asap_cache();
+    -- The cached keys are kept. A caller can set the key server before each token it verifies, and
+    -- get_public_key caches a key per key server, so a key from another server is never returned.
 end
 
 function Util:set_asap_accepted_issuers(acceptedIssuers)
@@ -280,7 +281,9 @@ end
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
-    local content = self.cache:get(keyId);
+    -- the key server is part of the cache key, as set_asap_key_server can change it between two calls
+    local cacheKey = tostring(self.asapKeyServer)..'|'..keyId;
+    local content = self.cache:get(cacheKey);
     local code;
     if content == nil then
         -- If the key is not found in the cache.
@@ -289,7 +292,7 @@ function Util:get_public_key(keyId)
         -- module:log("debug", "Fetching public key from: %s", keyurl);
         content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
-            self.cache:set(keyId, content);
+            self.cache:set(cacheKey, content);
         else
             if code == nil then
                 -- this is timeout after nr_retries retries
