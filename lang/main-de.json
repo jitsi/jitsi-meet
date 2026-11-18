@@ -1830,7 +1830,7 @@
         "consentDescription": "Der Agent kann nur Teilnehmende hören, die dies erlauben. Wenn Sie es erlauben, kann er Sie hören und Sie dessen Antworten.",
         "consentDescriptionMuted": "Der Agent kann nur Teilnehmende hören, die dies erlauben. Wenn Sie es erlauben, kann er Sie hören und Sie dessen Antworten. Sie sind stummgeschaltet während Sie sich entscheiden.",
         "consentTitle": "{{name}} ist als KI-Agent beigetreten",
-        "e2eeUnsupportedDescription": "KI-Agenden können an Ende-zu-Ende-verschlüsselten Konferenzen nicht teilnehmen. Ende-zu-Ende-Verschlüsselung deaktivieren, damit der Agent teilnehmen kann.",
+        "e2eeUnsupportedDescription": "KI-Agenten können an Ende-zu-Ende-verschlüsselten Konferenzen nicht teilnehmen. Ende-zu-Ende-Verschlüsselung deaktivieren, damit der Agent teilnehmen kann.",
         "e2eeUnsupportedTitle": "{{name}} ist nicht verfügbar",
         "labelTooltip": "KI-Agenten in der Konferenz: {{names}}",
         "labelTooltipAllow": "KI-Agenten in der Konferenz: {{names}}. Anklicken, damit diese Sie hören können.",
