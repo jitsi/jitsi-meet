@@ -42,6 +42,17 @@ export const EDIT_POLL = 'EDIT_POLL';
 export const RECEIVE_POLL = 'RECEIVE_POLL';
 
 /**
+ * The type of the action which signals that a poll was closed, thus it does not take answers anymore.
+ *
+ * {
+ *     type: RECEIVE_POLL_CLOSED,
+ *     answers: Array<IAnswerData>,
+ *     pollId: string
+ * }
+ */
+export const RECEIVE_POLL_CLOSED = 'RECEIVE_POLL_CLOSED';
+
+/**
  * The type of the action which signals that a new Answer was received.
  *
  * {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
+import { onActivationKey } from '../../base/ui/functions.web';
 
 interface IProps extends WithTranslation {
 
@@ -41,7 +42,10 @@ class GoogleSignInButton extends Component<IProps> {
         return (
             <div
                 className = 'google-sign-in'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                onKeyDown = { onActivationKey(() => this.props.onClick()) }
+                role = 'button'
+                tabIndex = { 0 }>
                 <img
                     alt = { t('welcomepage.logo.googleLogo') }
                     className = 'google-logo'

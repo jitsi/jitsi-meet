@@ -6,13 +6,14 @@ import {
     EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
+    RECEIVE_POLL_CLOSED,
     REGISTER_VOTE,
     REMOVE_POLL,
     RESET_UNREAD_POLLS_COUNT,
     SAVE_POLL
 } from './actionTypes';
 import logger from './logger';
-import { IIncomingAnswerData, IPollData, IVoterData } from './types';
+import { IAnswerData, IIncomingAnswerData, IPollData, IVoterData } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -29,6 +30,30 @@ export interface IPollsState {
 }
 
 const STORE_NAME = 'features/polls';
+
+/**
+ * Returns the server's answers with the names this client has for their voters. The server stores the nick a voter
+ * had when voting, which is stale after a rename or empty without a nick.
+ *
+ * @param {Array<IAnswerData>} answers - The answers from the server.
+ * @param {Array<IAnswerData>} localAnswers - The answers this client has.
+ * @returns {Array<IAnswerData>}
+ */
+function _withLocalVoterNames(answers: Array<IAnswerData>, localAnswers: Array<IAnswerData>) {
+    const names = new Map(localAnswers.flatMap(({ voters }) => voters ?? []).map(({ id, name }) => [ id, name ]));
+
+    return answers.map(answer => {
+        return {
+            ...answer,
+            voters: answer.voters?.map(voter => {
+                return {
+                    ...voter,
+                    name: names.get(voter.id) || voter.name
+                };
+            })
+        };
+    });
+}
 
 ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action): IPollsState => {
     switch (action.type) {
@@ -94,9 +119,8 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         }
 
         // if the poll exists, we update it with the incoming answer
-        for (let i = 0; i < poll.answers.length; i++) {
-            // if the answer was chosen, we add the senderId to the array of voters of this answer
-            let voters = Array.isArray(poll.answers[i].voters) ? poll.answers[i].voters as IVoterData[] : [];
+        const answers = poll.answers.map((existingAnswer, i) => {
+            let voters = Array.isArray(existingAnswer.voters) ? [ ...existingAnswer.voters ] as IVoterData[] : [];
 
             if (voters.find(user => user.id === answer.senderId)) {
                 if (!answer.answers[i]) {
@@ -109,8 +133,11 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 });
             }
 
-            poll.answers[i].voters = voters?.length ? voters : undefined;
-        }
+            return {
+                ...existingAnswer,
+                voters: voters.length ? voters : undefined
+            };
+        });
 
         // finally we update the state by returning the updated poll
         return {
@@ -119,7 +146,31 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 ...state.polls,
                 [pollId]: {
                     ...poll,
-                    answers: [ ...poll.answers ]
+                    answers
+                }
+            }
+        };
+    }
+
+    case RECEIVE_POLL_CLOSED: {
+        const poll = state.polls[action.pollId];
+
+        if (!poll) {
+            return state;
+        }
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: {
+                    ...poll,
+
+                    // Only a visitor node sends the answers: the main prosody's, without a vote that the visitor node
+                    // took but the main one refused because the poll was already closed.
+                    ...action.answers?.length ? { answers: _withLocalVoterNames(action.answers, poll.answers) } : {},
+                    changingVote: false,
+                    closed: true
                 }
             }
         };

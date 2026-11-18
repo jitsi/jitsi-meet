@@ -1,7 +1,6 @@
 /* global APP */
 /* eslint-disable no-unused-vars */
 import Logger from '@jitsi/logger';
-import $ from 'jquery';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
@@ -9,7 +8,6 @@ import { Provider } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../react/features/analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../react/features/analytics/functions';
-import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { getSsrcRewritingFeatureFlag } from '../../../react/features/base/config/functions.any';
 import i18next from '../../../react/features/base/i18n/i18next';
@@ -36,6 +34,7 @@ import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/fe
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
+import LargeVideoAvatar from '../../../react/features/large-video/components/LargeVideoAvatar.web';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
 import PresenceLabel from '../../../react/features/presence-status/components/PresenceLabel';
 import { shouldDisplayTileView } from '../../../react/features/video-layout/functions.any';
@@ -152,6 +151,20 @@ export default class LargeVideoManager {
             = this._onVideoResolutionUpdate.bind(this);
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
+
+        /**
+         * The translation key and options of the message which describes that
+         * the remote user is having connectivity issues.
+         *
+         * @type {{ msgKey: string, msgOptions: Object }|undefined}
+         */
+        this._remoteConnectionMessage = undefined;
+
+        this._renderRemoteConnectionMessage
+            = this._renderRemoteConnectionMessage.bind(this);
+
+        // Translate the message again when the language changes.
+        i18next.on('languageChanged', this._renderRemoteConnectionMessage);
     }
 
     /**
@@ -162,6 +175,7 @@ export default class LargeVideoManager {
      */
     destroy() {
         this.videoContainer.removeResizeListener(this._onVideoResolutionUpdate);
+        i18next.off('languageChanged', this._renderRemoteConnectionMessage);
 
         // Remove track streaming status listener.
         // TODO: when this class is converted to a function react component,
@@ -554,10 +568,7 @@ export default class LargeVideoManager {
         }
         this._avatarRoot.render(
             <Provider store = { APP.store }>
-                <Avatar
-                    id = "dominantSpeakerAvatar"
-                    participantId = { this.id }
-                    size = { 200 } />
+                <LargeVideoAvatar participantId = { this.id } />
             </Provider>
         );
     }
@@ -671,11 +682,29 @@ export default class LargeVideoManager {
      */
     _setRemoteConnectionMessage(msgKey, msgOptions) {
         if (msgKey) {
-            $('#remoteConnectionMessage')
-                .attr('data-i18n', msgKey)
-                .attr('data-i18n-options', JSON.stringify(msgOptions));
-            APP.translation.translateElement(
-                $('#remoteConnectionMessage'), msgOptions);
+            this._remoteConnectionMessage = {
+                msgKey,
+                msgOptions
+            };
+            this._renderRemoteConnectionMessage();
+        }
+    }
+
+    /**
+     * Renders the text which describes that the remote user is having
+     * connectivity issues, in the current language. The translation is set as
+     * text, never as HTML.
+     *
+     * @private
+     * @returns {void}
+     */
+    _renderRemoteConnectionMessage() {
+        const element = document.getElementById('remoteConnectionMessage');
+
+        if (element && this._remoteConnectionMessage) {
+            const { msgKey, msgOptions } = this._remoteConnectionMessage;
+
+            element.textContent = i18next.t(msgKey, msgOptions);
         }
     }
 

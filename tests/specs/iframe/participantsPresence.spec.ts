@@ -10,7 +10,10 @@ setTestProperties(__filename, {
 
 describe('Participants presence', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
+        // The prejoin screen registers the local participant in the iframe API as 'local', so make sure it is shown.
+        await ensureTwoParticipants(
+            { configOverwrite: { prejoinConfig: { enabled: true } } },
+            { name: 'p1', iFrameApi: true });
 
         const { p1, p2 } = ctx;
 
@@ -31,7 +34,7 @@ describe('Participants presence', () => {
 
     it('participants info',
         async () => {
-            const { p1, roomName } = ctx;
+            const { p1, p2, roomName } = ctx;
             const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
 
             expect(roomsInfo).toBeDefined();
@@ -50,6 +53,15 @@ describe('Participants presence', () => {
 
             expect(roomsInfo.participants.length).toBe(2);
             expect(await p1.getIframeAPI().getNumberOfParticipants()).toBe(2);
+
+            const participants = await p1.getIframeAPI().getParticipantsInfo();
+            const ids = participants.map(participant => participant.participantId);
+
+            // The prejoin screen registers the local participant as 'local'. That entry must be gone after joining.
+            expect(ids).not.toContain('local');
+            expect(ids).toContain(p1EpId);
+            expect(ids).toContain(await p2.getEndpointId());
+            expect(participants.length).toBe(2);
         }
     );
 
@@ -166,6 +178,33 @@ describe('Participants presence', () => {
         await settingsDialog.clickCloseButton();
 
         expect(emailValue).toBe(testEmail);
+    });
+
+    it('accepts the toggleShareAudio command', async () => {
+        const { p1 } = ctx;
+
+        await p1.switchToMainFrame();
+
+        // executeCommand() logs this error synchronously when a command is missing from its commands map.
+        const errors: string[] = await p1.execute(() => {
+            const logged: string[] = [];
+            const originalError = console.error;
+
+            console.error = (...args: any[]) => {
+                logged.push(args.join(' '));
+                originalError(...args);
+            };
+
+            try {
+                (window as any).jitsiAPI.executeCommand('toggleShareAudio');
+            } finally {
+                console.error = originalError;
+            }
+
+            return logged;
+        });
+
+        expect(errors).not.toContain('Not supported command name.');
     });
 
     it('hangup', async () => {

@@ -26,10 +26,13 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<IProps> 
      * @returns {React$Component}
      */
     _renderSwitch() {
+        const moderationVideoLabel = this.props.t('dialog.moderationVideoLabel');
+
         return (
             this.props.exclude.length === 0
             && <Dialog.Switch
-                label = { this.props.t('dialog.moderationVideoLabel') }
+                accessibilityLabel = { moderationVideoLabel }
+                label = { moderationVideoLabel }
                 onValueChange = { this._onToggleModeration }
                 value = { !this.state.moderationEnabled } />
         );

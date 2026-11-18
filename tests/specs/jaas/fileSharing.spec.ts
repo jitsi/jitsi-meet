@@ -67,6 +67,27 @@ describe('File sharing', () => {
         await p1Panel.uploadFile(TEST_FILE_PATH);
         await p1Panel.waitForFile(TEST_FILE_NAME);
 
+        // Retrieve the specific file's message ID from chat history to scope assertions. This has to happen
+        // before the removal, which replaces the message's fileMetadata with just { isDeleted: true }. The file
+        // is listed as soon as its upload starts, but the chat message is only added once the upload completes,
+        // so wait for it.
+        let fileMessageId: string | undefined;
+
+        await p1.driver.waitUntil(async () => {
+            fileMessageId = await p1.execute((fileName: string) => {
+                const messages: Array<{ fileMetadata?: { fileName?: string; }; messageId?: string; }>
+                    = APP.store.getState()['features/chat']?.messages || [];
+                const msg = messages.find(m => m.fileMetadata?.fileName === fileName);
+
+                return msg?.messageId;
+            }, TEST_FILE_NAME);
+
+            return Boolean(fileMessageId);
+        }, {
+            timeout: 15_000,
+            timeoutMsg: `No chat message for "${TEST_FILE_NAME}" after its upload`
+        });
+
         // p2 (joined earlier without file-upload) rejoins with file-upload to test deletion of p1's file
         p2 = await joinJaasMuc({
             name: 'p2',
@@ -84,6 +105,43 @@ describe('File sharing', () => {
         await p2Panel.removeFile(TEST_FILE_NAME);
 
         await p1Panel.waitForFileGone(TEST_FILE_NAME);
+
+        // Verify the corresponding chat message transitions to the deleted placeholder without an edited label
+        const p1ChatPanel = p1.getChatPanel();
+        const wasChatOpen = await p1ChatPanel.isOpen();
+
+        if (!wasChatOpen) {
+            await p1.getToolbar().clickChatButton();
+        }
+
+        await p1.driver.$('#chat-tab').click();
+
+        try {
+            // 1. Verify the specific message container still exists after deletion
+            const messageContainer = await p1.driver.$(`[id="${fileMessageId}"]`);
+
+            await messageContainer.waitForExist({ timeout: 5000 });
+
+            // 2. Verify the deleted-file placeholder is visible within that container (using text match as classes are CSS-in-JS generated)
+            const deletedPlaceholder = await messageContainer.$('div*=A file was deleted');
+
+            await deletedPlaceholder.waitForExist({ timeout: 5000 });
+            expect(await deletedPlaceholder.isDisplayed()).toBe(true);
+
+            // 3. Verify active file controls, actions, and file name are absent within that container
+            expect(await messageContainer.$(`[title="${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
+            expect(await messageContainer.$(`button[aria-label="Download ${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
+            expect(await messageContainer.$(`button[aria-label="Remove ${TEST_FILE_NAME}"]`).isExisting()).toBe(false);
+
+            // 4. Verify the (edited) label is absent within that container
+            expect(await messageContainer.$('div*=(edited)').isExisting()).toBe(false);
+        } finally {
+            await p1.driver.$('#file_sharing-tab').click();
+
+            if (!wasChatOpen && await p1ChatPanel.isOpen()) {
+                await p1.getToolbar().clickCloseChatButton();
+            }
+        }
     });
 
     it('user without file-upload can download but not delete files', async () => {

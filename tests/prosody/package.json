@@ -20,6 +20,6 @@
   "devDependencies": {
     "allure-commandline": "2.32.0",
     "allure-mocha": "^3.7.1",
-    "mocha": "^10.7.3"
+    "mocha": "^12.0.3"
   }
 }

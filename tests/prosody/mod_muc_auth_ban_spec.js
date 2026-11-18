@@ -6,16 +6,18 @@ import { setAccessManagerResponse } from './helpers/test_observer.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 // VPaaS tenant prefix — mod_muc_auth_ban only calls the access manager for
-// sessions whose jitsi_web_query_prefix starts with this string.
-// The prefix is set from the ?prefix= WebSocket URL param by mod_jitsi_session.
+// sessions whose jitsi_web_query_prefix or token sub claim starts with this
+// string, ignoring case. The prefix is set from the ?prefix= WebSocket URL param by
+// mod_jitsi_session, the sub claim from the verified token by mod_auth_token.
 const VPAAS_PREFIX = 'vpaas-magic-cookie-test';
 
 // Tokens are RS256 (deterministic): same payload in the same second → same
 // token string. Use a per-test jti so each test gets a unique token and cannot
 // accidentally match a token that was cached as banned by an earlier test.
 let _tokenCounter = 0;
-const freshToken = () => mintAsapToken({ room: '*',
-    jti: `ban-test-${++_tokenCounter}` });
+const freshToken = (overrides = {}) => mintAsapToken({ room: '*',
+    jti: `ban-test-${++_tokenCounter}`,
+    ...overrides });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -26,11 +28,15 @@ const freshToken = () => mintAsapToken({ room: '*',
  * uses to decide whether to call the external access manager.
  *
  * @param {string} token  A valid login JWT (RS256 / HS256).
+ * @param {object} [opts]  Extra createXmppClient options.
+ * @param {string|null} [opts.prefix]  The ?prefix= value (default VPAAS_PREFIX),
+ *   null to leave the param out.
  * @returns {Promise<XmppTestClient>}
  */
-function createVpaasClient(token) {
+function createVpaasClient(token, { prefix = VPAAS_PREFIX, ...opts } = {}) {
     return createXmppClient({
-        params: { prefix: VPAAS_PREFIX,
+        ...opts,
+        params: prefix === null ? { token } : { prefix,
             token }
     });
 }
@@ -39,35 +45,52 @@ function createVpaasClient(token) {
  * Asserts that a VPaaS session is banned, whichever way the ban surfaces.
  *
  * mod_muc_auth_ban's HTTP callback calls session:close(), and where that lands
- * depends on when the access manager answers. Answering within the same event
- * loop tick as the SASL auth refuses the connection outright; answering a tick
- * later lets the session establish and then closes it. Both are the same ban,
- * and which one happens is timing, so accept either rather than only the first.
+ * depends on when the access manager answers relative to the client's session
+ * setup. All of these are the same ban, so accept any of them, and return
+ * which one was seen so a test that pins the timing can check it:
+ *
+ * - 'sasl': the close lands before the client restarts the stream after SASL.
+ *   The client reconnects, and the token, now cached as banned, is refused
+ *   during SASL (not-allowed).
+ * - 'restart': the close lands between SASL success and resource binding.
+ *   start() rejects once the server has closed the stream. Either the restart
+ *   writes to the already reset socket ("Cannot read properties of null
+ *   (reading 'write')"), the WebSocket reports the close as an error (both
+ *   TypeErrors), or the restart is written while the WebSocket is still
+ *   closing and ws fails the send ("WebSocket is not open: readyState 2
+ *   (CLOSING)", a plain Error).
+ * - 'online': the close lands after the session is online and ends it.
  *
  * @param {string} token  A login JWT the access manager will reject.
  * @param {string} message  Assertion message.
- * @returns {Promise<void>}
+ * @param {object} [opts]  Extra createXmppClient options.
+ * @returns {Promise<'sasl'|'restart'|'online'>}
  */
-async function assertBanned(token, message) {
+async function assertBanned(token, message, opts) {
     let client;
 
     try {
-        client = await createVpaasClient(token);
+        client = await createVpaasClient(token, opts);
     } catch (e) {
-        // refused during SASL
-        assert.match(String(e), /not-allowed/, message);
+        if (/not-allowed/.test(String(e))) {
+            return 'sasl';
+        }
 
-        return;
+        assert.ok(e?.streamClosed && (e instanceof TypeError || /^WebSocket is not open/.test(e.message)),
+            `${message}: ${e}`);
+
+        return 'restart';
     }
 
     // established, so the close must follow
     const disconnected = await client.waitForDisconnect(5000).then(() => true, () => false);
 
-    if (!disconnected) {
-        await client.disconnect();
-    }
+    // stop the client either way, or its reconnect retries in the background
+    await client.disconnect();
 
     assert.ok(disconnected, message);
+
+    return 'online';
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -131,16 +154,88 @@ describe('mod_muc_auth_ban', () => {
     //
     // When access=false, mod_muc_auth_ban's HTTP callback calls session:close()
     // and caches the token. The access manager runs on the same Prosody process
-    // (loopback), so the callback usually resolves within the same event loop
-    // tick as the SASL auth and the ban surfaces as a SASL failure, but under
-    // load it can resolve a tick later and close an established session instead.
-    // assertBanned accepts either.
+    // (loopback), so the callback usually lands before the client restarts the
+    // stream and the client's reconnect is refused during SASL by the cache.
+    // Under load it can land mid-restart or after the session is online
+    // instead. assertBanned accepts all three.
 
     it('VPaaS user is rejected when access manager returns access=false', async () => {
         await setAccessManagerResponse({ access: false });
 
         await assertBanned(freshToken(),
             'VPaaS user must be rejected when access manager returns access=false');
+    });
+
+    // The two tests below pin the ban to one point in session setup. The mock
+    // holds its reply for 100 ms, by which time the client is normally online.
+    // Holding the client's stream restart for longer than that makes the close
+    // land after SASL success but before resource binding instead. Each test
+    // checks the path it saw, so a timing that drifts fails rather than passes
+    // through one of the other paths.
+
+    it('ban landing after the session is online closes it', async () => {
+        await setAccessManagerResponse({ access: false,
+            delay: 0.1 });
+
+        const path = await assertBanned(freshToken(), 'online session must be closed by a late ban');
+
+        assert.strictEqual(path, 'online', 'ban must land after the session is online');
+    });
+
+    it('ban landing between SASL success and resource binding is a rejection', async () => {
+        await setAccessManagerResponse({ access: false,
+            delay: 0.1 });
+
+        const path = await assertBanned(freshToken(),
+            'session must be rejected by a ban that lands mid-restart', { restartDelay: 300 });
+
+        assert.strictEqual(path, 'restart', 'ban must land between SASL success and resource binding');
+    });
+
+    // ── VPaaS token sub claim ─────────────────────────────────────────────────
+    //
+    // The session is also checked when the verified token has a VPaaS sub claim,
+    // whatever the ?prefix= param is.
+
+    it('VPaaS token sub without a prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX }),
+            'VPaaS token sub must be checked when the prefix param is missing', { prefix: null });
+    });
+
+    it('VPaaS token sub with an empty prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX }),
+            'VPaaS token sub must be checked when the prefix param is empty', { prefix: '' });
+    });
+
+    it('upper-case VPaaS token sub without a prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken({ sub: VPAAS_PREFIX.toUpperCase() }),
+            'upper-case VPaaS token sub must be checked', { prefix: null });
+    });
+
+    it('upper-case VPaaS prefix param is checked by the access manager', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        await assertBanned(freshToken(),
+            'upper-case VPaaS prefix param must be checked', { prefix: VPAAS_PREFIX.toUpperCase() });
+    });
+
+    it('token with a non-string sub and no prefix param is allowed without an HTTP check', async () => {
+        await setAccessManagerResponse({ access: false });
+
+        const c = await createVpaasClient(freshToken({ sub: 12345 }), { prefix: null });
+
+        // Stay connected past the point where a ban would have closed the session.
+        const disconnected = await c.waitForDisconnect(500).then(() => true, () => false);
+
+        await c.disconnect();
+
+        assert.strictEqual(disconnected, false, 'non-string sub must not trigger the access check');
     });
 
     // ── Cached ban ────────────────────────────────────────────────────────────

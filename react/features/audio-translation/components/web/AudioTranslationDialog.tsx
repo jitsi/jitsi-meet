@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -7,7 +7,7 @@ import { hideDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { setAudioTranslationLanguage, setParticipantAudioTranslationLanguage } from '../../actions';
-import { SUPPORTED_TRANSLATION_LANGUAGES } from '../../constants';
+import { getAudioTranslationLanguageLabel, orderAudioTranslationLanguages } from '../../functions';
 
 import AudioTranslationLanguageItem from './AudioTranslationLanguageItem';
 
@@ -46,12 +46,17 @@ const AudioTranslationDialog = ({ participantId, t }: IProps) => {
     const defaultLanguage = useSelector((state: IReduxState) => state['features/audio-translation'].language);
     const participantLanguages
         = useSelector((state: IReduxState) => state['features/audio-translation'].participantLanguages);
+    const languagesConfig = useSelector((state: IReduxState) => state['features/base/config'].audioTranslation);
 
     // Highlight the effective language for the target: the per-participant override if one is set, else the
     // default. (For the conference-wide dialog there is no participantId, so this is just the default.)
     const language = participantId && participantId in participantLanguages
         ? participantLanguages[participantId]
         : defaultLanguage;
+
+    // Recomputed only when the config block or the active language changes, not on every store update.
+    const languages = useMemo(
+        () => orderAudioTranslationLanguages(languagesConfig, language), [ languagesConfig, language ]);
 
     const onSelect = useCallback((code: string | null) => {
         if (participantId) {
@@ -73,11 +78,11 @@ const AudioTranslationDialog = ({ participantId, t }: IProps) => {
                     label = { t('toolbar.audioTranslationOff') }
                     onSelect = { onSelect }
                     selected = { !language } />
-                { SUPPORTED_TRANSLATION_LANGUAGES.map(({ code, label }) => (
+                { languages.map(code => (
                     <AudioTranslationLanguageItem
                         code = { code }
                         key = { code }
-                        label = { label }
+                        label = { getAudioTranslationLanguageLabel(code, t) }
                         onSelect = { onSelect }
                         selected = { language === code } />
                 )) }

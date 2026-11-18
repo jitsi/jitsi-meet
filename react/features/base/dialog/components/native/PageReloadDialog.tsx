@@ -126,6 +126,8 @@ class PageReloadDialog extends Component<IProps, IPageReloadDialogState> {
                 this._onReloadNow();
                 this._interval = undefined;
             }
+
+            return;
         }
 
         this.setState({

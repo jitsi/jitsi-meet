@@ -108,6 +108,7 @@ export const RoomParticipantContextMenu = ({
 
     return isLocalModerator ? (
         <ContextMenu
+            accessibilityLabel = { entity?.participantName }
             activateFocusTrap = { true }
             entity = { entity }
             isDrawerOpen = { Boolean(entity) }

@@ -20,7 +20,7 @@ export interface IPipState {
      * window open for the page regardless of who opened it. Kept in Redux so that every change
      * to the reference is observable by React.
      *
-     * The ts-ignore mirrors web-hid's HIDDevice: the pip feature is excluded from the native
+     * The ts-ignore is needed because the pip feature is excluded from the native
      * TypeScript config, which has no DOM lib defining Window, but this interface still reaches
      * the native check through IReduxState. Types are erased at build time, so the suppression
      * only affects the type check and nothing on native ever reads this field.

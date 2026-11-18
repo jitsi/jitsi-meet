@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { ADD_FILE, _FILE_LIST_RECEIVED } from '../file-sharing/actionTypes';
+import { ADD_FILE, _FILE_LIST_RECEIVED, _FILE_REMOVED } from '../file-sharing/actionTypes';
 import { IVisitorChatParticipant } from '../visitors/types';
 
 import {
@@ -25,6 +25,7 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
+    SET_MESSAGE_DISPLAY_NAME,
     SET_MESSAGE_MODERATION_SUPPORTED,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_USER_CHAT_WIDTH
@@ -352,6 +353,38 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
+    case SET_MESSAGE_DISPLAY_NAME: {
+        const { messageId, displayName } = action;
+        let hasChanged = false;
+
+        const messages = state.messages.map(m => {
+            if (m.messageId === messageId) {
+                if (m.displayName === displayName) {
+                    return m;
+                }
+
+                hasChanged = true;
+
+                return {
+                    ...m,
+                    displayName
+                };
+            }
+
+            return m;
+        });
+
+        if (!hasChanged) {
+            return state;
+        }
+
+        return {
+            ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
+            messages
+        };
+    }
+
     case SET_MESSAGE_MODERATION_SUPPORTED:
         return {
             ...state,
@@ -495,6 +528,36 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         return {
             ...state,
             unreadFilesCount: remoteFilesCount
+        };
+    }
+
+    case _FILE_REMOVED: {
+        const { fileId } = action;
+        let hasChanged = false;
+
+        const messages = state.messages.map(m => {
+            if (m.messageId === fileId && m.fileMetadata && !m.fileMetadata.isDeleted) {
+                hasChanged = true;
+
+                return {
+                    ...m,
+                    fileMetadata: {
+                        isDeleted: true
+                    } as any
+                };
+            }
+
+            return m;
+        });
+
+        if (!hasChanged) {
+            return state;
+        }
+
+        return {
+            ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
+            messages
         };
     }
     }

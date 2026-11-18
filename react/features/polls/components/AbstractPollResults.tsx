@@ -10,6 +10,7 @@ import { getParticipantById, getParticipantDisplayName } from '../../base/partic
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IAnswerData, IPollData, IVoterData } from '../types';
 
 /**
@@ -33,7 +34,10 @@ export type AnswerInfo = IAnswerData & {
  */
 export type AbstractProps = {
     answers: Array<AnswerInfo>;
+    canClose: boolean;
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closePoll: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closed: boolean;
     creatorName: string;
     haveVoted: boolean;
     pollId: string;
@@ -97,7 +101,9 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         });
     }, [ poll.answers, showDetails ]);
 
+    const { canClose, closePoll } = useClosePoll(pollId);
     const dispatch = useDispatch();
+
     const changeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, true));
         sendAnalytics(createPollEvent('vote.changed'));
@@ -108,7 +114,10 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
     return (
         <Component
             answers = { answers }
+            canClose = { canClose }
             changeVote = { changeVote }
+            closePoll = { closePoll }
+            closed = { Boolean(poll.closed) }
             creatorName = { creatorName }
             haveVoted = { poll.lastVote !== null }
             pollId = { pollId }

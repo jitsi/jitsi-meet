@@ -317,6 +317,17 @@ function devicesToStr(devices?: MediaDeviceInfo[]) {
 }
 
 /**
+ * Returns whether lib-jitsi-meet switches the audio output device through its audio output manager
+ * (config.audioOutput.manager). Without it, or with a lib-jitsi-meet that doesn't have it, the previous
+ * implementation is used.
+ *
+ * @returns {boolean}
+ */
+export function isAudioOutputManagerEnabled() {
+    return Boolean(JitsiMeetJS.mediaDevices.isAudioOutputManagerEnabled?.());
+}
+
+/**
  * Logs an array of devices.
  *
  * @param {MediaDeviceInfo[]} devices - The array of devices.

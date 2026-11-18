@@ -291,9 +291,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             // modify non-native children.
             joinButton = (
                 <TouchableHighlight
-                    accessibilityLabel =
-                        { t('welcomepage.accessibilityLabel.join') }
-                    onPress = { this._onJoin }
+                    accessibilityLabel = { t('welcomepage.accessibilityLabel.join') }
+                    accessibilityRole = 'button'
+                    accessibilityState = {{ busy: true }}
+                    disabled = { true }
                     style = { styles.button as ViewStyle }>
                     <View>
                         <LoadingIndicator

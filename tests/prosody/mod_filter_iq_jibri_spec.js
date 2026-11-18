@@ -188,6 +188,108 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         });
     });
 
+    // ─── SIP gateway (sipaddress) ────────────────────────────────────────────
+    //
+    // jicofo starts a SIP gateway session for any request with a non-blank
+    // sipaddress, whatever the recording_mode, so such requests are gated by
+    // sip-outbound-call.
+
+    describe('SIP gateway (sipaddress)', () => {
+
+        const SIP_ADDRESS = 'sip:room@example.com';
+
+        /**
+         * Sends a Jibri IQ with the given <jibri/> attributes to the focus
+         * occupant and returns the Jibri IQs that reached the MUC component.
+         */
+        async function sendAttrsAndCollect(client, roomJid, attrs) {
+            await clearJibriIqs();
+            await client.sendJibriIqTo(`${roomJid}/focus`, attrs);
+            await new Promise(r => setTimeout(r, 300));
+
+            return getJibriIqs();
+        }
+
+        for (const action of [ 'start', 'stop' ]) {
+
+            it(`passes ${action} IQ when features['sip-outbound-call'] = true`, async () => {
+                const { client: c, room } = await setup({ context: { features: { 'sip-outbound-call': true } } });
+                const iqs = await sendAttrsAndCollect(c, room, { action,
+                    sipaddress: SIP_ADDRESS });
+
+                assert.strictEqual(iqs.length, 1, 'IQ should reach the MUC');
+                assert.strictEqual(iqs[0].action, action);
+            });
+
+            it(`blocks ${action} IQ when features['sip-outbound-call'] = false`, async () => {
+                const { client: c, room } = await setup({ context: { features: { 'sip-outbound-call': false } } });
+                const iqs = await sendAttrsAndCollect(c, room, { action,
+                    sipaddress: SIP_ADDRESS });
+
+                assert.strictEqual(iqs.length, 0);
+            });
+
+            it(`blocks ${action} IQ when only features.livestreaming = true`, async () => {
+                const { client: c, room } = await setup({ context: { features: { livestreaming: true } } });
+                const iqs = await sendAttrsAndCollect(c, room, { action,
+                    sipaddress: SIP_ADDRESS });
+
+                assert.strictEqual(iqs.length, 0);
+            });
+
+            it(`blocks ${action} IQ when token has no context.features (non-moderator fallback)`, async () => {
+                const { client: c, room } = await setup();
+                const iqs = await sendAttrsAndCollect(c, room, { action,
+                    sipaddress: SIP_ADDRESS });
+
+                assert.strictEqual(iqs.length, 0);
+            });
+        }
+
+        it('passes start IQ for a moderator that gets the default permissions', async () => {
+            // no context.features in the token, so mod_jitsi_permissions sets the defaults
+            const { client: c, room } = await setup({ context: { user: { moderator: true } } });
+            const iqs = await sendAttrsAndCollect(c, room, { action: 'start',
+                sipaddress: SIP_ADDRESS });
+
+            assert.strictEqual(iqs.length, 1);
+        });
+
+        it('blocks recording_mode=file with sipaddress when only features.recording = true', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: true,
+                'sip-outbound-call': false } } });
+            const iqs = await sendAttrsAndCollect(c, room, { action: 'start',
+                // eslint-disable-next-line camelcase
+                recording_mode: 'file',
+                sipaddress: SIP_ADDRESS });
+
+            assert.strictEqual(iqs.length, 0);
+        });
+
+        it('passes recording_mode=file with sipaddress when only features[\'sip-outbound-call\'] = true', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: false,
+                'sip-outbound-call': true } } });
+            const iqs = await sendAttrsAndCollect(c, room, { action: 'start',
+                // eslint-disable-next-line camelcase
+                recording_mode: 'file',
+                sipaddress: SIP_ADDRESS });
+
+            assert.strictEqual(iqs.length, 1);
+        });
+
+        it('gates a blank sipaddress by recording_mode', async () => {
+            // jicofo treats a blank sipaddress as a recording request
+            const { client: c, room } = await setup({ context: { features: { recording: true,
+                'sip-outbound-call': false } } });
+            const iqs = await sendAttrsAndCollect(c, room, { action: 'start',
+                // eslint-disable-next-line camelcase
+                recording_mode: 'file',
+                sipaddress: '  ' });
+
+            assert.strictEqual(iqs.length, 1);
+        });
+    });
+
     // ─── robustness: nil room ─────────────────────────────────────────────────
     //
     // mod_filter_iq_jibri calls get_room_from_jid() on the IQ target and then

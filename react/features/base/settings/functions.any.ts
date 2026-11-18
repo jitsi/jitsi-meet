@@ -124,3 +124,20 @@ export function getHideSelfView(state: IReduxState) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView
         || iAmVisitor(state);
 }
+
+/**
+ * Returns the value the user chose for a config option of the Experimental tab of the settings dialog, or undefined
+ * when they have not chosen one. The feature owning the option decides what the choice means next to its config, see
+ * e.g. {@code isBrowserPiPTurnedOn()} of the pip feature. The value comes from the browser's local storage, where an
+ * older version of the option or a hand edit may have left anything, so a value of an unexpected type counts as no
+ * choice.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} optionId - The id of the config option, see {@code CONFIG_OPTIONS} of the settings feature.
+ * @returns {boolean|undefined} - The user's choice, if any.
+ */
+export function getUserSelectedConfigValue(state: IReduxState, optionId: string): boolean | undefined {
+    const value = state['features/base/settings'].userSelectedConfig?.[optionId];
+
+    return typeof value === 'boolean' ? value : undefined;
+}

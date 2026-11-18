@@ -567,9 +567,35 @@ local function history_message_handler(event)
 end
 module:hook('message/host', history_message_handler);
 
+-- The clients of this vnode never address the main prosody. Everything that goes there (messages for the main
+-- room, promotion requests, poll answers) is sent by this vnode itself, from a component or the virtual host.
+-- A stanza that a client addresses to the main domain or to one of its subdomains (the main muc component,
+-- tenant muc domains and the other components) is dropped here, before it is routed over s2s.
+-- When the vnode domains are subdomains of the main domain (as in docker-jitsi-meet: vN.meet.jitsi for meet.jitsi),
+-- this also drops a stanza to another vnode. That is intended: a client has nothing to send to another vnode either.
+-- The hosts of this vnode are local, so a stanza to them is never routed here.
+local function route_client_stanza(event)
+    local origin, stanza, to_host = event.origin, event.stanza, event.to_host;
+
+    if not origin or origin.type ~= 'c2s'
+        or not to_host or (to_host ~= main_domain and not ends_with(to_host, '.'..main_domain)) then
+        return; -- continue with hook listeners
+    end
+
+    module:log('debug', 'Dropping %s from client %s to %s', stanza.name, stanza.attr.from, stanza.attr.to);
+
+    if stanza.attr.type ~= 'error' and stanza.attr.type ~= 'result' then
+        origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Not allowed from a visitor node'));
+    end
+
+    return true;
+end
+
 process_host_module(local_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
     host_module:hook('message/full', message_handler);
+    -- mod_s2s routes on -1 and -10
+    host_module:hook('route/remote', route_client_stanza, 10);
 end);
 
 -- add to message stanza display name for the visitor
@@ -956,15 +982,12 @@ end
 
 module:hook('answer-poll', function(answerData)
     local room = answerData.room;
-    local room_jid = room_jid_match_rewrite(jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain));
 
-    -- now send it to the main prosody
+    -- now send it to the main prosody, which takes the room and the voter from the jid we send it from
     local data = {
         answers = answerData.data.answers;
         command = 'answer-poll';
         pollId = answerData.pollId;
-        roomJid = room_jid,
-        senderId = answerData.voterId;
         senderName = answerData.voterName;
         type = 'polls';
     };
@@ -975,10 +998,10 @@ module:hook('answer-poll', function(answerData)
     end
 
     local stanza = st.message({
-        from = module.host,
+        from = jid.join(jid.node(room.jid), module.host, answerData.voterId),
         to = 'polls.'..main_domain
     })
-    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet"; roomJid = room_jid; })
+    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
     :text(data_str)
     :up();
     room:route_stanza(stanza);

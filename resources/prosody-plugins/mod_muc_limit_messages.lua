@@ -1,7 +1,10 @@
 -- Enforces a per-room message count cap (muc_limit_messages_count). Once the cap
 -- is reached the triggering message is rejected with <not-allowed/>, a broadcast
--- is sent to the room, and all further messages are rejected. Messages from
--- sessions without room context (no jitsi_web_query_room) are passed through.
+-- is sent to the room, and all further messages are rejected. Messages are
+-- counted against the room they are addressed to, and only when the sender is
+-- an occupant of that room; others (e.g. visitor messages over s2s) are passed through.
+-- Messages in a breakout room count against its main room. Transcriber messages
+-- (transcription results) are not counted.
 -- Body-less non-groupchat messages and answer-poll json-messages are exempt from
 -- counting. With muc_limit_messages_check_token = true an authenticated sender
 -- permanently lifts the cap for that room.
@@ -9,9 +12,12 @@
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local id = require 'util.id';
+local jid = require 'util.jid';
 local st = require 'util.stanza';
 
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
+local util = module:require 'util';
+local get_room_from_jid = util.get_room_from_jid;
+local is_transcriber = util.is_transcriber;
 
 local count;
 local check_token;
@@ -49,18 +55,35 @@ function on_message(event)
     end
 
     local session = event.origin;
-    if not session or not session.jitsi_web_query_room then
-        -- No room context: cannot apply limits, pass through.
-        -- (Visitor messages from s2sin are also passed through — limits enforced at visitor node.)
+    if not session then
         return;
     end
 
-    -- get room name with tenant and find room
-    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+    -- the room the message is addressed to, private messages are addressed to an occupant of it
+    local room = get_room_from_jid(jid.bare(stanza.attr.to));
     if not room then
-        module:log('warn', 'No room found for %s/%s',
-            session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return;
+    end
+
+    -- mod_muc checks the sender after this handler (we hook at -1), so count only messages from occupants.
+    -- Visitor messages from s2sin have no occupant here and are passed through — limits enforced at visitor node.
+    if not room:get_occupant_by_real_jid(stanza.attr.from) then
+        return;
+    end
+
+    -- transcription results from the transcriber are not chat
+    if is_transcriber(stanza.attr.from) then
+        return;
+    end
+
+    -- a breakout room shares the counter of its main room, the session names the main room it joined
+    -- (mod_muc_breakout_rooms sets it) and we use it only when that main room lists this breakout room
+    if session.jitsi_breakout_main_jid then
+        local main_room = get_room_from_jid(session.jitsi_breakout_main_jid);
+        if main_room and main_room ~= room
+                and main_room._data.breakout_rooms and main_room._data.breakout_rooms[room.jid] then
+            room = main_room;
+        end
     end
 
     if check_token and session.auth_token then

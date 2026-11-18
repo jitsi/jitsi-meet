@@ -43,6 +43,15 @@ export function isPiPEnabled(pipConfig?: { disabled?: boolean; enableBrowserPiP?
         return false;
     }
 
+    return isPiPSupportedByBrowser();
+}
+
+/**
+ * Checks if the browser offers a Picture-in-Picture API at all, either Document PiP or video element PiP.
+ *
+ * @returns {boolean} - True if the browser supports Picture-in-Picture.
+ */
+export function isPiPSupportedByBrowser(): boolean {
     return 'documentPictureInPicture' in window
         || Boolean(document.pictureInPictureEnabled);
 }

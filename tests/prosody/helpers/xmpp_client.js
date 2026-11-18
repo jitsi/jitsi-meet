@@ -26,24 +26,27 @@ export async function joinWithJibri(roomJid) {
 }
 
 /**
- * Connects as the transcriber, joins roomJid with nick 'transcriber', and
- * returns the client. Authenticates as transcriber@recorder.localhost.
+ * Connects as the transcriber, joins roomJid with an 8 hex digit nick (as
+ * Jigasi does; 'transcriber' is a reserved resource), and returns the client.
+ * Authenticates as transcriber@recorder.localhost.
  * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
  * true, matching the default transcriber_prefixes in util.lib.lua.
  *
  * The caller is responsible for disconnecting the returned client.
  *
  * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @param {object} [opts]
+ * @param {Array}  [opts.extensions]  presence children, forwarded to joinRoom
  * @returns {Promise<XmppTestClient>}
  */
-export async function joinWithTranscriber(roomJid) {
+export async function joinWithTranscriber(roomJid, { extensions } = {}) {
     const c = await createXmppClient({
         domain: 'recorder.localhost',
         username: 'transcriber',
         password: 'transcribersecret'
     });
 
-    await c.joinRoom(roomJid, 'transcriber');
+    await c.joinRoom(roomJid, 'a1b2c3d4', { extensions });
 
     return c;
 }
@@ -111,6 +114,7 @@ export async function joinWithFocus(roomJid) {
  *
  * @param {object} opts
  * @param {string} [opts.host='localhost']    TCP host to connect to.
+ * @param {number} [opts.port=5280]           HTTP port of the WebSocket endpoint.
  * @param {string} [opts.domain]              XMPP domain (stream header). Defaults to host.
  *                                            Set to a different VirtualHost name (e.g.
  *                                            'whitelist.localhost') to get a JID on that
@@ -120,10 +124,17 @@ export async function joinWithFocus(roomJid) {
  * @param {string} [opts.username]            SASL username for PLAIN auth. When omitted,
  *                                            ANONYMOUS auth is used.
  * @param {string} [opts.password]            SASL password for PLAIN auth.
- * @returns {Promise<XmppTestClient>}
+ * @param {string} [opts.resource]            Resource to request at bind. When omitted,
+ *                                            the server assigns one.
+ * @param {number} [opts.restartDelay]       Milliseconds to hold the stream restart that
+ *                                            follows SASL success, so a server-side close
+ *                                            can be made to land before resource binding.
+ * @returns {Promise<XmppTestClient>} If start() fails after the server closed the
+ *                                    stream, the rejection has `streamClosed: true`.
  */
-export async function createXmppClient({ host = 'localhost', domain, params, username, password } = {}) {
-    const url = new URL(`ws://${host}:5280/xmpp-websocket`);
+export async function createXmppClient({ host = 'localhost', port = 5280, domain, params, username, password,
+    resource, restartDelay } = {}) {
+    const url = new URL(`ws://${host}:${port}/xmpp-websocket`);
 
     if (params) {
         for (const [ k, v ] of Object.entries(params)) {
@@ -134,6 +145,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     const xmpp = client({
         service: url.toString(),
         domain: domain ?? host,
+        resource,
         ...username === undefined ? {} : { username,
             password }
     });
@@ -142,6 +154,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     // Errors surface through the xmpp.start() promise rejection instead.
     // eslint-disable-next-line no-empty-function
     xmpp.on('error', () => {});
+
+    if (restartDelay) {
+        const restart = xmpp.restart.bind(xmpp);
+
+        xmpp.restart = async () => {
+            await new Promise(resolve => setTimeout(resolve, restartDelay));
+
+            return restart();
+        };
+    }
+
+    // 'close' is the server ending the XML stream. Recorded so a start() that
+    // fails because of it can be told apart from one that never got that far.
+    let streamClosed = false;
+
+    xmpp.on('close', () => {
+        streamClosed = true;
+    });
 
     // id -> { resolve, reject, timer }
     const pendingIqs = new Map();
@@ -169,6 +199,9 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         await xmpp.start();
     } catch (err) {
         xmpp.stop().catch(Function.prototype);
+        if (streamClosed && err && typeof err === 'object') {
+            err.streamClosed = true;
+        }
         throw err;
     }
 
@@ -623,6 +656,16 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a stanza built by the caller as is. Fire-and-forget: a reply,
+         * if any, lands in the stanza queue.
+         *
+         * @param {Element} stanza  Built with xml() from @xmpp/client.
+         */
+        sendRaw(stanza) {
+            return xmpp.send(stanza);
+        },
+
+        /**
          * Sends a one-to-one <message type='chat'> with a body to an arbitrary
          * JID. Fire-and-forget: resolves with the stanza id once the stanza is
          * written.
@@ -1021,22 +1064,39 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * mod_muc_auth_ban's async ban — which calls session:close() from
          * the HTTP callback — actually terminates the connection.
          *
+         * A server-side close shows up as 'close' (stream ended) or
+         * 'disconnect' (socket dropped); 'offline' only follows a local stop(),
+         * and @xmpp/client's reconnect never gets there on its own.
+         * The stream restart after SASL fires neither: 'close' needs the
+         * server's stream-close element and 'disconnect' a socket close, so
+         * a live session never resolves this.
+         *
          * Rejects with a timeout error if the connection does not drop within
          * the given timeout.
          *
          * @param {number} [timeout=5000]
          */
         waitForDisconnect(timeout = 5000) {
-            return new Promise((resolve, reject) => {
-                const timer = setTimeout(
-                    () => reject(new Error('Timeout waiting for disconnect')),
-                    timeout
-                );
+            const events = [ 'close', 'disconnect', 'offline' ];
 
-                xmpp.once('offline', () => {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
+                    reject(new Error('Timeout waiting for disconnect'));
+                }, timeout);
+
+                /**
+                 * Settles on the first of the drop events.
+                 *
+                 * @returns {void}
+                 */
+                function onDrop() {
                     clearTimeout(timer);
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
                     resolve();
-                });
+                }
+
+                events.forEach(e => xmpp.once(e, onDrop));
             });
         },
 
@@ -1134,6 +1194,25 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                 pollId,
                 type: 'polls'
             }));
+        },
+
+        /**
+         * Sends an A/V moderation command to the av_moderation component, the
+         * same stanza lib-jitsi-meet AVModeration sends. Fire-and-forget —
+         * assert via the json-messages the component sends back.
+         *
+         * @param {string} componentJid  e.g. 'avmoderation.localhost'
+         * @param {object} attrs         <av_moderation> attributes, e.g.
+         *                               { enable: 'true', mediaType: 'audio' } or
+         *                               { jidToWhitelist: 'room@conference.localhost/nick', mediaType: 'audio' }
+         */
+        sendAvModeration(componentJid, attrs) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `avm-${++_counter}` },
+                    xml('av_moderation', attrs)
+                )
+            );
         },
 
         /**

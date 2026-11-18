@@ -106,16 +106,20 @@ class CalendarList extends AbstractPage<IProps> {
             return null;
         }
 
+        const buttonLabel = t('calendarSync.permissionButton');
+
         return (
             <View style = { styles.noPermissionMessageView as ViewStyle }>
                 <Text style = { styles.noPermissionMessageText as ViewStyle }>
                     { t('calendarSync.permissionMessage') }
                 </Text>
                 <TouchableOpacity
+                    accessibilityLabel = { buttonLabel }
+                    accessibilityRole = 'button'
                     onPress = { openSettings }
                     style = { styles.noPermissionMessageButton as ViewStyle } >
                     <Text style = { styles.noPermissionMessageButtonText as ViewStyle }>
-                        { t('calendarSync.permissionButton') }
+                        { buttonLabel }
                     </Text>
                 </TouchableOpacity>
             </View>

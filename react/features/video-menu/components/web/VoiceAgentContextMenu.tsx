@@ -100,6 +100,7 @@ const VoiceAgentContextMenu = ({
 
     return (
         <ContextMenu
+            accessibilityLabel = { drawerParticipant?.displayName }
             activateFocusTrap = { !thumbnailMenu }
             className = { className }
             entity = { participant }

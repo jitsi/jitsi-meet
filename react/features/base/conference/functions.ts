@@ -1,8 +1,9 @@
 import { sha512_256 as sha512 } from 'js-sha512';
-import { upperFirst, words } from 'lodash-es';
+import { debounce, upperFirst, words } from 'lodash-es';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
+import { readyToClose } from '../../mobile/external-api/actions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
@@ -222,7 +223,10 @@ export function getConferenceOptions(stateful: IStateful) {
     const { defaultTranscriptionLanguage } = state['features/dynamic-branding'];
     const { tenant } = state['features/base/jwt'];
     const { email, name: nick } = getLocalParticipant(state) ?? {};
-    const options: any = { ...config };
+    const options: any = {
+        ...config,
+        analytics: config.analytics && { ...config.analytics }
+    };
 
     if (tenant) {
         options.siteID = tenant;
@@ -246,8 +250,8 @@ export function getConferenceOptions(stateful: IStateful) {
 
     // Disable analytics, if requested.
     if (options.disableThirdPartyRequests) {
-        delete config.analytics?.scriptURLs;
-        delete config.analytics?.amplitudeAPPKey;
+        delete options.analytics?.scriptURLs;
+        delete options.analytics?.amplitudeAPPKey;
     }
 
     return options;
@@ -664,4 +668,26 @@ export function processDestroyConferenceEvent(stateful: IStateful, dispatch: ISt
     }
 
     return false;
+}
+
+/**
+ * Per-store `readyToClose` senders, so one app's teardown can't drop another's.
+ */
+const _readyToCloseSenders = new WeakMap<Function, Function>();
+
+/**
+ * Sends `readyToClose` once per burst of calls, with no trailing call to avoid a close() re-trigger loop.
+ *
+ * @param {Function} dispatch - The redux dispatch of the store sending the event.
+ * @returns {void}
+ */
+export function _sendReadyToClose(dispatch: Function) {
+    let send = _readyToCloseSenders.get(dispatch);
+
+    if (!send) {
+        send = debounce(() => dispatch(readyToClose()), 2500, { leading: true, trailing: false });
+        _readyToCloseSenders.set(dispatch, send);
+    }
+
+    send();
 }

@@ -133,6 +133,9 @@ class ConfirmDialog extends AbstractDialog<IProps> {
         const dialogButtonStyle
             = isConfirmDestructive
                 ? styles.destructiveDialogButton : styles.dialogButton;
+        const backButtonLabel = t(backLabel || 'dialog.confirmBack');
+        const cancelButtonLabel = t(cancelLabel || 'dialog.confirmNo');
+        const confirmButtonLabel = t(confirmLabel || 'dialog.confirmYes');
 
         return (
             <Dialog.Container
@@ -148,19 +151,22 @@ class ConfirmDialog extends AbstractDialog<IProps> {
                 { children }
                 {
                     !isBackHidden && <Dialog.Button
-                        label = { t(backLabel || 'dialog.confirmBack') }
+                        accessibilityLabel = { backButtonLabel }
+                        label = { backButtonLabel }
                         onPress = { this._onBack }
                         style = { styles.dialogButton } />
                 }
                 {
                     !isCancelHidden && <Dialog.Button
-                        label = { t(cancelLabel || 'dialog.confirmNo') }
+                        accessibilityLabel = { cancelButtonLabel }
+                        label = { cancelButtonLabel }
                         onPress = { this._onCancel }
                         style = { styles.dialogButton } />
                 }
                 {
                     !isConfirmHidden && <Dialog.Button
-                        label = { t(confirmLabel || 'dialog.confirmYes') }
+                        accessibilityLabel = { confirmButtonLabel }
+                        label = { confirmButtonLabel }
                         onPress = { this._onSubmit }
                         style = { dialogButtonStyle } />
                 }

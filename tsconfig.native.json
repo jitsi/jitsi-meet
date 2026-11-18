@@ -37,10 +37,11 @@
         "react/features/screenshot-capture",
         "react/features/stream-effects",
         "react/features/virtual-background",
-        "react/features/web-hid",
         "react/features/whiteboard",
         "**/web/*",
         "**/*.web.ts",
-        "**/*.web.tsx"
+        "**/*.web.tsx",
+        "**/*.web.test.ts",
+        "**/*.web.test.tsx"
     ]
 }

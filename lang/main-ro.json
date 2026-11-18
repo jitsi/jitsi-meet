@@ -431,7 +431,7 @@
         "somebody": "Cineva",
         "startSilentDescription": "",
         "startSilentTitle": "",
-        "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser-ele suportate</a>.",
+        "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <0>browser-ele suportate</0>.",
         "suboptimalExperienceTitle": "Avertisment browser",
         "unmute": ""
     },

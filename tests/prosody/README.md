@@ -78,6 +78,15 @@ const state = await getRoomState('room@conference.localhost');
 assert.equal(state.hidden, true);
 ```
 
+## Visitor node over s2s
+
+`visitors_s2s_spec.js` starts its own two containers from `docker/visitors/docker-compose.yml`,
+next to the one of `setup.js`: a main prosody (`main.test`) and a visitor node (`v0.meet.jitsi`).
+They use the same image, each with its own config (`docker/visitors/main.cfg.lua` and
+`docker/visitors/visitor.cfg.lua`), and connect over s2s with dialback and `s2sout_override`,
+as the nodes of a shard do. The spec turns the checks of the main muc off and on with
+`prosodyShell(command, container)` and runs Lua on either node in the same way.
+
 ## Test Placement Guidelines
 
 **Pure Lua code (no Prosody API needed)** — test in `lua/` using
@@ -109,6 +118,7 @@ tests/prosody/
 ├── docker/
 │   ├── Dockerfile                  Prosody 13 image with lua-cjson + Jitsi plugins
 │   ├── docker-compose.yml          Exposes :5222 (XMPP) and :5280 (HTTP)
+│   ├── visitors/                   A main prosody and a visitor node, for visitors_s2s_spec.js
 │   ├── prosody.cfg.lua             Top-level config: Includes the cfg/ fragments below
 │   └── cfg/                        Config fragments (see prosody.cfg.lua header)
 │       ├── global.cfg.lua          Global settings: no TLS, anonymous auth, HTTP on :5280

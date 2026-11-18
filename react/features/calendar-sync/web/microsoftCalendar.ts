@@ -254,7 +254,13 @@ export const microsoftCalendarApi = {
                 // token expired, let's refresh it
                 return dispatch(refreshAuthToken())
                     .then(() => true)
-                    .catch(() => false);
+                    .catch(() => {
+                        // Drop the dead auth state, so the refresh is not
+                        // retried on every page load.
+                        dispatch(setCalendarAPIAuthState(undefined));
+
+                        return false;
+                    });
             }
 
             return Promise.resolve(state.accessToken && !isExpired);
@@ -516,6 +522,10 @@ function refreshAuthToken() {
 
         return signInPromise.then(hash => {
             const params = getParamsFromHash(hash as string);
+
+            if (!params.access_token) {
+                return Promise.reject('Refreshing the auth token failed');
+            }
 
             dispatch(setCalendarAPIAuthState({
                 accessToken: params.access_token,

@@ -110,12 +110,15 @@ const useStyles = makeStyles()(theme => {
  */
 const PollResults = ({
     answers,
+    canClose,
     changeVote,
+    closePoll,
+    closed,
     creatorName,
     haveVoted,
     pollId,
-    showDetails,
     question,
+    showDetails,
     t,
     toggleIsDetailed
 }: AbstractProps) => {
@@ -132,6 +135,11 @@ const PollResults = ({
                 <div className = { classes.creator }>
                     {t('polls.by', { name: creatorName })}
                 </div>
+                {
+                    closed && <div className = { classes.creator }>
+                        {t('polls.results.closed')}
+                    </div>
+                }
             </div>
             <ul className = { classes.resultList }>
                 {answers.map(({ name, percentage, voters, voterCount }, index) =>
@@ -165,10 +173,18 @@ const PollResults = ({
                     onClick = { toggleIsDetailed }>
                     {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
                 </button>
-                <button
-                    onClick = { changeVote }>
-                    {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
-                </button>
+                {
+                    !closed && <button
+                        onClick = { changeVote }>
+                        {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
+                    </button>
+                }
+                {
+                    canClose && <button
+                        onClick = { closePoll }>
+                        {t('polls.results.endPoll')}
+                    </button>
+                }
             </div>
         </div>
     );

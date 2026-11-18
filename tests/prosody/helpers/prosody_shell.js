@@ -9,11 +9,10 @@ import { getContainer } from './container.js';
  *   module:unload("muc_hide_all", "conference.localhost")
  *
  * @param {string} command  Prosody shell command string
+ * @param {object} [container]  The container to run it in. Defaults to the one started by setup.js.
  * @returns {Promise<string>} stdout from the shell
  */
-export async function prosodyShell(command) {
-    const container = getContainer();
-
+export async function prosodyShell(command, container = getContainer()) {
     // Escape single quotes in the command before embedding in the shell string.
     const escaped = command.replace(/'/g, '\'\\\'\'');
 

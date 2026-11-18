@@ -532,11 +532,17 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     });
 
                     if (autoTranscribeOnRecord) {
-                        dispatch(setRequestingSubtitles(true, false, null, false, true));
+                        dispatch(setRequestingSubtitles(true, false, null, true, true));
                     } else {
+                        // Preserve any existing isTranscribingEnabled so a running transcription
+                        // is not signalled as stopped.
+                        const existingRecMeta
+                            = conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
                         conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                            isRecordingRequested: true,
-                            isTranscribingEnabled: false
+                            isTranscribingEnabled: false,
+                            ...existingRecMeta,
+                            isRecordingRequested: true
                         });
                     }
                 } else {

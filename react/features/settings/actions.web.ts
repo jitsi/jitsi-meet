@@ -10,6 +10,7 @@ import {
 import { getConferenceState } from '../base/conference/functions';
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
+import { storeUserSelectedLanguage } from '../base/i18n/functions';
 import i18next from '../base/i18n/i18next';
 import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
@@ -18,7 +19,7 @@ import { updateSettings } from '../base/settings/actions';
 import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
-import { setFollowMe, setFollowMeRecorder } from '../follow-me/actions';
+import { setFollowMe, setFollowMeRecorderExclusive } from '../follow-me/actions';
 import {
     disableKeyboardShortcuts,
     enableKeyboardShortcuts,
@@ -35,7 +36,9 @@ import {
 } from './actionTypes';
 import LogoutDialog from './components/web/LogoutDialog';
 import SettingsDialog from './components/web/SettingsDialog';
+import { SETTINGS_TABS } from './constants';
 import {
+    getExperimentalTabProps,
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
@@ -43,6 +46,7 @@ import {
     getShortcutsTabProps
 } from './functions.web';
 import logger from './logger';
+import { IConfigOptionValues, IExperimentalTabState } from './types';
 
 /**
  * Opens {@code LogoutDialog}.
@@ -113,6 +117,15 @@ export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage
 }
 
 /**
+ * Opens the settings tab that holds the self view toggle.
+ *
+ * @returns {Function}
+ */
+export function openSelfViewSettings() {
+    return openSettingsDialog(SETTINGS_TABS.MORE);
+}
+
+/**
  * Sets the visibility of the audio settings.
  *
  * @param {boolean} value - The new value.
@@ -159,6 +172,7 @@ export function submitMoreTab(newState: any) {
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
+            storeUserSelectedLanguage(newState.currentLanguage);
 
             const { conference } = getConferenceState(state);
 
@@ -172,6 +186,39 @@ export function submitMoreTab(newState: any) {
 }
 
 /**
+ * Submits the settings from the "Experimental" tab of the settings dialog. Only the options whose value the user
+ * changed are stored, so an option they leave alone keeps following the config.
+ *
+ * @param {IExperimentalTabState} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitExperimentalTab(newState: IExperimentalTabState) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { values: currentValues } = getExperimentalTabProps(state);
+        const newValues = newState.values ?? {};
+        const changedValues: IConfigOptionValues = {};
+
+        for (const optionId of Object.keys(newValues)) {
+            if (newValues[optionId] !== currentValues[optionId]) {
+                changedValues[optionId] = newValues[optionId];
+            }
+        }
+
+        if (Object.keys(changedValues).length === 0) {
+            return;
+        }
+
+        dispatch(updateSettings({
+            userSelectedConfig: {
+                ...state['features/base/settings'].userSelectedConfig,
+                ...changedValues
+            }
+        }));
+    };
+}
+
+/**
  * Submits the settings from the "Moderator" tab of the settings dialog.
  *
  * @param {Object} newState - The new settings.
@@ -181,12 +228,15 @@ export function submitModeratorTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getModeratorTabProps(getState());
 
-        if (newState.followMeEnabled !== currentState.followMeEnabled) {
-            dispatch(setFollowMe(newState.followMeEnabled));
+        // The recorder mode also sets follow me, thus apply it first and compare follow me with the result.
+        // Turning it on also turns off follow me first, so the followers get "off" and then the recorder command.
+        if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
+            dispatch(setFollowMeRecorderExclusive(newState.followMeRecorderEnabled));
         }
 
-        if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
-            dispatch(setFollowMeRecorder(newState.followMeRecorderEnabled));
+        if (!newState.followMeRecorderEnabled
+                && newState.followMeEnabled !== getModeratorTabProps(getState()).followMeEnabled) {
+            dispatch(setFollowMe(newState.followMeEnabled));
         }
 
         if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
@@ -205,7 +255,9 @@ export function submitModeratorTab(newState: any) {
 
         if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled
             || newState.privateChatWithPermissionsEnabled !== currentState.privateChatWithPermissionsEnabled
-            || newState.sharedVideoWithPermissionsEnabled !== currentState.sharedVideoWithPermissionsEnabled) {
+            || newState.sharedVideoWithPermissionsEnabled !== currentState.sharedVideoWithPermissionsEnabled
+            || newState.breakoutRoomJoinWithPermissionsEnabled
+                !== currentState.breakoutRoomJoinWithPermissionsEnabled) {
             const { conference } = getState()['features/base/conference'];
 
             const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
@@ -214,6 +266,7 @@ export function submitModeratorTab(newState: any) {
             // confirms it, thus a second update here would not see the first one.
             conference?.getMetadataHandler().setMetadata('permissions', {
                 ...currentPermissions,
+                breakoutRoomJoinRestricted: newState.breakoutRoomJoinWithPermissionsEnabled,
                 groupChatRestricted: newState.chatWithPermissionsEnabled,
                 privateChatRestricted: newState.privateChatWithPermissionsEnabled,
                 sharedVideoRestricted: newState.sharedVideoWithPermissionsEnabled

@@ -324,7 +324,9 @@ export async function checkForScreensharingTile(sharer: Participant, observer: P
             }
         },
         {
-            timeout: 3_000,
+            // The remote tile appears only once the sharer's source-add and presence reach the observer,
+            // which can take several seconds when signaling is slow.
+            timeout: 10_000,
             timeoutMsg: `Screensharing tile of ${sharer.name} is ${
                 reverse ? 'still displayed' : 'not displayed'} on ${observer.name}`
         }

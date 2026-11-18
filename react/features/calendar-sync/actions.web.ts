@@ -4,6 +4,7 @@ import { createCalendarConnectedEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { loadGoogleAPI } from '../google-api/actions';
+import { GOOGLE_POPUP_CLOSED } from '../google-api/constants';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,
@@ -63,12 +64,14 @@ export function bootstrapCalendarIntegration() {
 
                 return dispatch(integrationToLoad._isSignedIn())
                     .then((signedIn: boolean) => {
-                        if (signedIn) {
-                            dispatch(setIntegrationReady(integrationType));
-                            dispatch(updateProfile(integrationType));
-                        } else {
-                            dispatch(clearCalendarIntegration());
+                        if (!signedIn) {
+                            // Keep the selected integration, so the user only
+                            // has to sign in again.
+                            return;
                         }
+
+                        dispatch(setIntegrationReady(integrationType));
+                        dispatch(updateProfile(integrationType));
                     });
             });
     };
@@ -210,9 +213,12 @@ export function signIn(calendarType: string) {
             .then(() => dispatch(refreshCalendar()))
             .then(() => sendAnalytics(createCalendarConnectedEvent()))
             .catch((error: any) => {
-                logger.error(
-                    'Error occurred while signing into calendar integration',
-                    error);
+                // Closing the popup is the user canceling, not a failure.
+                if (error?.type !== GOOGLE_POPUP_CLOSED) {
+                    logger.error(
+                        'Error occurred while signing into calendar integration',
+                        error);
+                }
 
                 return Promise.reject(error);
             });

@@ -41,6 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Audio translation has been turned off for this meeting.",
+        "errorBadRequest": "The meeting server rejected the translation request. If this keeps happening, ask your administrator to check the configured translation languages.",
         "errorForbidden": "You don't have permission to use audio translation.",
         "errorGeneric": "Couldn't enable audio translation. Please try again.",
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
@@ -105,6 +106,8 @@
         "permissionButton": "Open settings",
         "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
         "refresh": "Refresh calendar",
+        "signInAgain": "Sign in again",
+        "signInAgainMessage": "Your calendar is still connected, but you need to sign in again to see upcoming meetings.",
         "today": "Today"
     },
     "carmode": {
@@ -164,6 +167,11 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateMessage": "Private message",
         "privateNotice": "Private message to {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Face with tears of joy",
+            "fire": "Fire",
+            "redHeart": "Red heart"
+        },
         "search": {
             "close": "Close search",
             "next": "Next match",
@@ -276,7 +284,7 @@
     "deepLinking": {
         "appNotInstalled": "You need the {{app}} mobile app to join this meeting on your phone.",
         "description": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. Try again or launch it in the {{app}} web app.",
-        "descriptionNew": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. <br /><br /> You can try again or launch it on web.",
+        "descriptionNew": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. <0/><0/> You can try again or launch it on web.",
         "descriptionWithoutWeb": "Nothing happened? We tried launching your meeting in the {{app}} desktop app.",
         "downloadApp": "Download the app",
         "downloadMobileApp": "Download from App Store",
@@ -290,7 +298,7 @@
         "noDesktopApp": "You don't have the app?",
         "noMobileApp": "You don't have the app?",
         "or": "OR",
-        "termsAndConditions": "By continuing you agree to our <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a>",
+        "termsAndConditions": "By continuing you agree to our <0>terms & conditions.</0>",
         "title": "Launching your meeting in {{app}}…",
         "titleNew": "Launching your meeting…",
         "tryAgainButton": "Try again in desktop",
@@ -305,12 +313,6 @@
         "microphonePermission": "Error obtaining microphone permission"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Call control",
-            "connectedDevices": "Connected devices:",
-            "deleteDevice": "Delete device",
-            "pairDevice": "Pair device"
-        },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
@@ -626,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
+    "editDisplayName": "Edit display name, {{name}}",
     "embedMeeting": {
         "title": "Embed this meeting"
     },
@@ -761,6 +764,7 @@
         "showMeWhatImSharing": "Show me what I'm sharing"
     },
     "liveStreaming": {
+        "badRequest": "The live stream request is not valid. Check the stream key and the stream settings.",
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
@@ -768,9 +772,12 @@
         "chooseCTA": "Choose a streaming option. You're currently logged in as {{email}}.",
         "chooseCTAWithChangeSignIn": "Choose a streaming option. You're currently logged in as {{email}}. <0>Switch accounts.</0>",
         "enterStreamKey": "Enter your YouTube live stream key here.",
+        "enterStreamKeyGeneric": "Enter your live stream key or RTMP URL here.",
         "error": "Live Streaming failed. Please try again.",
         "errorAPI": "An error occurred while accessing your YouTube broadcasts. Please try logging in again.",
+        "errorGoogleApiLoad": "Google sign-in could not be loaded. Check that it is not blocked by your browser or network and try again, or enter your live stream key below.",
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
+        "errorPopupBlocked": "The Google sign-in popup was blocked. Allow popups for this site and try again, or enter your live stream key below.",
         "expandedOff": "The live streaming has stopped",
         "expandedOn": "The meeting is currently being live streamed",
         "expandedPending": "The live streaming is being started…",
@@ -785,6 +792,7 @@
         "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream…",
         "policyError": "You tried to start a live stream too quickly. Please try again later!",
+        "privacyPolicy": "Privacy Policy",
         "serviceName": "Live Streaming service",
         "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signIn": "Sign in with Google",
@@ -793,6 +801,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "terms": "Terms of service",
         "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youTubeGoLiveWarning": "Remember to click 'Go Live' in YouTube Studio if Auto-Start/Auto-Stop are disabled. Otherwise the stream will not begin recording.",
@@ -900,6 +909,12 @@
         "allowDesktop": "Allow screen sharing",
         "allowVideo": "Allow Video",
         "allowedUnmute": "You can unmute your microphone, start your camera or share your screen.",
+        "audioOutputAttachFailedDescription": "Their audio may be heard through another speaker.",
+        "audioOutputAttachFailedTitle": "Could not switch the speaker for a participant",
+        "audioOutputChangeFailedDescription": "Audio keeps playing through the previous speaker.",
+        "audioOutputChangeFailedTitle": "Could not switch the speaker",
+        "audioOutputPartlyChangedDescription": "Some participants may still be heard through the previous speaker.",
+        "audioOutputPartlyChangedTitle": "Speaker switched for some participants only",
         "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "audioUnmuteBlockedTitle": "Mic unmute blocked!",
         "chatMessages": "Chat messages",
@@ -918,7 +933,7 @@
         "desktopMutedRemotelyTitle": "Your screen sharing has been stopped by {{participantDisplayName}}",
         "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondaryNative": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
-        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
+        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <0>Jitsi as a Service</0> for production embedding!",
         "disconnected": "disconnected",
         "dismissError": "Failed to dismiss suggestions",
         "dismissSuccess": "Suggestions dismissed",
@@ -949,6 +964,15 @@
         "localRecordingStarted": "{{name}} has started a local recording.",
         "localRecordingStopped": "{{name}} has stopped a local recording.",
         "me": "Me",
+        "mediaConnectivityAtRisk": "Having trouble connecting",
+        "mediaConnectivityAtRiskDescription": "Connecting is taking longer than usual. Your network or firewall may be blocking the call.",
+        "mediaConnectivityDegraded": "Limited connection",
+        "mediaConnectivityDegradedDescription": "Your network is restricting the call, so audio and video may lag or freeze.",
+        "mediaConnectivityFailed": "Unable to connect",
+        "mediaConnectivityFailedDescription": "Your network may be blocking the call. Try another network or ask your IT team for help.",
+        "mediaConnectivityInterrupted": "Connection lost",
+        "mediaConnectivityInterruptedDescription": "Audio and video have stopped. Trying to reconnect…",
+        "mediaConnectivityRestored": "Connection restored",
         "moderationInEffectCSDescription": "Please raise hand if you want to share your screen.",
         "moderationInEffectCSTitle": "Screen sharing is blocked by the moderator",
         "moderationInEffectDescription": "Please raise hand if you want to speak.",
@@ -998,7 +1022,7 @@
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
-        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <0>fully supported browsers</0>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "suggestRecordingAction": "Start",
         "suggestRecordingDescription": "Would you like to start a recording?",
@@ -1083,6 +1107,7 @@
         "answer": {
             "edit": "Edit",
             "send": "Send",
+            "singleAnswerHint": "Choose one answer",
             "skip": "Skip",
             "submit": "Submit"
         },
@@ -1100,10 +1125,18 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
-            "save": "Save"
+            "save": "Save",
+            "singleAnswer": "Allow only one answer"
+        },
+        "endPollDialog": {
+            "description": "Voting ends for everyone and the poll cannot be reopened.",
+            "title": "End this poll?"
         },
         "errors": {
-            "notUniqueOption": "Options must be unique"
+            "closeFailed": "The poll could not be ended",
+            "notUniqueOption": "Options must be unique",
+            "voteFailed": "Your vote was not counted",
+            "voteNotCounted": "Your vote was not counted, the poll has ended"
         },
         "notification": {
             "description": "Open polls tab to vote",
@@ -1111,7 +1144,9 @@
         },
         "results": {
             "changeVote": "Change vote",
+            "closed": "Voting has ended",
             "empty": "There are no polls in the meeting yet.",
+            "endPoll": "End poll",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
             "vote": "Vote"
@@ -1168,6 +1203,7 @@
         "joinAudioByPhone": "Join with phone audio",
         "joinMeeting": "Join meeting",
         "joinMeetingInLowBandwidthMode": "Join in low bandwidth mode",
+        "joinOptions": "Join options",
         "joinWithoutAudio": "Join without audio",
         "keyboardShortcuts": "Enable Keyboard shortcuts",
         "linkCopied": "Link copied to clipboard",
@@ -1222,6 +1258,7 @@
         "alsoTranscribe": "Also transcribe this meeting?",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
+        "badRequest": "The recording settings of this meeting are not supported.",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
@@ -1280,6 +1317,7 @@
         "storageLocation": "Storage location",
         "surfaceError": "Please select the current tab.",
         "title": "Recording",
+        "transcriptionAlreadyOn": "Transcription is already on",
         "transcriptionLanguage": "Transcription language",
         "transcriptionOptions": "Transcription options",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
@@ -1293,7 +1331,7 @@
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarningNative": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting ",
-        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <0>here</0>.",
         "title": "Security Options",
         "unsafeRoomActions": {
             "meeting": "Consider securing your meeting using the security button.",
@@ -1304,6 +1342,7 @@
     "settings": {
         "audio": "Audio",
         "audioTranslation": "Enable audio translation",
+        "breakoutRoomJoinWithPermissions": "Disable choosing a breakout room for non-moderators",
         "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -1318,6 +1357,7 @@
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "enableCtrlAltReactionShortcuts": "Enable Ctrl+Alt alternatives for reaction shortcuts",
+        "experimental": "Experimental",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
@@ -1335,6 +1375,8 @@
         "participantJoined": "Participant Joined",
         "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
+        "pictureInPicture": "Picture-in-Picture",
+        "pictureInPictureDescription": "Keep the meeting visible in a small floating window when you switch to another tab or app.",
         "playSounds": "Play sound on",
         "privateChatWithPermissions": "Disable private chat for non-moderators",
         "reactions": "Meeting reactions",
@@ -1501,6 +1543,7 @@
             "participants": "Open participants panel. {{participantsCount}} participants",
             "pip": "Enter Picture-in-Picture mode",
             "pipClose": "Close Picture-in-Picture mode",
+            "polls": "Open polls",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise your hand",
@@ -1672,7 +1715,7 @@
         "onWithRecording": "A transcript will also be available after the meeting.",
         "openClosedCaptions": "Open closed captions",
         "original": "Original",
-        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
+        "sourceLanguageDesc": "Currently the meeting language is set to <0>{{sourceLanguage}}</0>. <1/> You can change it from ",
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
@@ -1847,7 +1890,7 @@
         "mobileDownLoadLinkAndroid": "Download mobile app for Android",
         "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
         "mobileDownLoadLinkIos": "Download mobile app for iOS",
-        "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
+        "moderatedMessage": "Or <0>book a meeting URL</0> in advance where you are the only moderator.",
         "privacy": "Privacy",
         "recentList": "Recent",
         "recentListDelete": "Delete entry",

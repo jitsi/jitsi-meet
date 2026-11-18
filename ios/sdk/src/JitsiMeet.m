@@ -32,7 +32,7 @@
 #import "JitsiReactFactoryDelegate.h"
 
 #if !defined(JITSI_MEET_SDK_LITE)
-#import <RNGoogleSignin/RNGoogleSignin.h>
+#import <GoogleSignIn/GoogleSignIn.h>
 #import "Dropbox.h"
 #endif
 
@@ -112,9 +112,8 @@
         return YES;
     }
 
-    if ([RNGoogleSignin application:app
-                            openURL:url
-                            options:options]) {
+    // google-signin 12 removed +[RNGoogleSignin application:openURL:options:], which only called this.
+    if ([GIDSignIn.sharedInstance handleURL:url]) {
         return YES;
     }
 #endif

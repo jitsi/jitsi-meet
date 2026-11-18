@@ -1,7 +1,9 @@
 /**
- * Supported AI audio-translation target languages: ISO code + picker label.
+ * Default AI audio-translation target languages offered when config.audioTranslation.translationLanguages is unset: the
+ * set every speech-to-speech provider supports, as code + native-script picker label. A deployment whose
+ * provider accepts more can replace the offered set in config (see orderAudioTranslationLanguages).
  */
-export const SUPPORTED_TRANSLATION_LANGUAGES: Array<{ code: string; label: string; }> = [
+export const DEFAULT_TRANSLATION_LANGUAGES: Array<{ code: string; label: string; }> = [
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Español' },
     { code: 'pt', label: 'Português' },

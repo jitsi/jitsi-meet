@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
+import {
+    createAudioOutputAttachFailedEvent,
+    createAudioPlayErrorEvent,
+    createAudioPlaySuccessEvent
+} from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-import { IReduxState } from '../../../../app/types';
+import { IReduxState, IStore } from '../../../../app/types';
 import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
 import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
     from '../../../../audio-translation/functions';
+import { showWarningNotification } from '../../../../notifications/actions';
+import { AUDIO_OUTPUT_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
+import { isAudioOutputManagerEnabled } from '../../../devices/functions.web';
 import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
@@ -49,6 +56,11 @@ interface IProps {
     autoPlay: boolean;
 
     /**
+     * The redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
+
+    /**
      * The value of the id attribute of the audio element.
      */
     id: string;
@@ -79,6 +91,11 @@ class AudioTrack extends Component<IProps> {
      * to prevent infinite recovery loops.
      */
     _reattachCount = 0;
+
+    /**
+     * Whether the component was unmounted, e.g. an attach that settles afterwards is for a participant who left.
+     */
+    _unmounted = false;
 
     /**
      * Default values for {@code AudioTrack} component's properties.
@@ -141,6 +158,7 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     override componentWillUnmount() {
+        this._unmounted = true;
         this._detachTrack(this.props.audioTrack);
 
         // @ts-ignore
@@ -259,6 +277,23 @@ class AudioTrack extends Component<IProps> {
                     }, 1000);
                 } else {
                     logger.error(`Failed to attach audio track on element ${id} after ${retryCount} retries`);
+
+                    if (this._unmounted) {
+                        return;
+                    }
+
+                    // The attach only fails when the element could not be switched to the selected speaker.
+                    const manager = isAudioOutputManagerEnabled();
+
+                    sendAnalytics(createAudioOutputAttachFailedEvent({
+                        error: error?.name,
+                        manager
+                    }));
+                    manager && this.props.dispatch(showWarningNotification({
+                        descriptionKey: 'notify.audioOutputAttachFailedDescription',
+                        titleKey: 'notify.audioOutputAttachFailedTitle',
+                        uid: AUDIO_OUTPUT_NOTIFICATION_ID
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                 }
             });
     }

@@ -41,6 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "S'ha desactivat la traducció d'àudio per a aquesta reunió.",
+        "errorBadRequest": "El servidor de reunions ha rebutjat la sol·licitud de traducció. Si això continua passant, demaneu a l'administrador que verifiqui les llengües de traducció configurades.",
         "errorForbidden": "No teniu permís per a usar la traducció d'àudio.",
         "errorGeneric": "No s'ha pogut habilitar la traducció d'àudio. Torneu-ho a provar.",
         "errorLimitReached": "No s'ha pogut traduir tothom alhora. En el seu lloc, activeu la traducció per als participants individuals.",
@@ -105,6 +106,8 @@
         "permissionButton": "Obre la configuració",
         "permissionMessage": "Es requereix el permís d'agenda per a veure les reunions en l'aplicació.",
         "refresh": "Actualitza l'agenda",
+        "signInAgain": "Inicia la sessió un altre cop",
+        "signInAgainMessage": "El vostre calendari encara està connectat, però heu de tornar a iniciar la sessió per a veure les pròximes reunions.",
         "today": "Avui"
     },
     "carmode": {
@@ -164,6 +167,11 @@
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "privateMessage": "Missatge privat",
         "privateNotice": "Missatge privat per a {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Cara amb llàgrimes d'alegria",
+            "fire": "Foc",
+            "redHeart": "Cor vermell"
+        },
         "search": {
             "close": "Tanca la cerca",
             "next": "Coincidència següent",
@@ -276,7 +284,7 @@
     "deepLinking": {
         "appNotInstalled": "Cal l'app {{app}} per a entrar a aquesta reunió des del telèfon.",
         "description": "No ha passat res? Hem intentat iniciar la reunió en l'aplicació d'escriptori {{app}}. Torna a intentar-ho en l'aplicació web {{app}}.",
-        "descriptionNew": "No ha passat res? Hem intentat obrir la reunió a l'aplicació d'escriptori {{app}}. <br /><br />Podeu tornar-ho a provar o obrir-la a la web.",
+        "descriptionNew": "No ha passat res? Hem intentat obrir la reunió a l'aplicació d'escriptori {{app}}. <0/><0/>Podeu tornar-ho a provar o obrir-la a la web.",
         "descriptionWithoutWeb": "No ha passat res? Hem intentat iniciar la reunió en l'aplicació d'escriptori {{app}}.",
         "downloadApp": "Baixa l'aplicació",
         "downloadMobileApp": "Baixa des de l'App Store",
@@ -290,7 +298,7 @@
         "noDesktopApp": "No teniu l'aplicació?",
         "noMobileApp": "No teniu l'aplicació?",
         "or": "O",
-        "termsAndConditions": "En continuar accepteu les nostres <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>condicions i termes.</a>",
+        "termsAndConditions": "En continuar accepteu les nostres <0>condicions i termes.</0>",
         "title": "S'està iniciant la reunió en {{app}}….",
         "titleNew": "S'està iniciant la reunió...",
         "tryAgainButton": "Torna-ho a intentar en l'escriptori",
@@ -305,12 +313,6 @@
         "microphonePermission": "S'ha produït un error en obtenir el permís del micròfon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Control de trucades",
-            "connectedDevices": "Dispositius connectats:",
-            "deleteDevice": "Suprimeix el dispositiu",
-            "pairDevice": "Enllaça el dispositiu"
-        },
         "noPermission": "No s'ha concedit el permís",
         "previewUnavailable": "La previsualització no és disponible",
         "selectADevice": "Seleccioneu un aparell",
@@ -626,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "La comunicació d'àudio i vídeo en aquesta trucada és xifrada d'extrem a extrem"
     },
+    "editDisplayName": "Edita el nom a mostrar, {{name}}",
     "embedMeeting": {
         "title": "Insereix aquesta reunió"
     },
@@ -761,6 +764,7 @@
         "showMeWhatImSharing": "Mostra'm què estic compartint"
     },
     "liveStreaming": {
+        "badRequest": "La sol·licitud de transmissió en viu no és vàlida. Comproveu la clau i la configuració de la transmissió.",
         "busy": "Treballem per a alliberar recursos de transmissió. Torneu-ho a intentar en uns minuts.",
         "busyTitle": "Ara mateix, tots els reproductors són ocupats",
         "changeSignIn": "Canvia entre comptes.",
@@ -768,9 +772,12 @@
         "chooseCTA": "Trieu una opció de transmissió. Ara mateix teniu sessió iniciada com a {{email}}.",
         "chooseCTAWithChangeSignIn": "Trieu una opció de estríming. Esteu connectat com a {{email}}. <0>Canvia de compte.</0>",
         "enterStreamKey": "Introduïu la clau YouTube de transmissió en directe aquí.",
+        "enterStreamKeyGeneric": "Introduïu aquí la clau d'emissió en directe o l'URL RTMP.",
         "error": "La transmissió en directe ha fallat. Torneu-ho a intentar més tard.",
         "errorAPI": "S'ha produït un error en accedir a les vostres emissions de Youtube. Torneu a iniciar sessió una altra vegada.",
+        "errorGoogleApiLoad": "No s'ha pogut carregar l'inici de sessió de Google. Comproveu que no està bloquejat pel vostre navegador o xarxa i torneu-ho a provar, o introduïu la clau de transmissió en directe a continuació.",
         "errorLiveStreamNotEnabled": "La transmissió en directe no està activada a ̣{{email}}. Activeu-la o inicieu sessió en un compte que tingui la transmissió en directe activada.",
+        "errorPopupBlocked": "S'ha blocat la finestra emergent d'inici de sessió de Google. Permeteu finestres emergents per a aquest lloc i torneu-ho a provar, o introduïu la clau de transmissió en directe a continuació.",
         "expandedOff": "S'ha aturat la transmissió en directe",
         "expandedOn": "Ara mateix, la reunió s'està transmetent a Youtube.",
         "expandedPending": "S'ha iniciat la transmissió en directe…",
@@ -785,6 +792,7 @@
         "onBy": "{{name}} ha iniciat la transmissió en directe",
         "pending": "S'està iniciant la transmissió en directe…",
         "policyError": "Heu intentat d'iniciar una emissió en directe massa ràpid. Torneu-ho a provar més tard!",
+        "privacyPolicy": "Política de privadesa",
         "serviceName": "Servei de transmissió en directe",
         "sessionAlreadyActive": "Aquesta sessió ja s'està enregistrant o s'està emetent en directe.",
         "signIn": "Inicia sessió amb Google",
@@ -793,6 +801,7 @@
         "signedInAs": "Teniu sessió iniciada com a:",
         "start": "Inicia la transmissió en directe",
         "streamIdHelp": "Què és això?",
+        "terms": "Condicions del servei",
         "title": "Transmissió en directe",
         "unavailableTitle": "La transmissió en directe no és disponible",
         "youTubeGoLiveWarning": "Recordeu de fer clic a «Ves en directe» a YouTube Studio si l'inici o l'aturada automàtics estan desactivats. En cas contrari, l'emissió no es començarà a enregistrar.",
@@ -918,7 +927,7 @@
         "desktopMutedRemotelyTitle": "{{participantDisplayName}} ha aturat la compartició de pantalla",
         "disabledIframe": "La incrustació només està destinada a propòsits de demostració, de manera que aquesta crida es desconnectarà d'aquí a {{timeout}} minuts.",
         "disabledIframeSecondaryNative": "Incrustar {{domain}} només està destinat a propòsits de demostració, de manera que aquesta crida es desconnectarà d'aquí a {{timeout}} minuts.",
-        "disabledIframeSecondaryWeb": "Incrustar {{domain}} només està destinat a propòsits de demostració, de manera que aquesta crida es desconnectarà d'aquí en {{timeout}} minuts. Useu <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi com a servei</a> per a la incrustació en producció!",
+        "disabledIframeSecondaryWeb": "Incrustar {{domain}} només està destinat a propòsits de demostració, de manera que aquesta crida es desconnectarà d'aquí en {{timeout}} minuts. Useu <0>Jitsi com a servei</0> per a la incrustació en producció!",
         "disconnected": "desconnectat",
         "dismissError": "Ha fallat en descartar els suggeriments",
         "dismissSuccess": "Suggeriments descartats",
@@ -949,6 +958,15 @@
         "localRecordingStarted": "{{name}} ha iniciat un enregistrament local.",
         "localRecordingStopped": "{{name}} ha aturat has stopped a local recording.",
         "me": "Jo",
+        "mediaConnectivityAtRisk": "Problemes de connexió",
+        "mediaConnectivityAtRiskDescription": "La connexió triga més del que és habitual. La vostra xarxa o tallafocs poden estar bloquejant la trucada.",
+        "mediaConnectivityDegraded": "Connexió limitada",
+        "mediaConnectivityDegradedDescription": "La vostra xarxa restringeix la trucada, de manera que l'àudio i el vídeo poden retardar-se o congelar-se.",
+        "mediaConnectivityFailed": "No s'ha pogut connectar",
+        "mediaConnectivityFailedDescription": "La vostra xarxa pot estar bloquejant la trucada. Proveu amb una altra xarxa o demaneu ajuda al vostre equip informàtic.",
+        "mediaConnectivityInterrupted": "S'ha perdut la connexió",
+        "mediaConnectivityInterruptedDescription": "L'àudio i el vídeo s'han aturat. S'està intentant de tornar a connectar...",
+        "mediaConnectivityRestored": "S'ha restaurat la connexió",
         "moderationInEffectCSDescription": "Alceu la mà si voleu compartir la pantalla.",
         "moderationInEffectCSTitle": "El moderador ha blocat la compartició de pantalla",
         "moderationInEffectDescription": "Alceu la mà si voleu parlar.",
@@ -998,7 +1016,7 @@
         "somebody": "Algú",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
         "startSilentTitle": "Hi heu entrat sense cap sortida d'àudio!",
-        "suboptimalBrowserWarning": "Ens sap greu que l'experiència de reunió no serà gaire bona. Cerquem maneres de millorar-ho, però fins aleshores, proveu algun dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadors completament compatibles</a>.",
+        "suboptimalBrowserWarning": "Ens sap greu que l'experiència de reunió no serà gaire bona. Cerquem maneres de millorar-ho, però fins aleshores, proveu algun dels <0>navegadors completament compatibles</0>.",
         "suboptimalExperienceTitle": "Avís del navegador",
         "suggestRecordingAction": "Inicia",
         "suggestRecordingDescription": "Voleu iniciar un enregistrament?",
@@ -1083,6 +1101,7 @@
         "answer": {
             "edit": "Edita",
             "send": "Envia",
+            "singleAnswerHint": "Trieu una resposta",
             "skip": "Omet",
             "submit": "Tramet"
         },
@@ -1100,10 +1119,18 @@
             "pollQuestion": "Pregunta de l'enquesta",
             "questionPlaceholder": "Feu una pregunta",
             "removeOption": "Elimina l'opció",
-            "save": "Desa"
+            "save": "Desa",
+            "singleAnswer": "Permet només una resposta"
+        },
+        "endPollDialog": {
+            "description": "La votació finalitza per a tothom i l'enquesta no es pot tornar a obrir.",
+            "title": "Voleu finalitzar aquesta enquesta?"
         },
         "errors": {
-            "notUniqueOption": "Les opcions han de ser úniques"
+            "closeFailed": "No s'ha pogut finalitzar l'enquesta",
+            "notUniqueOption": "Les opcions han de ser úniques",
+            "voteFailed": "El vostre vot no s'ha comptat",
+            "voteNotCounted": "El vostre vot no s'ha comptat, l'enquesta ha finalitzat"
         },
         "notification": {
             "description": "Obre la pestanya de les enquestes per a votar",
@@ -1111,7 +1138,9 @@
         },
         "results": {
             "changeVote": "Canvia el vot",
+            "closed": "La votació ha finalitzat",
             "empty": "Encara no hi ha cap enquesta en la reunió. Comenceu una enquesta aquí!",
+            "endPoll": "Finalitza l'enquesta",
             "hideDetailedResults": "Amaga els detalls",
             "showDetailedResults": "Mostra els detalls",
             "vote": "Vota"
@@ -1168,6 +1197,7 @@
         "joinAudioByPhone": "Entra amb àudio de telèfon",
         "joinMeeting": "Entra a la reunió",
         "joinMeetingInLowBandwidthMode": "Entra-hi en mode de poca amplada de banda",
+        "joinOptions": "Opcions d'entrada",
         "joinWithoutAudio": "Entra sense àudio",
         "keyboardShortcuts": "Activa les dreceres del teclat",
         "linkCopied": "L'enllaç s'ha copiat al porta-retalls",
@@ -1222,6 +1252,7 @@
         "alsoTranscribe": "També voleu transcriure aquesta reunió?",
         "authDropboxText": "Puja a Dropbox",
         "availableSpace": "Espai disponible: {{spaceLeft}} MB (aproximadament {{duration}} minuts d'enregistrament)",
+        "badRequest": "Els paràmetres d'enregistrament d'aquesta reunió no són compatibles.",
         "beta": "BETA",
         "busy": "Treballem per a alliberar recursos d'enregistrament. Torneu-ho a intentar en uns minuts.",
         "busyTitle": "Tots els enregistradors estan ocupats",
@@ -1280,6 +1311,7 @@
         "storageLocation": "Ubicació de l'emmagatzematge",
         "surfaceError": "Trieu la pestanya actual.",
         "title": "Enregistrament",
+        "transcriptionAlreadyOn": "La transcripció ja està activada",
         "transcriptionLanguage": "Llengua de la transcripció",
         "transcriptionOptions": "Opcions de transcripció",
         "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
@@ -1293,7 +1325,7 @@
         "about": "Podeu afegir un $t(lockRoomPassword) a la reunió. Els participants hauran de proporcionar la $t(lockRoomPassword) abans de poder entrar-hi.",
         "aboutReadOnly": "Els moderadors poden afegir una $t(lockRoomPassword) a la reunió. Caldrà que els participants proporcionin la $t(lockRoomPassword) abans per a ser autoritzats a entrar en la reunió.",
         "insecureRoomNameWarningNative": "El nom de la sala no és segur. Els participants no desitjats poden unir-se a la vostra reunió. {{recommendAction}} Més informació sobre com assegurar la vostra reunió ",
-        "insecureRoomNameWarningWeb": "El nom de la sala no és segur. Els participants no desitjats poden unir-se a la vostra reunió. {{recommendAction}} Més informació sobre com assegurar la vostra reunió <a href=\"{{securityUrl}}\" target=\"_blank\">aquí</a>.",
+        "insecureRoomNameWarningWeb": "El nom de la sala no és segur. Els participants no desitjats poden unir-se a la vostra reunió. {{recommendAction}} Més informació sobre com assegurar la vostra reunió <0>aquí</0>.",
         "title": "Opcions de seguretat",
         "unsafeRoomActions": {
             "meeting": "Considereu d'assegurar la vostra reunió usant el botó de seguretat.",
@@ -1304,6 +1336,7 @@
     "settings": {
         "audio": "Àudio",
         "audioTranslation": "Habilita la traducció d'àudio",
+        "breakoutRoomJoinWithPermissions": "Desactiva l'elecció d'una sala de descans per als no moderadors",
         "buttonLabel": "Paràmetres",
         "calendar": {
             "about": "La integració de l'agenda {{appName}} s'usa per a accedir de forma segura a la vostra agenda perquè pugui llegir els esdeveniments pròxims.",
@@ -1318,6 +1351,7 @@
         "desktopShareWarning": "Cal que reinicieu la compartició de pantalla perquè la nova configuració tingui efecte.",
         "devices": "Aparells",
         "enableCtrlAltReactionShortcuts": "Habilita les alternatives Ctrl+Alt per a les dreceres de reacció",
+        "experimental": "Experimental",
         "followMe": "Tothom que em segueix",
         "followMeRecorder": "L'enregistrador em segueix",
         "framesPerSecond": "fotogrames per segon",
@@ -1335,6 +1369,8 @@
         "participantJoined": "Ha entrat un participant",
         "participantKnocking": "El participant ha entrat a la sala d'espera",
         "participantLeft": "Un participant ha sortit de la reunió",
+        "pictureInPicture": "Imatge sobre imatge",
+        "pictureInPictureDescription": "Manteniu visible la reunió en una petita finestra flotant quan canvieu a una altra pestanya o aplicació.",
         "playSounds": "Reprodueix el so",
         "privateChatWithPermissions": "Desactiva el xat privat per als no moderadors",
         "reactions": "Reaccions de la reunió",
@@ -1501,6 +1537,7 @@
             "participants": "Obre el tauler de participants. {{participantsCount}} participants",
             "pip": "Activa o desactiva el mode imatge en imatge",
             "pipClose": "Tanca el mode Imatge en imatge",
+            "polls": "Obre les enquestes",
             "privateMessage": "Envia un missatge privat",
             "profile": "Edita el perfil",
             "raiseHand": "Alça o abaixa la mà",
@@ -1672,7 +1709,7 @@
         "onWithRecording": "També es disposarà d'una transcripció després de la reunió.",
         "openClosedCaptions": "Obre els subtítols",
         "original": "Original",
-        "sourceLanguageDesc": "La llengua actual de la reunió és <b>{{sourceLanguage}}</b>. <br/> Podeu canviar-la",
+        "sourceLanguageDesc": "La llengua actual de la reunió és <0>{{sourceLanguage}}</0>. <1/> Podeu canviar-la",
         "sourceLanguageHere": "aquí",
         "start": "Activa els subtítols",
         "stop": "Desactiva els subtítols",
@@ -1847,7 +1884,7 @@
         "mobileDownLoadLinkAndroid": "Baixa l'aplicació per a Android",
         "mobileDownLoadLinkFDroid": "Baixa l'aplicació per a F-Droid",
         "mobileDownLoadLinkIos": "Baixa l'aplicació per a iOS",
-        "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reserveu un URL per a la reunió</a>amb antelació si sou l'únic moderador.",
+        "moderatedMessage": "O <0>reserveu un URL per a la reunió</0>amb antelació si sou l'únic moderador.",
         "privacy": "Privadesa",
         "recentList": "Recents",
         "recentListDelete": "Suprimeix l'entrada",

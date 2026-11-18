@@ -413,7 +413,7 @@ export class Participant {
 
                 await p1PreJoinScreen.waitForLoading();
 
-                await this._clickPrejoinJoinButton(p1PreJoinScreen);
+                await this.clickPrejoinJoinButton(p1PreJoinScreen);
             }
         }
 
@@ -492,7 +492,7 @@ export class Participant {
      * @param {PreJoinScreen} prejoinScreen - The prejoin screen page object.
      * @returns {Promise<void>}
      */
-    private async _clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
+    async clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
         const MAX_ATTEMPTS = 3;
         let previousElementId: string | undefined;
 
@@ -779,8 +779,8 @@ export class Participant {
      */
     async waitForSendReceiveData(timeout = 15_000, msg?: string): Promise<boolean> {
         const values = await Promise.all([
-            await this.waitForSendMedia(timeout, msg ? `${msg} (send)` : undefined),
-            await this.waitForReceiveMedia(timeout, msg ? `${msg} (receive)` : undefined)
+            this.waitForSendMedia(timeout, msg ? `${msg} (send)` : undefined),
+            this.waitForReceiveMedia(timeout, msg ? `${msg} (receive)` : undefined)
         ]);
 
         return values[0] && values[1];
@@ -1210,7 +1210,7 @@ export class Participant {
 
         await localVideoContainer.moveTo();
 
-        return localVideoContainer.$('span[id="localDisplayName"]');
+        return localVideoContainer.$('[id="localDisplayName"]');
     }
 
     /**

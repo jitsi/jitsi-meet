@@ -39,10 +39,13 @@ def cocoa_utilities
     pod 'CocoaLumberjack', '3.7.4'
 end
 
-# Giphy is excluded from iOS autolinking to keep it out of the lite SDK, 
-# but the full SDK needs its TurboModule spec 
-# and we re-add it to autolinking.json so react native codegen generates it.
-def include_giphy_in_codegen!
+# Excluded from iOS autolinking for the lite SDK, but codegen must still generate their specs.
+CODEGEN_ONLY_DEPENDENCIES = {
+  '@giphy/react-native-sdk' => 'giphy-react-native-sdk.podspec',
+  '@react-native-google-signin/google-signin' => 'RNGoogleSignin.podspec'
+}.freeze
+
+def include_excluded_dependencies_in_codegen!
   require 'json'
   autolinking_json = File.join(
     Pod::Config.instance.installation_root.to_s,
@@ -51,19 +54,21 @@ def include_giphy_in_codegen!
   return unless File.exist?(autolinking_json)
 
   json = JSON.parse(File.read(autolinking_json))
-  giphy_root = File.expand_path('../node_modules/@giphy/react-native-sdk', __dir__)
   json['dependencies'] ||= {}
-  json['dependencies']['@giphy/react-native-sdk'] = {
-    'name' => '@giphy/react-native-sdk',
-    'root' => giphy_root,
-    'platforms' => {
-      'ios' => {
-        'podspecPath' => File.join(giphy_root, 'giphy-react-native-sdk.podspec'),
-        'scriptPhases' => [],
-        'configurations' => []
+  CODEGEN_ONLY_DEPENDENCIES.each do |name, podspec|
+    root = File.expand_path("../node_modules/#{name}", __dir__)
+    json['dependencies'][name] = {
+      'name' => name,
+      'root' => root,
+      'platforms' => {
+        'ios' => {
+          'podspecPath' => File.join(root, podspec),
+          'scriptPhases' => [],
+          'configurations' => []
+        }
       }
     }
-  }
+  end
   File.write(autolinking_json, JSON.pretty_generate(json))
 end
 
@@ -81,7 +86,7 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
-  include_giphy_in_codegen!
+  include_excluded_dependencies_in_codegen!
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

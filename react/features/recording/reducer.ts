@@ -39,6 +39,12 @@ export interface ISessionData {
  */
 export interface IStartRecordingIntent {
     recording: boolean;
+
+    /**
+     * Whether a file recording session has been seen on since the recording was requested. Set by
+     * the recording middleware; tells a recording stopped from one cancelled before it started.
+     */
+    recordingStarted?: boolean;
     transcription: boolean;
 }
 

@@ -10,7 +10,8 @@
 --                               --            anonymous JID after a reconnect
 --   session.customusername      -- ?customusername=  pre-set JID, used with the
 --                               --                   "pre-jitsi-authentication" event
---   session.jitsi_web_query_room   -- ?room=   Jitsi conference room name
+--   session.jitsi_web_query_room   -- ?room=   Jitsi conference room name, percent-encoded the way
+--                                  --          the client encodes it in the room JID
 --   session.jitsi_web_query_prefix -- ?prefix= optional tenant prefix (defaults to "")
 --   session.auth_token          -- ?token= or Authorization: Bearer <token> header;
 --                               --         populated without validation — downstream
@@ -22,6 +23,21 @@ module:set_global();
 
 local formdecode = require "util.http".formdecode;
 local region_header_name = module:get_option_string('region_header_name', 'x_proxy_region');
+
+-- Percent-encodes a room name like the client does for the room JID (encodeURIComponent with
+-- lowercase hex digits). Existing escapes are kept, so a name that is already encoded is unchanged.
+local function encode_room_name(room)
+    room = room:gsub('%%(%x?%x?)', function (hex)
+        if #hex == 2 then
+            return '%'..hex:lower();
+        end
+        return '%25'..hex;
+    end);
+
+    return (room:gsub("[^%w%-_%.!~%*'%(%)%%]", function (c)
+        return string.format('%%%02x', c:byte());
+    end));
+end
 
 function init_session(event)
     local session, request = event.session, event.request;
@@ -46,7 +62,7 @@ function init_session(event)
         session.customusername = query and params.customusername or nil;
 
         -- The room name and optional prefix from the web query
-        session.jitsi_web_query_room = params.room;
+        session.jitsi_web_query_room = params.room and encode_room_name(params.room);
         session.jitsi_web_query_prefix = params.prefix or "";
 
         -- The following fields are filled in the session, by extracting them

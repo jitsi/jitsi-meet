@@ -53,6 +53,21 @@ export function createFakeConfig(baseURL: string) {
 }
 
 /**
+ * Returns the name of the window event on which the cleanup for a page that goes away has to run. By default that is
+ * {@code beforeunload}. With {@code disableBeforeUnloadHandlers} it is {@code pagehide}, which is fired only when the
+ * page really goes away. It is not {@code unload}: browsers are removing that event and Chrome no longer fires it by
+ * default, so a cleanup registered there would never run.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string} The name of the event.
+ */
+export function getPageUnloadEventName(state: IReduxState): 'beforeunload' | 'pagehide' {
+    const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+
+    return disableBeforeUnloadHandlers ? 'pagehide' : 'beforeunload';
+}
+
+/**
  * Selector used to get the meeting region.
  *
  * @param {Object} state - The global state.
@@ -388,7 +403,7 @@ export function setConfigFromURLParams(
 
     // When not in an iframe, start without media if the pre-join page is not enabled.
     if (!isEmbedded()
-            && ('config.prejoinConfig' in params || 'config.prejoinConfig.enabled' in params)
+            && json.config?.prejoinConfig?.enabled === false
             && config.prejoinConfig?.enabled === false) {
         logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
         config.disableInitialGUM = true;

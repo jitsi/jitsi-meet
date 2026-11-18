@@ -63,6 +63,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
     override render() {
         const { t } = this.props;
         const { error } = this.state;
+        const placeholder = t('dialog.sharedVideoLinkPlaceholder');
 
         return (
             <InputDialog
@@ -70,9 +71,10 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
                 onChangeText = { this._onChangeText }
                 onSubmit = { this._onSubmitValue }
                 textInputProps = {{
+                    accessibilityLabel: placeholder,
                     autoCapitalize: 'none',
                     autoCorrect: false,
-                    placeholder: t('dialog.sharedVideoLinkPlaceholder')
+                    placeholder
                 }}
                 titleKey = 'dialog.shareVideoTitle' />
         );

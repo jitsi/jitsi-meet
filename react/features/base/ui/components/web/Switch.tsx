@@ -110,7 +110,14 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
+const Switch = ({
+    accessibilityLabel,
+    checked,
+    className,
+    disabled,
+    id,
+    onChange
+}: IProps) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
@@ -123,12 +130,13 @@ const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
             className = { cx('toggle-container', styles.container, checked && styles.containerOn,
                 isMobile && 'is-mobile', disabled && 'disabled', className) }>
             <input
-                type = 'checkbox'
-                { ...(id ? { id } : {}) }
+                aria-label = { accessibilityLabel }
                 checked = { checked }
                 className = { styles.checkbox }
                 disabled = { disabled }
-                onChange = { change } />
+                { ...(id ? { id } : {}) }
+                onChange = { change }
+                type = 'checkbox' />
             <div className = { cx('toggle-checkbox-ring', styles.checkboxRing, isMobile && 'is-mobile') } />
             <div className = { cx('toggle', styles.toggle, checked && styles.toggleOn, isMobile && 'is-mobile') } />
         </span>

@@ -32,7 +32,7 @@ import LocalRecordingManager from '../../recording/components/Recording/LocalRec
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
 import { configWillLoad, overwriteConfig, setConfig } from '../config/actions';
-import { buildConfigURL } from '../config/functions.any';
+import { buildConfigURL, getPageUnloadEventName } from '../config/functions.any';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect, setPreferVisitor } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
@@ -398,10 +398,7 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const {
-        disableBeforeUnloadHandlers = false,
-        requireDisplayName
-    } = getState()['features/base/config'];
+    const { requireDisplayName } = getState()['features/base/config'];
 
     retryAsVisitorOnMaxError = true;
     settingsIncompleteNotificationShown = false;
@@ -432,7 +429,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    const pageUnloadEventName = getPageUnloadEventName(getState());
+
+    window.addEventListener(pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -843,6 +842,22 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
+ * Returns the options with which the unload handler is added to the window and removed from it.
+ *
+ * On {@code pagehide} the handler captures the event, so that it runs before the listener that persists the redux
+ * state. That listener is on the window since the app was loaded and would otherwise run first. The duration that
+ * {@code conferenceWillLeave} puts in the recent list would then not be written for a tab that is closed while it is
+ * in the background. On {@code beforeunload} the state is persisted later, so the order of the listeners stays as it
+ * was.
+ *
+ * @param {string} eventName - The name of the event the handler is registered on.
+ * @returns {Object} The options for {@code addEventListener} and {@code removeEventListener}.
+ */
+function _getUnloadHandlerOptions(eventName: string) {
+    return { capture: eventName === 'pagehide' };
+}
+
+/**
  * Removes the unload handler.
  *
  * @param {Function} getState - The redux getState function.
@@ -850,9 +865,10 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
  */
 function _removeUnloadHandler(getState: IStore['getState']) {
     if (typeof beforeUnloadHandler !== 'undefined') {
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+        const pageUnloadEventName = getPageUnloadEventName(getState());
 
-        window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.removeEventListener(
+            pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
         beforeUnloadHandler = undefined;
     }
 }

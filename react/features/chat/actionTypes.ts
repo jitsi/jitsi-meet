@@ -63,6 +63,17 @@ export const CLOSE_CHAT = 'CLOSE_CHAT';
 export const EDIT_MESSAGE = 'EDIT_MESSAGE';
 
 /**
+ * The type of the action which signals to update a chat message's display name.
+ *
+ * {
+ *     type: SET_MESSAGE_DISPLAY_NAME,
+ *     displayName: string,
+ *     messageId: string
+ * }
+ */
+export const SET_MESSAGE_DISPLAY_NAME = 'SET_MESSAGE_DISPLAY_NAME';
+
+/**
  * The type of the action which signals to moderate a message
  *
  * {

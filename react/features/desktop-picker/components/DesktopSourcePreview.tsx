@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
-
-import { translate } from '../../base/i18n/functions';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 /**
  * The type of the React {@code Component} props of
  * {@link DesktopSourcePreview}.
  */
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * The callback to invoke when the component is clicked. The id of the
@@ -43,103 +41,53 @@ interface IProps extends WithTranslation {
 /**
  * React component for displaying a preview of a DesktopCapturerSource.
  *
- * @augments Component
+ * @param {IProps} props - The component's props.
+ * @returns {ReactElement}
  */
-class DesktopSourcePreview extends Component<IProps> {
-    /**
-     * Initializes a new DesktopSourcePreview instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+const DesktopSourcePreview = ({
+    onClick,
+    onDoubleClick,
+    selected,
+    source,
+    type
+}: IProps) => {
+    const { t } = useTranslation();
 
-        this._onClick = this._onClick.bind(this);
-        this._onDoubleClick = this._onDoubleClick.bind(this);
+    const _onClick = useCallback(() => {
+        onClick(source.id, type);
+    }, [ onClick, source.id, type ]);
+
+    const _onDoubleClick = useCallback(() => {
+        onDoubleClick(source.id, type);
+    }, [ onDoubleClick, source.id, type ]);
+
+    const selectedClass = selected ? 'is-selected' : '';
+    const displayClasses = `desktop-picker-source ${selectedClass}`;
+
+    // default data URL for thumbnail image
+    let srcImage = source.thumbnail.dataUrl;
+
+    // legacy thumbnail image
+    if (typeof source.thumbnail.toDataURL === 'function') {
+        srcImage = source.thumbnail.toDataURL();
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        const selectedClass = this.props.selected ? 'is-selected' : '';
-        const displayClasses = `desktop-picker-source ${selectedClass}`;
-
-        return (
-            <div
-                className = { displayClasses }
-                onClick = { this._onClick }
-                onDoubleClick = { this._onDoubleClick }>
-                {this._renderThumbnailImageContainer()}
-                <div className = 'desktop-source-preview-label'>
-                    { this.props.source.name }
-                </div>
-            </div>
-        );
-    }
-
-    /**
-     * Render thumbnail screenshare image.
-     *
-     * @returns {Object} - Thumbnail image.
-     */
-    _renderThumbnailImageContainer() {
-        // default data URL for thumnbail image
-        let srcImage = this.props.source.thumbnail.dataUrl;
-
-        // legacy thumbnail image
-        if (typeof this.props.source.thumbnail.toDataURL === 'function') {
-            srcImage = this.props.source.thumbnail.toDataURL();
-        }
-
-        return (
+    return (
+        <div
+            className = { displayClasses }
+            onClick = { _onClick }
+            onDoubleClick = { _onDoubleClick }>
             <div className = 'desktop-source-preview-image-container'>
-                { this._renderThumbnailImage(srcImage) }
+                <img
+                    alt = { t('welcomepage.logo.desktopPreviewThumbnail') }
+                    className = 'desktop-source-preview-thumbnail'
+                    src = { srcImage } />
             </div>
-        );
+            <div className = 'desktop-source-preview-label'>
+                { source.name }
+            </div>
+        </div>
+    );
+};
 
-    }
-
-    /**
-     * Render thumbnail screenshare image.
-     *
-     * @param {string} src - Of the image.
-     * @returns {Object} - Thumbnail image.
-     */
-    _renderThumbnailImage(src: string) {
-        return (
-            <img
-                alt = { this.props.t('welcomepage.logo.desktopPreviewThumbnail') }
-                className = 'desktop-source-preview-thumbnail'
-                src = { src } />
-        );
-    }
-
-    /**
-     * Invokes the passed in onClick callback.
-     *
-     * @returns {void}
-     */
-    _onClick() {
-        const { source, type } = this.props;
-
-        this.props.onClick(source.id, type);
-    }
-
-    /**
-     * Invokes the passed in onDoubleClick callback.
-     *
-     * @returns {void}
-     */
-    _onDoubleClick() {
-        const { source, type } = this.props;
-
-        this.props.onDoubleClick(source.id, type);
-    }
-}
-
-export default translate(DesktopSourcePreview);
+export default DesktopSourcePreview;

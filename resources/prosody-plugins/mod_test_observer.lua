@@ -90,4 +90,26 @@ module:hook("iq/full", function(event)
     end
 end, 500);
 
+-- Record what a default-priority muc-occupant-groupchat handler sees for a
+-- groupchat message with a body. This is the place of the handlers that copy the
+-- stanza before the room delivers it (for example the relay to the visitor nodes
+-- in mod_visitors, which the test config does not load).
+-- Keeps only the newest entries, so a full suite run does not grow the table.
+local MAX_GROUPCHATS = 100;
+if not shared.groupchats then shared.groupchats = {}; end
+module:hook("muc-occupant-groupchat", function(event)
+    local stanza = event.stanza;
+    local body = stanza:get_child_text("body");
+    if not body then return; end
+    local groupchats = shared.groupchats;
+    table.insert(groupchats, {
+        room             = event.room.jid;
+        id               = stanza.attr.id;
+        body             = body;
+        has_nick         = stanza:get_child("nick", "http://jabber.org/protocol/nick") ~= nil;
+        has_display_name = stanza:get_child("display-name", "http://jitsi.org/protocol/display-name") ~= nil;
+    });
+    while #groupchats > MAX_GROUPCHATS do table.remove(groupchats, 1); end
+end);
+
 module:log("info", "test_observer loaded");

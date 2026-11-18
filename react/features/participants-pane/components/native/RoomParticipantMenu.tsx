@@ -121,7 +121,9 @@ class RoomParticipantMenu extends PureComponent<IProps> {
                 <Avatar
                     displayName = { participantName }
                     size = { AVATAR_SIZE } />
-                <Text style = { styles.participantNameLabel as TextStyle }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.participantNameLabel as TextStyle }>
                     { participantName }
                 </Text>
             </View>

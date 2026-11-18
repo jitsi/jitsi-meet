@@ -27,6 +27,15 @@ map $arg_vnode $prosody_node {
     v7 v7;
     v8 v8;
 }
+# Empty defaults for the tenant variables echoed by config.js, overridden by
+# `set` in the tenant locations. A server-level `set` cannot be used, as it
+# runs again for the config.js SSI subrequest and resets the tenant values.
+map "" $subdomain {
+    default "";
+}
+map "" $subdir {
+    default "";
+}
 # Matches any URI or Referer with some matches and redacts the whole
 # query string. log_format and map must be at the http context level.
 map $request_uri $loggable_uri {

@@ -505,7 +505,7 @@
         "somebody": "Niekto",
         "startSilentDescription": "Pripojte sa k stretnutiu ešte raz, aby ste aktivovali zvuk.",
         "startSilentTitle": "Pripojili ste sa bez zvukového výstupu!",
-        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plne podporovaných prehliadačov</a>.",
+        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <0>plne podporovaných prehliadačov</0>.",
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
         "unmute": "Zapnúť mikrofón"
     },
@@ -854,7 +854,7 @@
         "goSmall": "Začať",
         "info": "Info",
         "join": "Pripojiť",
-        "moderatedMessage": "Alebo si <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">rezervujte vopred URL</a> pre konferenciu, kde budete jediný moderátor.",
+        "moderatedMessage": "Alebo si <0>rezervujte vopred URL</0> pre konferenciu, kde budete jediný moderátor.",
         "privacy": "Súkromie",
         "recentList": "Posledné",
         "recentListDelete": "Vymazať",

@@ -96,6 +96,7 @@ const commands = {
     toggleNoiseSuppression: 'toggle-noise-suppression',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
@@ -157,6 +158,7 @@ const events = {
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
+    'noise-suppression-changed': 'noiseSuppressionChanged',
     'non-participant-message-received': 'nonParticipantMessageReceived',
     'notification-triggered': 'notificationTriggered',
     'outgoing-message': 'outgoingMessage',
@@ -604,6 +606,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                     this._tmpE2EEKey = undefined;
                 }
 
+                // The prejoin screen registers the local participant under the 'local' id. Now that the real id is
+                // known, drop that entry, otherwise getParticipantsInfo() lists the local user twice.
+                delete this._participants.local;
+
                 this._myUserID = userID;
                 this._participants[userID] = {
                     email: data.email,
@@ -847,7 +853,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the connection stats of the conference.
      *
-     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc).
+     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc). Rejects if there is no
+     * conference at the moment (before joining or after leaving).
      */
     getConnectionStats() {
         return this._transport.sendRequest({
@@ -976,8 +983,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Captures the screenshot of the large video.
      *
-     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot
-     * if large video is detected, an error otherwise.
+     * @returns {Promise<{dataURL: string}>} - Resolves with an object that contains the base64 encoded image
+     * data of the screenshot in dataURL. Rejects with an error (it has a message) if no large video is detected.
      */
     captureLargeVideoScreenshot() {
         return this._transport.sendRequest({
@@ -989,9 +996,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Captures a picture through OS camera.
      *
      * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
-     * @param {string} descriptionText - The OS camera facing mode (environment/user).
-     * @param {string} titleText - The OS camera facing mode (environment/user).
-     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
+     * @param {string} descriptionText - The description shown in the camera capture dialog.
+     * @param {string} titleText - The title shown in the camera capture dialog.
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the picture. Rejects when the
+     * browser is not a mobile one, because the feature is only supported there.
      */
     captureCameraPicture(
             cameraFacingMode,
@@ -1033,6 +1041,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     * {@code password} - When the conference asks for a password (the {@code passwordRequired} event), joins with
+     * the password passed in the arguments array. Otherwise sets it as the password of the conference, which is only
+     * possible once joined: send it after the {@code videoConferenceJoined} event, before that it is ignored.
      *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
@@ -1241,7 +1252,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Invite people to the call.
      *
      * @param {Array<Object>} invitees - The invitees.
-     * @returns {Promise} - Resolves on success and rejects on failure.
+     * @returns {Promise<{result: boolean}>} - Resolves with { result: true } on success and rejects with an
+     * error (it has a message) on failure, for example when one or more of the invites failed.
      */
     invite(invitees) {
         if (!Array.isArray(invitees) || invitees.length === 0) {
@@ -1378,7 +1390,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Gets the deployment info.
      *
-     * @returns {Promise} - Resolves with the deployment info object.
+     * @returns {Promise} - Resolves with the deployment info object. The object is empty until the
+     * information is received from the server.
      */
     getDeploymentInfo() {
         return this._transport.sendRequest({
@@ -1556,7 +1569,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     resizeLargeVideo(width, height) {
-        if (width <= this._width && height <= this._height) {
+        // Numeric size options are what the embedder asked for, so keep comparing with them (they also work while
+        // the iframe is still hidden). Other values, such as the default '100%', can't be compared with a number, so
+        // use the layout size of the iframe. clientWidth/clientHeight are not affected by CSS transforms.
+        const optionWidth = Number(this._width);
+        const optionHeight = Number(this._height);
+        const maxWidth = Number.isFinite(optionWidth) ? optionWidth : this._frame.clientWidth;
+        const maxHeight = Number.isFinite(optionHeight) ? optionHeight : this._frame.clientHeight;
+
+        if (width <= maxWidth && height <= maxHeight) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
     }
@@ -1697,7 +1718,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Sets the key and keyIndex for e2ee.
      *
      * @param {Object} keyInfo - Json containing key information.
-     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {CryptoKey} [keyInfo.key] - The encryption key. If it is not provided, the key is cleared.
      * @param {number} [keyInfo.index] - The index of the encryption key.
      * @returns {void}
      */

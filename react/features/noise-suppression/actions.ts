@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
+import { timeoutPromise } from '../base/util/timeoutPromise';
 import { showErrorNotification } from '../notifications/actions';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
@@ -24,18 +25,50 @@ export function setNoiseSuppressionEnabledState(enabled: boolean): any {
 }
 
 /**
+ * The last queued noise suppression change. The enabled state is only updated once the effect has been applied to
+ * (or removed from) the local audio track, so changes are run one after another, otherwise back-to-back calls would
+ * all see the same, stale, state.
+ */
+let pendingChange: Promise<void> = Promise.resolve();
+
+/**
+ * The maximum time, in milliseconds, a queued noise suppression change is waited for before moving on to the next one.
+ */
+const CHANGE_TIMEOUT = 10_000;
+
+/**
+ * Runs the given noise suppression change once all the previously queued ones have finished.
+ *
+ * @param {Function} change - The change to run.
+ * @returns {Promise<void>}
+ */
+function queueChange(change: () => Promise<void>): Promise<void> {
+    // A change which never settles (e.g. the noise suppressor worklet failing to load) would otherwise block all the
+    // later changes, as well as the callers awaiting them (e.g. screen sharing with audio).
+    const result = pendingChange.then(() => timeoutPromise(change(), CHANGE_TIMEOUT).catch(error => {
+        if (error?.message !== 'timeout') {
+            throw error;
+        }
+
+        logger.error(`Noise suppression change did not complete within ${CHANGE_TIMEOUT}ms, moving on`);
+    }));
+
+    // Keep the queue going even if a change fails, the failure is still reported to the caller through result.
+    pendingChange = result.catch(() => undefined);
+
+    return result;
+}
+
+/**
  *  Enabled/disable noise suppression depending on the current state.
  *
  * @returns {Function}
  */
 export function toggleNoiseSuppression(): any {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (isNoiseSuppressionEnabled(getState())) {
-            dispatch(setNoiseSuppressionEnabled(false));
-        } else {
-            dispatch(setNoiseSuppressionEnabled(true));
-        }
-    };
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+
+        // The state is read only when the change runs, so that it reflects any previously queued change.
+        queueChange(() => dispatch(applyNoiseSuppressionEnabled(!isNoiseSuppressionEnabled(getState()))));
 }
 
 /**
@@ -46,6 +79,18 @@ export function toggleNoiseSuppression(): any {
  * @returns {Function}
  */
 export function setNoiseSuppressionEnabled(enabled: boolean): any {
+    return (dispatch: IStore['dispatch']) => queueChange(() => dispatch(applyNoiseSuppressionEnabled(enabled)));
+}
+
+/**
+ * Enables or disables noise suppression by applying or removing the {@link NoiseSuppressionEffect} on the local
+ * audio track. Must only be run through {@link queueChange}.
+ *
+ * @param {boolean} enabled - Enable or disable noise suppression.
+ *
+ * @returns {Function}
+ */
+function applyNoiseSuppressionEnabled(enabled: boolean): any {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
@@ -72,6 +117,8 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
         try {
             if (enabled) {
                 if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
+                    logger.warn('Noise suppression cannot be enabled for the current local audio track');
+
                     return;
                 }
 

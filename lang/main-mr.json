@@ -442,7 +442,7 @@
         "somebody": "कुणीतरी",
         "startSilentDescription": "ऑडिओ सक्षम करण्यासाठी संमेलनात पुन्हा सामील व्हा",
         "startSilentTitle": "आपण ऑडिओ आउटपुटसह सामील झालात!",
-        "suboptimalBrowserWarning": " आम्हाला भीती वाटते की येथे आपल्या भेटीचा अनुभव इतका उत्कृष्ट होणार नाही. आम्ही यामध्ये सुधारणा करण्याचे मार्ग शोधत आहोत, परंतु तोपर्यंत कृपया त्यापैकी एक वापरून पहा <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": " आम्हाला भीती वाटते की येथे आपल्या भेटीचा अनुभव इतका उत्कृष्ट होणार नाही. आम्ही यामध्ये सुधारणा करण्याचे मार्ग शोधत आहोत, परंतु तोपर्यंत कृपया त्यापैकी एक वापरून पहा <0>fully supported browsers</0>.",
         "suboptimalExperienceTitle": "ब्राउझर चेतावणी",
         "unmute": "सशब्द करा"
     },

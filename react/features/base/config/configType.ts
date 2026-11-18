@@ -219,6 +219,10 @@ export interface IConfig {
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
     appId?: string;
     audioLevelsInterval?: number;
+    audioOutput?: {
+        manager?: boolean;
+        switchTimeout?: number;
+    };
     audioQuality?: {
         enableAdvancedAudioSettings?: boolean;
         opusMaxAverageBitrate?: number | null;
@@ -232,6 +236,8 @@ export interface IConfig {
     audioTranslation?: {
         duckedVolume?: number;
         enabled?: boolean;
+        translationLanguages?: Array<string>;
+        translationLanguagesHead?: Array<string>;
     };
     /**
      * @deprecated Use `transcription.autoTranscribeOnRecord` instead.
@@ -442,7 +448,6 @@ export interface IConfig {
     enableSaveLogs?: boolean;
     enableTalkWhileMuted?: boolean;
     enableTcc?: boolean;
-    enableWebHIDFeature?: boolean;
     /**
      * @deprecated Use `welcomePage.disabled` instead.
      */
@@ -712,7 +717,10 @@ export interface IConfig {
     };
     serviceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
+    showBreakoutRoomJoinPermissionsModeratorSetting?: boolean;
     showChatPermissionsModeratorSetting?: boolean;
+    showEndPollButton?: boolean;
+    showPollSingleAnswerSetting?: boolean;
     showSharedVideoPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
     speakerStats?: {

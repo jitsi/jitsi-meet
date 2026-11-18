@@ -30,7 +30,6 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y --no-install-recommends lua5.4 luarocks libssl-dev
           sudo luarocks install busted
-          sudo luarocks install basexx
           sudo luarocks install openssl
           sudo luarocks install lua-cjson
 

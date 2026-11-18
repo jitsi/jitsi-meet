@@ -92,6 +92,51 @@ export function createApiEvent(action: string, attributes = {}) {
 }
 
 /**
+ * Creates an event for an element that could not be switched to the selected audio output device when a
+ * participant's audio was attached, after the retries.
+ *
+ * @param {Object} attributes - The failure.
+ * @param {string} [attributes.error] - The name of the error.
+ * @param {boolean} attributes.manager - Whether lib-jitsi-meet's audio output manager made the switch.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioOutputAttachFailedEvent(attributes: {
+    error?: string;
+    manager: boolean;
+}) {
+    return {
+        action: 'audio.output.attach.failed',
+        attributes
+    };
+}
+
+/**
+ * Creates an event for the outcome of a change of the audio output device.
+ *
+ * @param {Object} attributes - The outcome.
+ * @param {number} attributes.duration - How long the change took, in ms.
+ * @param {string} [attributes.error] - The name of the error when it failed.
+ * @param {number} attributes.failed - The number of tracks that did not switch.
+ * @param {boolean} attributes.manager - Whether lib-jitsi-meet's audio output manager made the change.
+ * @param {string} attributes.result - 'changed', 'partly' when some tracks did not switch, or 'failed'.
+ * @param {boolean} attributes.userSelection - Whether the user picked the device, as opposed to the app.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioOutputChangeEvent(attributes: {
+    duration: number;
+    error?: string;
+    failed: number;
+    manager: boolean;
+    result: string;
+    userSelection: boolean;
+}) {
+    return {
+        action: 'audio.output.change',
+        attributes
+    };
+}
+
+/**
  * Creates an event which indicates that the audio-only mode has been changed.
  *
  * @param {boolean} enabled - True if audio-only is enabled, false otherwise.
@@ -407,6 +452,7 @@ export function createPinnedEvent(action: string, participantId: string, attribu
 /**
  * Creates a poll event.
  * The following events will be created:
+ * - poll.closed
  * - poll.created
  * - poll.vote.checked
  * - poll.vote.sent

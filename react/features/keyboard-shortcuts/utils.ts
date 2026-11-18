@@ -25,6 +25,18 @@ const _elementsBlacklist = [
 export const getPriorityFocusedElement = (): HTMLElement | null =>
     document.querySelector(`:focus:is(${_elementsBlacklist.join(',')})`);
 
+export const getShortcutKey = (character: string, alt?: boolean, ctrl?: boolean): string => {
+    if (ctrl && alt) {
+        return `-:${character}`;
+    } else if (alt) {
+        return `:${character}`;
+    } else if (ctrl) {
+        return `-${character}`;
+    }
+
+    return character;
+};
+
 /**
 * Returns the keyboard key from a KeyboardEvent.
 *
@@ -41,12 +53,8 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
 
     const replacedKey = code.replace('Key', '');
 
-    if (ctrlKey && altKey) {
-        return `-:${replacedKey}`;
-    }
-
     if (altKey) {
-        return `:${replacedKey}`;
+        return getShortcutKey(replacedKey, altKey, ctrlKey);
     }
 
     // If e.key is a string, then it is assumed it already plainly states
@@ -56,7 +64,7 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     // further analyzed by jitsi to a key using e.which.
     if (typeof key === 'string' && key !== 'Unidentified') {
         if (ctrlKey) {
-            return `-${key}`;
+            return getShortcutKey(key, false, ctrlKey);
         }
 
         if (code.startsWith('Key')) {

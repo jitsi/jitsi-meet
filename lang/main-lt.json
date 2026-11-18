@@ -430,7 +430,7 @@
         "somebody": "Kažkas",
         "startSilentDescription": "Persijunkite prie susitikimo, kad įjungtumėte garsą",
         "startSilentTitle": "Jūs prisijungėte be jokios garso išvesties!",
-        "suboptimalBrowserWarning": "Mes apgailėstaujame, kad jūsų susitikimo įspūdžiai nėra tokie, kokių tikėjotės. Mes visada ieškome būdų kaip patobulėti, bet kol kas bandykite tai <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "Mes apgailėstaujame, kad jūsų susitikimo įspūdžiai nėra tokie, kokių tikėjotės. Mes visada ieškome būdų kaip patobulėti, bet kol kas bandykite tai <0>fully supported browsers</0>.",
         "suboptimalExperienceTitle": "Naršyklės įspėjimas",
         "unmute": "Įjungti garsą"
     },

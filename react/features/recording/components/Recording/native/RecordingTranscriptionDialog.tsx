@@ -41,10 +41,6 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
      */
     override render() {
         const {
-            _fileRecordingsServiceEnabled,
-            _fileRecordingsServiceSharingEnabled,
-            _recordingRunning,
-            _transcriptionRunning,
             recordAudioAndVideo
         } = this.props;
         const {
@@ -52,7 +48,6 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             isValidating,
             localRecordingOnlySelf,
             selectedLanguage,
-            selectedRecordingService,
             sharingEnabled,
             spaceLeft,
             userName
@@ -62,12 +57,10 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             <JitsiScreen style = { styles.startRecodingContainer }>
                 <ScrollView>
                     <StartRecordingDialogContent
-                        fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
-                        fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
-                        integrationsEnabled = { this._areIntegrationsEnabled() }
                         isTokenValid = { isTokenValid }
                         isValidating = { isValidating }
                         localRecordingOnlySelf = { localRecordingOnlySelf }
+                        model = { this._getModel() }
                         onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
                         onRecordingServiceChange = { this._onSelectedRecordingServiceChanged }
                         onSharingSettingChanged = { this._onSharingSettingChanged }
@@ -79,13 +72,9 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                         onStopTranscription = { this._onStopTranscriptionPress }
                         onSubtitlesLanguageChange = { this._onSubtitlesLanguageChanged }
                         recordAudioAndVideo = { recordAudioAndVideo }
-                        recordingRunning = { Boolean(_recordingRunning) }
                         selectedLanguage = { selectedLanguage }
-                        selectedRecordingService = { selectedRecordingService }
                         sharingSetting = { sharingEnabled }
                         spaceLeft = { spaceLeft }
-                        startRecordingDisabled = { this._isStartRecordingDisabled() }
-                        transcriptionRunning = { Boolean(_transcriptionRunning) }
                         userName = { userName } />
                 </ScrollView>
             </JitsiScreen>

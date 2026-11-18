@@ -64,7 +64,7 @@ const DEFAULT_STATE: ICustomPanelState = {
  */
 PersistenceRegistry.register('features/custom-panel', {
     width: true
-});
+}, DEFAULT_STATE);
 
 /**
  * Listen for actions that mutate the custom panel state.

@@ -145,6 +145,18 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Shows/hides the "Allow only one answer" option when creating a poll. The option is sent with
+    // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus enable this
+    // only when both support it. With visitors, enable it only once the main and all visitor prosodies run a
+    // mod_polls_component with single answer support: an old visitor node shows checkboxes and keeps multi-answer
+    // votes locally.
+    // showPollSingleAnswerSetting: false,
+
+    // Shows/hides the "End poll" button for the poll's creator and moderators. Closing a poll is enforced by
+    // the mod_polls_component prosody module, thus enable this only when the server runs a version of that
+    // module that supports it.
+    // showEndPollButton: false,
+
     // Disables chat feature entirely including notifications, sounds, and private messages.
     // disableChat: false,
 
@@ -157,13 +169,23 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
-    // Shows/hides the moderator setting for chat permissions.
+    // Shows/hides the moderator settings that restrict group chat and private chat to the participants with the
+    // `send-groupchat` and `send-private-message` permissions. The restrictions are enforced by the
+    // mod_filter_messages prosody module, thus enable this only when that module is loaded on the main MUC
+    // component and on the breakout rooms MUC component.
     // showChatPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts video sharing to the participants with the
     // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
-    // thus enable this only when that module is loaded.
+    // thus enable this only when that module is loaded on the main MUC component and on the breakout rooms MUC
+    // component.
     // showSharedVideoPermissionsModeratorSetting: false,
+
+    // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator
+    // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus enable this
+    // only when the server runs a version of that module that supports it. Older clients still show Join while
+    // the restriction is on: the server refuses that join and lib-jitsi-meet moves them back to the main room.
+    // showBreakoutRoomJoinPermissionsModeratorSetting: false,
 
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
@@ -194,6 +216,15 @@ var config = {
     // disableAudioLevels: false,
 
     // audioLevelsInterval: 200,
+
+    // Speaker (audio output device) switching.
+    // audioOutput: {
+    //     // Switches the speaker through lib-jitsi-meet's audio output manager, which waits for every audio element
+    //     // to switch, keeps the previous speaker when none could, and reports the participants that did not switch.
+    //     manager: false,
+    //     // With the manager, how long switching an audio element may take before it counts as failed, in ms.
+    //     switchTimeout: 5000,
+    // },
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
@@ -258,6 +289,29 @@ var config = {
     //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
     //     // element volume cannot be lowered there.
     //     duckedVolume: 0.15,
+    //
+    //     // Target languages offered in the audio-translation picker, as the codes the
+    //     // deployment's speech-to-speech translation provider accepts (they are sent to the
+    //     // bridge verbatim, and the translated track is named <source>.<code>). Defaults to the
+    //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
+    //     // vi. Extend this only if the translation service accepts more: a language the
+    //     // provider rejects is dropped server-side and the picker entry produces no audio.
+    //     // A code must be 1-20 ASCII letters: prosody's audio-translation component refuses any
+    //     // other language with bad-request, and one bad code in a meeting-wide request fails
+    //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
+    //     // 'pt_BR' are dropped from the list with a warning. A list that is
+    //     // set but leaves nothing usable offers no language at all, with a warning, rather
+    //     // than the defaults. Codes outside the default list are labelled with the language's
+    //     // own name where the platform has Intl.DisplayNames (browsers; the mobile apps do not),
+    //     // else with the English name from lang/translation-languages.json. Same keys as
+    //     // transcription.translationLanguages.
+    //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
+    //
+    //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike
+    //     // transcription.translationLanguagesHead this only reorders: a head entry that is not
+    //     // in the offered list is ignored, so it cannot add a language the provider may reject,
+    //     // and it takes the list's spelling.
+    //     translationLanguagesHead: [ 'en' ],
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -345,7 +399,7 @@ var config = {
     //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
     //     // 'role', <- Moderators on top.
     //     // 'name', <- Alphabetically by name.
-    //     // 'hasLeft', <- The ones that have left in the bottom.
+    //     // 'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position.
     //     order: [
     //         'role',
     //         'name',
@@ -362,7 +416,7 @@ var config = {
     // speakerStatsOrder: [
     //  'role', <- Moderators on top
     //  'name', <- Alphabetically by name
-    //  'hasLeft', <- The ones that have left in the bottom
+    //  'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position
     // ], <- the order of the array elements determines priority
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
@@ -497,6 +551,10 @@ var config = {
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
+    // When googleApiApplicationClientID is set, termsLink and dataPrivacyLink default to YouTube/Google
+    // links, and validatorRegExpString defaults to the 4-group YouTube key format.
+    // When googleApiApplicationClientID is not set, termsLink and dataPrivacyLink are not shown by default
+    // unless configured here, and validatorRegExpString defaults to accepting RTMP/RTMPS URLs and stream keys.
     // liveStreaming: {
     //    // Whether to enable live streaming or not.
     //    enabled: false,
@@ -701,7 +759,7 @@ var config = {
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
-    // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'unload' event.
+    // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'pagehide' event.
     // disableBeforeUnloadHandlers: true,
 
     // Disables or enables TCC support in this client (default: enabled).
@@ -758,9 +816,6 @@ var config = {
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
-
-    // Enables webhid functionality for Audio.
-    // enableWebHIDFeature: false,
 
     // DEPRECATED! Use 'welcomePage.disabled' instead.
     // Whether to use a welcome page or not. In case it's false a random room
@@ -852,7 +907,10 @@ var config = {
 
     // Picture-in-Picture configuration.
     // pip: {
-    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false.
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false. Leave it unset to let
+    //     // users turn browser PiP on or off for themselves from the Experimental tab of the settings dialog;
+    //     // their browser remembers the choice. A value set here, through URL parameters or the iframe API is
+    //     // final and hides that setting.
     //     enableBrowserPiP: false,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
@@ -1900,6 +1958,9 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.audioOutputAttachFailedTitle', // shown when a participant could not be switched to the speaker
+    //     'notify.audioOutputChangeFailedTitle', // shown when the speaker could not be switched
+    //     'notify.audioOutputPartlyChangedTitle', // shown when the speaker was switched for some participants only
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.connectedOneMember', // show when a participant joined
@@ -1917,6 +1978,11 @@ var config = {
     //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.localRecordingStarted', // shown when the local recording has been started
     //     'notify.localRecordingStopped', // shown when the local recording has been stopped
+    //     'notify.mediaConnectivityAtRisk', // shown when connecting takes long or the network may be blocking the call
+    //     'notify.mediaConnectivityDegraded', // shown when the call is carried over TCP, so media may lag
+    //     'notify.mediaConnectivityFailed', // shown when audio and video could not be connected
+    //     'notify.mediaConnectivityInterrupted', // shown when audio and video dropped during the call
+    //     'notify.mediaConnectivityRestored', // shown when audio and video are back after dropping or failing
     //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation

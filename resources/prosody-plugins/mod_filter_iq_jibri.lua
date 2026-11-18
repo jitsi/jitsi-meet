@@ -1,9 +1,10 @@
 -- Filters Jibri recording/livestreaming IQ stanzas (http://jitsi.org/protocol/jibri)
 -- on the main VirtualHost. start/stop actions are allowed only when the sender's JWT
--- token grants the required feature ('recording' for file mode, 'livestreaming' for
--- stream mode), or, absent token features, when the sender holds moderator role in the
--- room. status IQs are always passed through. Blocked stanzas receive an
--- auth/forbidden error reply. Rate-limited per IP and per room.
+-- token grants the required feature ('sip-outbound-call' when a sipaddress is present,
+-- otherwise 'recording' for file mode and 'livestreaming' for stream mode), or, absent
+-- token features, when the sender holds moderator role in the room. status IQs are
+-- always passed through. Blocked stanzas receive an auth/forbidden error reply.
+-- Rate-limited per IP and per room.
 -- This module is enabled under the main virtual host.
 local cache = require 'util.cache';
 local new_throttle = require 'util.throttle'.create;
@@ -44,8 +45,15 @@ module:hook("pre-iq/full", function(event)
                 return true;
             end
             local occupant = room:get_occupant_by_real_jid(stanza.attr.from);
-            local recording_mode_lower = jibri.attr.recording_mode and jibri.attr.recording_mode:lower();
-            local feature = recording_mode_lower == 'file' and 'recording' or 'livestreaming';
+            local feature;
+            -- jicofo handles any request with a non-blank sipaddress as a SIP gateway session,
+            -- whatever the recording_mode, so the feature follows the sipaddress first
+            if jibri.attr.sipaddress and jibri.attr.sipaddress:match('%S') then
+                feature = 'sip-outbound-call';
+            else
+                local recording_mode_lower = jibri.attr.recording_mode and jibri.attr.recording_mode:lower();
+                feature = recording_mode_lower == 'file' and 'recording' or 'livestreaming';
+            end
             local is_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,

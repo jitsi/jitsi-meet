@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
@@ -130,6 +131,41 @@ describe('mod_muc_domain_mapper', () => {
 
             assert.equal(iq.attrs.type, 'result',
                 'disco#info to subdomain room must return a result IQ');
+        });
+
+        it('disco#info to the subdomain MUC host returns a result from that host', async () => {
+            const c = await ctx.connect();
+
+            const iq = await c.sendDiscoInfo(CONFERENCE_SUB);
+
+            assert.equal(iq.attrs.type, 'result');
+            assert.equal(iq.attrs.from, CONFERENCE_SUB,
+                'the reply must come from the subdomain host the request was sent to');
+        });
+
+    });
+
+    // -------------------------------------------------------------------------
+    // Sender of stanzas between clients
+    // -------------------------------------------------------------------------
+    describe('sender of an IQ between clients', () => {
+
+        it('keeps the sender of an IQ with a host-only <conference> room', async () => {
+            const a = await ctx.connect();
+            const b = await ctx.connect();
+            const id = `mapper-iq-${Date.now()}`;
+
+            await a.sendRaw(xml('iq', { type: 'set',
+                to: b.jid,
+                id },
+                xml('conference', { room: CONFERENCE_SUB })
+            ));
+
+            const iq = await b.waitForIq(s => s.attrs.id === id);
+
+            assert.equal(iq.attrs.from, a.jid);
+            assert.equal(iq.getChild('conference')?.attrs.room, CONFERENCE_SUB,
+                'the room of the <conference> child must be delivered as sent');
         });
 
     });

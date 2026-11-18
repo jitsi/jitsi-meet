@@ -9,6 +9,16 @@ import { IButtonProps } from '../types';
 interface IProps extends IButtonProps {
 
     /**
+     * Whether an associated popup is expanded.
+     */
+    ariaExpanded?: boolean;
+
+    /**
+     * Indicates the type of popup the button controls.
+     */
+    ariaHasPopup?: React.AriaAttributes['aria-haspopup'];
+
+    /**
      * Class name used for additional styles.
      */
     className?: string;
@@ -176,6 +186,8 @@ const useStyles = makeStyles()(theme => {
 
 const Button = React.forwardRef<any, any>(({
     accessibilityLabel,
+    ariaExpanded,
+    ariaHasPopup,
     autoFocus = false,
     className,
     description,
@@ -198,6 +210,8 @@ const Button = React.forwardRef<any, any>(({
     return (
         <button
             aria-description = { description }
+            aria-expanded = { ariaExpanded }
+            aria-haspopup = { ariaHasPopup }
             aria-label = { accessibilityLabel }
             autoFocus = { autoFocus }
             className = { cx(styles.button, styles[type],

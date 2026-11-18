@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
+    requestDisableDesktopModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
+    requestEnableDesktopModeration,
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
 import { MEDIA_TYPE } from '../../../av-moderation/constants';
@@ -20,19 +22,26 @@ import { getCurrentConference } from '../../../base/conference/functions';
 import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconRaiseHand, IconVideoOff } from '../../../base/icons/svg';
+import { IconRaiseHand, IconScreenshare, IconVideoOff } from '../../../base/icons/svg';
 import { raiseHand } from '../../../base/participants/actions';
 import { getRaiseHandsQueue, isLocalParticipantModerator } from '../../../base/participants/functions';
 import { LOWER_HAND_MESSAGE } from '../../../base/tracks/constants';
+import MuteEveryonesDesktopDialog
+    from '../../../video-menu/components/native/MuteEveryonesDesktopDialog';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
+import ModerationRow from './ModerationRow';
 import styles from './styles';
 
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
     const muteAllVideo = useCallback(() => {
         dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
+    const muteAllDesktop = useCallback(() => {
+        dispatch(openDialog('MuteEveryonesDesktopDialog', MuteEveryonesDesktopDialog));
         dispatch(hideSheet());
     }, [ dispatch ]);
     const conference = useSelector(getCurrentConference);
@@ -49,12 +58,28 @@ export const ContextMenuMore = () => {
 
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
+    const isDesktopModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.DESKTOP));
 
-    const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
-    const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
-
-    const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
-    const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
+    const moderationActions = [
+        {
+            disable: requestDisableAudioModeration,
+            enable: requestEnableAudioModeration,
+            enabled: isAudioModerationEnabled,
+            labelKey: 'participantsPane.actions.audioModeration'
+        },
+        {
+            disable: requestDisableVideoModeration,
+            enable: requestEnableVideoModeration,
+            enabled: isVideoModerationEnabled,
+            labelKey: 'participantsPane.actions.videoModeration'
+        },
+        {
+            disable: requestDisableDesktopModeration,
+            enable: requestEnableDesktopModeration,
+            enabled: isDesktopModerationEnabled,
+            labelKey: 'participantsPane.actions.desktopModeration'
+        }
+    ];
 
     return (
         <BottomSheet
@@ -69,6 +94,16 @@ export const ContextMenuMore = () => {
                     size = { 24 }
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                accessibilityLabel = { t('participantsPane.actions.stopEveryonesDesktop') }
+                accessibilityRole = 'button'
+                onPress = { muteAllDesktop }
+                style = { styles.contextMenuItem as ViewStyle }>
+                <Icon
+                    size = { 24 }
+                    src = { IconScreenshare } />
+                <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesDesktop')}</Text>
             </TouchableOpacity>
             { moderator && raisedHandsQueue.length !== 0 && <TouchableOpacity
                 accessibilityLabel = { t('participantsPane.actions.lowerAllHands') }
@@ -86,54 +121,11 @@ export const ContextMenuMore = () => {
                 <View style = { styles.contextMenuItem as ViewStyle }>
                     <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.allow')}</Text>
                 </View>
-                {isAudioModerationEnabled
-                    ? <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: true }}
-                        onPress = { disableAudioModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Text style = { styles.contextMenuItemTextNoIcon }>
-                            {t('participantsPane.actions.audioModeration')}
-                        </Text>
-                    </TouchableOpacity>
-                    : <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: false }}
-                        onPress = { enableAudioModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconCheck } />
-                        <Text style = { styles.contextMenuItemText }>
-                            {t('participantsPane.actions.audioModeration')}
-                        </Text>
-                    </TouchableOpacity> }
-                {isVideoModerationEnabled
-                    ? <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: true }}
-                        onPress = { disableVideoModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Text style = { styles.contextMenuItemTextNoIcon }>
-                            {t('participantsPane.actions.videoModeration')}
-                        </Text>
-                    </TouchableOpacity>
-                    : <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: false }}
-                        onPress = { enableVideoModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconCheck } />
-                        <Text style = { styles.contextMenuItemText }>
-                            {t('participantsPane.actions.videoModeration')}
-                        </Text>
-                    </TouchableOpacity>}
+                {moderationActions.map(action => (
+                    <ModerationRow
+                        key = { action.labelKey }
+                        { ...action } />
+                ))}
             </>}
         </BottomSheet>
     );

@@ -20,6 +20,7 @@ const LANGUAGE_SELECT_MENU = '#transcription-language-select-menu';
 const FOLLOW_ME_RECORDER_SWITCH = '#recording-switch-follow-me';
 const FILE_SHARING_SWITCH = '#recording-switch-share';
 const LOCAL_RECORDING_ONLY_SELF_SWITCH = '#recording-switch-myself';
+const TOOLTIP = '.popover-content';
 
 /**
  * Page object for the unified Recording & Transcription dialog: two sections
@@ -109,6 +110,49 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
      */
     isStartBothEnabled(): Promise<boolean> {
         return this.participant.driver.$(START_BOTH).isEnabled();
+    }
+
+    /**
+     * Whether the transcription section Start button is enabled.
+     */
+    isStartTranscriptionEnabled(): Promise<boolean> {
+        return this.participant.driver.$(START_TRANSCRIPTION).isEnabled();
+    }
+
+    /**
+     * Hovers the transcription section Start button and returns the text of the tooltip it
+     * shows.
+     */
+    async getStartTranscriptionTooltip(): Promise<string> {
+        const driver = this.participant.driver;
+        const button = driver.$(START_TRANSCRIPTION);
+
+        // The tooltip repeats the button's description. Tooltips render in a portal, not next to
+        // the button, so that text is what tells this one from any other popover on the page.
+        const reason = await button.getAttribute('aria-description');
+
+        if (!reason) {
+            throw new Error('The Start transcription button has no description to show in a tooltip');
+        }
+
+        await button.moveTo();
+
+        // The tooltip fades in: it exists before it is visible, and getText() returns an empty
+        // string for it until then.
+        await driver.waitUntil(async () => {
+            for (const popover of await driver.$$(TOOLTIP)) {
+                if (await popover.getText() === reason) {
+                    return true;
+                }
+            }
+
+            return false;
+        }, {
+            timeout: 3000,
+            timeoutMsg: 'Start transcription tooltip did not appear'
+        });
+
+        return reason;
     }
 
     /**

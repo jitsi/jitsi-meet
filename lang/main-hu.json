@@ -529,7 +529,7 @@
         "somebody": "Valaki",
         "startSilentDescription": "Csatlakozzon újra a hang engedélyezéséhez",
         "startSilentTitle": "Hang nélkül csatlakozott!",
-        "suboptimalBrowserWarning": "Sajnáljuk, de nem nagy élmény így csatlakozni a konferenciához. Keressük a megoldást, de addig is, érdemes inkább egy <a href='{{recommendedBrowserPageLink}}' target='_blank'>teljesen támogatott böngészővel</a> csatlakozni.",
+        "suboptimalBrowserWarning": "Sajnáljuk, de nem nagy élmény így csatlakozni a konferenciához. Keressük a megoldást, de addig is, érdemes inkább egy <0>teljesen támogatott böngészővel</0> csatlakozni.",
         "suboptimalExperienceTitle": "Böngészőhiba",
         "unmute": "Visszahangosítás"
     },

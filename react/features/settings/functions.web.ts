@@ -12,6 +12,9 @@ import {
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
+import { CONFIG_OPTIONS } from './configOptions';
+import { ConfigOption, IConfigOptionValues } from './types';
+
 export * from './functions.any';
 
 /**
@@ -122,6 +125,43 @@ export function getVirtualBackgroundTabProps(stateful: IStateful, isDisplayedOnW
     return {
         options: state['features/virtual-background'],
         selectedVideoInputId
+    };
+}
+
+/**
+ * Returns the config options the user may decide here: those that apply to the current environment and whose value
+ * no config source has set.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {ConfigOption[]} - The config options to display.
+ */
+export function getAvailableConfigOptions(stateful: IStateful): ConfigOption[] {
+    const state = toState(stateful);
+
+    return CONFIG_OPTIONS.filter(option => option.isAvailable(state));
+}
+
+/**
+ * Returns the properties for the "Experimental" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Experimental" tab from settings dialog.
+ */
+export function getExperimentalTabProps(stateful: IStateful) {
+    const state = toState(stateful);
+    const options = getAvailableConfigOptions(state);
+    const values: IConfigOptionValues = {};
+
+    for (const option of options) {
+        values[option.id] = option.getValue(state);
+    }
+
+    return {
+        options,
+        values
     };
 }
 

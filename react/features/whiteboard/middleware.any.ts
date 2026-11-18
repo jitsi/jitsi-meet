@@ -47,7 +47,9 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
         // metadata updates (e.g. toggling the lobby) would re-open a whiteboard the user had closed.
         const previousCollabDetails = state['features/base/conference'].metadata?.[WHITEBOARD_ID]?.collabDetails;
 
-        if (newCollabDetails && newCollabDetails.roomId !== previousCollabDetails?.roomId) {
+        if (newCollabDetails
+            && (newCollabDetails.roomId !== previousCollabDetails?.roomId
+                || newCollabDetails.roomKey !== previousCollabDetails?.roomKey)) {
             store.dispatch(setupWhiteboard({
                 collabDetails: newCollabDetails,
                 collabServerUrl: generateCollabServerUrl(store.getState())

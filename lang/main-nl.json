@@ -41,6 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Audiovertaling is uitgeschakeld voor deze vergadering.",
+        "errorBadRequest": "De vergaderserver heeft het vertaalverzoek afgewezen. Als dit blijft gebeuren, vraag dan uw beheerder om de geconfigureerde talen te controleren.",
         "errorForbidden": "U hebt geen toestemming om audiovertaling te gebruiken.",
         "errorGeneric": "Kon audiovertaling niet inschakelen. Probeer het opnieuw.",
         "errorLimitReached": "Kon niet iedereen tegelijk vertalen. Schakel vertaling in voor individuele deelnemers.",
@@ -105,6 +106,8 @@
         "permissionButton": "Instellingen openen",
         "permissionMessage": "Het Agenda-toegangsrecht is nodig om uw vergaderingen in de app te zien.",
         "refresh": "Agenda vernieuwen",
+        "signInAgain": "Opnieuw aanmelden",
+        "signInAgainMessage": "Uw agenda is nog steeds verbonden, maar u moet zich opnieuw aanmelden om komende vergaderingen te zien.",
         "today": "Vandaag"
     },
     "carmode": {
@@ -164,6 +167,11 @@
         "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
         "privateMessage": "Privébericht",
         "privateNotice": "Privébericht aan {{recipient}}",
+        "reactions": {
+            "faceWithTearsOfJoy": "Gezicht met tranen van vreugde",
+            "fire": "Vuur",
+            "redHeart": "Rood hart"
+        },
         "search": {
             "close": "Zoeken sluiten",
             "next": "Volgende overeenkomst",
@@ -276,7 +284,7 @@
     "deepLinking": {
         "appNotInstalled": "U hebt de mobiele app {{app}} nodig om aan deze vergadering deel te nemen via uw telefoon.",
         "description": "Gebeurt er niets? Er is geprobeerd uw vergadering te starten in de desktop-app {{app}}. Probeer het opnieuw of start de vergadering in de web-app {{app}}.",
-        "descriptionNew": "Niets gebeurd? We hebben geprobeerd uw vergadering te starten in de desktop-app {{app}}. <br /><br /> U kunt het opnieuw proberen of starten op internet.",
+        "descriptionNew": "Niets gebeurd? We hebben geprobeerd uw vergadering te starten in de desktop-app {{app}}. <0/><0/> U kunt het opnieuw proberen of starten op internet.",
         "descriptionWithoutWeb": "Gebeurt er niets? Er is geprobeerd om uw vergadering te starten in de desktop-app {{app}}",
         "downloadApp": "Download de app",
         "downloadMobileApp": "Download van de App Store",
@@ -290,7 +298,7 @@
         "noDesktopApp": "U hebt de app niet?",
         "noMobileApp": "U hebt de app niet?",
         "or": "OF",
-        "termsAndConditions": "Door verder te gaan, gaat u akkoord met onze <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>gebruiksvoorwaarden.</a>",
+        "termsAndConditions": "Door verder te gaan, gaat u akkoord met onze <0>gebruiksvoorwaarden.</0>",
         "title": "Uw vergadering wordt gestart in {{app}}…",
         "titleNew": "Uw vergadering wordt gestart…",
         "tryAgainButton": "Opnieuw proberen in desktop",
@@ -305,12 +313,6 @@
         "microphonePermission": "Fout bij verkrijgen toegangsrecht microfoon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Gesprekscontrole",
-            "connectedDevices": "Verbonden apparaten:",
-            "deleteDevice": "Apparaat verwijderen",
-            "pairDevice": "Apparaat koppelen"
-        },
         "noPermission": "Geen toestemming verleend",
         "previewUnavailable": "Voorbeeld niet beschikbaar",
         "selectADevice": "Selecteer een apparaat",
@@ -391,6 +393,7 @@
         "displayNameRequired": "Hallo! Wat is uw naam?",
         "done": "Gereed",
         "e2eeDescription": "Eind-tot-Eind-Versleuteling is momenteel EXPERIMENTEEL. Houd er rekening mee dat inschakelen van Eind-tot-Eind-Versleuteling de door de server geleverde services zal uitschakelen zoals: opnemen, livestreamen en deelname via telefoon. Houd er ook rekening mee dat de vergadering alleen zal werken voor personen die deelnemen vanaf browsers met ondersteuning voor insertable streams.",
+        "e2eeDisabledDueToAgentDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld terwijl een AI-agent in de vergadering is.",
         "e2eeDisabledDueToMaxModeDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld vanwege het grote aantal deelnemers aan de conferentie.",
         "e2eeDisabledDueToTranscriptionDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld terwijl de vergadering wordt getranscribeerd.",
         "e2eeDisabledDueToTranslationDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld terwijl livevertaling wordt gebruikt.",
@@ -625,6 +628,7 @@
     "e2ee": {
         "labelToolTip": "Audio- en Videocommunicatie in dit gesprek is Eind-tot-Eind-Versleuteld"
     },
+    "editDisplayName": "Weergavenaam bewerken, {{name}}",
     "embedMeeting": {
         "title": "Deze vergadering embedden"
     },
@@ -760,6 +764,7 @@
         "showMeWhatImSharing": "Laat mij zien wat ik deel"
     },
     "liveStreaming": {
+        "badRequest": "Het verzoek tot livestreaming is ongeldig. Controleer de stream-sleutel en de stream-instellingen.",
         "busy": "Er wordt gewerkt aan het vrijmaken van streamingmiddelen. Probeer het over enkele minuten opnieuw.",
         "busyTitle": "Alle streamers zijn momenteel bezet",
         "changeSignIn": "Wissel van account.",
@@ -767,9 +772,12 @@
         "chooseCTA": "Kies een streamingoptie. U bent momenteel aangemeld als {{email}}.",
         "chooseCTAWithChangeSignIn": "Kies een streamingoptie. U bent momenteel aangemeld als {{email}}. <0>Accounts schakelen.</0>",
         "enterStreamKey": "Voer hier uw livestream-sleutel van YouTube in.",
+        "enterStreamKeyGeneric": "Voer hier uw livestream-sleutel of RTMP-URL in.",
         "error": "Livestreamen is mislukt. Probeer het opnieuw.",
         "errorAPI": "Er is een fout opgetreden tijdens het openen van uw YouTube-uitzendingen. Meld u opnieuw aan.",
+        "errorGoogleApiLoad": "Google-aanmelding kon niet worden geladen. Controleer of het niet wordt geblokkeerd door uw browser of netwerk en probeer het opnieuw, of voer hieronder uw livestream-sleutel in.",
         "errorLiveStreamNotEnabled": "Livestreamen is niet ingeschakeld voor {{email}}. Schakel livestreamen in of meld u aan met een account waarbij livestreamen is ingeschakeld.",
+        "errorPopupBlocked": "De pop-up van Google-aanmelding werd geblokkeerd. Sta pop-ups toe voor deze site en probeer het opnieuw, of voer hieronder uw livestream-sleutel in.",
         "expandedOff": "De livestream is gestopt",
         "expandedOn": "De vergadering wordt momenteel gestreamd naar YouTube.",
         "expandedPending": "De livestream wordt gestart…",
@@ -784,6 +792,7 @@
         "onBy": "{{name}} heeft de livestream gestart.",
         "pending": "Livestream starten…",
         "policyError": "U probeerde te snel een livestream te starten. Probeer het later nog eens!",
+        "privacyPolicy": "Privacybeleid",
         "serviceName": "Livestreamservice",
         "sessionAlreadyActive": "Deze sessie wordt al opgenomen of live gestreamd.",
         "signIn": "Aanmelden met Google",
@@ -792,6 +801,7 @@
         "signedInAs": "U bent momenteel aangemeld als:",
         "start": "Een livestream starten",
         "streamIdHelp": "Wat is dit?",
+        "terms": "Servicevoorwaarden",
         "title": "Livestream",
         "unavailableTitle": "Livestreamen niet beschikbaar",
         "youTubeGoLiveWarning": "Vergeet niet om op 'Go Live' te klikken in YouTube Studio als Auto-Start/Auto-Stop is uitgeschakeld. Anders begint de stream niet met opnemen.",
@@ -917,7 +927,7 @@
         "desktopMutedRemotelyTitle": "Uw schermdeling is gestopt door {{participantDisplayName}}",
         "disabledIframe": "Insluiten is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
         "disabledIframeSecondaryNative": "Het insluiten van {{domain}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
-        "disabledIframeSecondaryWeb": "Het insluiten van {{domain}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank>Jitsi as a Service</a> voor productie-insluiting!",
+        "disabledIframeSecondaryWeb": "Het insluiten van {{domain}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <0>Jitsi as a Service</0> voor productie-insluiting!",
         "disconnected": "verbinding verbroken",
         "dismissError": "Voorstellen negeren is mislukt",
         "dismissSuccess": "Voorstellen genegeerd",
@@ -948,6 +958,15 @@
         "localRecordingStarted": "{{name}} heeft een lokale opname gestart.",
         "localRecordingStopped": "{{name}} heeft een lokale opname gestopt.",
         "me": "Ik",
+        "mediaConnectivityAtRisk": "Moeite met verbinden",
+        "mediaConnectivityAtRiskDescription": "Verbinden duurt langer dan normaal. Uw netwerk of firewall blokkeert mogelijk de oproep.",
+        "mediaConnectivityDegraded": "Beperkte verbinding",
+        "mediaConnectivityDegradedDescription": "Uw netwerk beperkt de oproep, waardoor audio en video kunnen haperen of bevriezen.",
+        "mediaConnectivityFailed": "Kan niet verbinden",
+        "mediaConnectivityFailedDescription": "Uw netwerk blokkeert mogelijk de oproep. Probeer een ander netwerk of vraag uw IT-team om hulp.",
+        "mediaConnectivityInterrupted": "Verbinding verbroken",
+        "mediaConnectivityInterruptedDescription": "Audio en video zijn gestopt. Opnieuw verbinding maken…",
+        "mediaConnectivityRestored": "Verbinding hersteld",
         "moderationInEffectCSDescription": "Steek uw hand op als u uw scherm wilt delen.",
         "moderationInEffectCSTitle": "Schermdelen is geblokkeerd door de moderator",
         "moderationInEffectDescription": "Steek uw hand op als u wilt spreken.",
@@ -993,10 +1012,11 @@
         "selfViewTitle": "U kunt het zelfbeeld altijd uit de instellingen verwijderen",
         "settingsIncompleteDescription": "Sommige instellingen konden niet worden geladen en in plaats daarvan werden standaardwaarden gebruikt.",
         "settingsIncompleteTitle": "Vergaderinstellingen kunnen onvolledig zijn",
+        "sharedVideoRestricted": "Een moderator schakelde het delen van video's uit voor niet-moderators",
         "somebody": "Iemand",
         "startSilentDescription": "Neem opnieuw aan de vergadering deel om audio in te schakelen",
         "startSilentTitle": "U neemt deel zonder audio-output!",
-        "suboptimalBrowserWarning": "Helaas zal uw vergaderervaring hier waarschijnlijk niet zo goed zijn. Er wordt geprobeerd dit in de toekomst te verbeteren, maar tot die tijd kunt u proberen een van de <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde browsers</a> te gebruiken.",
+        "suboptimalBrowserWarning": "Helaas zal uw vergaderervaring hier waarschijnlijk niet zo goed zijn. Er wordt geprobeerd dit in de toekomst te verbeteren, maar tot die tijd kunt u proberen een van de <0>volledig ondersteunde browsers</0> te gebruiken.",
         "suboptimalExperienceTitle": "Browserwaarschuwing",
         "suggestRecordingAction": "Starten",
         "suggestRecordingDescription": "Wil je een opname starten?",
@@ -1081,6 +1101,7 @@
         "answer": {
             "edit": "Bewerken",
             "send": "Verzenden",
+            "singleAnswerHint": "Kies een antwoord",
             "skip": "Overslaan",
             "submit": "Indienen"
         },
@@ -1098,10 +1119,18 @@
             "pollQuestion": "Peiling vraag",
             "questionPlaceholder": "Stel een vraag",
             "removeOption": "Optie verwijderen",
-            "save": "Opslaan"
+            "save": "Opslaan",
+            "singleAnswer": "Slechts een antwoord toestaan"
+        },
+        "endPollDialog": {
+            "description": "De stemming eindigt voor iedereen en de peiling kan niet worden heropend.",
+            "title": "Deze peiling beëindigen?"
         },
         "errors": {
-            "notUniqueOption": "Opties moeten uniek zijn"
+            "closeFailed": "De peiling kan iet worden beëindigd",
+            "notUniqueOption": "Opties moeten uniek zijn",
+            "voteFailed": "Uw stem is niet meegeteld",
+            "voteNotCounted": "Uw stem is niet meegeteld, de peiling is beëindigd"
         },
         "notification": {
             "description": "Open het peilingen tabblad om te stemmen",
@@ -1109,7 +1138,9 @@
         },
         "results": {
             "changeVote": "Stem wijzigen",
+            "closed": "Stemming is beëindigd",
             "empty": "Er zijn nog geen peilingen in deze vergadering.",
+            "endPoll": "Peiling beëindigen",
             "hideDetailedResults": "Details verbergen",
             "showDetailedResults": "Details weergeven",
             "vote": "Stemmen"
@@ -1166,6 +1197,7 @@
         "joinAudioByPhone": "Deelnemen met telefoonaudio",
         "joinMeeting": "Deelnemen aan de vergadering",
         "joinMeetingInLowBandwidthMode": "Deelnemen met lage bandbreedte",
+        "joinOptions": "Deelname-opties",
         "joinWithoutAudio": "Deelnemen zonder audio",
         "keyboardShortcuts": "Sneltoetsen inschakelen",
         "linkCopied": "Link gekopieerd naar klembord",
@@ -1220,6 +1252,7 @@
         "alsoTranscribe": "Deze vergadering ook transcriberen?",
         "authDropboxText": "Uploaden naar Dropbox",
         "availableSpace": "Beschikbare ruimte: {{spaceLeft}} MB (circa {{duration}} minuten aan opname)",
+        "badRequest": "De opname-instellingen van deze bijeenkomst worden niet ondersteund.",
         "beta": "BÈTA",
         "busy": "Er worden opnamemiddelen vrijgemaakt. Probeer het over enkele minuten opnieuw.",
         "busyTitle": "Alle opnemers zijn momenteel bezet",
@@ -1278,6 +1311,7 @@
         "storageLocation": "Opslaglocatie",
         "surfaceError": "Selecteer het huidige tabblad.",
         "title": "Opnemen",
+        "transcriptionAlreadyOn": "Transcriptie is al ingeschakeld",
         "transcriptionLanguage": "Transcriptietaal",
         "transcriptionOptions": "Transcriptieopties",
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
@@ -1291,7 +1325,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarningNative": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees meer over het beveiligen van uw vergadering",
-        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
+        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <0>hier</0> meer over het beveiligen van uw vergadering.",
         "title": "Beveiligingsopties",
         "unsafeRoomActions": {
             "meeting": "Overweeg om uw vergadering te beveiligen met behulp van de beveiligingsknop.",
@@ -1302,6 +1336,7 @@
     "settings": {
         "audio": "Audio",
         "audioTranslation": "Audiovertaling inschakelen",
+        "breakoutRoomJoinWithPermissions": "Aparte vergaderruimte kiezen uitschakelen voor niet-moderators",
         "buttonLabel": "Instellingen",
         "calendar": {
             "about": "De agenda-integratie van {{appName}} wordt gebruikt voor een veilige toegang tot uw agenda, zodat het aankomende afspraken kan uitlezen.",
@@ -1316,6 +1351,7 @@
         "desktopShareWarning": "U moet het schermdelen opnieuw beginnen om de nieuwe instellingen toe te passen.",
         "devices": "Apparaten",
         "enableCtrlAltReactionShortcuts": "Ctrl+Alt-alternatieven voor reactiesneltoetsen inschakelen",
+        "experimental": "Experimenteel",
         "followMe": "Iedereen volgt mij",
         "followMeRecorder": "Opname volgt mij",
         "framesPerSecond": "beelden per seconde",
@@ -1333,6 +1369,8 @@
         "participantJoined": "Deelnemer heeft zich aangesloten",
         "participantKnocking": "Deelnemer heeft de wachtruimte betreden",
         "participantLeft": "Deelnemer is vertrokken",
+        "pictureInPicture": "Picture-in-Picture",
+        "pictureInPictureDescription": "Houd de vergadering zichtbaar in een klein zwevend venster wanneer u overschakelt naar een ander tabblad of een andere app.",
         "playSounds": "Speel geluid af bij",
         "privateChatWithPermissions": "Privé-chat uitschakelen voor niet-moderators",
         "reactions": "Vergaderreacties",
@@ -1341,6 +1379,7 @@
         "selectCamera": "Camera",
         "selectMic": "Microfoon",
         "selfView": "Eigen beeld",
+        "sharedVideoWithPermissions": "Delen van video's uitschakelen voor niet-moderators",
         "shortcuts": "Sneltoetsen",
         "showSubtitlesOnStage": "Ondertitels op het podium tonen",
         "speakers": "Sprekers",
@@ -1498,6 +1537,7 @@
             "participants": "Deelnemerspaneel openen. {{participantsCount}} deelnemers",
             "pip": "Picture-in-Picture-modus in- of uitschakelen",
             "pipClose": "Picture-in-Picture-modus sluiten",
+            "polls": "Peilingen openen",
             "privateMessage": "Verstuur privébericht",
             "profile": "Uw profiel bewerken",
             "raiseHand": "Hand opsteken in- of uitschakelen",
@@ -1669,7 +1709,7 @@
         "onWithRecording": "Na de vergadering zal er ook een transcriptie beschikbaar zijn.",
         "openClosedCaptions": "Ondertiteling openen",
         "original": "Origineel",
-        "sourceLanguageDesc": "Momenteel is de vergadertaal ingesteld op <b>{{sourceLanguage}}</b>. <br/> U kunt het vanaf hier ",
+        "sourceLanguageDesc": "Momenteel is de vergadertaal ingesteld op <0>{{sourceLanguage}}</0>. <1/> U kunt het vanaf hier ",
         "sourceLanguageHere": "veranderen",
         "start": "Ondertiteling starten",
         "stop": "Ondertiteling stoppen",
@@ -1794,6 +1834,20 @@
         },
         "waitingMessage": "U zult deelnemen aan de vergadering zodra deze live is!"
     },
+    "voiceAgents": {
+        "allow": "Toestaan",
+        "consentDescription": "De agent hoort alleen deelnemers die het toestaan. Als u dat toestaat, hoort zij u en hoort u haar antwoorden.",
+        "consentDescriptionMuted": "De agent hoort alleen deelnemers die het toestaan. Als u dat toestaat, hoort zij u en hoort u haar antwoorden. U bent gedempt totdat u besluit.",
+        "consentTitle": "{{name}} neemt deel als AI-agent",
+        "e2eeUnsupportedDescription": "AI-agenten kunnen niet deelnemen aan Eind-tot-Eind-Versleutelde bijeenkomsten. Schakel Eind-tot-Eind-Versleuteling uit om de agent te laten luisteren en gehoord te worden.",
+        "e2eeUnsupportedTitle": "{{name}} is niet beschikbaar",
+        "labelTooltip": "AI-agent in vergadering: {{names}}",
+        "labelTooltipAllow": "AI-agent in de vergadering: {{names}}. Klik om het je te laten horen.",
+        "labelTooltipE2EE": "AI-agent in de vergadering: {{names}}. Niet beschikbaar terwijl de vergadering Eind-tot-Eind-Versleuteld is.",
+        "nativeTitle": "AI-agent in de vergadering",
+        "notNow": "Nu niet",
+        "thumbnailTooltip": "AI-agent"
+    },
     "volumeSlider": "Volume-schuifknop",
     "welcomepage": {
         "accessibilityLabel": {
@@ -1830,7 +1884,7 @@
         "mobileDownLoadLinkAndroid": "Download mobiele app voor Android",
         "mobileDownLoadLinkFDroid": "Download mobiele app voor F-Droid",
         "mobileDownLoadLinkIos": "Download mobiele app voor iOS",
-        "moderatedMessage": "Of <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">boek een vergadering URL</a> van tevoren waar u de enige moderator bent.",
+        "moderatedMessage": "Of <0>boek een vergadering URL</0> van tevoren waar u de enige moderator bent.",
         "privacy": "Privacy",
         "recentList": "Recente",
         "recentListDelete": "Verwijderen",

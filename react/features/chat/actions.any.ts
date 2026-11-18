@@ -26,6 +26,7 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
+    SET_MESSAGE_DISPLAY_NAME,
     SET_MESSAGE_MODERATION_SUPPORTED,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
@@ -99,6 +100,25 @@ export function editMessage(message: Object) {
     return {
         type: EDIT_MESSAGE,
         message
+    };
+}
+
+/**
+ * Updates the display name of an existing chat message.
+ *
+ * @param {string} messageId - The ID of the message to update.
+ * @param {string} displayName - The updated display name.
+ * @returns {{
+ *     type: SET_MESSAGE_DISPLAY_NAME,
+ *     displayName: string,
+ *     messageId: string
+ * }}
+ */
+export function setMessageDisplayName(messageId: string, displayName: string) {
+    return {
+        type: SET_MESSAGE_DISPLAY_NAME,
+        displayName,
+        messageId
     };
 }
 

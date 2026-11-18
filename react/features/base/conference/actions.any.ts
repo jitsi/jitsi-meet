@@ -1,7 +1,6 @@
 import { maybeRedirectToTokenAuthUrl } from '../../app/actions.any';
 import { IReduxState, IStore } from '../../app/types';
 import { isTokenAuthInline } from '../../authentication/functions.any';
-import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
@@ -78,6 +77,7 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    _sendReadyToClose,
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
@@ -161,7 +161,8 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                     isReplaced
                 }));
 
-                dispatch(readyToClose());
+                dispatch(conferenceLeft(conference));
+                _sendReadyToClose(dispatch);
             } else {
                 dispatch(kickedOut(conference, participant));
             }

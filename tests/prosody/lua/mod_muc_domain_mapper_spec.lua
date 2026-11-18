@@ -199,21 +199,13 @@ describe("mod_muc_domain_mapper", function()
                 assert.equal(1, #rewrite_from_calls)
             end)
 
-            it("rewrites <conference room> attribute when child is present", function()
+            it("leaves the <conference room> attribute of an IQ as it is", function()
                 local conf    = make_stanza("conference", { room = "room@conference.sub.example.com" })
                 local stanza  = make_stanza("iq", { to = "focus@example.com" }, { conf })
                 filter_stanza(stanza, make_session("c2s"))
 
-                -- room attr on the child gets rewritten
-                assert.equal("MAPPED:room@conference.sub.example.com", conf.attr.room)
-                -- 'to' also gets rewritten (focus@example.com passes through the mock)
-                assert.equal(2, #rewrite_to_calls)
-            end)
-
-            it("does not touch stanzas with no <conference> child", function()
-                local stanza = make_stanza("iq", { to = "focus@example.com" })
-                filter_stanza(stanza, make_session("c2s"))
-
+                assert.equal("room@conference.sub.example.com", conf.attr.room)
+                -- only 'to' is rewritten
                 assert.equal(1, #rewrite_to_calls)
                 assert.equal(0, #rewrite_from_calls)
             end)

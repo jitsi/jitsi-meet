@@ -85,7 +85,8 @@ else
         return addr;
     end;
     is_focus = function(nick)
-        return string.sub(nick, -string.len("/focus")) == "/focus";
+        local _, _, resource = jid.split(nick);
+        return resource == 'focus';
     end;
     strip_jwt_signature = function(token)
         if token == nil then return nil end
