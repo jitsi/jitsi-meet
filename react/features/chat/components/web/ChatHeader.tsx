@@ -194,7 +194,7 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled, onCancel: onCan
     }, [ dispatch, hasMatches, matchIndex, matches.length ]);
 
     const onSearchKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && (e.target as HTMLElement).id === 'chat-search-input') {
             e.preventDefault();
             e.shiftKey ? onPrev() : onNext();
         } else if (e.key === 'Escape') {
@@ -267,21 +267,29 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled, onCancel: onCan
                             : null}
                     </span>
                     <Icon
+                        ariaDisabled = { !hasMatches }
                         ariaLabel = { t('chat.search.previous') }
                         className = { cx(classes.navButton, !hasMatches && 'disabled') }
                         onClick = { onPrev }
-                        src = { IconArrowUp } />
+                        role = 'button'
+                        src = { IconArrowUp }
+                        tabIndex = { 0 } />
                     <Icon
+                        ariaDisabled = { !hasMatches }
                         ariaLabel = { t('chat.search.next') }
                         className = { cx(classes.navButton, !hasMatches && 'disabled') }
                         onClick = { onNext }
-                        src = { IconArrowDown } />
+                        role = 'button'
+                        src = { IconArrowDown }
+                        tabIndex = { 0 } />
                     <span className = { classes.divider } />
                     <Icon
                         ariaLabel = { t('chat.search.close') }
                         onClick = { onSearchClose }
+                        role = 'button'
                         size = { 18 }
-                        src = { IconCloseCircle } />
+                        src = { IconCloseCircle }
+                        tabIndex = { 0 } />
                 </div>
             ) : (
                 <span
