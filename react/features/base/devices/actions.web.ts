@@ -261,6 +261,10 @@ export function setAudioInputDeviceAndUpdateSettings(deviceId: string) {
 // Only the latest change of the audio output device is applied, an earlier one that settles later is ignored.
 let audioOutputChange = 0;
 
+// The change the user asked for that is running, if any. A change the app makes meanwhile, e.g. after a device list
+// change, would undo it.
+let userAudioOutputChange: number | undefined;
+
 /**
  * Switches the audio output device. Without lib-jitsi-meet's audio output manager this is the previous
  * implementation, {@link setAudioOutputDeviceId}. With it, nothing is saved when the switch fails, so the UI keeps
@@ -288,7 +292,8 @@ export function setAudioOutputDevice(deviceId = 'default', userSelection = true,
             error: error?.name,
             failed,
             manager,
-            result
+            result,
+            userSelection
         }));
 
         if (!manager) {
@@ -305,6 +310,12 @@ export function setAudioOutputDevice(deviceId = 'default', userSelection = true,
             return true;
         }
 
+        if (!userSelection && userAudioOutputChange !== undefined) {
+            logger.info(`Ignoring the audio output change to ${deviceLabel}[${deviceId}] while the user's is running`);
+
+            return false;
+        }
+
         const change = ++audioOutputChange;
         const notify = (titleKey: string, descriptionKey: string) => userSelection
             && dispatch(showWarningNotification({
@@ -315,6 +326,7 @@ export function setAudioOutputDevice(deviceId = 'default', userSelection = true,
         let failed;
 
         logger.info(`Setting the audio output device to ${deviceLabel}[${deviceId}]`);
+        userSelection && (userAudioOutputChange = change);
 
         try {
             failed = await JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId) ?? [];
@@ -326,6 +338,10 @@ export function setAudioOutputDevice(deviceId = 'default', userSelection = true,
             }
 
             return false;
+        } finally {
+            if (userAudioOutputChange === change) {
+                userAudioOutputChange = undefined;
+            }
         }
 
         if (change !== audioOutputChange) {
