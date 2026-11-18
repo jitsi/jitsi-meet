@@ -11,8 +11,12 @@ import { IReduxState, IStore } from '../../../../app/types';
 import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
 import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
     from '../../../../audio-translation/functions';
-import { showWarningNotification } from '../../../../notifications/actions';
-import { AUDIO_OUTPUT_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
+import { hideNotification, showWarningNotification } from '../../../../notifications/actions';
+import {
+    AUDIO_OUTPUT_NOTIFICATION_ID,
+    AUDIO_PLAYBACK_BLOCKED_NOTIFICATION_ID,
+    NOTIFICATION_TIMEOUT_TYPE
+} from '../../../../notifications/constants';
 import { isAudioOutputManagerEnabled } from '../../../devices/functions.web';
 import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
@@ -22,6 +26,13 @@ import logger from '../../logger';
 // assigning it is a no-op. Ducking therefore can't lower the volume there; we fall back to muting the
 // original entirely while its translation plays. `element.muted` IS honoured on iOS.
 const IS_IOS_BROWSER = browser.isIosBrowser();
+
+// The events that give the page user activation (a touch pointerdown does not), which lifts the autoplay block. A
+// click into an iframe (shared video, Etherpad) activates the page too, but only shows up here as a blur.
+const ACTIVATION_EVENTS = [ 'blur', 'keydown', 'mousedown', 'touchend' ];
+
+// The elements the autoplay policy blocks; the one notification about them stays until none is left.
+const blockedTracks = new Set<AudioTrack>();
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
@@ -119,6 +130,7 @@ class AudioTrack extends Component<IProps> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._errorHandler = this._errorHandler.bind(this);
+        this._onUserActivation = this._onUserActivation.bind(this);
         this._ref = React.createRef();
         this._play = this._play.bind(this);
     }
@@ -160,6 +172,7 @@ class AudioTrack extends Component<IProps> {
     override componentWillUnmount() {
         this._unmounted = true;
         this._detachTrack(this.props.audioTrack);
+        this._unblock();
 
         // @ts-ignore
         this._ref?.current?.removeEventListener('error', this._errorHandler);
@@ -328,6 +341,75 @@ class AudioTrack extends Component<IProps> {
     }
 
     /**
+     * Adds or removes the listeners that retry playback once the user interacts with the page.
+     *
+     * @param {boolean} listen - Whether to add the listeners.
+     * @returns {void}
+     */
+    _listenForUserActivation(listen: boolean) {
+        for (const type of ACTIVATION_EVENTS) {
+            listen
+                ? window.addEventListener(type, this._onUserActivation, true)
+                : window.removeEventListener(type, this._onUserActivation, true);
+        }
+    }
+
+    /**
+     * Retries playback blocked by the autoplay policy, now that the page has user activation.
+     *
+     * @param {Event} event - The event that may have activated the page.
+     * @returns {void}
+     */
+    _onUserActivation(event: Event) {
+        // A blur that doesn't move focus into an iframe, or Escape and other keys that don't activate the page, would
+        // only be blocked again.
+        const activated = event.type === 'blur'
+            ? document.activeElement instanceof HTMLIFrameElement
+            : navigator.userActivation?.isActive !== false;
+
+        if (!activated) {
+            return;
+        }
+
+        this._listenForUserActivation(false);
+        this._play();
+    }
+
+    /**
+     * Records that the autoplay policy blocks this element and tells the user how to lift it.
+     *
+     * @param {Error} error - The error play() was rejected with.
+     * @returns {void}
+     */
+    _block(error: Error) {
+        // A retry that is blocked again lands here too.
+        if (!blockedTracks.has(this)) {
+            logger.warn(`Autoplay blocks audio element ${this.props.id} until the user interacts with the page`, error);
+            sendAnalytics(createAudioPlayErrorEvent(this.props.id));
+            blockedTracks.size || this.props.dispatch(showWarningNotification({
+                descriptionKey: 'notify.audioPlaybackBlockedDescription',
+                titleKey: 'notify.audioPlaybackBlockedTitle',
+                uid: AUDIO_PLAYBACK_BLOCKED_NOTIFICATION_ID
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            blockedTracks.add(this);
+        }
+        this._listenForUserActivation(true);
+    }
+
+    /**
+     * Clears the autoplay block of this element, hiding the notification once no element is blocked.
+     *
+     * @returns {void}
+     */
+    _unblock() {
+        this._listenForUserActivation(false);
+
+        if (blockedTracks.delete(this) && !blockedTracks.size) {
+            this.props.dispatch(hideNotification(AUDIO_PLAYBACK_BLOCKED_NOTIFICATION_ID));
+        }
+    }
+
+    /**
      * Plays the underlying HTMLAudioElement.
      *
      * @param {number} retries - The number of previously failed retries.
@@ -349,14 +431,32 @@ class AudioTrack extends Component<IProps> {
             // case the audio may not autoplay.
             this._ref.current.play()
             .then(() => {
-                if (retries !== 0) {
+                if (this._unmounted) {
+                    return;
+                }
+
+                if (retries !== 0 || blockedTracks.has(this)) {
                     // success after some failures
                     this._retryTimeout = undefined;
                     sendAnalytics(createAudioPlaySuccessEvent(id));
                     logger.info(`Successfully played audio track! retries: ${retries}`);
                 }
                 this._reattachCount = 0;
+                this._unblock();
             }, e => {
+                if (this._unmounted) {
+                    return;
+                }
+
+                // Retrying cannot succeed until the user interacts with the page.
+                if (e?.name === 'NotAllowedError') {
+                    this._block(e);
+
+                    return;
+                }
+
+                // The autoplay policy no longer blocks it, so the notice asking for a click would not help.
+                this._unblock();
                 logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
@@ -394,7 +494,6 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
-    const audioTranslationConfigured = Boolean(state['features/base/config'].audioTranslation);
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
@@ -405,8 +504,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     if (ducked) {
         _volume = getDuckedVolumeForParticipant(state, ownProps.participantId);
-    } else if (audioTranslationConfigured && _volume === undefined) {
-        // Restore full volume after ducking (config presence, not enabled, so a mid-call disable un-ducks).
+    } else if (_volume === undefined) {
+        // Full volume also undoes ducking, and a previous owner's volume when the bridge remaps the track.
         _volume = DEFAULT_ORIGINAL_VOLUME;
     }
 

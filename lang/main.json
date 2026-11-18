@@ -915,6 +915,8 @@
         "audioOutputChangeFailedTitle": "Could not switch the speaker",
         "audioOutputPartlyChangedDescription": "Some participants may still be heard through the previous speaker.",
         "audioOutputPartlyChangedTitle": "Speaker switched for some participants only",
+        "audioPlaybackBlockedDescription": "Your browser blocked audio playback. Click anywhere on the page to hear the other participants.",
+        "audioPlaybackBlockedTitle": "Audio is blocked",
         "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "audioUnmuteBlockedTitle": "Mic unmute blocked!",
         "chatMessages": "Chat messages",

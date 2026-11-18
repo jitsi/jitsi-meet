@@ -1961,6 +1961,7 @@ var config = {
     //     'notify.audioOutputAttachFailedTitle', // shown when a participant could not be switched to the speaker
     //     'notify.audioOutputChangeFailedTitle', // shown when the speaker could not be switched
     //     'notify.audioOutputPartlyChangedTitle', // shown when the speaker was switched for some participants only
+    //     'notify.audioPlaybackBlockedTitle', // shown when the browser blocks remote audio until the user interacts
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.connectedOneMember', // show when a participant joined
