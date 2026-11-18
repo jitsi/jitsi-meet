@@ -455,6 +455,8 @@ class AudioTrack extends Component<IProps> {
                     return;
                 }
 
+                // The autoplay policy no longer blocks it, so the notice asking for a click would not help.
+                this._unblock();
                 logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
