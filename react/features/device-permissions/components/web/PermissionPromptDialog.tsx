@@ -1,31 +1,22 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { alpha } from '@mui/material/styles';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { hideDialog } from '../../../base/dialog/actions';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet';
-import Dialog from '../../../base/ui/components/web/Dialog';
-import { CaptureKind, getCaptureElement } from '../../functions';
+import Icon from '../../../base/icons/components/Icon';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { DEVICE_ICONS } from '../../constants';
+import { CaptureKind, getKeySuffix } from '../../functions';
+import { usePermissionPrompt } from '../../hooks.web';
+import { IPermissionPrompt } from '../../reducer';
 
 import CaptureElement from './CaptureElement';
+import PermissionDialog from './PermissionDialog';
 
-interface IProps {
-
-    /**
-     * The devices about to be requested.
-     */
-    kinds: CaptureKind[];
-
-    /**
-     * Invoked with whether to go ahead with the request.
-     */
-    onDone: (allowed: boolean) => void;
-
-    /**
-     * The other device, offered when unmuting one of them.
-     */
-    otherKind?: CaptureKind;
+interface IProps extends IPermissionPrompt {
 
     /**
      * Whether the user is unmuting a device, as opposed to joining.
@@ -34,29 +25,32 @@ interface IProps {
 }
 
 const useStyles = makeStyles()(theme => {
+    const badgeColor = alpha(theme.palette.action01, 0.2);
+
     return {
-        controls: {
+        badge: {
+            alignItems: 'center',
+            backgroundColor: theme.palette.dialogBackground,
+
+            // Opaque, so that the overlapping badge hides the one under it.
+            backgroundImage: `linear-gradient(${badgeColor}, ${badgeColor})`,
+            border: `2px solid ${theme.palette.dialogBackground}`,
+            borderRadius: '50%',
+            boxSizing: 'border-box',
             display: 'flex',
-            flexWrap: 'wrap',
-            gap: theme.spacing(2),
-            marginTop: theme.spacing(3)
+            height: '44px',
+            justifyContent: 'center',
+            width: '44px',
+
+            '& + &': {
+                marginLeft: '-10px'
+            }
+        },
+        badges: {
+            display: 'flex'
         }
     };
 });
-
-/**
- * Returns the suffix of the translation keys for the given devices.
- *
- * @param {CaptureKind[]} kinds - The devices.
- * @returns {string}
- */
-function getKeySuffix(kinds: CaptureKind[]) {
-    if (kinds.length > 1) {
-        return 'Both';
-    }
-
-    return kinds[0] === 'audio' ? 'Audio' : 'Video';
-}
 
 /**
  * Explains why the microphone or the camera is needed before the browser asks for access.
@@ -65,78 +59,83 @@ function getKeySuffix(kinds: CaptureKind[]) {
  * @returns {JSX.Element}
  */
 const PermissionPromptDialog = ({ kinds, onDone, otherKind, whenUnmuting }: IProps) => {
-    const { classes } = useStyles();
+    const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const done = useRef(false);
+    const close = useCallback(() => dispatch(hideDialog()), []);
+    const { allow, allowBoth, cancel, onCaptureElementUnsupported, showCaptureElement }
+        = usePermissionPrompt({ close, kinds, onDone, otherKind });
     const suffix = getKeySuffix(kinds);
-    const [ useElement, setUseElement ] = useState(() =>
-        Boolean(getCaptureElement(kinds) && (!otherKind || getCaptureElement([ ...kinds, otherKind ]))));
+    const dismissKey = whenUnmuting ? 'mediaPermissions.notNow' : `mediaPermissions.continueWithout${suffix}`;
 
-    const finish = useCallback((allowed: boolean) => {
-        if (!done.current) {
-            done.current = true;
-            onDone(allowed);
-        }
-    }, [ onDone ]);
+    const dismiss = useCallback(() => {
+        close();
+        cancel();
+    }, [ cancel, close ]);
 
-    // Closed without an answer, e.g. replaced by another dialog.
-    useEffect(() => () => finish(false), []);
-
-    const onAllow = useCallback(() => {
-        finish(true);
-        dispatch(hideDialog());
-    }, [ finish ]);
-
-    const onAllowBoth = useCallback(async () => {
-        // A single prompt for both, the device that isn't being unmuted stays off.
-        try {
-            const tracks = await JitsiMeetJS.createLocalTracks({ devices: [ ...kinds, otherKind ] });
-
-            tracks.forEach((track: any) => track.dispose());
-        } catch {
-            // The request for the unmuted device reports the failure.
-        }
-        onAllow();
-    }, [ kinds, otherKind, onAllow ]);
-
-    const onCancel = useCallback(() => finish(false), [ finish ]);
-    const onElementUnsupported = useCallback(() => setUseElement(false), []);
+    const badges = (
+        <div className = { classes.badges }>
+            { ([ 'audio', 'video' ] as CaptureKind[]).filter(kind => kinds.includes(kind)).map(kind => (
+                <div
+                    className = { classes.badge }
+                    key = { kind }>
+                    <Icon
+                        color = { theme.palette.action01 }
+                        size = { 20 }
+                        src = { DEVICE_ICONS[kind] } />
+                </div>
+            )) }
+        </div>
+    );
 
     return (
-        <Dialog
-            back = {{
-                hidden: !otherKind || useElement,
-                onClick: onAllowBoth,
-                translationKey: 'mediaPermissions.allowBoth'
-            }}
-            cancel = {{
-                translationKey: whenUnmuting ? 'mediaPermissions.notNow' : `mediaPermissions.continueWithout${suffix}`
-            }}
-            disableAutoHideOnSubmit = { true }
-            ok = {{
-                hidden: useElement,
-                translationKey: `mediaPermissions.allow${suffix}`
-            }}
-            onCancel = { onCancel }
-            onSubmit = { onAllow }
-            titleKey = { `mediaPermissions.promptTitle${suffix}` }>
-            <div>{ t(`mediaPermissions.promptDescription${suffix}`) }</div>
-            { useElement && (
-                <div className = { classes.controls }>
-                    <CaptureElement
-                        kinds = { kinds }
-                        onDone = { onAllow }
-                        onUnsupported = { onElementUnsupported } />
-                    { otherKind && (
-                        <CaptureElement
-                            kinds = { [ ...kinds, otherKind ] }
-                            onDone = { onAllow }
-                            onUnsupported = { onElementUnsupported } />
+        <PermissionDialog
+            actions = {
+                <>
+                    { showCaptureElement ? (
+                        <>
+                            <CaptureElement
+                                kinds = { kinds }
+                                onDone = { allow }
+                                onUnsupported = { onCaptureElementUnsupported } />
+                            { otherKind && (
+                                <CaptureElement
+                                    kinds = { [ ...kinds, otherKind ] }
+                                    onDone = { allow }
+                                    onUnsupported = { onCaptureElementUnsupported } />
+                            ) }
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                accessibilityLabel = { t(`mediaPermissions.allow${suffix}`) }
+                                fullWidth = { true }
+                                icon = { whenUnmuting ? DEVICE_ICONS[kinds[0]] : undefined }
+                                labelKey = { `mediaPermissions.allow${suffix}` }
+                                onClick = { allow } />
+                            { otherKind && (
+                                <Button
+                                    accessibilityLabel = { t('mediaPermissions.allowBoth') }
+                                    fullWidth = { true }
+                                    icon = { DEVICE_ICONS[otherKind] }
+                                    labelKey = 'mediaPermissions.allowBoth'
+                                    onClick = { allowBoth }
+                                    type = { BUTTON_TYPES.SECONDARY } />
+                            ) }
+                        </>
                     ) }
-                </div>
-            ) }
-        </Dialog>
+                    <Button
+                        accessibilityLabel = { t(dismissKey) }
+                        fullWidth = { true }
+                        labelKey = { dismissKey }
+                        onClick = { dismiss }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                </>
+            }
+            description = { t(`mediaPermissions.promptDescription${suffix}`) }
+            header = { badges }
+            onClose = { cancel }
+            title = { t(`mediaPermissions.promptTitle${suffix}`) } />
     );
 };
 

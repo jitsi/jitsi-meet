@@ -144,7 +144,7 @@ function setAudioSettingsVisibility(value: boolean) {
  * @param {boolean} value - The new value.
  * @returns {Function}
  */
-function setVideoSettingsVisibility(value: boolean) {
+export function setVideoSettingsVisibility(value: boolean) {
     return {
         type: SET_VIDEO_SETTINGS_VISIBILITY,
         value
