@@ -176,6 +176,19 @@ describe('token/util public key cache', function()
         assert.is_nil(token_util:get_public_key(KID))
     end)
 
+    it('keeps apart a key server and a kid that give the same text when joined', function()
+        -- 'a' with the kid 'b|c' and 'a|b' with the kid 'c' are different keys
+        served[KEY_SERVER_A .. '/b|c.pem'] = 'key b|c from a'
+        served[KEY_SERVER_A .. '|b/c.pem'] = 'key c from a|b'
+
+        assert.equal('key b|c from a', token_util:get_public_key('b|c'))
+
+        token_util:set_asap_key_server(KEY_SERVER_A .. '|b')
+        assert.equal('key c from a|b', token_util:get_public_key('c'))
+
+        assert.same({ KEY_SERVER_A .. '/b|c.pem', KEY_SERVER_A .. '|b/c.pem' }, fetched)
+    end)
+
     it('does not cache a failed fetch', function()
         served[KEY_SERVER_A .. '/' .. KID .. '.pem'] = nil
         assert.is_nil(token_util:get_public_key(KID))

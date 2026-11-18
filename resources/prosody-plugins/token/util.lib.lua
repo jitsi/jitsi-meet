@@ -247,6 +247,9 @@ end
 -- (cache_keys_url) and the app_secret read from the host config are dropped.
 -- Used by the HTTP API modules that accept only tokens signed with the keys
 -- from prosody_password_public_key_repo_url.
+-- The cached public keys are kept: a caller can set the key server before each
+-- token it verifies, and get_public_key caches a key per key server, so a key
+-- from another server is never returned.
 -- @param asapKeyServer the key server URL
 function Util:set_asap_key_server(asapKeyServer)
     self.asapKeyServer = asapKeyServer;
@@ -257,8 +260,6 @@ function Util:set_asap_key_server(asapKeyServer)
     if not starts_with(self.signatureAlgorithm, "RS") then
         self.signatureAlgorithm = "RS256";
     end
-    -- The cached keys are kept. A caller can set the key server before each token it verifies, and
-    -- get_public_key caches a key per key server, so a key from another server is never returned.
 end
 
 function Util:set_asap_accepted_issuers(acceptedIssuers)
@@ -281,8 +282,10 @@ end
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
-    -- the key server is part of the cache key, as set_asap_key_server can change it between two calls
-    local cacheKey = tostring(self.asapKeyServer)..'|'..keyId;
+    -- The key server is part of the cache key, as set_asap_key_server can change it between two calls.
+    -- Its length comes first, so the cache key is the same only for the same key server and kid.
+    local keyServer = tostring(self.asapKeyServer);
+    local cacheKey = #keyServer..'|'..keyServer..keyId;
     local content = self.cache:get(cacheKey);
     local code;
     if content == nil then
