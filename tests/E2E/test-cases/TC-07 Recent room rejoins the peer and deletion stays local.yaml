@@ -1,0 +1,48 @@
+customSteps: |
+    generate from regex "trrecent[a-z]{20}" and save as "roomName"
+    generate from regex "rejoined[a-z]{24}" and save as "rejoinMessage"
+    save value "TRRecentHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Peer" and switch
+    reset to home
+    save value "TRRecentPeer" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRRecentHost"
+    switch to browser "default"
+    jitsi-leave-conference
+    // Use the actual recent entry instead of typing the room into the welcome form again.
+    check that page contains stored value from "roomName"
+    click stored value "roomName"
+    save value "TRRecentHost" as "participantName"
+    jitsi-join-conference
+    switch to browser "Peer"
+    wait up to 30 seconds until page contains "TRRecentHost"
+    click "Close participants pane"
+    jitsi-open-chat
+    switch to browser "default"
+    jitsi-open-chat
+    enter stored value "rejoinMessage" into "Type a message"
+    click button "Send"
+    switch to browser "Peer"
+    wait up to 30 seconds until page contains stored value from "rejoinMessage"
+    switch to browser "default"
+    jitsi-leave-conference
+    // The delete icon is exposed by hovering this entry; fresh browser history has only this room.
+    hover over stored value "roomName"
+    click "Delete entry"
+    check that page does not contain stored value from "roomName"
+    reload
+    wait up to 30 seconds until page contains button "Start meeting"
+    check that page does not contain stored value from "roomName"
+    switch to browser "Peer"
+    jitsi-leave-conference
+    // Deleting browser A's history must not delete browser B's history.
+    check that page contains stored value from "roomName"
+labels:
+    - jitsi-e2e
+    - recent-rooms
+    - jitsi-tc07
+    - jitsi-browser-journeys

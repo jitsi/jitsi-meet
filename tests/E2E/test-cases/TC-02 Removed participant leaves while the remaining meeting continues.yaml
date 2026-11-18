@@ -1,0 +1,67 @@
+customSteps: |
+    generate from regex "trkick[a-z]{20}" and save as "roomName"
+    generate from regex "survives[a-z]{22}" and save as "survivalMessage"
+    save value "TRKickHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Removed" and switch
+    reset to home
+    save value "TRRemoved" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Witness" and switch
+    reset to home
+    save value "TRWitness" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRRemoved"
+    check that page contains "TRKickHost"
+
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRRemoved"
+    // Target the roster row rather than the same name on a video tile.
+    hover over "TRRemoved" roughly below "Search participants"
+    click "More participant options"
+    click "Kick out"
+    wait up to 30 seconds until page contains "Are you sure you want to kick this participant?"
+    click button "Kick"
+    switch to browser "Removed"
+    wait up to 30 seconds until page contains "kicked you out of the meeting"
+    switch to browser "Witness"
+    wait up to 30 seconds until page does not contain "TRRemoved"
+    check that page contains "TRWitness"
+    check that page contains "TRKickHost"
+    hover over the middle of the screen
+    click "Close participants pane"
+    click "Open chat"
+    check that page does not contain stored value from "survivalMessage"
+    switch to browser "default"
+    wait up to 30 seconds until page does not contain "TRRemoved"
+    hover over the middle of the screen
+    click "Close participants pane"
+    click "Open chat"
+    enter stored value "survivalMessage" into "Type a message"
+    click button "Send"
+    // A third participant receiving a new message proves the surviving meeting still functions.
+    switch to browser "Witness"
+    wait up to 30 seconds until page contains stored value from "survivalMessage"
+    jitsi-leave-conference
+    switch to browser "default"
+    // Leave the final room URL explicitly; post-hangup routing is not the removal outcome.
+    reset to home
+    wait up to 30 seconds until page contains button "Start meeting"
+    check that page contains button "Start meeting"
+    switch to browser "Removed"
+    reset to home
+    wait up to 30 seconds until page contains button "Start meeting"
+labels:
+    - jitsi-e2e
+    - participant-removal
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-leave-conference
+    - jitsi-tc02
+    - jitsi-browser-journeys

@@ -1,0 +1,96 @@
+name: Browser E2E (opt-in)
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testrigor-${{ vars.TESTRIGOR_SUITE_ID || 'unconfigured' }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Check E2E configuration
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.config.outputs.enabled }}
+    steps:
+    - name: Check credentials and trusted ref
+      id: config
+      env:
+        CI_TOKEN: ${{ secrets.TESTRIGOR_CI_TOKEN }}
+        SUITE_ID: ${{ vars.TESTRIGOR_SUITE_ID }}
+        EVENT_NAME: ${{ github.event_name }}
+        SOURCE_REF: ${{ github.ref }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        REPOSITORY: ${{ github.repository }}
+        PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+        PR_BASE_BRANCH: ${{ github.base_ref }}
+      run: |
+        trusted=false
+        if [[ "$EVENT_NAME" == workflow_dispatch && "$SOURCE_REF" == "refs/heads/$DEFAULT_BRANCH" ]]; then
+          trusted=true
+        elif [[ "$EVENT_NAME" == pull_request && "$PR_HEAD_REPOSITORY" == "$REPOSITORY" && "$PR_BASE_BRANCH" == "$DEFAULT_BRANCH" ]]; then
+          trusted=true
+        fi
+        if [[ -n "$CI_TOKEN" && -n "$SUITE_ID" && "$trusted" == true ]]; then
+          echo 'enabled=true' >> "$GITHUB_OUTPUT"
+        else
+          echo 'enabled=false' >> "$GITHUB_OUTPUT"
+          echo 'E2E skipped: configure the suite and CI token and use the default branch or a same-repository PR targeting it.' >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+  e2e:
+    name: Seven browser journeys
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      JITSI_E2E_PROJECT: jitsi-e2e
+      E2E_BRANCH: ${{ github.head_ref || github.ref_name }}
+      E2E_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      TESTRIGOR_SUITE_ID: ${{ vars.TESTRIGOR_SUITE_ID }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version-file: '.nvmrc'
+    - name: Provision browser profile and build source
+      env:
+        JITSI_E2E_RUNTIME_DIR: ${{ runner.temp }}/jitsi-e2e
+      run: |
+        mkdir -p tests/E2E/.run
+        install -D -m 644 tests/E2E/config/web-config.js "$JITSI_E2E_RUNTIME_DIR/config/web/custom-config.js"
+        bash tests/E2E/scripts/install-jitsi-meet.sh
+    - name: Install testRigor CLI
+      run: npm install --global @testrigor/testrigor-cli@2.0.9
+    - name: Run sequential browser suite
+      env:
+        TESTRIGOR_API_KEY: ${{ secrets.TESTRIGOR_CI_TOKEN }}
+        JITSI_E2E_RUNTIME_DIR: ${{ runner.temp }}/jitsi-e2e
+      run: bash tests/E2E/scripts/run-ci.sh
+    - name: Collect container logs on failure
+      if: failure()
+      env:
+        JITSI_E2E_RUNTIME_DIR: ${{ runner.temp }}/jitsi-e2e
+      run: |
+        mkdir -p tests/E2E/.run
+        for service in web prosody jicofo jvb; do
+          docker logs --timestamps "jitsi-e2e-${service}-1" 2>&1 | python3 tests/E2E/scripts/redact-logs.py > "tests/E2E/.run/${service}.log"
+        done
+    - name: Upload E2E evidence
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: jitsi-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+        path: tests/E2E/.run/
+        include-hidden-files: true
+        retention-days: 7
+        if-no-files-found: warn

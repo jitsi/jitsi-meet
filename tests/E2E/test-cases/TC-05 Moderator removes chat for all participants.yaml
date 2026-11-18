@@ -1,0 +1,60 @@
+customSteps: |
+    generate from regex "trmoderate[a-z]{20}" and save as "roomName"
+    generate from regex "moderate[a-z]{24}" and save as "targetMessage"
+    save value "TRChatModerator" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Author" and switch
+    reset to home
+    save value "TRChatAuthor" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-chat
+    enter stored value "targetMessage" into "Type a message"
+    click button "Send"
+    start browser "Witness" and switch
+    reset to home
+    save value "TRChatWitness" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-chat
+    wait up to 30 seconds until page contains stored value from "targetMessage"
+    // The witness is not the author or the first-join moderator: no moderation action.
+    jitsi-open-message-menu
+    check that page contains "Copy"
+    check that page does not contain exactly "Delete"
+    type escape
+    switch to browser "default"
+    jitsi-open-chat
+    wait up to 30 seconds until page contains stored value from "targetMessage"
+    jitsi-open-message-menu
+    check that page contains exactly "Delete"
+    click exactly "Delete"
+    wait up to 30 seconds until page contains "Deleted by a moderator."
+    check that page does not contain stored value from "targetMessage"
+    switch to browser "Author"
+    wait up to 30 seconds until page contains "Deleted by a moderator."
+    check that page does not contain stored value from "targetMessage"
+    switch to browser "Witness"
+    wait up to 30 seconds until page contains "Deleted by a moderator."
+    check that page does not contain stored value from "targetMessage"
+    jitsi-leave-conference
+    switch to browser "Author"
+    jitsi-leave-conference
+    switch to browser "default"
+    // Verify exit before navigating home; the final browser may land at room prejoin.
+    // Automatic post-hangup routing is separate from the moderation outcome.
+    hover over the middle of the screen
+    click "Leave the meeting"
+    click exactly "Leave meeting" if exists
+    wait up to 30 seconds until page contains button "Start meeting" or "Join meeting"
+    check that page contains button "Start meeting" or "Join meeting"
+    check that page does not contain "Type a message"
+    reset to home
+    wait up to 30 seconds until page contains button "Start meeting"
+    check that page contains button "Start meeting"
+labels:
+    - jitsi-e2e
+    - chat-moderation
+    - jitsi-tc05
+    - jitsi-browser-journeys

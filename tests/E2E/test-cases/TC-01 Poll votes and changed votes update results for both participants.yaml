@@ -1,0 +1,60 @@
+customSteps: |
+    generate from regex "trpoll[a-z]{20}" and save as "roomName"
+    generate from regex "Poll[a-z]{20}" and save as "pollQuestion"
+    save value "TRPollHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+
+    start browser "Voter" and switch
+    reset to home
+    save value "TRPollGuest" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-polls
+
+    switch to browser "default"
+    jitsi-open-polls
+    click button "Create a poll"
+    enter stored value "pollQuestion" into "Poll Question"
+    enter "Blue" into "Poll option 1"
+    enter "Green" into "Poll option 2"
+    click "Allow only one answer"
+    click button "Save"
+    click button "Send poll"
+
+    switch to browser "Voter"
+    wait up to 30 seconds until page contains stored value from "pollQuestion"
+    click "Blue"
+    click button "Submit"
+    check that page contains "1 (100%)" above "Green"
+    check that page contains "0 (0%)" below "Green"
+
+    switch to browser "default"
+    click button "Skip"
+    wait up to 30 seconds until page contains "1 (100%)" above "Green"
+    check that page contains "0 (0%)" below "Green"
+
+    // A changed single-answer vote must move the count, not add a second vote.
+    switch to browser "Voter"
+    click button "Change vote"
+    click "Green"
+    click button "Submit"
+    check that page contains "0 (0%)" above "Green"
+    check that page contains "1 (100%)" below "Green"
+    switch to browser "default"
+    wait up to 30 seconds until page contains "1 (100%)" below "Green"
+    check that page contains "0 (0%)" above "Green"
+
+    switch to browser "Voter"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - polls
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-open-polls
+    - jitsi-leave-conference
+    - jitsi-tc01
+    - jitsi-browser-journeys

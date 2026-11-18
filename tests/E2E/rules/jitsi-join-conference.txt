@@ -1,0 +1,8 @@
+// The browser profile disables initial device capture.
+enter stored value "participantName" into "Enter your name"
+click button "Join meeting"
+// Confirm the destination, then wake the auto-hidden toolbar over the main conference area.
+wait up to 60 seconds until page does not contain button "Join meeting"
+check that url contains stored value "roomName"
+check that page contains stored value from "participantName"
+hover over the middle of the screen

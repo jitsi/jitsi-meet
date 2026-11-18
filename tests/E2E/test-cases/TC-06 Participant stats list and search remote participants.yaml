@@ -1,0 +1,58 @@
+customSteps: |
+    generate from regex "trstats[a-z]{20}" and save as "roomName"
+    save value "TRStatsHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Peer" and switch
+    reset to home
+    save value "TRStatsPeer" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRStatsHost"
+    click "Close participants pane"
+    click "More actions"
+    click "Participants Stats"
+    // Text contexts resolve to the title heading; global names also match tiles behind
+    // the dialog. Read only rendered dialog rows by its accessible role/name instead.
+    // Throw on missing/hidden rows: this cannot pass on background tiles or an empty list.
+    execute JavaScript in the browser text starting from next line and ending with [END]
+    var dialog = document.querySelector('[role="dialog"][aria-label="Participants Stats"]');
+    var names = dialog && Array.from(dialog.querySelectorAll('.display-name')).filter(function (el) { return el.getClientRects().length; }).map(function (el) { return el.innerText; });
+    if (!names || names.indexOf('TRStatsHost') < 0 || names.indexOf('TRStatsPeer (me)') < 0) { throw new Error('Stats must list both participants: ' + JSON.stringify(names)); }
+    [END]
+    enter "TRStatsHost" into "Search participants"
+    // Stats refresh on a one-second interval. The '(me)' suffix occurs only in this
+    // dialog, so these waits cannot be satisfied by the local participant's tile.
+    wait up to 15 seconds until page does not contain "TRStatsPeer (me)"
+    execute JavaScript in the browser text starting from next line and ending with [END]
+    var dialog = document.querySelector('[role="dialog"][aria-label="Participants Stats"]');
+    var names = dialog && Array.from(dialog.querySelectorAll('.display-name')).filter(function (el) { return el.getClientRects().length; }).map(function (el) { return el.innerText; });
+    if (!names || names.length !== 1 || names[0] !== 'TRStatsHost') { throw new Error('Stats search must show only the matching remote participant: ' + JSON.stringify(names)); }
+    [END]
+    enter "" into "Search participants"
+    wait up to 15 seconds until page contains "TRStatsPeer (me)"
+    execute JavaScript in the browser text starting from next line and ending with [END]
+    var dialog = document.querySelector('[role="dialog"][aria-label="Participants Stats"]');
+    var names = dialog && Array.from(dialog.querySelectorAll('.display-name')).filter(function (el) { return el.getClientRects().length; }).map(function (el) { return el.innerText; });
+    if (!names || names.indexOf('TRStatsHost') < 0 || names.indexOf('TRStatsPeer (me)') < 0) { throw new Error('Clearing search must restore both participants: ' + JSON.stringify(names)); }
+    [END]
+    click "Close dialog"
+    switch to browser "default"
+    click "More actions"
+    click "Participants Stats"
+    execute JavaScript in the browser text starting from next line and ending with [END]
+    var dialog = document.querySelector('[role="dialog"][aria-label="Participants Stats"]');
+    var names = dialog && Array.from(dialog.querySelectorAll('.display-name')).filter(function (el) { return el.getClientRects().length; }).map(function (el) { return el.innerText; });
+    if (!names || names.indexOf('TRStatsPeer') < 0 || names.indexOf('TRStatsHost (me)') < 0) { throw new Error('Host stats must list both participants: ' + JSON.stringify(names)); }
+    [END]
+    click "Close dialog"
+    switch to browser "Peer"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - speaker-stats
+    - jitsi-tc06
+    - jitsi-browser-journeys

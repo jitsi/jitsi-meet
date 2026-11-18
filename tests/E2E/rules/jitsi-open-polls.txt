@@ -1,0 +1,5 @@
+// The caller starts with chat closed; the tab name is its visible accessible label.
+hover over the middle of the screen
+click "Open chat"
+click "Polls"
+wait up to 15 seconds until page contains button "Create a poll"

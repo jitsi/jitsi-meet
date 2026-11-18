@@ -1,0 +1,3 @@
+// Each caller has exactly one user message, so only its menu can be selected.
+hover over stored value "targetMessage"
+click "Show more options"

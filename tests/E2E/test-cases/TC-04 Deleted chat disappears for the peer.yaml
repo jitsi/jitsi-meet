@@ -1,0 +1,34 @@
+customSteps: |
+    generate from regex "trdelete[a-z]{20}" and save as "roomName"
+    generate from regex "retract[a-z]{24}" and save as "targetMessage"
+    save value "TRDeleteAuthor" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Peer" and switch
+    reset to home
+    save value "TRDeletePeer" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-chat
+    switch to browser "default"
+    jitsi-open-chat
+    enter stored value "targetMessage" into "Type a message"
+    click button "Send"
+    switch to browser "Peer"
+    wait up to 30 seconds until page contains stored value from "targetMessage"
+    switch to browser "default"
+    jitsi-open-message-menu
+    click "Delete"
+    wait up to 30 seconds until page contains "You deleted this message."
+    check that page does not contain stored value from "targetMessage"
+    switch to browser "Peer"
+    wait up to 30 seconds until page contains "This message was deleted."
+    check that page does not contain stored value from "targetMessage"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - chat-delete
+    - jitsi-tc04
+    - jitsi-browser-journeys

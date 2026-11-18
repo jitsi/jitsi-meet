@@ -1,0 +1,39 @@
+customSteps: |
+    generate from regex "tredit[a-z]{20}" and save as "roomName"
+    generate from regex "original[a-z]{24}" and save as "targetMessage"
+    generate from regex "replacement[a-z]{24}" and save as "editedMessage"
+    save value "TREditAuthor" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Peer" and switch
+    reset to home
+    save value "TREditPeer" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-chat
+    switch to browser "default"
+    jitsi-open-chat
+    enter stored value "targetMessage" into "Type a message"
+    click button "Send"
+    switch to browser "Peer"
+    // Positive delivery before asserting that editing removes the original rendering.
+    wait up to 30 seconds until page contains stored value from "targetMessage"
+    switch to browser "default"
+    jitsi-open-message-menu
+    click "Edit"
+    enter stored value "editedMessage" into "Type a message"
+    click button "Send"
+    wait up to 30 seconds until page contains stored value from "editedMessage"
+    switch to browser "Peer"
+    wait up to 30 seconds until page contains stored value from "editedMessage"
+    // There is exactly one user message; the marker must belong to its replacement.
+    check that page contains "(edited)"
+    check that page does not contain stored value from "targetMessage"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - chat-edit
+    - jitsi-tc03
+    - jitsi-browser-journeys

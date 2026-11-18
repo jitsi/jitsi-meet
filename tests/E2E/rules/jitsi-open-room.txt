@@ -1,0 +1,5 @@
+// Reach the generated room through the welcome page so the environment URL stays configurable.
+wait up to 30 seconds until page contains "Start meeting"
+enter stored value "roomName" into "Enter room name"
+click button "Start meeting"
+wait up to 30 seconds until page contains "Enter your name"

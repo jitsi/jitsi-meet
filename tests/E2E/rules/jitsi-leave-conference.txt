@@ -1,0 +1,6 @@
+// Reveal the toolbar and choose leaving rather than ending the meeting for others.
+hover over the middle of the screen
+click "Leave the meeting"
+click exactly "Leave meeting" if exists
+wait up to 30 seconds until page contains "Start meeting"
+check that page contains button "Start meeting"

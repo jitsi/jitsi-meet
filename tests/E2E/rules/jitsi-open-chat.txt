@@ -1,0 +1,3 @@
+// Callers start with the chat panel closed.
+click "Open chat"
+wait up to 15 seconds until page contains "Type a message"
