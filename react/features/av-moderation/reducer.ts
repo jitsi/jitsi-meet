@@ -87,39 +87,34 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
 (state = initialState, action): IAVModerationState => {
     switch (action.type) {
     case DISABLE_MODERATION: {
-        let newState = {};
-
         switch (action.mediaType) {
         case MEDIA_TYPE.AUDIO:
-            newState = {
+            return {
+                ...state,
                 audioModerationEnabled: false,
-                audioUnmuteApproved: undefined
+                audioUnmuteApproved: undefined,
+                audioWhitelist: {},
+                pendingAudio: []
             };
-            break;
         case MEDIA_TYPE.DESKTOP:
-            newState = {
+            return {
+                ...state,
                 desktopModerationEnabled: false,
-                desktopUnmuteApproved: undefined
+                desktopUnmuteApproved: undefined,
+                desktopWhitelist: {},
+                pendingDesktop: []
             };
-            break;
         case MEDIA_TYPE.VIDEO:
-            newState = {
+            return {
+                ...state,
                 videoModerationEnabled: false,
-                videoUnmuteApproved: undefined
+                videoUnmuteApproved: undefined,
+                videoWhitelist: {},
+                pendingVideo: []
             };
-            break;
         }
 
-        return {
-            ...state,
-            ...newState,
-            audioWhitelist: {},
-            desktopWhitelist: {},
-            videoWhitelist: {},
-            pendingAudio: [],
-            pendingDesktop: [],
-            pendingVideo: []
-        };
+        return state;
     }
 
     case ENABLE_MODERATION: {
