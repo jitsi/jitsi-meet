@@ -219,6 +219,10 @@ export interface IConfig {
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
     appId?: string;
     audioLevelsInterval?: number;
+    audioOutput?: {
+        manager?: boolean;
+        switchTimeout?: number;
+    };
     audioQuality?: {
         enableAdvancedAudioSettings?: boolean;
         opusMaxAverageBitrate?: number | null;

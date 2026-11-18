@@ -61,6 +61,7 @@ import {
     getAvailableDevices,
     notifyCameraError,
     notifyMicError,
+    setAudioOutputDevice,
     updateDeviceList
 } from './react/features/base/devices/actions.web';
 import {
@@ -68,8 +69,7 @@ import {
     filterIgnoredDevices,
     flattenAvailableDevices,
     getDefaultDeviceId,
-    logDevices,
-    setAudioOutputDeviceId
+    logDevices
 } from './react/features/base/devices/functions.web';
 import {
     JitsiConferenceErrors,
@@ -1998,14 +1998,7 @@ export default {
         };
 
         if (typeof newDevices.audiooutput !== 'undefined') {
-            const { dispatch } = APP.store;
-            const setAudioOutputPromise
-                = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
-                    .catch(err => {
-                        logger.error(`Failed to set the audio output device to ${newDevices.audiooutput} - ${err}`);
-                    });
-
-            promises.push(setAudioOutputPromise);
+            promises.push(APP.store.dispatch(setAudioOutputDevice(newDevices.audiooutput, false)));
         }
 
         // The camera is stopped before the new one is opened, some machines can't open two cameras at once.

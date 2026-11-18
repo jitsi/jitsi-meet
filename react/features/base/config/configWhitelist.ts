@@ -20,6 +20,7 @@ export default [
     'analytics.rtcstatsEnabled',
     'analytics.watchRTCEnabled',
     'audioLevelsInterval',
+    'audioOutput',
     'audioQuality',
     'audioTranslation',
     'autoKnockLobby',

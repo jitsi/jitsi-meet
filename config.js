@@ -217,6 +217,15 @@ var config = {
 
     // audioLevelsInterval: 200,
 
+    // Speaker (audio output device) switching.
+    // audioOutput: {
+    //     // Switches the speaker through lib-jitsi-meet's audio output manager, which waits for every audio element
+    //     // to switch, keeps the previous speaker when none could, and reports the participants that did not switch.
+    //     manager: false,
+    //     // With the manager, how long switching an audio element may take before it counts as failed, in ms.
+    //     switchTimeout: 5000,
+    // },
+
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
     // input and will suggest another valid device if one is present.
@@ -1949,6 +1958,9 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.audioOutputAttachFailedTitle', // shown when a participant could not be switched to the speaker
+    //     'notify.audioOutputChangeFailedTitle', // shown when the speaker could not be switched
+    //     'notify.audioOutputPartlyChangedTitle', // shown when the speaker was switched for some participants only
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.connectedOneMember', // show when a participant joined

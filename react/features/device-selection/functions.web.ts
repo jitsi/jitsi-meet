@@ -11,7 +11,8 @@ import {
     areDeviceLabelsInitialized,
     getAudioOutputDeviceId,
     getDeviceIdByLabel,
-    groupDevicesByKind
+    groupDevicesByKind,
+    isAudioOutputManagerEnabled
 } from '../base/devices/functions.web';
 import { isIosMobileBrowser, isMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -262,6 +263,12 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
                 dispatch(setAudioInputDeviceAndUpdateSettings(deviceId));
                 break;
             case 'audiooutput':
+                if (isAudioOutputManagerEnabled()) {
+                    // Answer with whether the switch happened, not only that it was requested.
+                    dispatch(setAudioOutputDevice(deviceId)).then((changed: boolean) => responseCallback(changed));
+
+                    return true;
+                }
                 dispatch(setAudioOutputDevice(deviceId));
                 break;
             case 'videoinput':
