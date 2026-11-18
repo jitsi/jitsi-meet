@@ -115,7 +115,9 @@ class LocalVideoMenu extends PureComponent<IProps> {
                 <Avatar
                     participantId = { _participant?.id }
                     size = { AVATAR_SIZE } />
-                <Text style = { styles.participantNameLabel as TextStyle }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.participantNameLabel as TextStyle }>
                     { this.props._participantDisplayName }
                 </Text>
             </View>

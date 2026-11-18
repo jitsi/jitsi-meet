@@ -40,7 +40,9 @@ const ContextMenuLobbyParticipantReject = ({ participant: p }: IProps) => {
             <Avatar
                 participantId = { p.id }
                 size = { 24 } />
-            <Text style = { styles.contextMenuItemName }>
+            <Text
+                accessibilityRole = 'header'
+                style = { styles.contextMenuItemName }>
                 { displayName }
             </Text>
         </View>
