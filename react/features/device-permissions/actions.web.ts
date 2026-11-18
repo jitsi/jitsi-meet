@@ -1,20 +1,28 @@
-import { IStore } from '../app/types';
+import { batch } from 'react-redux';
+
+import { IReduxState, IStore } from '../app/types';
 import { notifyCameraError, notifyMicError } from '../base/devices/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
+import { isMobileBrowser } from '../base/environment/utils';
 import { JitsiTrackErrors } from '../base/lib-jitsi-meet';
 import { createLocalTracksA } from '../base/tracks/actions.any';
 import { getLocalTrack } from '../base/tracks/functions.any';
 import { createLocalTracksF } from '../base/tracks/functions.web';
 import { setDeviceStatusOk } from '../prejoin/actions.web';
 import { isPrejoinPageVisible } from '../prejoin/functions';
+import { setVideoSettingsVisibility } from '../settings/actions.web';
+import { isToolboxVisible } from '../toolbox/functions.web';
 
+import { SET_VIDEO_PERMISSION_PROMPT } from './actionTypes';
 import PermissionBlockedDialog from './components/web/PermissionBlockedDialog';
 import PermissionPromptDialog from './components/web/PermissionPromptDialog';
 import { CaptureKind, getKindsToPrompt, shouldShowGuidance } from './functions';
 import logger from './logger';
+import { IDevicePermissionsState } from './reducer';
 
-// A new key for every dialog, so that one opened while the previous one fades out isn't reused with its state.
+// A new key for every dialog and camera explanation, so that one shown while the previous one closes isn't reused with
+// its state.
 let dialogKey = 0;
 
 // The ended tracks already dealt with, the permission and the end of a track are reported separately.
@@ -25,6 +33,22 @@ const retriedAt = new WeakMap<object, number>();
 
 // A device whose new track ends this soon as well isn't requested again, it keeps failing.
 const RETRY_INTERVAL = 10000;
+
+/**
+ * Whether the camera button is on screen with its settings popover, which can then hold the explanation.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+function canAnchorToCameraButton(state: IReduxState) {
+    return !isMobileBrowser()
+        && !state['features/base/responsive-ui'].isNarrowLayout
+        && !isPrejoinPageVisible(state)
+        && isToolboxVisible(state)
+
+        // The camera button has the settings popover only in the main toolbar, not in the overflow menu.
+        && Boolean(document.querySelector('.video-preview'));
+}
 
 /**
  * Explains why the devices are needed before the browser asks for access to them.
@@ -46,52 +70,37 @@ export function explainBeforePrompt(kinds: CaptureKind[], whenUnmuting = false) 
             return Promise.resolve(kinds);
         }
 
-        const otherKind = toPrompt[0] === 'audio' ? 'video' : 'audio';
+        const otherKind: CaptureKind = toPrompt[0] === 'audio' ? 'video' : 'audio';
         const offerOtherKind = whenUnmuting && toPrompt.length === 1 && getKindsToPrompt(state, [ otherKind ]).length;
+        const props = {
+            kinds: toPrompt,
+            otherKind: offerOtherKind ? otherKind : undefined
+        };
+
+        // A request made while the camera request is still explained replaces it.
+        dispatch(hideVideoPermissionPrompt());
 
         return new Promise<boolean>(resolve => {
+            if (whenUnmuting && toPrompt.length === 1 && toPrompt[0] === 'video' && canAnchorToCameraButton(state)) {
+                batch(() => {
+                    dispatch(setVideoPermissionPrompt({
+                        ...props,
+                        id: ++dialogKey,
+                        onDone: resolve
+                    }));
+                    dispatch(setVideoSettingsVisibility(true));
+                });
+
+                return;
+            }
+
             dispatch(openDialog('PermissionPromptDialog', PermissionPromptDialog, {
+                ...props,
                 key: ++dialogKey,
-                kinds: toPrompt,
                 onDone: resolve,
-                otherKind: offerOtherKind ? otherKind : undefined,
                 whenUnmuting
             }));
         }).then(allowed => allowed ? kinds : kinds.filter(kind => !toPrompt.includes(kind)));
-    };
-}
-
-/**
- * Guides the user through unblocking the devices after the requests for them were denied.
- *
- * @param {CaptureKind[]} kinds - The devices whose requests failed.
- * @returns {Function}
- */
-export function showPermissionGuidance(kinds: CaptureKind[]) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        let blocked = kinds.filter(kind => shouldShowGuidance(state, kind));
-
-        // Each device fails on its own, so add it to the guidance already shown.
-        if (isDialogOpen(state, PermissionBlockedDialog)) {
-            const { componentProps } = state['features/base/dialog'];
-            const shown = (componentProps as { kinds?: CaptureKind[]; } | undefined)?.kinds ?? [];
-
-            if (blocked.every(kind => shown.includes(kind))) {
-                return;
-            }
-            blocked = ([ 'audio', 'video' ] as CaptureKind[]).filter(kind => shown.includes(kind) || blocked.includes(kind));
-        }
-
-        if (!blocked.length) {
-            return;
-        }
-
-        dispatch(openDialog('PermissionBlockedDialog', PermissionBlockedDialog, {
-            key: ++dialogKey,
-            kinds: blocked,
-            onRetry: () => dispatch(retryDevices(blocked))
-        }));
     };
 }
 
@@ -183,6 +192,30 @@ export function handleEndedTrack(jitsiTrack: any) {
 }
 
 /**
+ * Hides the explanation shown above the camera button, together with the popover holding it, and answers no if it
+ * wasn't answered, e.g. when it was hidden before it showed.
+ *
+ * @param {number} [id] - The explanation to hide, the one shown when not given.
+ * @returns {Function}
+ */
+export function hideVideoPermissionPrompt(id?: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { videoPrompt } = getState()['features/device-permissions'];
+
+        if (!videoPrompt || (id !== undefined && id !== videoPrompt.id)) {
+            return;
+        }
+        videoPrompt.onDone(false);
+
+        // In one go, the camera settings would otherwise open previews of every camera in between.
+        batch(() => {
+            dispatch(setVideoSettingsVisibility(false));
+            dispatch(setVideoPermissionPrompt());
+        });
+    };
+}
+
+/**
  * Leaves the end of a track to the code that stops it on purpose, e.g. to switch to another camera.
  *
  * @param {Object} jitsiTrack - The track about to be stopped.
@@ -215,5 +248,52 @@ export function retryDevices(kinds: CaptureKind[]) {
                 && missing.every(kind => getLocalTrack(state['features/base/tracks'], kind)?.jitsiTrack)) {
             dispatch(setDeviceStatusOk('prejoin.lookGood'));
         }
+    };
+}
+
+/**
+ * Sets the explanation of the camera request shown above the camera button.
+ *
+ * @param {Object} [prompt] - The explanation, none to hide it.
+ * @returns {Object}
+ */
+export function setVideoPermissionPrompt(prompt?: IDevicePermissionsState['videoPrompt']) {
+    return {
+        prompt,
+        type: SET_VIDEO_PERMISSION_PROMPT
+    };
+}
+
+/**
+ * Guides the user through unblocking the devices after the requests for them were denied.
+ *
+ * @param {CaptureKind[]} kinds - The devices whose requests failed.
+ * @returns {Function}
+ */
+export function showPermissionGuidance(kinds: CaptureKind[]) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        let blocked = kinds.filter(kind => shouldShowGuidance(state, kind));
+
+        // Each device fails on its own, so add it to the guidance already shown.
+        if (isDialogOpen(state, PermissionBlockedDialog)) {
+            const { componentProps } = state['features/base/dialog'];
+            const shown = (componentProps as { kinds?: CaptureKind[]; } | undefined)?.kinds ?? [];
+
+            if (blocked.every(kind => shown.includes(kind))) {
+                return;
+            }
+            blocked = ([ 'audio', 'video' ] as CaptureKind[]).filter(kind => shown.includes(kind) || blocked.includes(kind));
+        }
+
+        if (!blocked.length) {
+            return;
+        }
+
+        dispatch(openDialog('PermissionBlockedDialog', PermissionBlockedDialog, {
+            key: ++dialogKey,
+            kinds: blocked,
+            onRetry: () => dispatch(retryDevices(blocked))
+        }));
     };
 }

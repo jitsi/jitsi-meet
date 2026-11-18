@@ -891,22 +891,75 @@
         "allowAudio": "Allow microphone",
         "allowBoth": "Allow microphone and camera",
         "allowVideo": "Allow camera",
-        "blockedTitleBrowser": "Your browser is blocking your {{device}}",
-        "blockedTitleMac": "Your Mac is blocking your {{device}}",
-        "blockedTitleOther": "Your computer is blocking your {{device}}",
-        "blockedTitleWindows": "Windows is blocking your {{device}}",
+        "blocked": {
+            "autoContinue": "We'll continue automatically once access is on.",
+            "browserChromium": {
+                "pill": "Blocked in your browser",
+                "step1": "Select the site controls icon in the address bar and allow the {{device}} for {{domain}}.",
+                "title": "Your browser is blocking your {{device}}"
+            },
+            "browserFirefox": {
+                "pill": "Blocked in Firefox",
+                "step1": "Select the crossed-out {{device}} icon in the address bar and remove the block.",
+                "step1Both": "Select the crossed-out microphone and camera icons in the address bar and remove the blocks.",
+                "title": "Firefox is blocking your {{device}}"
+            },
+            "browserSafari": {
+                "allow": "Allow",
+                "askWarning": "\"Ask\" will not show the prompt again.",
+                "menuSafari": "Safari",
+                "menuSiteSettings": "Settings for {{domain}}…",
+                "pill": "Blocked in Safari",
+                "step1": "In the menu bar, choose:",
+                "step2": "Set Camera and Microphone to Allow.",
+                "title": "Safari is blocking your {{device}}"
+            },
+            "captureElement": "Select the button below to unblock it for {{domain}}.",
+            "embedded": "This meeting is embedded in another site, so allow access for {{domain}}.",
+            "osMac": {
+                "pill": "Blocked by macOS",
+                "privacy": "Privacy & Security",
+                "step1": "Open System Settings, then go to:",
+                "step2": "Turn on {{app}}.",
+                "step2Generic": "Turn on your browser.",
+                "step3": "macOS asks you to quit and reopen {{browser}}. Rejoin the meeting after it restarts.",
+                "step3Generic": "macOS asks you to quit and reopen your browser. Rejoin the meeting after it restarts.",
+                "title": "Your Mac is blocking {{browser}} from using your {{device}}",
+                "titleGeneric": "Your Mac is blocking your browser from using your {{device}}"
+            },
+            "osOther": {
+                "pill": "Blocked by your system",
+                "step1": "Allow your browser to use the {{device}} in your system settings.",
+                "title": "Your computer is blocking your {{device}}"
+            },
+            "osWindows": {
+                "desktopApps": "Let desktop apps access your {{device}}",
+                "deviceAccess": "{{pane}} access",
+                "pill": "Blocked by Windows",
+                "privacy": "Privacy & security",
+                "step1": "Open Settings, then go to:",
+                "step2": "Turn on both of these:",
+                "title": "Windows is blocking your {{device}}"
+            },
+            "policy": {
+                "description": "This site's settings don't allow it. Ask the site's administrator to allow the microphone and camera.",
+                "descriptionEmbedded": "Only that site can allow it. Ask its owner to allow the microphone and camera for this meeting.",
+                "pill": "Blocked by the site",
+                "title": "This site blocks your {{device}}",
+                "titleEmbedded": "The site this meeting is embedded in blocks your {{device}}"
+            },
+            "tryAgainStep": "Select Try again."
+        },
         "continueWithoutAudio": "Continue without microphone",
         "continueWithoutBoth": "Continue without microphone and camera",
         "continueWithoutVideo": "Continue without camera",
         "deviceAudio": "microphone",
         "deviceBoth": "microphone and camera",
         "deviceVideo": "camera",
-        "embedded": "This meeting is embedded in another site, so allow access for {{domain}}.",
         "notNow": "Not now",
-        "openSettings": "Open Settings",
         "openSystemSettings": "Open System Settings",
+        "openWindowsSettings": "Open Windows Settings",
         "paneAudio": "Microphone",
-        "paneBoth": "Microphone and Camera",
         "paneVideo": "Camera",
         "promptDescriptionAudio": "Your browser will ask for access to your microphone. You can turn it off at any time.",
         "promptDescriptionBoth": "Your browser will ask for access to your microphone and camera. You can turn them off at any time.",
@@ -914,32 +967,6 @@
         "promptTitleAudio": "Do you want people to hear you in the meeting?",
         "promptTitleBoth": "Do you want people to see and hear you in the meeting?",
         "promptTitleVideo": "Do you want people to see you in the meeting?",
-        "steps": {
-            "browserChromium": {
-                "1": "Select the site controls icon next to the address bar and allow the {{device}} for {{domain}}.",
-                "2": "Select Try again."
-            },
-            "browserFirefox": {
-                "1": "Select the crossed-out {{device}} icon in the address bar and remove the block.",
-                "2": "Select Try again."
-            },
-            "browserSafari": {
-                "1": "Choose Safari, then Settings for {{domain}}, and set {{pane}} to Allow. \"Ask\" won't show the prompt again.",
-                "2": "Select Try again."
-            },
-            "osMac": {
-                "1": "Open System Settings, then Privacy & Security, then {{pane}}.",
-                "2": "Turn on your browser.",
-                "3": "Quit and reopen your browser when macOS asks, then join the meeting again."
-            },
-            "osOther": {
-                "1": "Allow your browser to use the {{device}} in your system settings, then select Try again."
-            },
-            "osWindows": {
-                "1": "Open Settings, then Privacy & security, then {{pane}}.",
-                "2": "Turn on access and \"Let desktop apps access your {{device}}\", then select Try again."
-            }
-        },
         "tryAgain": "Try again"
     },
     "multiScreen": {

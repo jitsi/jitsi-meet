@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { CaptureKind, getCaptureElement } from '../../functions';
 import logger from '../../logger';
@@ -21,6 +22,19 @@ interface IProps {
     onUnsupported: () => void;
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+
+        // The browser sizes the element itself and adds its own padding to any width set on it, so it is centered
+        // instead of stretched like the buttons around it. The browser also requires a font size of at least 'small'.
+        container: {
+            ...theme.typography.bodyShortRegular,
+            display: 'flex',
+            justifyContent: 'center'
+        }
+    };
+});
+
 /**
  * Renders the browser's capability element for the devices ({@code <microphone>}, {@code <camera>} or
  * {@code <usermedia>}), which asks for access when the user clicks it, next to the element, and lets the user undo
@@ -30,6 +44,7 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const CaptureElement = ({ kinds, onDone, onUnsupported }: IProps) => {
+    const { classes } = useStyles();
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -78,7 +93,11 @@ const CaptureElement = ({ kinds, onDone, onUnsupported }: IProps) => {
         };
     }, []);
 
-    return <div ref = { containerRef } />;
+    return (
+        <div
+            className = { classes.container }
+            ref = { containerRef } />
+    );
 };
 
 export default CaptureElement;

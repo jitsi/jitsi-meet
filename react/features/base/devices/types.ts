@@ -4,7 +4,7 @@
  * The permission status of a capture device, as reported by lib-jitsi-meet.
  */
 export interface IPermissionStatus {
-    reason?: 'browser' | 'os' | 'user';
+    reason?: 'browser' | 'os' | 'policy' | 'user';
     state: 'denied' | 'granted' | 'prompt';
 }
 
