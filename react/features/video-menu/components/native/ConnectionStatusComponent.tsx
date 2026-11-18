@@ -443,7 +443,9 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
                 <Avatar
                     participantId = { participantID }
                     size = { AVATAR_SIZE } />
-                <Text style = { styles.participantNameLabel as TextStyle }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.participantNameLabel as TextStyle }>
                     { this.props._participantDisplayName }
                 </Text>
             </View>
