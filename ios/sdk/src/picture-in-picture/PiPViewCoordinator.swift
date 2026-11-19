@@ -87,7 +87,6 @@ public class PiPViewCoordinator {
         parentView.addSubview(view)
         currentBounds = parentView.bounds
         view.frame = currentBounds
-        view.layer.zPosition = CGFloat(Float.greatestFiniteMagnitude)
     }
 
     /// Show view with fade in animation
@@ -117,8 +116,12 @@ public class PiPViewCoordinator {
     /// around screen, and add a button of top of the view to be able to exit mode
     public func enterPictureInPicture() {
         isInPiP = true
-        // Resizing is done by hand when in pip.
+        
+        // Resizing is done by hand when in PiP.
         view.autoresizingMask = []
+
+        // Keep the PiP tile above the host app.
+        view.layer.zPosition = CGFloat(Float.greatestFiniteMagnitude)
 
         animateViewChange()
         dragController.startDragListener(inView: view)
@@ -136,8 +139,13 @@ public class PiPViewCoordinator {
     /// exit pip button, and disable the drag gesture
     @objc public func exitPictureInPicture() {
         isInPiP = false
-        // Enable autoresizing again, which got disabled for pip.
+        
+        // Enable autoresizing again, which got disabled for PiP.
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Drop the PiP zPosition so sheets show above the view.
+        view.layer.zPosition = 0
+        view.superview?.bringSubviewToFront(view)
 
         animateViewChange()
         dragController.stopDragListener()
