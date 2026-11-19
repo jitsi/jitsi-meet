@@ -840,6 +840,12 @@ describe('mod_voice_agent_component', function()
                 fanIn = 'per-source' }).status_code);
             assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
         end)
+
+        it('dials a record from before fanIn existed as per-source, not as the relay would default it', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            mock_room._data.voice_agents['agent-support'].fanIn = nil;
+            assert.are.equal('per-source', dial_body().fanIn);
+        end)
     end)
 
     describe('the mix fan-in and its options', function()
