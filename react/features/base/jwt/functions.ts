@@ -240,18 +240,28 @@ export function validateJwt(jwt: string) {
  * Extracts and returns the expiration date of jwt.
  *
  * @param {string|undefined} jwt - The jwt to check.
- * @returns {Date} The expiration date of the jwt.
+ * @returns {Date|undefined} The expiration date of the jwt.
  */
-export function getJwtExpirationDate(jwt: string | undefined) {
+export function getJwtExpirationDate(jwt: string | undefined): Date | undefined {
     if (!jwt) {
         return;
     }
 
-    const payload = jwtDecode(jwt);
+    try {
+        const payload = jwtDecode(jwt);
 
-    if (payload) {
-        const { exp } = payload;
+        if (payload) {
+            const { exp } = payload;
 
-        return new Date(exp * 1000);
+            if (typeof exp === 'number' && Number.isFinite(exp)) {
+                const expirationDate = new Date(exp * 1000);
+
+                if (!Number.isNaN(expirationDate.getTime())) {
+                    return expirationDate;
+                }
+            }
+        }
+    } catch {
+        return;
     }
 }
