@@ -1395,7 +1395,7 @@ local function handle_dial(event)
         endpoint = jicofo_entry.endpoint;
         customParameters = jicofo_entry.customParameters;
         mediaFormat = jicofo_entry.mediaFormat;
-        fanIn = jicofo_entry.fanIn;
+        fanIn = jicofo_entry.fanIn or PER_SOURCE_FAN_IN; -- no fanIn: from before it existed; the relay's default is mix
         mix = jicofo_entry.mix;
     }) };
 end
