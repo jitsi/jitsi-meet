@@ -1,7 +1,9 @@
 import base64js from 'base64-js';
 
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import { _getTokenAuthState } from './functions.any';
 import logger from './logger';
@@ -140,3 +142,26 @@ export const getTokenAuthUrl = (
 
     return Promise.resolve(url);
 };
+
+/**
+ * Returns the login service a JaaS tenant names in its own token, for participants who are not moderators yet.
+ * JaaS meetings do not use the deployment's {@code tokenAuthUrl}; a tenant that wants its host to be able to log in
+ * from the lobby puts its own login service in the token it signs for every participant
+ * ({@code context.tokenAuthUrl}). Only https URLs are used.
+ *
+ * @param {IReduxState} state - The state of the app.
+ * @returns {string|undefined}
+ */
+export function getTenantTokenAuthUrl(state: IReduxState): string | undefined {
+    if (!isVpaasMeeting(state)) {
+        return undefined;
+    }
+
+    const { tenantTokenAuthUrl } = state['features/base/jwt'];
+
+    try {
+        return tenantTokenAuthUrl && new URL(tenantTokenAuthUrl).protocol === 'https:' ? tenantTokenAuthUrl : undefined;
+    } catch {
+        return undefined;
+    }
+}
