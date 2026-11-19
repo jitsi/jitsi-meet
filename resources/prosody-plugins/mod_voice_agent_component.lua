@@ -38,9 +38,9 @@
 --   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
 --                                customParameters?, callbackUrl?, mediaFormat?{encoding}, fanIn?, mix? }
 --     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
---     fanIn: 'per-source' (every participant's audio as its own stream, the default), 'dominant'
---       (only the dominant speaker's, as the bridge ranks them) or 'mix' (one stream, the sum of the
---       participants; needs audio/l16)
+--     fanIn: 'mix' (one stream, the sum of the participants; needs audio/l16, and the default with it),
+--       'per-source' (every participant's audio as its own stream; the default with audio/opus) or
+--       'dominant' (only the dominant speaker's, as the bridge ranks them)
 --     mix: options of the mix fan-in, a flat object of numbers, booleans and strings; the media relay owns
 --       their names and values and checks them when it dials
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
@@ -502,14 +502,15 @@ local function validate_media_format(media_format)
 end
 
 -- How the media relay fans several participants' audio in to the agent.
-local DEFAULT_FAN_IN = 'per-source';
-local FAN_INS = { ['per-source'] = true; ['dominant'] = true; ['mix'] = true };
+local PER_SOURCE_FAN_IN = 'per-source';
 local MIX_FAN_IN = 'mix';
+local FAN_INS = { [PER_SOURCE_FAN_IN] = true; ['dominant'] = true; [MIX_FAN_IN] = true };
 
--- Validates the optional fanIn; returns the policy (the default when absent), or nil plus an error.
-local function validate_fan_in(fan_in)
+-- Validates the optional fanIn; returns the policy, or nil plus an error. Absent, it is the mix, the one stream
+-- most speech models take; Opus is relayed undecoded and cannot be mixed, so it defaults to per-source.
+local function validate_fan_in(fan_in, encoding)
     if fan_in == nil then
-        return DEFAULT_FAN_IN;
+        return encoding == DEFAULT_MEDIA_ENCODING and MIX_FAN_IN or PER_SOURCE_FAN_IN;
     end
     if not FAN_INS[fan_in] then
         return nil, 'fanIn must be per-source, dominant or mix';
@@ -1048,7 +1049,7 @@ local function handle_invite(event)
     if media_format_error then
         return error_response(400, media_format_error);
     end
-    local fan_in, fan_in_error = validate_fan_in(payload.fanIn);
+    local fan_in, fan_in_error = validate_fan_in(payload.fanIn, media_format.encoding);
     if fan_in_error then
         return error_response(400, fan_in_error);
     end
@@ -1079,7 +1080,7 @@ local function handle_invite(event)
                 and maps_equal(jicofo_entry.endpoint, endpoint)
                 and maps_equal(jicofo_entry.customParameters, custom_params)
                 and (jicofo_entry.mediaFormat or { encoding = DEFAULT_MEDIA_ENCODING }).encoding == media_format.encoding
-                and (jicofo_entry.fanIn or DEFAULT_FAN_IN) == fan_in
+                and (jicofo_entry.fanIn or PER_SOURCE_FAN_IN) == fan_in -- no fanIn: from before it existed
                 and maps_equal(jicofo_entry.mix, mix)
                 and jicofo_entry.callbackUrl == callback_url then
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
