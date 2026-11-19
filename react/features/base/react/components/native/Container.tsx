@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    AccessibilityRole,
     GestureResponderEvent,
     TouchableHighlight,
     TouchableWithoutFeedback,
@@ -9,6 +10,11 @@ import {
 import AbstractContainer, { IProps as AbstractProps } from '../AbstractContainer';
 
 interface IProps extends AbstractProps {
+
+    /**
+     * An optional accessibility role to apply to the container root or touchable element.
+     */
+    accessibilityRole?: AccessibilityRole;
 
     onClick?: (e: GestureResponderEvent) => void;
 
@@ -36,6 +42,7 @@ export default class Container extends AbstractContainer<IProps> {
     override render() {
         const {
             accessibilityLabel,
+            accessibilityRole,
             accessible,
             onClick,
             onLongPress,
@@ -63,6 +70,7 @@ export default class Container extends AbstractContainer<IProps> {
         if (element && onClickOrTouchFeedback) {
             const touchableProps = {
                 accessibilityLabel,
+                accessibilityRole: accessibilityRole ?? (onClick || onLongPress ? 'button' : undefined),
                 accessible,
                 onLongPress,
                 onPress: onClick
