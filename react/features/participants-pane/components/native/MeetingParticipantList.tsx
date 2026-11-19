@@ -82,6 +82,7 @@ const MeetingParticipantList = ({
     return (
         <View style = { styles.meetingListContainer }>
             <Text
+                accessibilityRole = 'header'
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }
             </Text>
