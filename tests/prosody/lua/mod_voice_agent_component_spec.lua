@@ -797,9 +797,21 @@ describe('mod_voice_agent_component', function()
             return encoded[#encoded];
         end
 
-        it('defaults to per-source in the dial response', function()
+        it('defaults to mix in the dial response', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal('mix', dial_body().fanIn);
+        end)
+
+        it('defaults to per-source for an Opus agent, which cannot be mixed', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mediaFormat = { encoding = 'audio/opus' } }).status_code);
             assert.are.equal('per-source', dial_body().fanIn);
+        end)
+
+        it('keeps the mix options of an invite that leaves the fan-in to the default', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mix = { bufferMs = 80 } }).status_code);
+            assert.are.same({ bufferMs = 80 }, dial_body().mix);
         end)
 
         it('carries dominant to the dial response and keeps it out of the client-facing entry', function()
@@ -816,15 +828,17 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(0, #agent_ids(mock_room));
         end)
 
-        it('is part of the idempotency check, the default matching an explicit per-source', function()
+        it('is part of the idempotency check, the default matching an explicit mix', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
-                fanIn = 'per-source' }).status_code);
-            -- A record from before fanIn existed counts as the default.
-            mock_room._data.voice_agents['agent-support'].fanIn = nil;
-            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
+                fanIn = 'mix' }).status_code);
             assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
-                fanIn = 'dominant' }).status_code);
+                fanIn = 'per-source' }).status_code);
+            -- A record from before fanIn existed was per-source, whatever the default is now.
+            mock_room._data.voice_agents['agent-support'].fanIn = nil;
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'per-source' }).status_code);
+            assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
         end)
     end)
 
