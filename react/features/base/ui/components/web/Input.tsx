@@ -18,6 +18,12 @@ interface IProps extends IInputProps {
     className?: string;
     describedBy?: string;
     hiddenDescription?: string; // Text that will be announced by screen readers but not displayed visually.
+
+    /**
+     * Accessible name for the icon when {@code iconClick} is set. The icon is
+     * then in the tab order, so assistive tech needs a name for it.
+     */
+    iconAccessibilityLabel?: string;
     iconClick?: () => void;
 
     /**
@@ -179,6 +185,7 @@ const Input = React.forwardRef<any, IProps>(({
     error,
     hiddenDescription,
     icon,
+    iconAccessibilityLabel,
     iconClick,
     id,
     invalidReason,
@@ -252,7 +259,11 @@ const Input = React.forwardRef<any, IProps>(({
             </label>}
             <div className = { styles.fieldContainer }>
                 {icon && <Icon
-                    { ...(iconClick ? { tabIndex: 0 } : {}) }
+                    { ...(iconClick ? {
+                        ariaLabel: iconAccessibilityLabel,
+                        role: 'button',
+                        tabIndex: 0
+                    } : {}) }
                     className = { cx(styles.icon, iconClick && styles.iconClickable) }
                     onClick = { iconClick }
                     size = { 20 }
