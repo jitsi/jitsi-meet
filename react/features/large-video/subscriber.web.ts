@@ -28,7 +28,7 @@ StateListenerRegistry.register(
             streamingStatus: videoTrack?.streamingStatus
         };
     },
-    /* listener */ ({ participantId, streamingStatus }, previousState: any = {}) => {
+    /* listener */ ({ participantId, streamingStatus }, _store, previousState: any = {}) => {
         if (streamingStatus !== previousState.streamingStatus) {
             VideoLayout.updateLargeVideo(participantId, true);
         }
