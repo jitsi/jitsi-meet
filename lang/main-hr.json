@@ -773,9 +773,7 @@
     },
     "poweredby": "omogućuje",
     "prejoin": {
-        "audioAndVideoError": "Audio i videogreška:",
         "audioDeviceProblem": "Postoji problem s audio uređajem",
-        "audioOnlyError": "Greška audio uređaja:",
         "audioTrackError": "Nije bilo moguće stvoriti audio snimku.",
         "callMe": "Nazovi me",
         "callMeAtNumber": "Nazovi me na ovaj broj:",
@@ -827,7 +825,6 @@
         "premeeting": "Predsastanak",
         "screenSharingError": "Greška dijeljenja ekrana:",
         "startWithPhone": "Počni s telefonom",
-        "videoOnlyError": "Greška videa:",
         "videoTrackError": "Nije bilo moguće stvoriti videosnimku.",
         "viewAllNumbers": "pogledaj sve brojeve"
     },

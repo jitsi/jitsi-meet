@@ -579,9 +579,7 @@
     },
     "poweredby": "garatzailea:",
     "prejoin": {
-        "audioAndVideoError": "Errorea audio eta bideoan:",
         "audioDeviceProblem": "Arazo bat dago zure audio gailuarekin",
-        "audioOnlyError": "Errorea audioan:",
         "audioTrackError": "Ezin izan da audio pista sortu.",
         "callMe": "Deitu nazazu",
         "callMeAtNumber": "Deitu nazazu zenbaki honetara:",
@@ -631,7 +629,6 @@
         "premeeting": "Aurre-bilera",
         "screenSharingError": "Errorea pantaila partekatzean:",
         "startWithPhone": "Telefono diearen audioarekin hasi",
-        "videoOnlyError": "Errorea bideoan:",
         "videoTrackError": "Ezin izan da bideo pista sortu.",
         "viewAllNumbers": "zenbaki guztiak ikusi"
     },

@@ -1148,9 +1148,7 @@
     },
     "poweredby": "funciona amb",
     "prejoin": {
-        "audioAndVideoError": "Error d'àudio i vídeo:",
         "audioDeviceProblem": "Hi ha un problema amb el vostre aparell d'àudio",
-        "audioOnlyError": "Error d'àudio:",
         "audioTrackError": "No s'ha pogut crear la pista d'àudio.",
         "callMe": "Truca'm",
         "callMeAtNumber": "Truca'm a aquest número:",
@@ -1209,7 +1207,6 @@
         "screenSharingError": "Error en compartir la pantalla:",
         "startWithPhone": "Comença amb àudio de telèfon",
         "unsafeRoomConsent": "Entenc els riscos, vull unir-me a la reunió",
-        "videoOnlyError": "Error del vídeo:",
         "videoTrackError": "No s'ha pogut crear la pista de vídeo.",
         "viewAllNumbers": "mostra tots els números"
     },

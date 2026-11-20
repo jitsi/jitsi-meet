@@ -990,9 +990,7 @@
     },
     "poweredby": "技術支援由",
     "prejoin": {
-        "audioAndVideoError": "音訊及視訊錯誤：",
         "audioDeviceProblem": "您的音訊裝置有問題",
-        "audioOnlyError": "音訊錯誤：",
         "audioTrackError": "無法建立音軌。",
         "callMe": "打給我",
         "callMeAtNumber": "撥打這支號碼：",
@@ -1050,7 +1048,6 @@
         "screenSharingError": "螢幕分享錯誤：",
         "startWithPhone": "使用手機音訊開始",
         "unsafeRoomConsent": "我了解風險，我想要加入會議",
-        "videoOnlyError": "視訊錯誤：",
         "videoTrackError": "無法建立視訊軌。",
         "viewAllNumbers": "檢視所有號碼"
     },

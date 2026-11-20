@@ -906,9 +906,7 @@
     },
     "poweredby": "produit per",
     "prejoin": {
-        "audioAndVideoError": "Error àudio e vidèo :",
         "audioDeviceProblem": "I a un problèma amb vòstre periferic àudio",
-        "audioOnlyError": "Error àudio :",
         "audioTrackError": "Creacion impossibla de la pista àudio.",
         "callMe": "Sona-me",
         "callMeAtNumber": "Sona-me a aqueste numèro :",
@@ -966,7 +964,6 @@
         "screenSharingError": "Error de partatge d’ecran :",
         "startWithPhone": "Començar amb l’àudio del telefòn",
         "unsafeRoomConsent": "Compreni lo risc e vòli çaquelà participar a la reünion",
-        "videoOnlyError": "Error vidèo :",
         "videoTrackError": "Creacion d’una pista àudio impossibla.",
         "viewAllNumbers": "veire totes los numèros"
     },

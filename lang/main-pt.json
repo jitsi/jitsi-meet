@@ -1051,9 +1051,7 @@
     },
     "poweredby": "distribuído por",
     "prejoin": {
-        "audioAndVideoError": "Erro no áudio e vídeo:",
         "audioDeviceProblem": "Há um problema com o seu dispositivo de áudio",
-        "audioOnlyError": "Erro no áudio:",
         "audioTrackError": "Não foi possível criar a pista de áudio.",
         "callMe": "Ligue-me",
         "callMeAtNumber": "Ligue-me para este número:",
@@ -1111,7 +1109,6 @@
         "screenSharingError": "Erro de partilha de ecrã:",
         "startWithPhone": "Iniciar com o áudio do telefone",
         "unsafeRoomConsent": "Compreendo os riscos, quero participar na reunião",
-        "videoOnlyError": "Erro de vídeo:",
         "videoTrackError": "Não foi possível criar a pista de vídeo.",
         "viewAllNumbers": "ver todos os números"
     },

@@ -714,9 +714,7 @@
     },
     "poweredby": "powered by",
     "prejoin": {
-        "audioAndVideoError": "オーディオとビデオのエラー:",
         "audioDeviceProblem": "オーディオに問題があります",
-        "audioOnlyError": "オーディオエラー:",
         "audioTrackError": "オーディオトラックを作成できませんでした。",
         "callMe": "呼び出してください",
         "callMeAtNumber": "この番号に電話してください:",
@@ -767,7 +765,6 @@
         "premeeting": "プレミーティング",
         "screenSharingError": "画面共有のエラー:",
         "startWithPhone": "音声通話を開始",
-        "videoOnlyError": "ビデオのエラー:",
         "videoTrackError": "ビデオトラックを生成できませんでした。",
         "viewAllNumbers": "すべての番号を表示"
     },

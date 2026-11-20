@@ -524,9 +524,7 @@
     },
     "poweredby": "powered by",
     "prejoin": {
-        "audioAndVideoError": "ഓഡിയോ, വീഡിയോ പിശക്:",
         "audioDeviceProblem": "നിങ്ങളുടെ ഓഡിയോ ഉപകരണത്തിൽ ഒരു പ്രശ്‌നമുണ്ട്",
-        "audioOnlyError": "ഓഡിയോ പിശക്:",
         "audioTrackError": "ഓഡിയോ ട്രാക്ക് സൃഷ്ടിക്കാൻ കഴിഞ്ഞില്ല.",
         "callMe": "എന്നെ വിളിക്കുക",
         "callMeAtNumber": "ഈ നമ്പറിൽ എന്നെ വിളിക്കുക:",
@@ -575,7 +573,6 @@
         "premeeting": "പ്രീ മീറ്റിംഗ്",
         "screenSharingError": "സ്ക്രീൻ പങ്കിടൽ പിശക്:",
         "startWithPhone": "ഫോൺ ഓഡിയോ ഉപയോഗിച്ച് ആരംഭിക്കുക",
-        "videoOnlyError": "വീഡിയോ പിശക്:",
         "videoTrackError": "വീഡിയോ ട്രാക്ക് സൃഷ്ടിക്കാൻ കഴിഞ്ഞില്ല.",
         "viewAllNumbers": "എല്ലാ അക്കങ്ങളും കാണുക"
     },

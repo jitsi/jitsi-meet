@@ -805,9 +805,7 @@
     },
     "poweredby": "napędzane dzięki",
     "prejoin": {
-        "audioAndVideoError": "Błąd audio i wideo:",
         "audioDeviceProblem": "Wystąpił problem z urządzeniem audio.",
-        "audioOnlyError": "Błąd audio:",
         "audioTrackError": "Nie można utworzyć ścieżki audio.",
         "callMe": "Zadzwoń do mnie",
         "callMeAtNumber": "Zadzwoń do mnie pod ten numer:",
@@ -862,7 +860,6 @@
         "screenSharingError": "Błąd udostępniania ekranu:",
         "startWithPhone": "Uruchom przez telefon",
         "unsafeRoomConsent": "Rozumiem ryzyko, chcę dołączyć do spotkania",
-        "videoOnlyError": "Błąd wideo:",
         "videoTrackError": "Nie można utworzyć ścieżki wideo.",
         "viewAllNumbers": "zobacz numery"
     },

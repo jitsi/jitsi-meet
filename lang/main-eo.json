@@ -869,9 +869,7 @@
     },
     "poweredby": "pelata de",
     "prejoin": {
-        "audioAndVideoError": "Eraro de videaĵo kaj aŭdaĵo:",
         "audioDeviceProblem": "Estas problemo kun via sonludilo",
-        "audioOnlyError": "Eraro kun la aŭdaĵo:",
         "audioTrackError": "Ne eblis krei sontrakon.",
         "callMe": "Voku min.",
         "callMeAtNumber": "Voku min al ĉi-tiu numero:",
@@ -925,7 +923,6 @@
         "screenSharingError": "Eraro kun la ekrandividado:",
         "startWithPhone": "Komencu kun la telefona sono",
         "unsafeRoomConsent": "Akceptu la riskojn, kaj daŭrigi",
-        "videoOnlyError": "Eraro kun la videaĵo:",
         "videoTrackError": "Ne eblis krei videotrakon.",
         "viewAllNumbers": "Vidu ĉiujn numerojn"
     },

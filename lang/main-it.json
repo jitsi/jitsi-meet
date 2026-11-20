@@ -1009,9 +1009,7 @@
     },
     "poweredby": "offerto da",
     "prejoin": {
-        "audioAndVideoError": "Errore audio e video:",
         "audioDeviceProblem": "C'è un problema con il tuo microfono",
-        "audioOnlyError": "Errore audio:",
         "audioTrackError": "Impossibile creare traccia audio.",
         "callMe": "Chiamami",
         "callMeAtNumber": "Chiamami a questo numero:",
@@ -1069,7 +1067,6 @@
         "screenSharingError": "Errore di condivisione dello schermo:",
         "startWithPhone": "Avvia usando l'audio del telefono",
         "unsafeRoomConsent": "Accetto i rischi, voglio entrare nella riunione.",
-        "videoOnlyError": "Errore video:",
         "videoTrackError": "Impossibile creare la traccia video.",
         "viewAllNumbers": "vedi tutti i numeri"
     },
