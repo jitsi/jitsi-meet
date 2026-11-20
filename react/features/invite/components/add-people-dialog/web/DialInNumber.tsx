@@ -58,21 +58,23 @@ function DialInNumber({ conferenceID, phoneNumber, t }: IProps) {
     /**
      * Copies the conference ID and phone number to the clipboard.
      *
-     * @returns {void}
-    */
-    function _onCopyText() {
-        copyText(textToCopy);
-        dispatch(showSuccessNotification({
-            titleKey: 'dialog.copied'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-        setIsClicked(true);
-        setTimeout(() => {
-            // avoid: Can't perform a React state update on an unmounted component
-            if (mounted) {
-                setIsClicked(false);
-            }
-        }, 2500);
+     * @returns {Promise<void>}
+     */
+    async function _onCopyText() {
+        const isCopied = await copyText(textToCopy);
 
+        if (isCopied) {
+            dispatch(showSuccessNotification({
+                titleKey: 'dialog.copied'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            setIsClicked(true);
+            setTimeout(() => {
+                // avoid: Can't perform a React state update on an unmounted component
+                if (mounted) {
+                    setIsClicked(false);
+                }
+            }, 2500);
+        }
     }
 
     /**
