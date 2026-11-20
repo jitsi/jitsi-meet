@@ -141,6 +141,56 @@ describe('mod_muc_cleanup_backend_services', () => {
         assert.ok(state, 'room should survive — timer is not started when an admin leaves');
     });
 
+    it('does not start timer when only focus remains', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        const user = await ctx.connect();
+
+        await user.joinRoom(r);
+
+        // no jibri or transcriber in the room, so the destroy timer must not start
+        await user.disconnect();
+
+        await sleep(TIMER_MS + BUFFER_MS);
+
+        const state = await getRoomState(r);
+
+        assert.ok(state, 'room should survive — it has no backend service');
+    });
+
+    it('does not destroy a new room with the same jid after the old room emptied', async () => {
+        const r = room();
+
+        const focus = await ctx.connectFocus(r);
+        const user = await ctx.connect();
+
+        await user.joinRoom(r);
+
+        // focus leaves first, so the user is the last occupant to leave and
+        // mod_muc destroys the empty room
+        await focus.disconnect();
+        await user.disconnect();
+
+        for (let i = 0; i < 20 && await getRoomState(r); i++) {
+            await sleep(100);
+        }
+        assert.equal(await getRoomState(r), null, 'old room should be destroyed when empty');
+
+        // a new conference starts in a room with the same jid
+        await ctx.connectFocus(r);
+        const user2 = await ctx.connect();
+
+        await user2.joinRoom(r);
+
+        await sleep(TIMER_MS + BUFFER_MS);
+
+        const state = await getRoomState(r);
+
+        assert.ok(state, 'new room should still exist');
+        assert.equal(state.occupant_count, 2, 'focus and user2 should still be in the new room');
+    });
+
     it('does not start timer when breakout rooms are active', async () => {
         const r = room();
 
