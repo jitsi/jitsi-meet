@@ -380,9 +380,10 @@ function handle_mediated_invite(room, origin, stanza, payload, host_module)
     elseif host_module:fire_event("muc-pre-invite", {room = room, origin = origin, stanza = stanza}) then
         return true;
     end
-    local invite = muc_util.filter_muc_x(st.clone(stanza));
-    invite.attr.from = room.jid;
-    invite.attr.to = invitee;
+    -- Build the invite from scratch instead of cloning the incoming stanza. The invite is sent from the bare
+    -- room jid, and clients read messages from that address as sent by the room itself, so it carries
+    -- only the invite and nothing else from the incoming stanza.
+    local invite = st.message({ from = room.jid, to = invitee, id = stanza.attr.id });
     invite:tag('x', { xmlns = MUC_USER_NS })
             :tag('invite', {from = stanza.attr.from;})
                 :tag('reason'):text(payload:get_child_text("reason")):up()
@@ -427,6 +428,17 @@ local prosody_overrides = {
         if type == nil or type == "normal" then
             local x = stanza:get_child("x", MUC_USER_NS);
             if x then
+                -- Only a moderator who is in the room can invite. Admitting a participant from the lobby is
+                -- such an invite, sent by a moderator of the main room.
+                if x:get_child("invite") then
+                    local occupant_jid = room:get_occupant_jid(stanza.attr.from);
+
+                    if not occupant_jid or room:get_role(occupant_jid) ~= 'moderator' then
+                        origin.send(st.error_reply(stanza, "auth", "forbidden"));
+                        return true;
+                    end
+                end
+
                 local handled = false;
                 for _, payload in pairs(x.tags) do
                     if payload ~= nil and payload.name == "invite" and payload.attr.to then
