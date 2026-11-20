@@ -6,6 +6,7 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import {
     conferenceLeft,
+    conferenceTimestampChanged,
     conferenceWillLeave,
     createConference
 } from '../base/conference/actions';
@@ -229,7 +230,10 @@ export function moveToRoom(roomId?: string) {
                 await conference?.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
+            }
 
+            if (conference && getState()['features/base/conference'].leaving === conference) {
+                dispatch(conferenceTimestampChanged(0));
                 dispatch(conferenceLeft(conference));
             }
 
@@ -239,6 +243,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
+            const conference = getCurrentConference(getState);
             const localTracks = getLocalTracks(getState()['features/base/tracks']);
             const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
             const isVideoMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.VIDEO);
@@ -249,8 +254,11 @@ export function moveToRoom(roomId?: string) {
                     () => APP.API.notifyConferenceLeft(APP.conference.roomName));
             } catch (error) {
                 logger.warn('APP.conference.leaveRoom() rejected with:', error);
+            }
 
-                // TODO: revisit why we don't dispatch CONFERENCE_LEFT here.
+            if (conference && getState()['features/base/conference'].leaving === conference) {
+                dispatch(conferenceTimestampChanged(0));
+                dispatch(conferenceLeft(conference));
             }
 
             APP.conference.joinRoom(_roomId, {

@@ -1,4 +1,4 @@
-import { CONFERENCE_PROPERTIES_CHANGED } from '../base/conference/actionTypes';
+import { CONFERENCE_PROPERTIES_CHANGED, CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -61,6 +61,8 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
 
             return state;
         }
+        case CONFERENCE_WILL_JOIN:
+            return _getInitialState();
         case TRANSCRIBER_JOINED:
             return {
                 ...state,

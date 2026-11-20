@@ -35,6 +35,14 @@ import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
 
+let pageUnloadEventType: 'beforeunload' | 'pagehide' | undefined;
+
+function onPageUnload() {
+    APP.API.notifyConferenceLeft(APP.conference.roomName);
+    APP.API.dispose();
+    getJitsiMeetTransport().dispose();
+}
+
 /**
  * The middleware of the feature {@code external-api}.
  *
@@ -240,14 +248,19 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CONFIG: {
-        /**
-         * Disposing the API when the user closes the page.
-         */
-        window.addEventListener(getPageUnloadEventName(store.getState()), () => {
-            APP.API.notifyConferenceLeft(APP.conference.roomName);
-            APP.API.dispose();
-            getJitsiMeetTransport().dispose();
-        });
+        const eventType = getPageUnloadEventName(store.getState());
+
+        if (eventType !== pageUnloadEventType) {
+            if (pageUnloadEventType) {
+                window.removeEventListener(pageUnloadEventType, onPageUnload);
+            }
+
+            /**
+             * Disposing the API when the user closes the page.
+             */
+            window.addEventListener(eventType, onPageUnload);
+            pageUnloadEventType = eventType;
+        }
 
         break;
     }

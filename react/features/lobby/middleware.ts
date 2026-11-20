@@ -7,6 +7,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
     ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
 import { conferenceWillJoin } from '../base/conference/actions';
@@ -86,6 +87,13 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceFailed(store, next, action);
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+    case CONFERENCE_LEFT: {
+        if (getKnockingParticipants(store.getState()).length) {
+            store.dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+        }
+
+        break;
+    }
     case ENDPOINT_MESSAGE_RECEIVED: {
         const { participant, data } = action;
 
