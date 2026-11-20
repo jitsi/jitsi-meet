@@ -802,9 +802,7 @@
     },
     "poweredby": "на основі",
     "prejoin": {
-        "audioAndVideoError": "Помилка аудіо та відео:",
         "audioDeviceProblem": "Виникла проблема з вашим звуковим пристроєм",
-        "audioOnlyError": "Помилка аудіо:",
         "audioTrackError": "Не вдалось створити звукову доріжку.",
         "callMe": "Зателефонуйте мені",
         "callMeAtNumber": "Зателефонуйте мені за цим номером:",
@@ -856,7 +854,6 @@
         "premeeting": "Перед приєднанням",
         "screenSharingError": "Помилка спільного перегляду екрана:",
         "startWithPhone": "Почати в режимі телефону",
-        "videoOnlyError": "Помилка відео:",
         "videoTrackError": "Не вдалося створити трек відео.",
         "viewAllNumbers": "переглянути всі номери"
     },

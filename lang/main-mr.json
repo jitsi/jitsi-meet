@@ -455,8 +455,6 @@
     },
     "poweredby": "द्वारा समर्थित",
     "prejoin": {
-        "audioAndVideoError": "ऑडिओ आणि व्हिडिओ त्रुटी:",
-        "audioOnlyError": "ऑडिओ त्रुटी:",
         "audioTrackError": "ऑडिओ ट्रॅक तयार करू शकलो नाही.",
         "callMe": "मला कॉल करा",
         "callMeAtNumber": "मला या नंबरवर कॉल करा:",
@@ -477,7 +475,6 @@
         "or": "किंवा",
         "screenSharingError": "स्क्रीन सामायिकरण त्रुटी:",
         "startWithPhone": "फोन ऑडिओसह प्रारंभ करा",
-        "videoOnlyError": "व्हिडिओ त्रुटी:",
         "videoTrackError": "व्हिडिओ ट्रॅक तयार करू शकलो नाही.",
         "viewAllNumbers": "सर्व संख्या पहा"
     },

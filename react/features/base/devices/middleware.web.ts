@@ -175,7 +175,8 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(setDeviceStatusWarning(titleKey));
+            store.dispatch(setDeviceStatusWarning(
+                name === JitsiTrackErrors.PERMISSION_DENIED ? 'prejoin.errorNoCameraPermission' : titleKey));
         }
 
         break;
@@ -207,7 +208,8 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(setDeviceStatusWarning(titleKey));
+            store.dispatch(setDeviceStatusWarning(
+                name === JitsiTrackErrors.PERMISSION_DENIED ? 'prejoin.errorNoMicPermission' : titleKey));
         }
 
         break;

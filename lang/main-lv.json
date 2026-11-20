@@ -1090,9 +1090,7 @@
     },
     "poweredby": "darbojas uz",
     "prejoin": {
-        "audioAndVideoError": "Audio un video kļūda:",
         "audioDeviceProblem": "Radās problēma ar jūsu audio ierīci",
-        "audioOnlyError": "Audio kļūda:",
         "audioTrackError": "Nevarēja izveidot audio celiņu.",
         "callMe": "Piezvani man",
         "callMeAtNumber": "Piezvani man uz šo numuru:",
@@ -1150,7 +1148,6 @@
         "screenSharingError": "Ekrāna koplietošanas kļūda:",
         "startWithPhone": "Sākt ar tālruņa audio",
         "unsafeRoomConsent": "Es saprotu riskus, vēlos pievienoties sapulcei",
-        "videoOnlyError": "Video kļūda:",
         "videoTrackError": "Nevarēja izveidot video celiņu.",
         "viewAllNumbers": "skatīt visus numurus"
     },

@@ -980,9 +980,7 @@
     },
     "poweredby": "de",
     "prejoin": {
-        "audioAndVideoError": "Faddina de àudio e de vìdeu",
         "audioDeviceProblem": "Problema cun su dispositivu de àudio tuo",
-        "audioOnlyError": "Faddina de àudio:",
         "audioTrackError": "Impossìbile creare una rasta de àudio.",
         "callMe": "Muti·mi",
         "callMeAtNumber": "Muti·mi a custu nùmeru",
@@ -1040,7 +1038,6 @@
         "screenSharingError": "Faddina in sa cumpartzidura de s'ischermu",
         "startWithPhone": "Avia imperende s'àudio de su telèfonu",
         "unsafeRoomConsent": "Cumprendo is arriscos e bògio aderire a s'addòbiu",
-        "videoOnlyError": "Faddina de vìdeu:",
         "videoTrackError": "Impossìbile creare una rasta de vìdeu.",
         "viewAllNumbers": "Ammustra totu is nùmeros"
     },

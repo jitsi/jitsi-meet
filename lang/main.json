@@ -1238,9 +1238,7 @@
     },
     "poweredby": "powered by",
     "prejoin": {
-        "audioAndVideoError": "Audio and video error:",
         "audioDeviceProblem": "There is a problem with your audio device",
-        "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
@@ -1270,6 +1268,7 @@
             "videoTearing": "We expect your video to be pixelated or have visual artefacts."
         },
         "copyAndShare": "Copy & share meeting link",
+        "devicesError": "Failed to access your microphone and camera",
         "dialInMeeting": "Dial into the meeting",
         "dialInPin": "Dial into the meeting and enter PIN code:",
         "dialing": "Dialing",
@@ -1279,6 +1278,8 @@
         "errorDialOutFailed": "Could not dial out. Call failed",
         "errorDialOutStatus": "Error getting dial out status",
         "errorMissingName": "Please enter your name to join the meeting",
+        "errorNoCameraPermission": "You need to enable camera access",
+        "errorNoMicPermission": "You need to enable microphone access",
         "errorNoPermissions": "You need to enable microphone and camera access",
         "errorStatusCode": "Error dialing out, status code: {{status}}",
         "errorValidation": "Number validation failed",
@@ -1299,7 +1300,6 @@
         "screenSharingError": "Screen sharing error:",
         "startWithPhone": "Start with phone audio",
         "unsafeRoomConsent": "I understand the risks, I want to join the meeting",
-        "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
         "viewAllNumbers": "view all numbers"
     },

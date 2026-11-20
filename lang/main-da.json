@@ -998,9 +998,7 @@
     },
     "poweredby": "drevet af",
     "prejoin": {
-        "audioAndVideoError": "Lyd- og videofejl:",
         "audioDeviceProblem": "Der er et problem med din lydenhed",
-        "audioOnlyError": "Lydfejl:",
         "audioTrackError": "Kunne ikke oprette lydspor.",
         "callMe": "Ring til mig",
         "callMeAtNumber": "Ring til mig på dette nummer:",
@@ -1058,7 +1056,6 @@
         "screenSharingError": "Fejl på skærmdeling:",
         "startWithPhone": "Start med telefonlyd",
         "unsafeRoomConsent": "Jeg forstår risikoen, jeg vil gerne deltage i mødet.",
-        "videoOnlyError": "Videofejl:",
         "videoTrackError": "Kunne ikke oprette videospor.",
         "viewAllNumbers": "Se alle numre"
     },

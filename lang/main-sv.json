@@ -1008,9 +1008,7 @@
     },
     "poweredby": "drivs med",
     "prejoin": {
-        "audioAndVideoError": "Ljud- och videofel:",
         "audioDeviceProblem": "Det finns ett problem med din ljudenhet",
-        "audioOnlyError": "Ljudfel:",
         "audioTrackError": "Det gick inte att skapa ljudspår.",
         "callMe": "Ring mig",
         "callMeAtNumber": "Ring mig på det här numret:",
@@ -1068,7 +1066,6 @@
         "screenSharingError": "Skärmdelningsfel:",
         "startWithPhone": "Börja med telefonljud",
         "unsafeRoomConsent": "Jag förstår riskerna, jag vill vara med på mötet",
-        "videoOnlyError": "Videofel:",
         "videoTrackError": "Det gick inte att skapa videospår.",
         "viewAllNumbers": "visa alla nummer"
     },

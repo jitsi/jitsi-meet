@@ -561,9 +561,7 @@
     },
     "poweredby": "శక్తిమంతం",
     "prejoin": {
-        "audioAndVideoError": "Audio and video error:",
         "audioDeviceProblem": "There is a problem with your audio device",
-        "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
@@ -612,7 +610,6 @@
         "premeeting": "Pre meeting",
         "screenSharingError": "Screen sharing error:",
         "startWithPhone": "Start with phone audio",
-        "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
         "viewAllNumbers": "నెంబర్లన్నిటినీ చూడండి"
     },

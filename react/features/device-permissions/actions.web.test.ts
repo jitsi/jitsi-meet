@@ -364,6 +364,23 @@ describe('retryDevices', () => {
             { options: { devices: [ 'video' ] }, type: 'CREATE_LOCAL_TRACKS' }
         ]);
     });
+
+    it('clears the pre-join warning about the access once the devices it is about work', async () => {
+        await run([ 'video' ]);
+
+        expect(dispatched('DEVICE_STATUS_OK')).toEqual([ { text: 'prejoin.lookGood', type: 'DEVICE_STATUS_OK' } ]);
+    });
+
+    it.each([
+        [ 'is about a device that still fails', 'prejoin.devicesError' ],
+        [ 'is also about another device', 'prejoin.errorNoPermissions' ]
+    ])('keeps a pre-join warning that %s', async (_, deviceStatusText) => {
+        state['features/prejoin'].deviceStatusText = deviceStatusText;
+
+        await run([ 'video' ]);
+
+        expect(dispatched('DEVICE_STATUS_OK')).toEqual([]);
+    });
 });
 
 describe('showPermissionGuidance', () => {

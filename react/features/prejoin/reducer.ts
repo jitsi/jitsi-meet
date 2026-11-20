@@ -1,5 +1,6 @@
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { isPermissionDenied } from '../device-permissions/functions';
 
 import {
     PREJOIN_JOINING_IN_PROGRESS,
@@ -141,16 +142,17 @@ ReducerRegistry.register<IPrejoinState>(
  * @returns {Object}
  */
 function getStatusFromErrors(errors: {
-    audioAndVideoError?: { message: string; };
-    audioOnlyError?: { message: string; };
-    videoOnlyError?: { message: string; }; }
+    audioAndVideoError?: { message: string; name?: string; };
+    audioOnlyError?: { message: string; name?: string; };
+    videoOnlyError?: { message: string; name?: string; }; }
 ) {
     const { audioOnlyError, videoOnlyError, audioAndVideoError } = errors;
 
     if (audioAndVideoError) {
         return {
             deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.audioAndVideoError',
+            deviceStatusText: isPermissionDenied(audioOnlyError) && isPermissionDenied(videoOnlyError)
+                ? 'prejoin.errorNoPermissions' : 'prejoin.devicesError',
             rawError: audioAndVideoError.message
         };
     }
@@ -158,7 +160,8 @@ function getStatusFromErrors(errors: {
     if (audioOnlyError) {
         return {
             deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.audioOnlyError',
+            deviceStatusText: isPermissionDenied(audioOnlyError)
+                ? 'prejoin.errorNoMicPermission' : 'deviceError.microphoneError',
             rawError: audioOnlyError.message
         };
     }
@@ -166,7 +169,8 @@ function getStatusFromErrors(errors: {
     if (videoOnlyError) {
         return {
             deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.videoOnlyError',
+            deviceStatusText: isPermissionDenied(videoOnlyError)
+                ? 'prejoin.errorNoCameraPermission' : 'deviceError.cameraError',
             rawError: videoOnlyError.message
         };
     }

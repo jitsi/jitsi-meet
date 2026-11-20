@@ -783,9 +783,7 @@
     },
     "poweredby": "Wobstarane wót",
     "prejoin": {
-        "audioAndVideoError": "zmólenje audio a wideo:",
         "audioDeviceProblem": "Dajo problem z Wašym audio-rědom.",
-        "audioOnlyError": "zmólenje audio:",
         "audioTrackError": "audio-sćažka njejo mógła se stwóriś.",
         "callMe": "mě pózwóniś",
         "callMeAtNumber": "mě pód tym numerom pózwóniś:",
@@ -837,7 +835,6 @@
         "premeeting": "naglěd",
         "screenSharingError": "zmólenje pśi sobuźělenju monitora:",
         "startWithPhone": "zachopiś z telefonowym audio",
-        "videoOnlyError": "zmólenje wideo:",
         "videoTrackError": "Sćažka wideo njejo mógła se załožyś.",
         "viewAllNumbers": "wšykne numery pokazaś"
     },

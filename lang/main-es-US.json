@@ -667,9 +667,7 @@
     },
     "poweredby": "con tecnología de",
     "prejoin": {
-        "audioAndVideoError": "Error en audio y video:",
         "audioDeviceProblem": "Hay un problema con su dispositivo de audio",
-        "audioOnlyError": "Error en audio:",
         "audioTrackError": "No se pudo crear la pista de audio.",
         "callMe": "Llámame",
         "callMeAtNumber": "Llamame a este número:",
@@ -719,7 +717,6 @@
         "premeeting": "Pre-reunión",
         "screenSharingError": "Error al compartir pantalla:",
         "startWithPhone": "Iniciar con audio de llamada telefónica",
-        "videoOnlyError": "Error con el video:",
         "videoTrackError": "No se pudo crear la pista de video.",
         "viewAllNumbers": "ver todos los números"
     },

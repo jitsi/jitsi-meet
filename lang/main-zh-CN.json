@@ -990,9 +990,7 @@
     },
     "poweredby": "技术支持由",
     "prejoin": {
-        "audioAndVideoError": "音频和视频错误：",
         "audioDeviceProblem": "你的音频设备存在问题",
-        "audioOnlyError": "音频错误：",
         "audioTrackError": "无无法创建音频轨道",
         "callMe": "呼叫我",
         "callMeAtNumber": "请拨打我的号码：",
@@ -1050,7 +1048,6 @@
         "screenSharingError": "屏幕共享出错：",
         "startWithPhone": "用电话音频开始",
         "unsafeRoomConsent": "我了解风险，仍然加入会议",
-        "videoOnlyError": "视频出错：",
         "videoTrackError": "无法创建视频轨道",
         "viewAllNumbers": "查看所有号码"
     },
