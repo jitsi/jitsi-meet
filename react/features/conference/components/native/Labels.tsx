@@ -1,6 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
+import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
+import isInsecureRoomName from '../../../base/util/isInsecureRoomName';
+import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.native';
 
 import InsecureRoomNameLabel from './InsecureRoomNameLabel';
@@ -18,37 +23,58 @@ interface IProps {
 
 /**
  * A container that renders the conference indicators, if any.
+ *
+ * @param {IProps} props - The React props passed to this component.
+ * @returns {JSX.Element}
  */
-class Labels extends Component<IProps> {
+const Labels = ({ createOnPress }: IProps) => {
+    const { t } = useTranslation();
 
-    /**
-     * Implements React {@code Component}'s render.
-     *
-     * @inheritdoc
-     */
-    override render() {
-        return (
-            <View pointerEvents = 'box-none'>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.indicatorContainer as ViewStyle }>
+    const isInsecureRoom = useSelector((state: IReduxState) => {
+        const { locked, room } = state['features/base/conference'];
+        const { lobbyEnabled } = state['features/lobby'];
+
+        return Boolean(isUnsafeRoomWarningEnabled(state)
+            && room && isInsecureRoomName(room)
+            && !(lobbyEnabled || Boolean(locked)));
+    });
+
+    const isLowBandwidth = useSelector(
+        (state: IReduxState) => Boolean(state['features/base/low-bandwidth-mode']?.enabled)
+    );
+
+    const insecureRoomNameLabel = t('security.insecureRoomNameLabel');
+    const qualityLabel = t('videoStatus.labelTooltipLowBandwidthMode');
+
+    return (
+        <View pointerEvents = 'box-none'>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.indicatorContainer as ViewStyle }>
+                {isInsecureRoom && (
                     <TouchableOpacity
+                        accessibilityLabel = { insecureRoomNameLabel }
+                        accessibilityRole = 'button'
                         hitSlop = { LabelHitSlop }
                         onPress = {
-                            this.props.createOnPress(LABEL_ID_INSECURE_ROOM_NAME)
+                            createOnPress(LABEL_ID_INSECURE_ROOM_NAME)
                         } >
                         <InsecureRoomNameLabel />
                     </TouchableOpacity>
+                )}
+                {isLowBandwidth && (
                     <TouchableOpacity
+                        accessibilityLabel = { qualityLabel }
+                        accessibilityRole = 'button'
                         hitSlop = { LabelHitSlop }
                         onPress = {
-                            this.props.createOnPress(LABEL_ID_QUALITY) } >
+                            createOnPress(LABEL_ID_QUALITY) } >
                         <VideoQualityLabel />
                     </TouchableOpacity>
-                </View>
+                )}
             </View>
-        );
-    }
-}
+        </View>
+    );
+};
 
 export default Labels;
