@@ -10,31 +10,46 @@ import logger from './logger';
 const MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO = 39;
 const MIN_MACOS_VERSION_FOR_AUDIO = [ 14, 2 ];
 
-// The macOS version split into numbers, read once at load. The user agent string always reports 10.15.7.
+// The macOS version split into numbers, read on first use. The user agent string always reports 10.15.7.
 let macOSVersion: number[] | undefined;
+let macOSVersionLookup: Promise<void> | undefined;
 
-if (browser.isElectron() && isMacOS()) {
-    const { userAgentData } = navigator as unknown as {
-        userAgentData?: {
-            getHighEntropyValues: (hints: string[]) => Promise<{ platformVersion?: string; }>;
+/**
+ * Returns the macOS version, starting its lookup on the first call. It returns undefined until the lookup has
+ * finished, or if it failed.
+ *
+ * @returns {number[] | undefined}
+ */
+function getMacOSVersion() {
+    if (!macOSVersionLookup) {
+        const { userAgentData } = navigator as unknown as {
+            userAgentData?: {
+                getHighEntropyValues: (hints: string[]) => Promise<{ platformVersion?: string; }>;
+            };
         };
-    };
 
-    userAgentData?.getHighEntropyValues([ 'platformVersion' ])
-        .then(({ platformVersion }) => {
-            macOSVersion = platformVersion?.split('.').map(Number);
-            logger.info(`macOS version: ${platformVersion}`);
-        })
-        .catch((error: Error) => logger.warn('Failed to read the macOS version', error));
+        macOSVersionLookup = userAgentData
+            ? userAgentData.getHighEntropyValues([ 'platformVersion' ])
+                .then(({ platformVersion }) => {
+                    macOSVersion = platformVersion?.split('.').map(Number);
+                    logger.info(`macOS version: ${platformVersion}`);
+                })
+                .catch((error: Error) => logger.warn('Failed to read the macOS version', error))
+            : Promise.resolve();
+    }
+
+    return macOSVersion;
 }
 
 /**
  * Returns whether the Electron app can share system audio. It is supported on Windows, and on macOS 14.2 or
- * later with Electron 39 or later. On macOS it returns false until the macOS version has been read.
+ * later with Electron 39 or later when the host app has declared it with {@code desktopSharingMacOSSystemAudio}.
+ * On macOS it returns false until the macOS version has been read.
  *
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isElectronSystemAudioSupported() {
+export function isElectronSystemAudioSupported(state: IReduxState) {
     if (!browser.isElectron()) {
         return false;
     }
@@ -43,12 +58,21 @@ export function isElectronSystemAudioSupported() {
         return true;
     }
 
-    // Not isVersionLessThan, which returns false for an unknown version.
-    if (!isMacOS() || !macOSVersion || !browser.isVersionGreaterThan(MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO - 1)) {
+    // Without NSAudioCaptureUsageDescription in the host's Info.plist macOS hands out a silent track, so the host
+    // has to say it has the key. Not isVersionLessThan, which returns false for an unknown version.
+    if (!isMacOS()
+            || !state['features/base/config'].desktopSharingMacOSSystemAudio
+            || !browser.isVersionGreaterThan(MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO - 1)) {
         return false;
     }
 
-    const [ major = 0, minor = 0 ] = macOSVersion;
+    const version = getMacOSVersion();
+
+    if (!version) {
+        return false;
+    }
+
+    const [ major = 0, minor = 0 ] = version;
     const [ minMajor, minMinor ] = MIN_MACOS_VERSION_FOR_AUDIO;
 
     return major > minMajor || (major === minMajor && minor >= minMinor);
@@ -57,17 +81,18 @@ export function isElectronSystemAudioSupported() {
 /**
  * Returns whether the Electron desktop picker offers to share system audio with a source of the given type.
  *
+ * @param {IReduxState} state - The state of the application.
  * @param {string} type - The desktop source type, 'screen' or 'window'.
  * @returns {boolean}
  */
-export function isSystemAudioOfferedFor(type: string) {
+export function isSystemAudioOfferedFor(state: IReduxState, type: string) {
     // A Windows window capture carries no system audio. The macOS loopback is the whole system's, so it goes
     // with a window as well.
     if (isWindows()) {
         return type === 'screen';
     }
 
-    return (type === 'screen' || type === 'window') && isElectronSystemAudioSupported();
+    return (type === 'screen' || type === 'window') && isElectronSystemAudioSupported(state);
 }
 
 /**
@@ -94,11 +119,12 @@ export function isScreenAudioShared(state: IReduxState) {
  * Returns the visibility of the audio only screen share button. Currently only Chromium based desktop browsers
  * and the Electron app where it can share system audio support this functionality.
  *
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenAudioSupported() {
+export function isScreenAudioSupported(state: IReduxState) {
     return (!isMobileBrowser() && browser.isChromiumBased() && !browser.isElectron())
-        || isElectronSystemAudioSupported();
+        || isElectronSystemAudioSupported(state);
 }
 
 /**

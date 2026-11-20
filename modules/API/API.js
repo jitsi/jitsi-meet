@@ -562,7 +562,7 @@ function initCommands() {
         },
         'toggle-share-audio': () => {
             sendAnalytics(createApiEvent('audio.screen.sharing.toggled'));
-            if (isScreenAudioSupported()) {
+            if (isScreenAudioSupported(APP.store.getState())) {
                 APP.store.dispatch(startAudioScreenShareFlow());
 
                 return;
