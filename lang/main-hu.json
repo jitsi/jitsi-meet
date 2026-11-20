@@ -598,9 +598,7 @@
     },
     "poweredby": "Működteti a",
     "prejoin": {
-        "audioAndVideoError": "Hang és videó hiba:",
         "audioDeviceProblem": "Hiba lépett fel az hangeszközzel",
-        "audioOnlyError": "Hang hiba:",
         "audioTrackError": "Nem lehet a hangot rögzíteni.",
         "callMe": "Hívj fel",
         "callMeAtNumber": "Hívj fel ezen a számon:",
@@ -641,7 +639,6 @@
         "premeeting": "Csatlakozás előtt",
         "screenSharingError": "Képernyő megosztás hiba:",
         "startWithPhone": "Kezdés telefonhanggal",
-        "videoOnlyError": "Videó hiba:",
         "videoTrackError": "Nem sikerült a videó megjelenítés.",
         "viewAllNumbers": "Összes szám megjelenítése"
     },

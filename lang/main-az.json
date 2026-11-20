@@ -1148,9 +1148,7 @@
     },
     "poweredby": "Dəstəkləyən:",
     "prejoin": {
-        "audioAndVideoError": "Səs və video xətası:",
         "audioDeviceProblem": "Səs cihazınızda problem var",
-        "audioOnlyError": "Səs xətası:",
         "audioTrackError": "Səs treki yaratmaq mümkün olmadı.",
         "callMe": "Mənə zəng et",
         "callMeAtNumber": "Mənə bu nömrəyə zəng et:",
@@ -1209,7 +1207,6 @@
         "screenSharingError": "Ekran paylaşımı xətası:",
         "startWithPhone": "Telefon səsi ilə başlat",
         "unsafeRoomConsent": "Riskləri başa düşürəm, görüşə qoşulmaq istəyirəm",
-        "videoOnlyError": "Video xətası:",
         "videoTrackError": "Video treki yaratmaq mümkün olmadı.",
         "viewAllNumbers": "bütün nömrələrə bax"
     },

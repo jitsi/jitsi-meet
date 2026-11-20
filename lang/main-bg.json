@@ -981,9 +981,7 @@
     },
     "poweredby": "с подкрепата на",
     "prejoin": {
-        "audioAndVideoError": "Грешка в аудио и видео:",
         "audioDeviceProblem": "Има проблем с вашето аудио устройство",
-        "audioOnlyError": "Грешка в аудиото:",
         "audioTrackError": "Не можа да се създаде аудио запис.",
         "callMe": "Позвънете ми",
         "callMeAtNumber": "Позвънете ми на този номер:",
@@ -1041,7 +1039,6 @@
         "screenSharingError": "Грешка при споделяне на екран:",
         "startWithPhone": "Започни с телефонно аудио",
         "unsafeRoomConsent": "Разбирам рисковете, искам да се присъединя към срещата",
-        "videoOnlyError": "Грешка във видеото:",
         "videoTrackError": "Не можа да се създаде видео запис.",
         "viewAllNumbers": "виж всички номера"
     },

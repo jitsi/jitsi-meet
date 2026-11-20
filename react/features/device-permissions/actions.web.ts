@@ -28,6 +28,13 @@ let dialogKey = 0;
 // The ended tracks already dealt with, the permission and the end of a track are reported separately.
 const endedTracks = new WeakSet();
 
+// The devices that the pre-join warnings about the access are about.
+const PERMISSION_WARNINGS: { [key: string]: CaptureKind[]; } = {
+    'prejoin.errorNoCameraPermission': [ 'video' ],
+    'prejoin.errorNoMicPermission': [ 'audio' ],
+    'prejoin.errorNoPermissions': [ 'audio', 'video' ]
+};
+
 // When each track that replaced an ended one was created.
 const retriedAt = new WeakMap<object, number>();
 
@@ -243,9 +250,11 @@ export function retryDevices(kinds: CaptureKind[]) {
         await dispatch(createLocalTracksA({ devices: missing }));
 
         const state = getState();
+        const warned = PERMISSION_WARNINGS[state['features/prejoin'].deviceStatusText];
 
+        // Only a warning about the access, which goes once every device it is about works.
         if (isPrejoinPageVisible(state)
-                && missing.every(kind => getLocalTrack(state['features/base/tracks'], kind)?.jitsiTrack)) {
+                && warned?.every(kind => getLocalTrack(state['features/base/tracks'], kind)?.jitsiTrack)) {
             dispatch(setDeviceStatusOk('prejoin.lookGood'));
         }
     };

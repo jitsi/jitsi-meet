@@ -1148,9 +1148,7 @@
     },
     "poweredby": "mogelijk gemaakt door",
     "prejoin": {
-        "audioAndVideoError": "Audio- en videofout:",
         "audioDeviceProblem": "Er is een probleem met uw audio-apparaat",
-        "audioOnlyError": "Audiofout:",
         "audioTrackError": "Kon audiotrack niet aanmaken.",
         "callMe": "Bel mij",
         "callMeAtNumber": "Bel mij op dit nummer:",
@@ -1209,7 +1207,6 @@
         "screenSharingError": "Fout bij schermdeling:",
         "startWithPhone": "Starten met telefoonaudio",
         "unsafeRoomConsent": "Ik begrijp de risico's en ik wil deelnemen aan de vergadering",
-        "videoOnlyError": "Videofout:",
         "videoTrackError": "Kon videotrack niet aanmaken.",
         "viewAllNumbers": "bekijk alle nummers"
     },

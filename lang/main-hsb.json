@@ -757,9 +757,7 @@
     },
     "poweredby": "poskićene wot",
     "prejoin": {
-        "audioAndVideoError": "awdijowy a widejowy zmylk:",
         "audioDeviceProblem": "Eksistuje problem z Wašim awdijowym nastrojom.",
-        "audioOnlyError": "awdijowy zmylk:",
         "audioTrackError": "Awdijowy trak njemóžeše so zestajić.",
         "callMe": "mje zawołać",
         "callMeAtNumber": "Mje pod tutym čisłom zawołać:",
@@ -810,7 +808,6 @@
         "premeeting": "předstwa",
         "screenSharingError": "zmylk při dopušćenju wužiwanja monitora:",
         "startWithPhone": "z telefoniskim awdijom startować",
-        "videoOnlyError": "widejowy zmylk:",
         "videoTrackError": "widejowy trak njebě móžny",
         "viewAllNumbers": "wšitke čisła pokazać"
     },

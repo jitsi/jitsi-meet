@@ -880,9 +880,7 @@
     },
     "poweredby": "Được hỗ trợ bởi",
     "prejoin": {
-        "audioAndVideoError": "Lỗi âm thanh và video:",
         "audioDeviceProblem": "Có vấn đề với thiết bị âm thanh của bạn",
-        "audioOnlyError": "Lỗi âm thanh:",
         "audioTrackError": "Không thể tạo track âm thanh.",
         "callMe": "Gọi cho tôi",
         "callMeAtNumber": "Gọi cho tôi ở số này:",
@@ -937,7 +935,6 @@
         "screenSharingError": "Lỗi chia sẻ màn hình:",
         "startWithPhone": "Bắt đầu với âm thanh điện thoại",
         "unsafeRoomConsent": "Tôi hiểu rủi ro, tôi muốn tham gia cuộc họp",
-        "videoOnlyError": "Lỗi video:",
         "videoTrackError": "Không thể tạo track video.",
         "viewAllNumbers": "Xem tất cả các số"
     },

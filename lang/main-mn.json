@@ -1009,9 +1009,7 @@
     },
     "poweredby": "дэмжигдсэн",
     "prejoin": {
-        "audioAndVideoError": "Дуу, дүрсний алдаа:",
         "audioDeviceProblem": "Дууны төхөөрөмж гэмтэлтэй байна",
-        "audioOnlyError": "Дууны алдаа:",
         "audioTrackError": "Дууг хадгалж чадсангүй.",
         "callMe": "Над руу залга",
         "callMeAtNumber": "Энэ дугаараар над руу залга:",
@@ -1069,7 +1067,6 @@
         "screenSharingError": "Дэлгэц хуваалцахад алдаа гарлаа:",
         "startWithPhone": "Утасны дуугаар холбогдох",
         "unsafeRoomConsent": "Эрсдэлийг ойлгосон, уулзалтад оролцохыг хүсч байна",
-        "videoOnlyError": "Видео дамжуулалтын алдаа:",
         "videoTrackError": "Видео бичлэг үүсгэж чадсангүй.",
         "viewAllNumbers": "бүх дугаарыг харах"
     },

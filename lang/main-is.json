@@ -870,9 +870,7 @@
     },
     "poweredby": "keyrt með",
     "prejoin": {
-        "audioAndVideoError": "Villa í hljóð og myndmerki:",
         "audioDeviceProblem": "Það kom upp vandamál með hljóðtækið þitt",
-        "audioOnlyError": "Villa í hljóði:",
         "audioTrackError": "Gat ekki búið til hljóðrás.",
         "callMe": "Hringdu í mig",
         "callMeAtNumber": "Hringdu í mig í þessu númeri:",
@@ -926,7 +924,6 @@
         "screenSharingError": "Villa í skjádeilingu:",
         "startWithPhone": "Byrja með símahljóði",
         "unsafeRoomConsent": "Ég skil áhættuna, ég vil taka þátt í fundinum",
-        "videoOnlyError": "Villa í myndmerki:",
         "videoTrackError": "Gat ekki búið til myndrás.",
         "viewAllNumbers": "skoða öll númer"
     },

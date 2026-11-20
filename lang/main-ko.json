@@ -905,9 +905,7 @@
     },
     "poweredby": "제공:",
     "prejoin": {
-        "audioAndVideoError": "오디오 및 비디오 오류:",
         "audioDeviceProblem": "오디오 장치에 문제가 있습니다",
-        "audioOnlyError": "오디오 오류:",
         "audioTrackError": "오디오 트랙을 생성할 수 없습니다.",
         "callMe": "나에게 전화하기",
         "callMeAtNumber": "이 번호로 전화하기:",
@@ -965,7 +963,6 @@
         "screenSharingError": "화면 공유 오류:",
         "startWithPhone": "전화 오디오로 시작",
         "unsafeRoomConsent": "위험을 이해하며 회의에 참여하고 싶습니다",
-        "videoOnlyError": "비디오 오류:",
         "videoTrackError": "비디오 트랙을 생성할 수 없습니다.",
         "viewAllNumbers": "모든 번호 보기"
     },

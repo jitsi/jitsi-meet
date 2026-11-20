@@ -1002,9 +1002,7 @@
     },
     "poweredby": "tukija:",
     "prejoin": {
-        "audioAndVideoError": "Ääni- ja videovirhe:",
         "audioDeviceProblem": "Äänilaitteessasi on ongelma",
-        "audioOnlyError": "Äänivirhe:",
         "audioTrackError": "Ääniraidan luominen epäonnistui.",
         "callMe": "Soita minulle",
         "callMeAtNumber": "Soita minulle tähän numeroon:",
@@ -1062,7 +1060,6 @@
         "screenSharingError": "Näytön jakovirhe:",
         "startWithPhone": "Aloita puhelinäänellä",
         "unsafeRoomConsent": "Ymmärrän riskit ja haluan liittyä kokoukseen",
-        "videoOnlyError": "Videovirhe:",
         "videoTrackError": "Videoraitaa ei voitu luoda.",
         "viewAllNumbers": "katso kaikki numerot"
     },

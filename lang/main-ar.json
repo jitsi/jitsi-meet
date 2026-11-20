@@ -770,9 +770,7 @@
     },
     "poweredby": "مُشغَّل بوساطة",
     "prejoin": {
-        "audioAndVideoError": "خطأ في الصوت أو الفيديو:",
         "audioDeviceProblem": "هنالك خطأ في جهاز الصوت لديك.",
-        "audioOnlyError": "خطأ في الصوت:",
         "audioTrackError": "لم نتمكن من إنشاء ملف الصوت",
         "callMe": "اتصل بي",
         "callMeAtNumber": "اتصل بي على هذا الرقم:",
@@ -824,7 +822,6 @@
         "premeeting": "ما قبل المُلتقى",
         "screenSharingError": "خطأ في مشاركة الشاشة:",
         "startWithPhone": "البدء مع جهاز الصوت من الجوال",
-        "videoOnlyError": "خطأ في الفيديو:",
         "videoTrackError": "لم نتمكن من إنشاء ملف الفيديو",
         "viewAllNumbers": "عرض جميع الأرقام"
     },

@@ -900,9 +900,7 @@
     },
     "poweredby": "tarafından",
     "prejoin": {
-        "audioAndVideoError": "Ses ve video hatası:",
         "audioDeviceProblem": "Ses cihazınızla ilgili bir sorun var",
-        "audioOnlyError": "Ses Hatası:",
         "audioTrackError": "Ses parçası oluşturulamadı.",
         "callMe": "Beni ara",
         "callMeAtNumber": "Beni şu numaradan arayın:",
@@ -960,7 +958,6 @@
         "screenSharingError": "Ekran paylaşma hatası:",
         "startWithPhone": "Telefon sesiyle başlayın",
         "unsafeRoomConsent": "Riskleri anlıyorum, toplantıya katılmak istiyorum",
-        "videoOnlyError": "Video hatası:",
         "videoTrackError": "Video izleme oluşturulamadı.",
         "viewAllNumbers": "Tüm numaraları görüntüle"
     },
