@@ -2,6 +2,7 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { disableLobby, enableLobby, setAffiliation } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
@@ -618,6 +619,43 @@ describe('mod_muc_lobby_rooms', () => {
 
             // The invite makes the invitee a member of the members-only room.
             await join(waiting, r, 'Waiting');
+        });
+
+        it('refuses a mediated invite to the lobby room', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            const host = await connect();
+
+            await join(host, r, 'Host');
+            await setAffiliation(r, host.jid.split('/')[0], 'owner');
+
+            const lobbyJid = await enableLobby(r);
+            const waiting = await connect();
+
+            await join(waiting, lobbyJid, 'Waiting');
+
+            // The lobby filter drops every message from the lobby room jid to a client, the error included,
+            // so the test watches the muc-invite event, which fires only for an invite that is accepted.
+            await prosodyShell('>prosody.test_lobby_invite_handler = function() prosody.test_lobby_invite = true end;'
+                + ` prosody.hosts["${LOBBY}"].events.add_handler("muc-invite",`
+                + ' prosody.test_lobby_invite_handler, 1000)');
+
+            try {
+                await waiting.sendRaw(invite(lobbyJid, host.jid));
+
+                const delivered = await host.waitForMessage(isInvite, 1000).then(() => true, () => false);
+
+                assert.strictEqual(delivered, false, 'invite must not be delivered');
+                const accepted = await prosodyShell(
+                    '>print("invite accepted:" .. tostring(prosody.test_lobby_invite == true))');
+
+                assert.match(accepted, /invite accepted:false/, 'the lobby room must not accept the invite');
+            } finally {
+                await prosodyShell(`>prosody.hosts["${LOBBY}"].events.remove_handler("muc-invite",`
+                    + ' prosody.test_lobby_invite_handler); prosody.test_lobby_invite_handler = nil;'
+                    + ' prosody.test_lobby_invite = nil');
+            }
         });
 
         it('admits a participant from the lobby with an invite from a moderator in a breakout room', async () => {

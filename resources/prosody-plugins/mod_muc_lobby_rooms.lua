@@ -467,6 +467,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     -- enable filtering presences in the lobby muc rooms
     filters.add_filter_hook(filter_session);
 
+    -- No flow invites into a lobby room. Admitting from the lobby is an invite to the main room.
+    host_module:hook('muc-pre-invite', util.refuse_mediated_invite);
+
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
     module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);
 

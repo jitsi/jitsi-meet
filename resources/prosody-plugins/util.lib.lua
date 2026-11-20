@@ -202,6 +202,16 @@ function get_occupant_by_real_jid(room, real_jid)
     return nil, nil;
 end
 
+-- A muc-pre-invite handler that refuses every mediated invite (XEP-0045 §7.8.2) to a room. For MUC components
+-- where no Jitsi flow sends one: the lobby, breakout rooms and visitor nodes. The main MUC handles invites in
+-- mod_muc_lobby_rooms.
+-- @param event the muc-pre-invite event
+-- @return true, so that the invite is not sent
+function refuse_mediated_invite(event)
+    event.origin.send(st.error_reply(event.stanza, 'auth', 'forbidden', nil, event.room.jid));
+    return true;
+end
+
 function async_handler_wrapper(event, handler)
     if not have_async then
         module:log("error", "requires a version of Prosody with util.async");
@@ -839,6 +849,7 @@ return {
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
     get_occupant_by_real_jid = get_occupant_by_real_jid;
+    refuse_mediated_invite = refuse_mediated_invite;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
     build_room_address = build_room_address;

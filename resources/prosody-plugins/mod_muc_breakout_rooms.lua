@@ -743,6 +743,9 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     -- Advertise the breakout rooms component so clients can pick up the address and use it
     module:add_identity('component', BREAKOUT_ROOMS_IDENTITY_TYPE, breakout_rooms_muc_component_config);
 
+    -- No flow invites into a breakout room. Admitting from the lobby is an invite to the main room.
+    host_module:hook('muc-pre-invite', util.refuse_mediated_invite);
+
     -- Tag the disco#info response with available features of breakout rooms.
     host_module:hook('host-disco-info-node', function (event)
         local session, reply, node = event.origin, event.reply, event.node;
