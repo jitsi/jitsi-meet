@@ -1,11 +1,14 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { disableLobby, enableLobby, setAffiliation } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const LOBBY = 'lobby.conference.localhost';
+const BREAKOUT_MUC = 'breakout.conference.localhost';
 const LOBBY_NS = 'http://jitsi.org/jitmeet';
 const MUC_NS = 'http://jabber.org/protocol/muc#user';
 
@@ -441,6 +444,264 @@ describe('mod_muc_lobby_rooms', () => {
 
             assert.strictEqual(kicked, false, 'focus must not be removed by an unauthorized sender');
             assert.equal(resp.attrs.type, 'error', 'IQ must be rejected');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // mediated invites (XEP-0045 §7.8.2)
+    // -------------------------------------------------------------------------
+    describe('mediated invite', () => {
+
+        /**
+         * Builds a mediated invite to the room. Any extra children are placed
+         * next to the muc#user <x>.
+         * @param {string} roomJid   Room the invite is sent to.
+         * @param {string} invitee   Real JID of the invited user.
+         * @param {Array}  [extra]   Extra child elements of the message.
+         * @returns {Element}
+         */
+        function invite(roomJid, invitee, extra = []) {
+            return xml('message', { to: roomJid },
+                xml('x', { xmlns: MUC_NS }, xml('invite', { to: invitee })),
+                ...extra);
+        }
+
+        /**
+         * Returns true for a message that carries a mediated invite.
+         * @param {Element} s
+         * @returns {boolean}
+         */
+        const isInvite = s => Boolean(s.getChild('x', MUC_NS)?.getChild('invite'));
+
+        /**
+         * Returns the default nick joinRoom uses: anonymous_strict requires the
+         * first 8 characters of the local part of the JID.
+         * @param {object} c
+         * @returns {string}
+         */
+        const nickOf = c => c.jid.split('@')[0].slice(0, 8);
+
+        /**
+         * Joins a room with the default nick and fails if the join is refused.
+         * @param {object} c
+         * @param {string} roomJid
+         * @param {string} displayName
+         * @returns {Promise<void>}
+         */
+        async function join(c, roomJid, displayName) {
+            const presence = await c.joinRoom(roomJid, undefined, { displayName });
+
+            assert.notEqual(presence.attrs.type, 'error', `${displayName} must join ${roomJid}`);
+        }
+
+        /**
+         * Joins `host` and `guest` to a new room and makes `host` a moderator.
+         * @returns {Promise<{ r: string, host: object, guest: object }>}
+         */
+        async function roomWithHostAndGuest() {
+            const r = room();
+            const focus = await focusJoin(r);
+            const host = await connect();
+            const guest = await connect();
+
+            await join(host, r, 'Host');
+            await focus.grantModerator(r, nickOf(host));
+            await join(guest, r, 'Guest');
+
+            return { r,
+                host,
+                guest };
+        }
+
+        /**
+         * Waits for the forbidden error the room sends back to `sender`, then
+         * checks that `recipient` got no invite.
+         * @param {object} sender
+         * @param {string} roomJid
+         * @param {object} recipient
+         * @returns {Promise<void>}
+         */
+        async function expectRefused(sender, roomJid, recipient) {
+            const error = await sender.waitForMessage(s => s.attrs.type === 'error' && s.attrs.from === roomJid);
+
+            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
+
+            const delivered = await recipient.waitForMessage(isInvite, 500).then(() => true, () => false);
+
+            assert.strictEqual(delivered, false, 'invite must not be delivered');
+        }
+
+        it('relays only the invite element from a moderator', async () => {
+            const { r, host, guest } = await roomWithHostAndGuest();
+
+            await host.sendRaw(invite(r, guest.jid, [
+                xml('body', {}, 'text from host'),
+                xml('subject', {}, 'subject from host'),
+                xml('thread', {}, 'thread-1'),
+                xml('json-message', { xmlns: LOBBY_NS }, JSON.stringify({ type: 'test' })),
+                xml('apply-to', { xmlns: 'urn:xmpp:fasten:0',
+                    id: 'some-message-id' })
+            ]));
+
+            const received = await guest.waitForMessage(isInvite);
+
+            assert.equal(received.attrs.from, r, 'invite must come from the room');
+            assert.equal(received.getChild('x', MUC_NS).getChild('invite').attrs.from, `${r}/${nickOf(host)}`,
+                'invite must name the sender by occupant jid');
+
+            // Only the muc#user <x> and the <body> that Prosody adds to an invite.
+            const childNames = received.getChildElements().map(c => c.name);
+
+            assert.deepEqual(childNames.filter(n => n !== 'x' && n !== 'body'), [],
+                `unexpected children: ${childNames.join(', ')}`);
+            assert.notEqual(received.getChildText('body'), 'text from host',
+                'the sender body must not be copied');
+        });
+
+        it('rejects an invite from a participant', async () => {
+            const { r, host, guest } = await roomWithHostAndGuest();
+
+            await guest.sendRaw(invite(r, host.jid));
+            await expectRefused(guest, r, host);
+        });
+
+        it('rejects an invite element in another namespace from a participant', async () => {
+            const { r, host, guest } = await roomWithHostAndGuest();
+
+            await guest.sendRaw(xml('message', { to: r },
+                xml('x', { xmlns: MUC_NS },
+                    xml('invite', { xmlns: 'urn:example:other',
+                        to: host.jid }))));
+            await expectRefused(guest, r, host);
+        });
+
+        it('rejects an invite from a user who is not in the room', async () => {
+            const { r, host } = await roomWithHostAndGuest();
+            const other = await connect();
+
+            await other.sendRaw(invite(r, host.jid));
+            await expectRefused(other, r, host);
+        });
+
+        it('rejects an invite from a moderator who left the room', async () => {
+            const { r, host, guest } = await roomWithHostAndGuest();
+
+            await host.leaveRoom(r, nickOf(host));
+            await host.sendRaw(invite(r, guest.jid));
+            await expectRefused(host, r, guest);
+        });
+
+        it('admits a participant from the lobby with the invite', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            const host = await connect();
+
+            await join(host, r, 'Host');
+
+            // Enabling the lobby makes the room members-only, which removes occupants
+            // without an affiliation, so the moderator here is an owner.
+            await setAffiliation(r, host.jid.split('/')[0], 'owner');
+
+            const lobbyJid = await enableLobby(r);
+            const waiting = await connect();
+            const blocked = await waiting.joinRoom(r, undefined, { displayName: 'Waiting' });
+
+            assert.ok(blocked.getChild('error')?.getChild('registration-required'),
+                'join before the invite must be blocked by the lobby');
+
+            await join(waiting, lobbyJid, 'Waiting');
+            await host.sendRaw(invite(r, waiting.jid));
+
+            const received = await waiting.waitForMessage(isInvite);
+
+            assert.equal(received.attrs.from, r, 'invite must come from the room');
+
+            // The invite makes the invitee a member of the members-only room.
+            await join(waiting, r, 'Waiting');
+        });
+
+        it('refuses a mediated invite to the lobby room', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            const host = await connect();
+
+            await join(host, r, 'Host');
+            await setAffiliation(r, host.jid.split('/')[0], 'owner');
+
+            const lobbyJid = await enableLobby(r);
+            const waiting = await connect();
+
+            await join(waiting, lobbyJid, 'Waiting');
+
+            // The lobby filter drops every message from the lobby room jid to a client, the error included,
+            // so the test watches the muc-invite event, which fires only for an invite that is accepted.
+            await prosodyShell('>prosody.test_lobby_invite_handler = function() prosody.test_lobby_invite = true end;'
+                + ` prosody.hosts["${LOBBY}"].events.add_handler("muc-invite",`
+                + ' prosody.test_lobby_invite_handler, 1000)');
+
+            try {
+                await waiting.sendRaw(invite(lobbyJid, host.jid));
+
+                const delivered = await host.waitForMessage(isInvite, 1000).then(() => true, () => false);
+
+                assert.strictEqual(delivered, false, 'invite must not be delivered');
+                const accepted = await prosodyShell(
+                    '>print("invite accepted:" .. tostring(prosody.test_lobby_invite == true))');
+
+                assert.match(accepted, /invite accepted:false/, 'the lobby room must not accept the invite');
+            } finally {
+                await prosodyShell(`>prosody.hosts["${LOBBY}"].events.remove_handler("muc-invite",`
+                    + ' prosody.test_lobby_invite_handler); prosody.test_lobby_invite_handler = nil;'
+                    + ' prosody.test_lobby_invite = nil');
+            }
+        });
+
+        it('admits a participant from the lobby with an invite from a moderator in a breakout room', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const host = await connect({ params: { room: roomName,
+                token } });
+
+            await join(host, r, 'Host');
+
+            const lobbyJid = await enableLobby(r);
+
+            await host.sendBreakoutRoomsMessage(BREAKOUT_MUC, 'features/breakout-rooms/add',
+                { subject: 'Breakout 1' });
+
+            const parseJson = s => {
+                try {
+                    return JSON.parse(s.getChildText('json-message', LOBBY_NS));
+                } catch {
+                    return null;
+                }
+            };
+            const update = await host.waitForMessage(
+                s => parseJson(s)?.event === 'features/breakout-rooms/update');
+            const breakoutJid = Object.values(parseJson(update).rooms).find(br => !br.isMainRoom)?.jid;
+
+            assert.ok(breakoutJid, 'breakout room jid must be in the update');
+
+            // Focus creates the breakout room, then the moderator moves there.
+            await focus.joinRoom(breakoutJid, 'focus');
+            await host.leaveRoom(r, nickOf(host));
+            await join(host, breakoutJid, 'Host');
+
+            const waiting = await connect();
+
+            await join(waiting, lobbyJid, 'Waiting');
+            await host.sendRaw(invite(r, waiting.jid));
+
+            const received = await waiting.waitForMessage(isInvite);
+
+            assert.equal(received.attrs.from, r, 'invite must come from the main room');
+
+            await join(waiting, r, 'Waiting');
         });
     });
 });

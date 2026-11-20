@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 import path from 'path';
 import { DockerComposeEnvironment, Wait } from 'testcontainers';
@@ -274,6 +275,30 @@ describe('visitor node s2s to the main prosody', () => {
         await joinFromVisitorMuc(room, 'component');
 
         await assert.rejects(presenceSeenBy(participant, room, 'component'), 'the participant saw the join');
+    });
+
+    it('mod_fmuc refuses a mediated invite to a room of the visitor node', async () => {
+        const room = `visitors-invite-${++_roomCounter}@${VISITOR_MUC}`;
+
+        assert.equal(await runLua(visitor,
+            `return prosody.hosts["${VISITOR_MUC}"].modules.muc.create_room("${room}") ~= nil`), 'true',
+            'the room must be created');
+
+        const sender = await connectVisitor();
+        const invitee = await connectVisitor();
+
+        await sender.sendRaw(xml('message', { to: room },
+            xml('x', { xmlns: 'http://jabber.org/protocol/muc#user' }, xml('invite', { to: invitee.jid }))));
+
+        const error = await sender.waitForMessage(s => s.attrs.type === 'error' && s.attrs.from === room);
+
+        assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
+
+        const delivered = await invitee.waitForMessage(
+            s => Boolean(s.getChild('x', 'http://jabber.org/protocol/muc#user')?.getChild('invite')), 500)
+            .then(() => true, () => false);
+
+        assert.strictEqual(delivered, false, 'invite must not be delivered');
     });
 
     describe('with mod_fmuc not loaded on the visitor node', () => {
