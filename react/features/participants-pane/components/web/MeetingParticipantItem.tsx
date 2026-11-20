@@ -25,8 +25,7 @@ import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,
-    getQuickActionButtonType,
-    participantMatchesSearch
+    getQuickActionButtonType
 } from '../../functions';
 
 import ParticipantActionEllipsis from './ParticipantActionEllipsis';
@@ -79,11 +78,6 @@ interface IProps {
      * Shared video local participant owner.
      */
     _localVideoOwner: boolean;
-
-    /**
-     * Whether or not the participant name matches the search string.
-     */
-    _matchesSearch: boolean;
 
     /**
      * The participant.
@@ -183,7 +177,6 @@ function MeetingParticipantItem({
     _hasAgentMenu,
     _local,
     _localVideoOwner,
-    _matchesSearch,
     _participant,
     _participantID,
     _quickActionButtonType,
@@ -227,10 +220,6 @@ function MeetingParticipantItem({
             }
         };
     }, [ _audioTrack ]);
-
-    if (!_matchesSearch) {
-        return null;
-    }
 
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
@@ -293,12 +282,11 @@ function MeetingParticipantItem({
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participantID, searchString } = ownProps;
+    const { participantID } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const _displayName = getParticipantDisplayName(state, participant?.id ?? '');
-    const _matchesSearch = participantMatchesSearch(participant, searchString);
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
@@ -319,7 +307,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _hasAgentMenu: hasVoiceAgentMenuItems(state, false),
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
-        _matchesSearch,
         _participant: participant,
         _participantID: participant?.id ?? '',
         _quickActionButtonType,
