@@ -7,6 +7,7 @@ import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const LOBBY = 'lobby.conference.localhost';
+const BREAKOUT_MUC = 'breakout.conference.localhost';
 const LOBBY_NS = 'http://jitsi.org/jitmeet';
 const MUC_NS = 'http://jabber.org/protocol/muc#user';
 
@@ -511,12 +512,31 @@ describe('mod_muc_lobby_rooms', () => {
                 guest };
         }
 
+        /**
+         * Waits for the forbidden error the room sends back to `sender`, then
+         * checks that `recipient` got no invite.
+         * @param {object} sender
+         * @param {string} roomJid
+         * @param {object} recipient
+         * @returns {Promise<void>}
+         */
+        async function expectRefused(sender, roomJid, recipient) {
+            const error = await sender.waitForMessage(s => s.attrs.type === 'error' && s.attrs.from === roomJid);
+
+            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
+
+            const delivered = await recipient.waitForMessage(isInvite, 500).then(() => true, () => false);
+
+            assert.strictEqual(delivered, false, 'invite must not be delivered');
+        }
+
         it('relays only the invite element from a moderator', async () => {
             const { r, host, guest } = await roomWithHostAndGuest();
 
             await host.sendRaw(invite(r, guest.jid, [
                 xml('body', {}, 'text from host'),
                 xml('subject', {}, 'subject from host'),
+                xml('thread', {}, 'thread-1'),
                 xml('json-message', { xmlns: LOBBY_NS }, JSON.stringify({ type: 'test' })),
                 xml('apply-to', { xmlns: 'urn:xmpp:fasten:0',
                     id: 'some-message-id' })
@@ -527,27 +547,31 @@ describe('mod_muc_lobby_rooms', () => {
             assert.equal(received.attrs.from, r, 'invite must come from the room');
             assert.equal(received.getChild('x', MUC_NS).getChild('invite').attrs.from, `${r}/${nickOf(host)}`,
                 'invite must name the sender by occupant jid');
+
+            // Only the muc#user <x> and the <body> that Prosody adds to an invite.
+            const childNames = received.getChildElements().map(c => c.name);
+
+            assert.deepEqual(childNames.filter(n => n !== 'x' && n !== 'body'), [],
+                `unexpected children: ${childNames.join(', ')}`);
             assert.notEqual(received.getChildText('body'), 'text from host',
                 'the sender body must not be copied');
-            assert.equal(received.getChild('subject'), undefined, 'subject must not be copied');
-            assert.equal(received.getChild('json-message', LOBBY_NS), undefined,
-                'json-message must not be copied');
-            assert.equal(received.getChild('apply-to', 'urn:xmpp:fasten:0'), undefined,
-                'apply-to must not be copied');
         });
 
         it('rejects an invite from a participant', async () => {
             const { r, host, guest } = await roomWithHostAndGuest();
 
             await guest.sendRaw(invite(r, host.jid));
+            await expectRefused(guest, r, host);
+        });
 
-            const error = await guest.waitForMessage(s => s.attrs.type === 'error');
+        it('rejects an invite element in another namespace from a participant', async () => {
+            const { r, host, guest } = await roomWithHostAndGuest();
 
-            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
-
-            const delivered = await host.waitForMessage(isInvite, 500).then(() => true, () => false);
-
-            assert.strictEqual(delivered, false, 'invite must not be delivered');
+            await guest.sendRaw(xml('message', { to: r },
+                xml('x', { xmlns: MUC_NS },
+                    xml('invite', { xmlns: 'urn:example:other',
+                        to: host.jid }))));
+            await expectRefused(guest, r, host);
         });
 
         it('rejects an invite from a user who is not in the room', async () => {
@@ -555,14 +579,7 @@ describe('mod_muc_lobby_rooms', () => {
             const other = await connect();
 
             await other.sendRaw(invite(r, host.jid));
-
-            const error = await other.waitForMessage(s => s.attrs.type === 'error');
-
-            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
-
-            const delivered = await host.waitForMessage(isInvite, 500).then(() => true, () => false);
-
-            assert.strictEqual(delivered, false, 'invite must not be delivered');
+            await expectRefused(other, r, host);
         });
 
         it('rejects an invite from a moderator who left the room', async () => {
@@ -570,17 +587,10 @@ describe('mod_muc_lobby_rooms', () => {
 
             await host.leaveRoom(r, nickOf(host));
             await host.sendRaw(invite(r, guest.jid));
-
-            const error = await host.waitForMessage(s => s.attrs.type === 'error');
-
-            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
-
-            const delivered = await guest.waitForMessage(isInvite, 500).then(() => true, () => false);
-
-            assert.strictEqual(delivered, false, 'invite must not be delivered');
+            await expectRefused(host, r, guest);
         });
 
-        it('delivers the invite that admits a participant from the lobby', async () => {
+        it('admits a participant from the lobby with the invite', async () => {
             const r = room();
 
             await focusJoin(r);
@@ -594,15 +604,64 @@ describe('mod_muc_lobby_rooms', () => {
 
             const lobbyJid = await enableLobby(r);
             const waiting = await connect();
+            const blocked = await waiting.joinRoom(r, undefined, { displayName: 'Waiting' });
+
+            assert.ok(blocked.getChild('error')?.getChild('registration-required'),
+                'join before the invite must be blocked by the lobby');
 
             await join(waiting, lobbyJid, 'Waiting');
-
-            await setAffiliation(r, waiting.jid.split('/')[0], 'member');
             await host.sendRaw(invite(r, waiting.jid));
 
             const received = await waiting.waitForMessage(isInvite);
 
             assert.equal(received.attrs.from, r, 'invite must come from the room');
+
+            // The invite makes the invitee a member of the members-only room.
+            await join(waiting, r, 'Waiting');
+        });
+
+        it('admits a participant from the lobby with an invite from a moderator in a breakout room', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const host = await connect({ params: { room: roomName,
+                token } });
+
+            await join(host, r, 'Host');
+
+            const lobbyJid = await enableLobby(r);
+
+            await host.sendBreakoutRoomsMessage(BREAKOUT_MUC, 'features/breakout-rooms/add',
+                { subject: 'Breakout 1' });
+
+            const parseJson = s => {
+                try {
+                    return JSON.parse(s.getChildText('json-message', LOBBY_NS));
+                } catch {
+                    return null;
+                }
+            };
+            const update = await host.waitForMessage(
+                s => parseJson(s)?.event === 'features/breakout-rooms/update');
+            const breakoutJid = Object.values(parseJson(update).rooms).find(br => !br.isMainRoom)?.jid;
+
+            assert.ok(breakoutJid, 'breakout room jid must be in the update');
+
+            // Focus creates the breakout room, then the moderator moves there.
+            await focus.joinRoom(breakoutJid, 'focus');
+            await host.leaveRoom(r, nickOf(host));
+            await join(host, breakoutJid, 'Host');
+
+            const waiting = await connect();
+
+            await join(waiting, lobbyJid, 'Waiting');
+            await host.sendRaw(invite(r, waiting.jid));
+
+            const received = await waiting.waitForMessage(isInvite);
+
+            assert.equal(received.attrs.from, r, 'invite must come from the main room');
 
             await join(waiting, r, 'Waiting');
         });

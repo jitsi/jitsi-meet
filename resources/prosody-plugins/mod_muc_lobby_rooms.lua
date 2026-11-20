@@ -90,6 +90,7 @@ local is_focus_jid = util.is_focus_jid;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
@@ -428,25 +429,31 @@ local prosody_overrides = {
         if type == nil or type == "normal" then
             local x = stanza:get_child("x", MUC_USER_NS);
             if x then
-                -- Only a moderator who is in the room can invite. Admitting a participant from the lobby is
-                -- such an invite, sent by a moderator of the main room.
-                if x:get_child("invite") then
-                    local occupant_jid = room:get_occupant_jid(stanza.attr.from);
-
-                    if not occupant_jid or room:get_role(occupant_jid) ~= 'moderator' then
-                        origin.send(st.error_reply(stanza, "auth", "forbidden"));
-                        return true;
+                local invites = {};
+                for _, payload in ipairs(x.tags) do
+                    if payload.name == "invite" and payload.attr.to then
+                        table.insert(invites, payload);
                     end
                 end
 
-                local handled = false;
-                for _, payload in pairs(x.tags) do
-                    if payload ~= nil and payload.name == "invite" and payload.attr.to then
-                        handled = true;
-                        handle_mediated_invite(room, origin, stanza, payload, host_module)
-                    end
+                if #invites == 0 then
+                    return false;
                 end
-                return handled;
+
+                -- Only a moderator of the room, or of one of its breakout rooms, can invite. Admitting a
+                -- participant from the lobby is such an invite. A moderator in a breakout room sends it to
+                -- the main room.
+                local occupant = get_occupant_by_real_jid(room, stanza.attr.from);
+
+                if not occupant or occupant.role ~= 'moderator' then
+                    origin.send(st.error_reply(stanza, "auth", "forbidden"));
+                    return true;
+                end
+
+                for _, payload in ipairs(invites) do
+                    handle_mediated_invite(room, origin, stanza, payload, host_module);
+                end
+                return true;
             end
         end
     end
