@@ -26,6 +26,9 @@ describe('Shared video', () => {
             { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ' },
             { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ?feature=share' },
             { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ#t=10' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/live/dQw4w9WgXcQ' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/live/dQw4w9WgXcQ?feature=share' },
+            { expected: 'dQw4w9WgXcQ', input: 'https://www.youtube.com/live/dQw4w9WgXcQ#t=10' },
             { expected: 'https://www.youtube.com/shorts/dQw4w9WgXcQ1', input: 'https://www.youtube.com/shorts/dQw4w9WgXcQ1' },
             { expected: 'https://example.com/video.mp4', input: 'https://example.com/video.mp4' }
         ];
