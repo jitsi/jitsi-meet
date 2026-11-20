@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
-import Platform from '../../base/react/Platform.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import Spinner from '../../base/ui/components/web/Spinner';
+import { isSystemAudioOfferedFor } from '../../screen-share/functions';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -109,12 +109,10 @@ class DesktopPickerPane extends Component<IProps> {
 
         let checkBox;
 
-        // Only display the share audio checkbox if we're on windows and on
-        // desktop sharing tab.
-        // App window and Mac OS screen sharing doesn't work with system audio.
-        if (type === 'screen' && Platform.OS === 'windows') {
+        if (isSystemAudioOfferedFor(type)) {
+            // The audio is the whole system's, not only the window's, so the label says so.
             checkBox = (<Checkbox
-                label = { t('dialog.screenSharingAudio') }
+                label = { t(type === 'window' ? 'dialog.screenSharingSystemAudio' : 'dialog.screenSharingAudio') }
                 name = 'share-system-audio'
                 onChange = { this._onShareAudioCheck } />);
         }
