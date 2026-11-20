@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
+import { isMacOS } from '../../base/environment/environment';
 import { translate } from '../../base/i18n/functions';
-import Platform from '../../base/react/Platform.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import Spinner from '../../base/ui/components/web/Spinner';
+import { isSystemAudioOfferedFor } from '../../screen-share/functions';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -12,6 +15,11 @@ import DesktopSourcePreview from './DesktopSourcePreview';
  * The type of the React {@code Component} props of {@link DesktopPickerPane}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * Whether the checkbox to share system audio is shown.
+     */
+    _systemAudioOffered: boolean;
 
     /**
      * The handler to be invoked when a DesktopSourcePreview is clicked.
@@ -81,6 +89,7 @@ class DesktopPickerPane extends Component<IProps> {
      */
     override render() {
         const {
+            _systemAudioOffered,
             onClick,
             onDoubleClick,
             selectedSourceId,
@@ -109,12 +118,10 @@ class DesktopPickerPane extends Component<IProps> {
 
         let checkBox;
 
-        // Only display the share audio checkbox if we're on windows and on
-        // desktop sharing tab.
-        // App window and Mac OS screen sharing doesn't work with system audio.
-        if (type === 'screen' && Platform.OS === 'windows') {
+        if (_systemAudioOffered) {
+            // On macOS the audio is the whole system's, whatever the source, so the label says so.
             checkBox = (<Checkbox
-                label = { t('dialog.screenSharingAudio') }
+                label = { t(isMacOS() ? 'dialog.screenSharingSystemAudio' : 'dialog.screenSharingAudio') }
                 name = 'share-system-audio'
                 onChange = { this._onShareAudioCheck } />);
         }
@@ -128,4 +135,18 @@ class DesktopPickerPane extends Component<IProps> {
     }
 }
 
-export default translate(DesktopPickerPane);
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @private
+ * @returns {Object}
+ */
+function _mapStateToProps(state: IReduxState, ownProps: { type: string; }) {
+    return {
+        _systemAudioOffered: isSystemAudioOfferedFor(state, ownProps.type)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DesktopPickerPane));
