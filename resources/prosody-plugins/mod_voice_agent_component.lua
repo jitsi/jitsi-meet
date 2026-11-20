@@ -25,8 +25,8 @@
 -- jicofo or the bridge. callbackUrl never leaves prosody.
 --
 -- ── Endpoints (contract frozen at v1.0 — see AGENT_REST_API.md) ───────────────
--- Authentication: Authorization: Bearer <system ASAP token>, verified against
--- prosody_password_public_key_repo_url (NOT login tokens), like mod_muc_jigasi_invite. Unlike it, the token's
+-- Authentication: Authorization: Bearer <system ASAP token>, verified against voice_agent_asap_key_server when set,
+-- else prosody_password_public_key_repo_url (NOT login tokens), like mod_muc_jigasi_invite. Unlike it, the token's
 -- room and sub claims scope the caller, as a meeting token's do: token/util's verify_room checks them against
 -- the resolved room ('*' allows every room, a '*' sub every tenant), as mod_muc_size does for its routes, and
 -- a request for another room is 403. A room claim is required; a breakout room is checked as its main room.
@@ -71,12 +71,16 @@
 --     that is gone uses what verify_room answered for the same token while the room existed, and is skipped
 --     when that token was never checked against it
 --
--- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
--- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. It also needs
+-- Provisioning auth needs a key repo, voice_agent_asap_key_server or else prosody_password_public_key_repo_url:
+-- without one the module refuses to load (a meeting token would otherwise pass), unless
+-- voice_agent_insecure_skip_auth is set for a dev rig. A key published in voice_agent_asap_key_server is not
+-- accepted by the other system routes, which verify against the shared repo only; ASAP on status and dial is
+-- then verified against it too, so jicofo and the media relay keep to their shared secrets. It also needs
 -- muc_mapper_domain_base, which verify_room resolves rooms with, as the token modules do. Lifecycle webhooks need
 -- voice_agent_webhook_secret: without it an invite with a callbackUrl is refused rather than delivered unsigned.
 -- voice_agent_callback_allowed_hosts (exact host or .suffix) limits where callbacks may go; empty allows any host,
 -- so an OSS deployment that accepts invites from several customers should set it (prosody POSTs there).
+-- An endpoint.url or callbackUrl that carries userinfo (user@ or user:pass@) is refused with a 400.
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
@@ -184,7 +188,11 @@ if DIAL_SECRET == '' and STATUS_SECRET ~= '' then
         .. 'endpoint credentials); set both to keep jicofo and the media relay apart');
 end
 
-local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
+-- A key repo of this API's own, when set: a key published in it is not accepted by the other system routes.
+local ASAP_KEY_SERVER = module:get_option_string('voice_agent_asap_key_server', '');
+if ASAP_KEY_SERVER == '' then
+    ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
+end
 local token_util;
 if INSECURE_SKIP_AUTH then
     module:log('warn', 'voice_agent_insecure_skip_auth is ON — /voice-agent endpoints are UNAUTHENTICATED');
@@ -193,7 +201,8 @@ else
     if ASAP_KEY_SERVER == '' then
         -- token/util would fall back to the host's meeting-token settings, and a meeting token must not invite
         -- or dismiss agents, nor read dial configs. Same stance as mod_muc_jigasi_invite.
-        module:log('error', 'No prosody_password_public_key_repo_url set: provisioning tokens cannot be verified. '
+        module:log('error', 'No voice_agent_asap_key_server or prosody_password_public_key_repo_url set: '
+            .. 'provisioning tokens cannot be verified. '
             .. 'Disabling /voice-agent (set voice_agent_insecure_skip_auth only on a dev rig).');
         return;
     end
@@ -411,6 +420,17 @@ local function url_host(url)
     return host:lower();
 end
 
+-- The authority as net.http reads it: everything up to the first '/', a '?' or '#' included.
+local function callback_authority(url)
+    return url:match('^%a+://([^/]*)') or '';
+end
+
+-- Whether the media relay would read userinfo: its parser skips extra '/' and '\' before the authority.
+local function endpoint_has_userinfo(url)
+    local authority = url:match('^%a+:[/\\]*([^/\\?#]*)');
+    return authority ~= nil and authority:find('@', 1, true) ~= nil;
+end
+
 -- Whether callbacks may be delivered to this host: any host when no allowlist is configured, else an exact
 -- entry or a subdomain of a '.suffix' entry.
 local function callback_host_allowed(host)
@@ -426,8 +446,8 @@ local function callback_host_allowed(host)
     return false;
 end
 
--- Validates callbackUrl: https:// (http:// only with the dev flag), bounded, no control chars, a host the
--- deployment allows, and only while deliveries can be signed.
+-- Validates callbackUrl: https:// (http:// only with the dev flag), bounded, no control chars, no userinfo, a host
+-- the deployment allows, and only while deliveries can be signed.
 local function validate_callback_url(url)
     if url == nil then
         return nil;
@@ -437,6 +457,14 @@ local function validate_callback_url(url)
     end
     if not (starts_with(url, 'https://') or (INSECURE_ALLOW_HTTP_CALLBACK and starts_with(url, 'http://'))) then
         return nil, 'callbackUrl must be an https:// URL';
+    end
+    -- Before the host check, so the host that check reads is the one the request goes to.
+    local authority = callback_authority(url);
+    if authority:find('@', 1, true) then
+        return nil, 'callbackUrl must not contain credentials';
+    end
+    if authority:find('[?#\\]') then
+        return nil, 'Invalid callbackUrl';
     end
     local host = url_host(url);
     if not host or not callback_host_allowed(host) then
@@ -449,7 +477,7 @@ local function validate_callback_url(url)
 end
 
 -- Validates the required endpoint.{url,authorization}; returns a bounded copy, or nil plus an error.
--- Enforces the wss:// scheme only; host-level SSRF filtering is done by the media relay's endpoint
+-- Enforces the wss:// scheme and refuses userinfo; host-level SSRF filtering is done by the media relay's endpoint
 -- guard at dial time.
 local function validate_endpoint(endpoint)
     if type(endpoint) ~= 'table' or type(endpoint.url) ~= 'string' or #endpoint.url > MAX_PARAM_VALUE_LENGTH
@@ -457,6 +485,9 @@ local function validate_endpoint(endpoint)
             or not (starts_with(endpoint.url, 'wss://')
                 or (INSECURE_ALLOW_WS_ENDPOINT and starts_with(endpoint.url, 'ws://'))) then
         return nil, 'endpoint.url is required and must be a wss:// URL';
+    end
+    if endpoint_has_userinfo(endpoint.url) then
+        return nil, 'endpoint.url must not contain credentials';
     end
     local authorization = endpoint.authorization;
     if authorization ~= nil and (type(authorization) ~= 'string' or #authorization > MAX_PARAM_VALUE_LENGTH
