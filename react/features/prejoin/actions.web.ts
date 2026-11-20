@@ -293,11 +293,10 @@ export function replaceAudioTrackById(deviceId: string) {
             const micDeviceId = newTrack.getDeviceId();
 
             logger.info(`Switching audio input device to ${micDeviceId}`);
-            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
-                dispatch(updateSettings({
-                    micDeviceId
-                }));
-            });
+            await dispatch(replaceLocalTrack(oldTrack, newTrack));
+            dispatch(updateSettings({
+                micDeviceId
+            }));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.audioTrackError'));
             logger.log('Error replacing audio track', err);
@@ -326,12 +325,14 @@ export function replaceVideoTrackById(deviceId: string) {
             const cameraDeviceId = newTrack.getDeviceId();
 
             logger.info(`Switching camera to ${cameraDeviceId}`);
-            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
-                dispatch(updateSettings({
-                    cameraDeviceId
-                }));
-            });
+
+            const replaced = dispatch(replaceLocalTrack(oldTrack, newTrack));
+
             wasVideoMuted && newTrack.mute();
+            await replaced;
+            dispatch(updateSettings({
+                cameraDeviceId
+            }));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);
