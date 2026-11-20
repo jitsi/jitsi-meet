@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
@@ -388,6 +389,40 @@ describe('mod_muc_breakout_rooms', () => {
                 /Timeout/,
                 'no broadcast must be received when a non-moderator attempts to create a room'
             );
+        });
+
+        it('refuses a mediated invite to a breakout room', async () => {
+            const name = nextRoomName();
+            const { focus, moderator } = await createRoom(name);
+            const participant = await createXmppClient({ params: { room: name } });
+
+            clients.push(focus, moderator, participant);
+            await participant.joinRoom(roomJid(name));
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_ADD, { subject: 'Invite Room' });
+
+            const createPayload = await waitForBreakoutUpdate(moderator);
+            const breakoutJid = Object.values(createPayload.rooms).find(r => !r.isMainRoom)?.jid;
+
+            await focus.joinRoom(breakoutJid, 'focus');
+
+            const presence = await moderator.joinRoom(breakoutJid);
+
+            assert.notEqual(presence.attrs.type, 'error', 'the moderator must join the breakout room');
+
+            await moderator.sendRaw(xml('message', { to: breakoutJid },
+                xml('x', { xmlns: 'http://jabber.org/protocol/muc#user' },
+                    xml('invite', { to: participant.jid }))));
+
+            const error = await moderator.waitForMessage(s => s.attrs.type === 'error' && s.attrs.from === breakoutJid);
+
+            assert.ok(error.getChild('error')?.getChild('forbidden'), 'error condition must be forbidden');
+
+            const delivered = await participant.waitForMessage(
+                s => Boolean(s.getChild('x', 'http://jabber.org/protocol/muc#user')?.getChild('invite')), 500)
+                .then(() => true, () => false);
+
+            assert.strictEqual(delivered, false, 'invite must not be delivered');
         });
 
     });

@@ -90,6 +90,7 @@ local is_focus_jid = util.is_focus_jid;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
@@ -380,9 +381,10 @@ function handle_mediated_invite(room, origin, stanza, payload, host_module)
     elseif host_module:fire_event("muc-pre-invite", {room = room, origin = origin, stanza = stanza}) then
         return true;
     end
-    local invite = muc_util.filter_muc_x(st.clone(stanza));
-    invite.attr.from = room.jid;
-    invite.attr.to = invitee;
+    -- Build the invite from scratch instead of cloning the incoming stanza. The invite is sent from the bare
+    -- room jid, and clients read messages from that address as sent by the room itself, so it carries
+    -- only the invite and nothing else from the incoming stanza.
+    local invite = st.message({ from = room.jid, to = invitee, id = stanza.attr.id });
     invite:tag('x', { xmlns = MUC_USER_NS })
             :tag('invite', {from = stanza.attr.from;})
                 :tag('reason'):text(payload:get_child_text("reason")):up()
@@ -427,14 +429,31 @@ local prosody_overrides = {
         if type == nil or type == "normal" then
             local x = stanza:get_child("x", MUC_USER_NS);
             if x then
-                local handled = false;
-                for _, payload in pairs(x.tags) do
-                    if payload ~= nil and payload.name == "invite" and payload.attr.to then
-                        handled = true;
-                        handle_mediated_invite(room, origin, stanza, payload, host_module)
+                local invites = {};
+                for _, payload in ipairs(x.tags) do
+                    if payload.name == "invite" and payload.attr.to then
+                        table.insert(invites, payload);
                     end
                 end
-                return handled;
+
+                if #invites == 0 then
+                    return false;
+                end
+
+                -- Only a moderator of the room, or of one of its breakout rooms, can invite. Admitting a
+                -- participant from the lobby is such an invite. A moderator in a breakout room sends it to
+                -- the main room.
+                local occupant = get_occupant_by_real_jid(room, stanza.attr.from);
+
+                if not occupant or occupant.role ~= 'moderator' then
+                    origin.send(st.error_reply(stanza, "auth", "forbidden"));
+                    return true;
+                end
+
+                for _, payload in ipairs(invites) do
+                    handle_mediated_invite(room, origin, stanza, payload, host_module);
+                end
+                return true;
             end
         end
     end
@@ -447,6 +466,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 
     -- enable filtering presences in the lobby muc rooms
     filters.add_filter_hook(filter_session);
+
+    -- No flow invites into a lobby room. Admitting from the lobby is an invite to the main room.
+    host_module:hook('muc-pre-invite', util.refuse_mediated_invite);
 
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
     module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);

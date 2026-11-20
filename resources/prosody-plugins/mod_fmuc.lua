@@ -151,6 +151,9 @@ local function add_transcription(room, occupant, lang)
     end
 end
 
+-- No flow invites into a room on a visitor node.
+module:hook('muc-pre-invite', util.refuse_mediated_invite);
+
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
     local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
