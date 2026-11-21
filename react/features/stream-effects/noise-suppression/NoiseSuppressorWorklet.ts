@@ -99,18 +99,20 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
      */
     process(inputs: Float32Array[][], outputs: Float32Array[][]) {
 
-        // We expect the incoming track to be mono, if a stereo track is passed only on of its channels will get
-        // denoised and sent pack.
-        // TODO Technically we can denoise both channel however this might require a new rnnoise context, some more
+        // We expect the incoming track to be mono, if a stereo track is passed only one of its channels will get
+        // denoised and sent back.
+        // TODO Technically we can denoise both channels however this might require a new rnnoise context, some more
         // investigation is required.
-        const inData = inputs[0][0];
-        const outData = outputs[0][0];
+        const inData = inputs[0]?.[0];
+        const outputChannels = outputs[0];
 
         // Exit out early if there is no input data (input node not connected/disconnected)
-        // as rest of worklet will crash otherwise
-        if (!inData) {
+        // or output channels are unavailable, as rest of worklet will crash otherwise.
+        if (!inData || !outputChannels?.length || !outputChannels[0]) {
             return true;
         }
+
+        const outDataLength = outputChannels[0].length;
 
         // Append new raw PCM sample.
         this._circularBuffer.set(inData, this._inputBufferLength);
@@ -146,18 +148,21 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
         // e.g. if the buffer size is 1024 samples but we only denoised 960 (this happens on the first iteration)
         // nothing happens, then on the next iteration 1920 samples will be denoised so we send 1024 which leaves
         // 896 for the next iteration and so on.
-        if (unsentDenoisedDataLength >= outData.length) {
+        if (unsentDenoisedDataLength >= outDataLength) {
             const denoisedFrame = this._circularBuffer.subarray(
                 this._denoisedBufferIndx,
-                this._denoisedBufferIndx + outData.length
+                this._denoisedBufferIndx + outDataLength
             );
 
-            outData.set(denoisedFrame, 0);
-            this._denoisedBufferIndx += outData.length;
+            for (let i = 0; i < outputChannels.length; i++) {
+                outputChannels[i].set(denoisedFrame, 0);
+            }
+
+            this._denoisedBufferIndx += outDataLength;
         }
 
         // When the end of the circular buffer has been reached, start from the beginning. By the time the index
-        // starts over, the data from the begging is stale (has already been processed) and can be safely
+        // starts over, the data from the beginning is stale (has already been processed) and can be safely
         // overwritten.
         if (this._denoisedBufferIndx === this._circularBufferLength) {
             this._denoisedBufferIndx = 0;
