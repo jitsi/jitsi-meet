@@ -150,7 +150,7 @@ body.welcome-page {
                     font-size: 0.875rem;
                     padding-left: 10px;
 
-                    &.focus-visible {
+                    &:focus-visible {
                         outline: auto 2px #005fcc;
                     }
                 }
