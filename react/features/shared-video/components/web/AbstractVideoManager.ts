@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import { type DebouncedFunc, throttle } from 'lodash-es';
 import { PureComponent } from 'react';
 
 import { createSharedVideoEvent as createEvent } from '../../../analytics/AnalyticsEvents';
@@ -134,7 +134,7 @@ type IOwnProps = Pick<IProps, 'follower' | 'onFollowerError' | 'videoId'>;
  * Manager of shared video.
  */
 class AbstractVideoManager extends PureComponent<IProps> {
-    throttledFireUpdateSharedVideoEvent: Function;
+    throttledFireUpdateSharedVideoEvent: DebouncedFunc<() => void>;
 
     /**
      * Initializes a new instance of AbstractVideoManager.
@@ -191,6 +191,12 @@ class AbstractVideoManager extends PureComponent<IProps> {
         if (!this.props.follower) {
             sendAnalytics(createEvent('stopped'));
             this.props._dockToolbox(false);
+        }
+
+        this.throttledFireUpdateSharedVideoEvent.cancel();
+
+        if (window._sharedVideoPlayer === this) {
+            window._sharedVideoPlayer = undefined;
         }
 
         if (this.dispose) {
