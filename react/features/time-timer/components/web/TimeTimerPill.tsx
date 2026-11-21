@@ -72,13 +72,17 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             transition: CONTAINER_TRANSITION,
 
+            '@media (max-width: 500px)': {
+                maxWidth: 'calc(100vw - 80px)'
+            },
+
             '@media (max-width: 300px)': {
                 display: 'none'
             }
         },
 
         containerCollapsed: {
-            maxWidth: COLLAPSED_WIDTH
+            maxWidth: `${COLLAPSED_WIDTH} !important`
         },
 
         // Left segment: meeting name + scheduled duration. Lighter navy.
@@ -86,17 +90,23 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             backgroundColor: NAME_SEGMENT_BG,
             display: 'flex',
-            flex: '0 0 auto',
+            flex: '0 1 auto',
+            minWidth: 0,
             gap: NAME_GAP,
             maxWidth: '324px',
             paddingLeft: NAME_SEGMENT_PAD_X,
-            paddingRight: NAME_SEGMENT_PAD_X
+            paddingRight: NAME_SEGMENT_PAD_X,
+
+            '@media (max-width: 500px)': {
+                maxWidth: 'calc(100vw - 165px)'
+            }
         },
 
         // Text spans fade to opacity 0 in lock-step with the width collapse
         // so the pill's content visually dissolves into the shrinking shape
         // rather than getting hard-clipped at the container's edge.
         name: {
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             transition: TEXT_TRANSITION,
