@@ -19,6 +19,11 @@ import {
     setVideoInputDevice
 } from './functions';
 
+/**
+ * Currently active JitsiMeetExternalAPI instance registered for MediaSession auto-PiP.
+ */
+let activeMediaSessionInstance = null;
+
 const ALWAYS_ON_TOP_FILENAMES = [
     'css/all.css', 'libs/alwaysontop.min.js'
 ];
@@ -724,6 +729,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         });
 
         this._setupIntersectionObserver();
+        this._setupMediaSession();
     }
 
     /**
@@ -771,6 +777,59 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         if (this._intersectionObserver) {
             this._intersectionObserver.disconnect();
             this._intersectionObserver = null;
+        }
+    }
+
+    /**
+     * Sets up MediaSession action handler on the host window for automatic Document PiP.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setupMediaSession() {
+        if (!isPiPEnabled(this._pipConfig)
+                || !('documentPictureInPicture' in window)
+                || !('mediaSession' in navigator)
+                || typeof navigator.mediaSession?.setActionHandler !== 'function') {
+            return;
+        }
+
+        activeMediaSessionInstance = this;
+        this._mediaSessionActionRegistered = true;
+
+        try {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', () => {
+                activeMediaSessionInstance?._getDocumentPiPController().open()
+                    .catch(error => console.error('Document PiP open failed:', error));
+            });
+        } catch (error) {
+            this._mediaSessionActionRegistered = false;
+            activeMediaSessionInstance = null;
+            console.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+    }
+
+    /**
+     * Tears down the MediaSession action handler on the host window.
+     *
+     * @private
+     * @returns {void}
+     */
+    _teardownMediaSession() {
+        if (!this._mediaSessionActionRegistered) {
+            return;
+        }
+
+        this._mediaSessionActionRegistered = false;
+
+        if (activeMediaSessionInstance === this) {
+            activeMediaSessionInstance = null;
+
+            try {
+                navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
+            } catch (error) {
+                // Ignore unsupported action on cleanup.
+            }
         }
     }
 
@@ -1025,6 +1084,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._transport.dispose();
         this.removeAllListeners();
         this._teardownIntersectionObserver();
+        this._teardownMediaSession();
 
         if (this._frame && this._frame.parentNode) {
             this._frame.parentNode.removeChild(this._frame);
@@ -1075,9 +1135,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             if (!wasEnabled && isEnabled) {
                 this._setupIntersectionObserver();
+                this._setupMediaSession();
                 pipTransition = 'enabled';
             } else if (wasEnabled && !isEnabled) {
                 this._teardownIntersectionObserver();
+                this._teardownMediaSession();
                 pipTransition = 'disabled';
             }
         }
