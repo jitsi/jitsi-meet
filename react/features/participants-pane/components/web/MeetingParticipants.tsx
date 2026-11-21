@@ -12,7 +12,12 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
-import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
+import {
+    getSortedParticipantIds,
+    isCurrentRoomRenamable,
+    participantMatchesSearch,
+    shouldRenderInviteButton
+} from '../../functions';
 import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
@@ -22,6 +27,13 @@ import MeetingParticipantItems from './MeetingParticipantItems';
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            minHeight: 0
+        },
+
         headingW: {
             color: theme.palette.participantWarningText
         },
@@ -42,6 +54,13 @@ const useStyles = makeStyles()(theme => {
                 textAlign: 'center',
                 paddingRight: '16px'
             }
+        },
+
+        listContainer: {
+            flex: 1,
+            minHeight: '200px',
+            maxHeight: '100%',
+            position: 'relative'
         }
     };
 });
@@ -83,12 +102,8 @@ function MeetingParticipants({
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
-    // FIXME:
-    // It seems that useTranslation is not very scalable. Unmount 500 components that have the useTranslation hook is
-    // taking more than 10s. To workaround the issue we need to pass the texts as props. This is temporary and dirty
-    // solution!!!
-    // One potential proper fix would be to use react-window component in order to lower the number of components
-    // mounted.
+    // Virtualization is handled via react-window in MeetingParticipantItems to keep only
+    // visible rows mounted for large meetings.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
@@ -97,7 +112,7 @@ function MeetingParticipants({
     const { classes: styles } = useStyles();
 
     return (
-        <>
+        <div className = { styles.container }>
             <span
                 aria-level = { 1 }
                 className = 'sr-only'
@@ -123,7 +138,7 @@ function MeetingParticipants({
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <div>
+            <div className = { styles.listContainer }>
                 <MeetingParticipantItems
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
@@ -145,7 +160,7 @@ function MeetingParticipants({
                 onSelect = { lowerMenu }
                 overflowDrawer = { overflowDrawer }
                 participantID = { raiseContext?.entity } />
-        </>
+        </div>
     );
 }
 
@@ -157,7 +172,7 @@ function MeetingParticipants({
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
     const _iAmVisitor = iAmVisitor(state);
 
@@ -179,6 +194,18 @@ function _mapStateToProps(state: IReduxState) {
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
+
+    const { searchString } = ownProps;
+
+    if (searchString) {
+        const normalizedSearch = normalizeAccents(searchString);
+
+        sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
+            const participant = getParticipantById(state, id);
+
+            return participantMatchesSearch(participant, normalizedSearch);
+        });
+    }
 
     return {
         currentRoom,

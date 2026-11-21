@@ -1,4 +1,7 @@
-import React from 'react';
+/* eslint-disable react/no-multi-comp */
+import React, { useCallback, useMemo } from 'react';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 
@@ -65,6 +68,70 @@ interface IProps {
     youText: string;
 }
 
+interface IItemData {
+    isInBreakoutRoom: boolean;
+    lowerMenu: Function;
+    openDrawerForParticipant: Function;
+    overflowDrawer?: boolean;
+    participantActionEllipsisLabel: string;
+    participantIds: Array<string>;
+    raiseContextId?: string;
+    searchString?: string;
+    toggleMenu: Function;
+    youText: string;
+}
+
+const listStyles = {
+    overflowX: 'hidden' as const,
+    overflowY: 'auto' as const
+};
+
+const InnerListElement = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => (
+    <div
+        { ...props }
+        ref = { ref }
+        role = 'list' />
+));
+
+InnerListElement.displayName = 'MeetingParticipantInnerList';
+
+const Row = React.memo(({ index, style, data }: ListChildComponentProps<IItemData>) => {
+    const {
+        isInBreakoutRoom,
+        lowerMenu,
+        openDrawerForParticipant,
+        overflowDrawer,
+        participantActionEllipsisLabel,
+        participantIds,
+        raiseContextId,
+        searchString,
+        toggleMenu,
+        youText
+    } = data;
+    const id = participantIds[index];
+
+    return (
+        <div
+            role = 'presentation'
+            style = { style }>
+            <MeetingParticipantItem
+                isHighlighted = { raiseContextId === id }
+                isInBreakoutRoom = { isInBreakoutRoom }
+                key = { id }
+                onContextMenu = { toggleMenu(id) }
+                onLeave = { lowerMenu }
+                openDrawerForParticipant = { openDrawerForParticipant }
+                overflowDrawer = { overflowDrawer }
+                participantActionEllipsisLabel = { participantActionEllipsisLabel }
+                participantID = { id }
+                searchString = { searchString }
+                youText = { youText } />
+        </div>
+    );
+});
+
+Row.displayName = 'MeetingParticipantRow';
+
 /**
  * Component used to display a list of meeting participants.
  *
@@ -74,7 +141,7 @@ function MeetingParticipantItems({
     isInBreakoutRoom,
     lowerMenu,
     toggleMenu,
-    participantIds,
+    participantIds = [],
     openDrawerForParticipant,
     overflowDrawer,
     raiseContextId,
@@ -82,24 +149,68 @@ function MeetingParticipantItems({
     searchString,
     youText
 }: IProps) {
-    const renderParticipant = (id: string) => (
-        <MeetingParticipantItem
-            isHighlighted = { raiseContextId === id }
-            isInBreakoutRoom = { isInBreakoutRoom }
-            key = { id }
-            onContextMenu = { toggleMenu(id) }
-            onLeave = { lowerMenu }
-            openDrawerForParticipant = { openDrawerForParticipant }
-            overflowDrawer = { overflowDrawer }
-            participantActionEllipsisLabel = { participantActionEllipsisLabel }
-            participantID = { id }
-            searchString = { searchString }
-            youText = { youText } />
-    );
+    const itemData = useMemo(() => ({
+        isInBreakoutRoom,
+        lowerMenu,
+        openDrawerForParticipant,
+        overflowDrawer,
+        participantActionEllipsisLabel,
+        participantIds,
+        raiseContextId,
+        searchString,
+        toggleMenu,
+        youText
+    }), [
+        isInBreakoutRoom,
+        lowerMenu,
+        openDrawerForParticipant,
+        overflowDrawer,
+        participantActionEllipsisLabel,
+        participantIds,
+        raiseContextId,
+        searchString,
+        toggleMenu,
+        youText
+    ]);
 
-    return (<>
-        {participantIds.map(renderParticipant)}
-    </>);
+    const itemKey = useCallback((index: number, data: IItemData) => data.participantIds[index], []);
+
+    const onScroll = useCallback(() => {
+        if (raiseContextId) {
+            lowerMenu(true);
+        }
+    }, [ lowerMenu, raiseContextId ]);
+
+    if (!participantIds.length) {
+        return null;
+    }
+
+    // ListItem height is 56px on desktop (including padding), 72px on mobile/drawer mode.
+    const itemSize = overflowDrawer ? 72 : 56;
+
+    return (
+        <AutoSizer>
+            {({ height, width }) => {
+                const contentHeight = participantIds.length * itemSize;
+                const listHeight = Math.max(height, Math.min(200, contentHeight));
+
+                return (
+                    <FixedSizeList
+                        height = { listHeight }
+                        innerElementType = { InnerListElement }
+                        itemCount = { participantIds.length }
+                        itemData = { itemData }
+                        itemKey = { itemKey }
+                        itemSize = { itemSize }
+                        onScroll = { onScroll }
+                        style = { listStyles }
+                        width = { width }>
+                        { Row }
+                    </FixedSizeList>
+                );
+            }}
+        </AutoSizer>
+    );
 }
 
 // Memoize the component in order to avoid rerender on drawer open/close.
