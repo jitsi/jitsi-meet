@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { getName } from '../app/functions.web';
 import { IStore } from '../app/types';
 import { isSuboptimalBrowser } from '../base/environment/environment';
 import TranslationWithMarkup from '../base/i18n/components/web/TranslationWithMarkup';
@@ -27,7 +28,8 @@ export function maybeShowSuboptimalExperienceNotification(dispatch: IStore['disp
                     titleKey: 'notify.suboptimalExperienceTitle',
                     description: React.createElement(TranslationWithMarkup, {
                         components: [ createTranslationLink(recommendedBrowserPageLink) ],
-                        i18nKey: 'notify.suboptimalBrowserWarning'
+                        i18nKey: 'notify.suboptimalBrowserWarning',
+                        values: { appName: getName() }
                     })
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG
             )
