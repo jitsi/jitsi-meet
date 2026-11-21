@@ -131,7 +131,8 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                         ariaLabel = { t('toolbar.closeChat') }
                         onClick = { this._onToggleChat }
                         role = 'button'
-                        src = { IconCloseLarge } />
+                        src = { IconCloseLarge }
+                        tabIndex = { 0 } />
                 </div>
                 <MessageContainer
                     messages = { _lobbyChatMessages }

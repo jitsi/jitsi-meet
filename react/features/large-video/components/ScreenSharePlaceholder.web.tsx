@@ -82,6 +82,13 @@ const ScreenSharePlaceholder: React.FC<WithTranslation> = ({ t }) => {
         store.dispatch(setSeeWhatIsBeingShared(true));
     }, []);
 
+    const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            updateShowMeWhatImSharing();
+        }
+    }, [ updateShowMeWhatImSharing ]);
+
     return (
         <div className = { classes.overlayContainer }>
             <div className = { classes.content }>
@@ -91,7 +98,9 @@ const ScreenSharePlaceholder: React.FC<WithTranslation> = ({ t }) => {
                 <span
                     className = { classes.showSharing }
                     onClick = { updateShowMeWhatImSharing }
-                    role = 'button'>{ t('largeVideo.showMeWhatImSharing') }</span>
+                    onKeyDown = { onKeyDown }
+                    role = 'button'
+                    tabIndex = { 0 }>{ t('largeVideo.showMeWhatImSharing') }</span>
             </div>
         </div>
     );

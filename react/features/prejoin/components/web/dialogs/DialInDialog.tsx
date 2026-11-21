@@ -120,11 +120,13 @@ function DialinDialog(props: IProps) {
         <div className = { classes.dialInDialog }>
             <div className = 'prejoin-dialog-dialin-header'>
                 <Icon
+                    ariaLabel = { t('dialog.Back') }
                     className = 'prejoin-dialog-icon prejoin-dialog-dialin-icon'
                     onClick = { onBack }
                     role = 'button'
                     size = { 24 }
-                    src = { IconArrowLeft } />
+                    src = { IconArrowLeft }
+                    tabIndex = { 0 } />
                 <div className = 'prejoin-dialog-title'>
                     {t('prejoin.dialInMeeting')}
                 </div>

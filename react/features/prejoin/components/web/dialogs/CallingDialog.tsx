@@ -64,11 +64,13 @@ function CallingDialog(props: IProps) {
         <div className = { classes.callingDialog }>
             <div className = 'prejoin-dialog-calling-header'>
                 <Icon
+                    ariaLabel = { t('dialog.accessibilityLabel.close') }
                     className = 'prejoin-dialog-icon'
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconCloseLarge } />
+                    src = { IconCloseLarge }
+                    tabIndex = { 0 } />
             </div>
             <Label className = 'prejoin-dialog-calling-label'>
                 {t(status)}

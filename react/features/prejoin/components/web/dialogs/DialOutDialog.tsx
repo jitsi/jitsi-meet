@@ -61,11 +61,13 @@ function DialOutDialog(props: IProps) {
                     {t('prejoin.startWithPhone')}
                 </div>
                 <Icon
+                    ariaLabel = { t('dialog.accessibilityLabel.close') }
                     className = 'prejoin-dialog-icon'
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconCloseLarge } />
+                    src = { IconCloseLarge }
+                    tabIndex = { 0 } />
             </div>
             <Label>{t('prejoin.callMeAtNumber')}</Label>
             <div className = { classes.picker }>

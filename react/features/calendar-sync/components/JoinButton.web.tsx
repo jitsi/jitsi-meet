@@ -55,10 +55,12 @@ class JoinButton extends Component<IProps> {
             <Tooltip
                 content = { t('calendarSync.joinTooltip') }>
                 <div
+                    aria-label = { t('calendarSync.joinTooltip') }
                     className = 'button join-button'
                     onClick = { this._onClick }
                     onKeyPress = { this._onKeyPress }
-                    role = 'button'>
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon
                         size = '14'
                         src = { IconPlus } />

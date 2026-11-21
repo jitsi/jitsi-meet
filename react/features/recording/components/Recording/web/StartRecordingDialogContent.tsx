@@ -119,11 +119,13 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         {t('recording.showAdvancedOptions')}
                     </label>
                     <Icon
+                        ariaLabel = { t('recording.showAdvancedOptions') }
                         ariaPressed = { showAdvancedOptions }
                         onClick = { this._onToggleShowOptions }
                         role = 'button'
                         size = { 24 }
-                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight } />
+                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight }
+                        tabIndex = { 0 } />
                 </div>
                 {showAdvancedOptions && (
                     <>
