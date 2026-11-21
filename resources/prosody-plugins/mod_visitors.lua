@@ -585,13 +585,15 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
-        local from = stanza.attr.from;
+        -- a visitor node sends a vote from the voter's jid in its room, room@conference.vN.meet.jitsi/<occupant-id>
+        -- (see 'answer-poll' in mod_fmuc), so its host is the conference service of that node
+        local from_host = jid.host(stanza.attr.from);
 
         -- we need to update all vnodes
         local vnodes = visitors_nodes[room.jid].nodes;
         for conference_service in pairs(vnodes) do
             -- skip sending the answer to the node from where it originates
-            if conference_service ~= from then
+            if conference_service ~= from_host then
                 send_visitors_iq(conference_service, room, 'update');
             end
         end
