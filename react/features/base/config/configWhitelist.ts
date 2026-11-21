@@ -85,6 +85,7 @@ export default [
     'customPanel.enabled',
     'deeplinking.disabled',
     'deeplinking.desktop.enabled',
+    'deeplinking.hideDialIn',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'desktopSharingFrameRate',
