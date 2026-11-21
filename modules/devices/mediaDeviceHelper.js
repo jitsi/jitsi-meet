@@ -18,9 +18,9 @@ import {
 /**
  * Determines if currently selected audio output device should be changed after
  * list of available devices has been changed.
- * @param {MediaDeviceInfo[]} newDevices
- * @returns {string|undefined} - ID of new audio output device to use, undefined
- *      if audio output device should not be changed.
+ *
+ * @param {MediaDeviceInfo[]} newDevices - The updated list of available devices.
+ * @returns {string|undefined} The audio output device ID to select, or undefined if no switch is needed.
  */
 function getNewAudioOutputDevice(newDevices) {
     if (!JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
@@ -53,11 +53,11 @@ function getNewAudioOutputDevice(newDevices) {
 /**
  * Determines if currently selected audio input device should be changed after
  * list of available devices has been changed.
- * @param {MediaDeviceInfo[]} newDevices
- * @param {JitsiLocalTrack} localAudio
- * @param {boolean} newLabel
- * @returns {string|undefined} - ID of new microphone device to use, undefined
- *      if audio input device should not be changed.
+ *
+ * @param {MediaDeviceInfo[]} newDevices - The updated list of available devices.
+ * @param {JitsiLocalTrack|null|undefined} localAudio - The current local audio track, if any.
+ * @param {boolean} newLabel - Whether device labels have just become available.
+ * @returns {string|undefined} The microphone device ID to select, or undefined if no switch is needed.
  */
 function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
     const availableAudioInputDevices = newDevices.filter(
@@ -105,11 +105,11 @@ function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
 /**
  * Determines if currently selected video input device should be changed after
  * list of available devices has been changed.
- * @param {MediaDeviceInfo[]} newDevices
- * @param {JitsiLocalTrack} localVideo
- * @param {boolean} newLabel
- * @returns {string|undefined} - ID of new camera device to use, undefined
- *      if video input device should not be changed.
+ *
+ * @param {MediaDeviceInfo[]} newDevices - The updated list of available devices.
+ * @param {JitsiLocalTrack|null|undefined} localVideo - The current local video track, if any.
+ * @param {boolean} newLabel - Whether device labels have just become available.
+ * @returns {string|undefined} The camera device ID to select, or undefined if no switch is needed.
  */
 function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
     const availableVideoInputDevices = newDevices.filter(
@@ -158,14 +158,13 @@ export default {
     /**
      * Determines if currently selected media devices should be changed after
      * list of available devices has been changed.
-     * @param {MediaDeviceInfo[]} newDevices
-     * @param {JitsiLocalTrack} localVideo
-     * @param {JitsiLocalTrack} localAudio
-     * @returns {{
-     *  audioinput: (string|undefined),
-     *  videoinput: (string|undefined),
-     *  audiooutput: (string|undefined)
-     *  }}
+     *
+     * @param {MediaDeviceInfo[]} newDevices - The updated list of available devices.
+     * @param {JitsiLocalTrack|null|undefined} localVideo - The current local video track, if any.
+     * @param {JitsiLocalTrack|null|undefined} localAudio - The current local audio track, if any.
+     * @param {boolean} newLabels - Whether device labels have just become available.
+     * @returns {{audioinput: (string|undefined), videoinput: (string|undefined), audiooutput: (string|undefined)}}
+     *     Device IDs to select for each media type; undefined means no change is needed.
      */
     getNewMediaDevicesAfterDeviceListChanged( // eslint-disable-line max-params
             newDevices,
@@ -180,11 +179,13 @@ export default {
     },
 
     /**
-     * Checks if the only difference between an object of known devices compared
-     * to an array of new devices are only the labels for the devices.
-     * @param {Object} oldDevices
-     * @param {MediaDeviceInfo[]} newDevices
-     * @returns {boolean}
+     * Checks whether the previous and updated device lists have the same number
+     * of devices. The label comparisons below do not affect the result because
+     * returning from the forEach callback does not return from this method.
+     *
+     * @param {Object} oldDevices - The previously available devices, grouped by type.
+     * @param {MediaDeviceInfo[]} newDevices - The updated list of available devices.
+     * @returns {boolean} Whether the flattened previous list and updated list have the same length.
      */
     newDeviceListAddedLabelsOnly(oldDevices, newDevices) {
         const oldDevicesFlattend = flattenAvailableDevices(oldDevices);
@@ -207,12 +208,14 @@ export default {
     },
 
     /**
-     * Tries to create new local tracks for new devices obtained after device
-     * list changed. Shows error dialog in case of failures.
-     * @param {function} createLocalTracks
-     * @param {string} (cameraDeviceId)
-     * @param {string} (micDeviceId)
-     * @returns {Promise.<JitsiLocalTrack[]>}
+     * Creates local tracks for the newly available devices. If creating audio
+     * and video together fails, retries each requested track separately.
+     *
+     * @param {function(Object): Promise<JitsiLocalTrack[]>} createLocalTracks - Creates
+     *     local tracks from device options.
+     * @param {string|null|undefined} cameraDeviceId - ID of the camera to use, if requested.
+     * @param {string|null|undefined} micDeviceId - ID of the microphone to use, if requested.
+     * @returns {Promise<JitsiLocalTrack[]>} The tracks that were created successfully.
      */
     createLocalTracksAfterDeviceListChanged(
             createLocalTracks,
@@ -257,7 +260,10 @@ export default {
         return Promise.resolve([]);
 
         /**
+         * Creates an audio track and records any creation error for notification.
          *
+         * @param {boolean} [showError=true] - Whether to notify immediately when creation fails.
+         * @returns {Promise<JitsiLocalTrack[]>} The created track, or an empty array on failure.
          */
         function createAudioTrack(showError = true) {
             return (
@@ -275,7 +281,10 @@ export default {
         }
 
         /**
+         * Creates a video track and records any creation error for notification.
          *
+         * @param {boolean} [showError=true] - Whether to notify immediately when creation fails.
+         * @returns {Promise<JitsiLocalTrack[]>} The created track, or an empty array on failure.
          */
         function createVideoTrack(showError = true) {
             return (

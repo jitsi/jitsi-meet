@@ -1,9 +1,10 @@
 import { TaskQueue } from './TaskQueue';
 
 /**
- * Create deferred object.
+ * Creates a deferred object whose promise can be resolved or rejected by the caller.
  *
- * @returns {{promise, resolve, reject}}
+ * @returns {{promise: Promise<*>, resolve: function(*=): void, reject: function(*=): void}}
+ *     The promise and its corresponding resolve and reject functions.
  */
 export function createDeferred() {
     const deferred = {};
@@ -17,9 +18,9 @@ export function createDeferred() {
 }
 
 /**
- * Returns an instance of {@link TaskQueue}.
+ * Creates a task queue.
  *
- * @returns {Object}
+ * @returns {TaskQueue} A new task queue instance.
  */
 export function createTaskQueue() {
     return new TaskQueue();
