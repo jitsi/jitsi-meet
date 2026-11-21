@@ -6,7 +6,8 @@ declare global {
     interface ImportMeta {
 
         // Provided by Vite, which runs the tests.
-        glob: <T>(pattern: string, options: { eager: true; import: 'default'; }) => Record<string, T>;
+        glob: <T>(pattern: string, options: { eager: true; import: 'default'; query?: string; })
+        => Record<string, T>;
     }
 }
 
@@ -15,6 +16,17 @@ type Bundle = { [key: string]: Bundle | string; };
 const BUNDLES = import.meta.glob<Bundle>('../../../../lang/main*.json', {
     eager: true,
     import: 'default'
+});
+
+const LANGUAGES = import.meta.glob<Bundle>('../../../../lang/languages.json', {
+    eager: true,
+    import: 'default'
+});
+
+const BUILTIN_LANGUAGES_SOURCE = import.meta.glob<string>('./BuiltinLanguages.native.ts', {
+    eager: true,
+    import: 'default',
+    query: '?raw'
 });
 
 /**
@@ -47,5 +59,20 @@ describe('language bundles', () => {
     // element. A tag with attributes means that a translation tries to provide the element itself.
     it.each(files)('%s has no tags with attributes', (file: string) => {
         expect(findTagsWithAttributes(BUNDLES[file])).toEqual([]);
+    });
+});
+
+// The mobile apps have no backend to load a language from, so a language they offer but do not bundle shows English.
+describe('BuiltinLanguages.native', () => {
+    const source = Object.values(BUILTIN_LANGUAGES_SOURCE)[0];
+    const languages = Object.keys(Object.values(LANGUAGES)[0]).filter(language => language !== 'en');
+
+    it('is found', () => {
+        expect(source).toContain('_LANGUAGES');
+        expect(languages.length).toBeGreaterThan(1);
+    });
+
+    it.each(languages)('bundles %s', (language: string) => {
+        expect(source).toContain(`require('../../../../lang/main-${language}')`);
     });
 });
