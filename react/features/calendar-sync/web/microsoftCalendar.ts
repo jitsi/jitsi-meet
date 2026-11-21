@@ -157,8 +157,6 @@ export const microsoftCalendarApi = {
                 authNonce: uuidV4()
             };
 
-            dispatch(setCalendarAPIAuthState(guids));
-
             const { microsoftApiApplicationClientID }
                 = getState()['features/base/config'];
             const authUrl = getAuthUrl(
@@ -174,6 +172,14 @@ export const microsoftCalendarApi = {
                 `width=${w}, height=${h}, top=${
                     (screen.height / 2) - (h / 2)}, left=${
                     (screen.width / 2) - (w / 2)}`);
+
+            // window.open() returns null when the popup is blocked. Nothing
+            // would settle the sign in then, so fail it right away.
+            if (!popupAuthWindow) {
+                return Promise.reject('Could not open the sign in popup.');
+            }
+
+            dispatch(setCalendarAPIAuthState(guids));
 
             const windowCloseCheck = setInterval(() => {
                 if (popupAuthWindow?.closed) {
