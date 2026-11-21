@@ -258,7 +258,7 @@ const AudioSettingsContent = ({
 
         _disposeTracks(audioTracks);
 
-        const newAudioTracks = await createLocalAudioTracks(microphoneDevices, 5000);
+        const newAudioTracks = await createLocalAudioTracks(microphoneDevices, currentMicDeviceId, 5000);
 
         if (_componentWasUnmounted.current) {
             _disposeTracks(newAudioTracks);

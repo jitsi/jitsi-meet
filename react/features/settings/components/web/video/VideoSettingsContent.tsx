@@ -63,6 +63,11 @@ export interface IProps {
     videoDeviceIds: string[];
 
     /**
+     * The connected cameras, for the labels of the entries without a preview.
+     */
+    videoInputDevices: MediaDeviceInfo[];
+
+    /**
     * Whether or not the virtual background is visible.
     */
     visibleVirtualBackground: boolean;
@@ -156,6 +161,7 @@ const VideoSettingsContent = ({
     setVideoInputDevice,
     toggleVideoSettings,
     videoDeviceIds,
+    videoInputDevices,
     visibleVirtualBackground
 }: IProps) => {
     const _componentWasUnmounted = useRef(false);
@@ -196,7 +202,7 @@ const VideoSettingsContent = ({
     const _setTracks = async () => {
         _disposeTracks(trackData);
 
-        const newTrackData = await createLocalVideoTracks(videoDeviceIds, 5000);
+        const newTrackData = await createLocalVideoTracks(videoDeviceIds, currentCameraDeviceId, 5000);
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
@@ -214,7 +220,9 @@ const VideoSettingsContent = ({
      * @param {string} deviceId - The id of the camera device.
      * @returns {Function}
      */
-    const _onEntryClick = (deviceId: string) => () => {
+    const _onEntryClick = (deviceId: string) => (e?: React.MouseEvent) => {
+        // The popover toggles on any click inside it, which would open the popup again.
+        e?.stopPropagation();
         setVideoInputDevice(deviceId);
         toggleVideoSettings();
     };
@@ -250,7 +258,8 @@ const VideoSettingsContent = ({
             key,
             tabIndex
         };
-        const label = jitsiTrack?.getTrackLabel();
+        const label = jitsiTrack?.getTrackLabel()
+            || videoInputDevices.find(device => device.deviceId === deviceId)?.label;
 
         if (isSelected) {
             previewProps['aria-checked'] = true;
@@ -339,6 +348,7 @@ const mapStateToProps = (state: IReduxState) => {
     return {
         disableLocalVideoFlip,
         localFlipX: Boolean(localFlipX),
+        videoInputDevices: state['features/base/devices'].availableDevices.videoInput ?? [],
         visibleVirtualBackground: checkBlurSupport()
         && checkVirtualBackgroundEnabled(state)
     };
