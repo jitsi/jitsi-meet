@@ -21,6 +21,7 @@
 
 #import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
+#import "JitsiBackgroundEffects+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "ReactUtils.h"
@@ -70,6 +71,8 @@ static NSString *recordingModeToString(RecordingMode mode);
      * React Native view where the entire content will be rendered.
      */
     RCTRootView *rootView;
+    NSString *backgroundOwnerId;
+    NSUInteger backgroundOwnerRevision;
 }
 
 #pragma mark Initializers
@@ -102,20 +105,24 @@ static NSString *recordingModeToString(RecordingMode mode);
     // Set a background color which matches the one used in JS.
     self.backgroundColor = [UIColor colorWithHex:0x040404 alpha:1];
     
+    backgroundOwnerId = [NSUUID UUID].UUIDString;
     [self registerObservers];
 }
 
 - (void)dealloc {
+    [JitsiBackgroundEffects releaseOwner:backgroundOwnerId];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark API
 
 - (void)join:(JitsiMeetConferenceOptions *)options {
+    backgroundOwnerRevision = [JitsiBackgroundEffects claimOwner:backgroundOwnerId];
     [self setProps:options == nil ? @{} : [options asProps]];
 }
 
 - (void)leave {
+    backgroundOwnerRevision = [JitsiBackgroundEffects advanceOwner:backgroundOwnerId];
     [self setProps:@{}];
 }
 
@@ -276,6 +283,8 @@ static NSString *recordingModeToString(RecordingMode mode);
     // source code. The workaround implemented below introduces imperativeness
     // in React Component props by defining a unique value per invocation.
     props[@"timestamp"] = @(mach_absolute_time());
+    props[@"backgroundOwnerId"] = backgroundOwnerId;
+    props[@"backgroundOwnerRevision"] = @(backgroundOwnerRevision);
 
     if (rootView) {
         // Update props with the new URL.

@@ -36,8 +36,22 @@ android {
 
     sourceSets {
         main {
+            assets.srcDirs += ["${rootProject.projectDir}/../resources/virtual-backgrounds",
+                               "${rootProject.projectDir}/../images/virtual-background"]
             java {
+                srcDir(rootProject.ext.libreBuild ? 'src/libre/java' : 'src/mlkit/java')
                 exclude "test/"
+                if (rootProject.ext.libreBuild) {
+                    exclude 'org/jitsi/meet/sdk/background/**'
+                }
+            }
+        }
+        test {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir 'src/testLibre/java'
+                    exclude 'org/jitsi/meet/sdk/background/**'
+                }
             }
         }
     }
@@ -104,6 +118,9 @@ dependencies {
     implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.6'
+    if (!rootProject.ext.libreBuild) {
+        implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta6'
+    }
     implementation 'androidx.startup:startup-runtime:1.1.0'
     implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
 

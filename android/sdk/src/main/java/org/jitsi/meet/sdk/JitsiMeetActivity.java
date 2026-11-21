@@ -399,7 +399,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        JitsiMeetActivityDelegate.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     private void registerForBroadcastMessages() {

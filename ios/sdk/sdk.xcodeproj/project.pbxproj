@@ -41,6 +41,18 @@
 		6F08DF7D4458EE3CF3F36F6D /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		9A8EE79C77C17743BB66E8BD /* libPods-JitsiMeetSDKLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
+		B20000000000000000000000 /* JitsiBackgroundEffects.h in Headers */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* JitsiBackgroundEffects.h */; };
+		B20001000000000000000000 /* JitsiBackgroundEffects.h in Headers */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* JitsiBackgroundEffects.h */; };
+		B20200000000000000000000 /* JitsiBackgroundEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* JitsiBackgroundEffects.m */; };
+		B20201000000000000000000 /* JitsiBackgroundEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* JitsiBackgroundEffects.m */; };
+		B20400000000000000000000 /* JMBackgroundFrameProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* JMBackgroundFrameProcessor.m */; };
+		B20401000000000000000000 /* JMBackgroundFrameProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* JMBackgroundFrameProcessor.m */; };
+		B20600000000000000000000 /* JitsiBackgroundEffectsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* JitsiBackgroundEffectsModule.m */; };
+		B20601000000000000000000 /* JitsiBackgroundEffectsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* JitsiBackgroundEffectsModule.m */; };
+		B40000000000000000000001 /* virtual-background in Resources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* virtual-background */; };
+		B40000000000000000000002 /* virtual-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000002 /* virtual-backgrounds.json */; };
+		B40000000000000000000003 /* virtual-background in Resources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* virtual-background */; };
+		B40000000000000000000004 /* virtual-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000002 /* virtual-backgrounds.json */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
@@ -142,6 +154,15 @@
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
+		B10000000000000000000001 /* JitsiBackgroundEffects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiBackgroundEffects.h; sourceTree = "<group>"; };
+		B10000000000000000000002 /* JitsiBackgroundEffects+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiBackgroundEffects+Private.h"; sourceTree = "<group>"; };
+		B10000000000000000000003 /* JitsiBackgroundEffects.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiBackgroundEffects.m; sourceTree = "<group>"; };
+		B10000000000000000000004 /* JMBackgroundFrameProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMBackgroundFrameProcessor.h; sourceTree = "<group>"; };
+		B10000000000000000000005 /* JMBackgroundFrameProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMBackgroundFrameProcessor.m; sourceTree = "<group>"; };
+		B10000000000000000000006 /* JitsiBackgroundEffectsModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiBackgroundEffectsModule.h; sourceTree = "<group>"; };
+		B10000000000000000000007 /* JitsiBackgroundEffectsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiBackgroundEffectsModule.m; sourceTree = "<group>"; };
+		B30000000000000000000001 /* virtual-background */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "virtual-background"; path = "../../images/virtual-background"; sourceTree = "<group>"; };
+		B30000000000000000000002 /* virtual-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "virtual-backgrounds.json"; path = "../../resources/virtual-backgrounds/virtual-backgrounds.json"; sourceTree = "<group>"; };
 		B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeetSDKLite.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
@@ -204,6 +225,8 @@
 			isa = PBXGroup;
 			children = (
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
+				B30000000000000000000001 /* virtual-background */,
+				B30000000000000000000002 /* virtual-backgrounds.json */,
 				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
 				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
 			);
@@ -233,6 +256,13 @@
 		0BD906E71EC0C00300C8C18E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B10000000000000000000001 /* JitsiBackgroundEffects.h */,
+				B10000000000000000000002 /* JitsiBackgroundEffects+Private.h */,
+				B10000000000000000000003 /* JitsiBackgroundEffects.m */,
+				B10000000000000000000004 /* JMBackgroundFrameProcessor.h */,
+				B10000000000000000000005 /* JMBackgroundFrameProcessor.m */,
+				B10000000000000000000006 /* JitsiBackgroundEffectsModule.h */,
+				B10000000000000000000007 /* JitsiBackgroundEffectsModule.m */,
 				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				C69EFA02209A0EFD0027712B /* callkit */,
@@ -348,6 +378,7 @@
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
 				DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */,
 				DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */,
+				B20000000000000000000000 /* JitsiBackgroundEffects.h in Headers */,
 				4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */,
 				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
@@ -373,6 +404,7 @@
 				DE9A0131289A9A9A00E41CBB /* JitsiMeetView.h in Headers */,
 				DE9A0133289A9A9A00E41CBB /* JitsiMeetBaseLogHandler.h in Headers */,
 				DE9A0134289A9A9A00E41CBB /* JitsiMeetSDK.h in Headers */,
+				B20001000000000000000000 /* JitsiBackgroundEffects.h in Headers */,
 				DE9A0135289A9A9A00E41CBB /* ScheenshareEventEmiter.h in Headers */,
 				DE9A0136289A9A9A00E41CBB /* JitsiMeetBaseLogHandler+Private.h in Headers */,
 				DE9A0138289A9A9A00E41CBB /* JitsiMeetViewDelegate.h in Headers */,
@@ -478,6 +510,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
+				B40000000000000000000001 /* virtual-background in Resources */,
+				B40000000000000000000002 /* virtual-backgrounds.json in Resources */,
 				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
 				C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */,
 			);
@@ -488,6 +522,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE9A0166289A9A9A00E41CBB /* CallKitIcon.png in Resources */,
+				B40000000000000000000003 /* virtual-background in Resources */,
+				B40000000000000000000004 /* virtual-backgrounds.json in Resources */,
 				DE9A0167289A9A9A00E41CBB /* image-resize@2x.png in Resources */,
 				DE9A0168289A9A9A00E41CBB /* image-resize@3x.png in Resources */,
 			);
@@ -661,6 +697,9 @@
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 				DF4E6A012233445566778801 /* JitsiReactFactoryDelegate.m in Sources */,
 				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
+				B20200000000000000000000 /* JitsiBackgroundEffects.m in Sources */,
+				B20400000000000000000000 /* JMBackgroundFrameProcessor.m in Sources */,
+				B20600000000000000000000 /* JitsiBackgroundEffectsModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -691,6 +730,9 @@
 				DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */,
 				DF4E6A012233445566778802 /* JitsiReactFactoryDelegate.m in Sources */,
 				DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */,
+				B20201000000000000000000 /* JitsiBackgroundEffects.m in Sources */,
+				B20401000000000000000000 /* JMBackgroundFrameProcessor.m in Sources */,
+				B20601000000000000000000 /* JitsiBackgroundEffectsModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
