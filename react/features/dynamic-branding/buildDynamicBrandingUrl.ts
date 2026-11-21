@@ -7,10 +7,10 @@ import { IConfig } from '../base/config/configType';
  * @returns {string}
  */
 export function extractFqnFromPathname(pathname: string): string {
-    const parts = pathname.split('/');
+    const parts = pathname.split('/').filter(Boolean);
     const len = parts.length;
 
-    return parts.length > 2 ? `${parts[len - 2]}/${parts[len - 1]}` : parts[1];
+    return len > 1 ? `${parts[len - 2]}/${parts[len - 1]}` : parts[0] ?? '';
 }
 
 /**
