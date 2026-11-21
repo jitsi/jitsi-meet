@@ -55,6 +55,7 @@
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Higher values might cause network issues.",
+        "assumedBandwidthInfo": "Assumed bandwidth information",
         "customValue": "custom value",
         "customValueEffect": "to set the actual bps value",
         "leaveEmpty": "leave empty",
