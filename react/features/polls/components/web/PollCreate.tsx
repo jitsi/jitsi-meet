@@ -118,7 +118,8 @@ const PollCreate = ({
             return;
         }
         input.focus();
-    }, [ lastFocus ]);
+        requestFocus(null);
+    }, [ answers, lastFocus ]);
 
     const checkModifiers = useCallback(ev => {
         // Composition events used to add accents to characters
@@ -138,12 +139,12 @@ const PollCreate = ({
             ev.preventDefault();
             onSubmit();
 
-            return;
+            return true;
         }
         if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey) {
-            return;
+            return true;
         }
-    }, []);
+    }, [ onSubmit ]);
 
     const onQuestionKeyDown = useCallback(ev => {
         if (checkModifiers(ev)) {
@@ -154,7 +155,7 @@ const PollCreate = ({
             requestFocus(0);
             ev.preventDefault();
         }
-    }, []);
+    }, [ checkModifiers ]);
 
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
@@ -189,7 +190,7 @@ const PollCreate = ({
             }
             ev.preventDefault();
         }
-    }, [ answers, addAnswer, removeAnswer, requestFocus ]);
+    }, [ answers, addAnswer, checkModifiers, removeAnswer, requestFocus ]);
 
     /* eslint-disable react/jsx-no-bind */
     return (<form
@@ -206,7 +207,7 @@ const PollCreate = ({
                     label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
                     onChange = { setQuestion }
-                    onKeyPress = { onQuestionKeyDown }
+                    onKeyDown = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
                     textarea = { true }
                     value = { question } />
@@ -232,7 +233,7 @@ const PollCreate = ({
                             onChange = { name => setAnswer(i, {
                                 name
                             }) }
-                            onKeyPress = { ev => onAnswerKeyDown(i, ev) }
+                            onKeyDown = { ev => onAnswerKeyDown(i, ev) }
                             placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                             ref = { r => registerFieldRef(i, r) }
                             textarea = { true }
