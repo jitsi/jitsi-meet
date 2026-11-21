@@ -1357,6 +1357,7 @@
             "mute": "Mute microphone",
             "muteEveryone": "Mute everyone",
             "muteEveryoneElse": "Mute everyone else",
+            "muteEveryoneElsesDesktopStream": "Stop everyone else's screen-share",
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
             "muteGUMPending": "Connecting your microphone",

@@ -183,7 +183,7 @@ export const CollapsibleRoom = ({
                         participantID = { p.jid }>
                         {!overflowDrawer && moderator && (
                             <ParticipantActionEllipsis
-                                accessibilityLabel = { t('breakoutRoom.more') }
+                                accessibilityLabel = { t('breakoutRooms.actions.more') }
                                 onClick = { toggleParticipantMenu({ room,
                                     jid: p.jid,
                                     participantName: p.displayName }) } />
