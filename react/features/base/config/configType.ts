@@ -198,6 +198,8 @@ export interface IVirtualBackgroundConfig {
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
+    _peerConnStatusOutOfLastNTimeout?: number;
+    _peerConnStatusRtcMuteTimeout?: number;
     _screenshotHistoryRegionUrl?: number;
     analytics?: {
         amplitudeAPPKey?: string;
@@ -248,6 +250,7 @@ export interface IConfig {
      * @deprecated Use `lobby.autoKnock` instead.
      */
     autoKnockLobby?: boolean;
+    avgRtpStatsN?: number;
     backgroundAlpha?: number;
     bosh?: string;
     brandingDataUrl?: string;
@@ -696,6 +699,13 @@ export interface IConfig {
     resolution?: number;
     roomPasswordNumberOfDigits?: number;
     salesforceUrl?: string;
+    screenShareSettings?: {
+        desktopDisplaySurface?: string;
+        desktopPreferCurrentTab?: boolean;
+        desktopSelfBrowserSurface?: string;
+        desktopSurfaceSwitching?: string;
+        desktopSystemAudio?: string;
+    };
     screenshotCapture?: {
         enabled?: boolean;
         mode?: 'always' | 'recording';
