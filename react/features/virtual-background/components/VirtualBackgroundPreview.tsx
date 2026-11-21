@@ -6,14 +6,11 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { IStore } from '../../app/types';
-import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { Video } from '../../base/media/components/index';
 import { equals } from '../../base/redux/functions';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import Spinner from '../../base/ui/components/web/Spinner';
-import { showWarningNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
@@ -67,6 +64,11 @@ interface IState {
      * Flag that indicates if the local track was loaded.
      */
     localTrackLoaded: boolean;
+
+    /**
+     * Whether the camera track for the preview could not be created.
+     */
+    previewUnavailable: boolean;
 }
 
 /**
@@ -137,7 +139,8 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
         this.state = {
             loading: false,
             localTrackLoaded: false,
-            jitsiTrack: null
+            jitsiTrack: null,
+            previewUnavailable: false
         };
     }
 
@@ -160,7 +163,10 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      */
     async _setTracks() {
         try {
-            this.setState({ loading: true });
+            this.setState({
+                loading: true,
+                previewUnavailable: false
+            });
             const [ jitsiTrack ] = await createLocalTracksF({
                 cameraDeviceId: this.props.selectedVideoInputId,
                 devices: [ 'video' ]
@@ -181,14 +187,17 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
             });
             this.props.loadedPreview(true);
         } catch (error) {
-            this.props.dispatch(hideDialog());
-            this.props.dispatch(
-                showWarningNotification({
-                    titleKey: 'virtualBackground.backgroundEffectError',
-                    descriptionKey: 'deviceError.cameraError'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG)
-            );
             logger.error('Failed to access camera device. Error on apply background effect.');
+
+            // Keep the settings dialog open and show the preview as unavailable,
+            // so the user can still pick a background or switch to another tab.
+            if (!this._componentWasUnmounted) {
+                this.setState({
+                    loading: false,
+                    previewUnavailable: true
+                });
+                this.props.loadedPreview(true);
+            }
 
             return;
         }
@@ -225,10 +234,10 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     /**
      * Renders a preview entry.
      *
-     * @param {Object} data - The track data.
+     * @param {Object|null} data - The track data, or null if the preview is unavailable.
      * @returns {React$Node}
      */
-    _renderPreviewEntry(data: Object) {
+    _renderPreviewEntry(data: Object | null) {
         const { t } = this.props;
         const classes = withStyles.getClasses(this.props);
 
@@ -289,12 +298,12 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     override render() {
-        const { jitsiTrack } = this.state;
+        const { jitsiTrack, previewUnavailable } = this.state;
         const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = { classes.virtualBackgroundPreview }>
-                {jitsiTrack
+                {jitsiTrack || previewUnavailable
                     ? this._renderPreviewEntry(jitsiTrack)
                     : this._loadVideoPreview()
                 }</div>
