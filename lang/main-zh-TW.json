@@ -155,6 +155,13 @@
         "dontShowAgain": "不要再問了",
         "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充功能"
     },
+    "clientRequirements": {
+        "rejectDescription": "此版本的應用程式無法在本會議中傳送或接收音訊或視訊。",
+        "rejectTitle": "必須更新應用程式",
+        "seeDetails": "查看詳細資訊",
+        "warnDescription": "此版本的應用程式缺少本會議所需的功能，請更新應用程式。",
+        "warnTitle": "建議更新應用程式"
+    },
     "closedCaptionsTab": {
         "emptyState": "即時字幕內容將在主持人啟用後顯示",
         "startClosedCaptionsButton": "啟動即時字幕"
