@@ -215,7 +215,7 @@ const ConnectionStatus = () => {
                     id = 'connection-status-description'>{t(connectionText)}</span>
                 <Icon
                     ariaDescribedBy = 'connection-status-description'
-                    ariaPressed = { showDetails }
+                    ariaExpanded = { showDetails }
                     className = { arrowClassName }
                     onClick = { onToggleDetails }
                     onKeyPress = { onKeyPressToggleDetails }

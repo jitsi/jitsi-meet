@@ -17,14 +17,14 @@ interface IProps {
     ariaDropDownLabel?: string;
 
     /**
+     * Whether the options dropdown is expanded (sets aria-expanded on the options toggle).
+     */
+    ariaExpanded?: boolean;
+
+    /**
      * The Label of the current element.
      */
     ariaLabel?: string;
-
-    /**
-     * To give a aria-pressed to the icon.
-     */
-    ariaPressed?: boolean;
 
     /**
      * Text of the button.
@@ -178,7 +178,7 @@ function ActionButton({
     onOptionsClick,
     tabIndex,
     role,
-    ariaPressed,
+    ariaExpanded,
     ariaLabel,
     ariaDropDownLabel
 }: IProps) {
@@ -220,9 +220,9 @@ function ActionButton({
             { hasOptions
                 && <div
                     aria-disabled = { disabled }
+                    aria-expanded = { ariaExpanded }
                     aria-haspopup = 'true'
                     aria-label = { ariaDropDownLabel }
-                    aria-pressed = { ariaPressed }
                     className = { classes.options }
                     data-testid = 'prejoin.joinOptions'
                     onClick = { disabled ? undefined : onOptionsClick }
