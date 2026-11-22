@@ -47,7 +47,6 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<IProps> 
                 descriptionKey = { this.state.content }
                 onSubmit = { this._onSubmit }
                 title = { this.props.title }>
-                {/* @ts-ignore */}
                 <Divider style = { styles.dividerDialog as ViewStyle } />
                 { this._renderSwitch() }
             </ConfirmDialog>
