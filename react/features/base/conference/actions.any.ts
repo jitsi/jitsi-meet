@@ -116,19 +116,19 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_FAILED,
-        (err: string, ...args: any[]) => dispatch(conferenceFailed(conference, err, ...args)));
+        (err: string, ...args: unknown[]) => dispatch(conferenceFailed(conference, err, ...args)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOINED,
-        (..._args: any[]) => dispatch(conferenceJoined(conference)));
+        () => dispatch(conferenceJoined(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
-        (..._args: any[]) => dispatch(conferenceUniqueIdSet(conference)));
+        () => dispatch(conferenceUniqueIdSet(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
-        (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
+        () => dispatch(conferenceJoinInProgress(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
-        (..._args: any[]) => {
+        () => {
             dispatch(conferenceTimestampChanged(0));
             dispatch(conferenceLeft(conference));
         });
@@ -378,7 +378,7 @@ export function authStatusChanged(authEnabled: boolean, authLogin?: string) {
  * }}
  * @public
  */
-export function conferenceFailed(conference: IJitsiConference, error: string, ...params: any) {
+export function conferenceFailed(conference: IJitsiConference, error: string, ...params: unknown[]) {
     return {
         type: CONFERENCE_FAILED,
         conference,
