@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 export { default as DemoteToVisitorDialog } from './native/DemoteToVisitorDialog';
 export { default as GrantModeratorDialog } from './native/GrantModeratorDialog';
 export { default as KickRemoteParticipantDialog } from './native/KickRemoteParticipantDialog';
