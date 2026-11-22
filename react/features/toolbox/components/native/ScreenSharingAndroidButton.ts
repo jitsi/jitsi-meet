@@ -30,6 +30,7 @@ interface IProps extends AbstractButtonProps {
  */
 class ScreenSharingAndroidButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
     override icon = IconScreenshare;
     override label = 'toolbar.startScreenSharing';
     override toggledLabel = 'toolbar.stopScreenSharing';
