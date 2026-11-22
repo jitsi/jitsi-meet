@@ -7,6 +7,7 @@ const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
 const DESKTOP = 'Start sharing your screen';
 const HANGUP = 'Leave the meeting';
+const LOWER_HAND = 'Lower your hand';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
@@ -174,6 +175,15 @@ export default class Toolbar extends BasePageObject {
         await this.participant.log('Clicking on: Raise hand Button');
 
         return this.getButton(RAISE_HAND).click();
+    }
+
+    /**
+     * Clicks on the raise hand button while the hand is raised, which lowers it.
+     */
+    async clickLowerHandButton(): Promise<void> {
+        await this.participant.log('Clicking on: Lower hand Button');
+
+        return this.getButton(LOWER_HAND).click();
     }
 
     /**
