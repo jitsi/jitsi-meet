@@ -212,7 +212,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
     _onInstallExtensionKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            this._onClosePressed();
+            this._onInstallExtensionClick();
         }
     }
 
