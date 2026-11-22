@@ -6,11 +6,8 @@ import { navigate }
 import { screen } from '../mobile/navigation/routes';
 import ConnectionStatusComponent
     from '../video-menu/components/native/ConnectionStatusComponent';
-// @ts-ignore
 import LocalVideoMenu from '../video-menu/components/native/LocalVideoMenu';
-// @ts-ignore
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
-// @ts-ignore
 import SharedVideoMenu from '../video-menu/components/native/SharedVideoMenu';
 
 import { PARTICIPANTS_PANE_OPEN, SET_VOLUME } from './actionTypes';
@@ -85,7 +82,6 @@ export function setVolume(participantId: string, volume: number) {
  * @returns {Function}
  */
 export function showRoomParticipantMenu(room: Object, participantJid: string, participantName: string) {
-    // @ts-ignore
     return openSheet(RoomParticipantMenu, { room,
         participantJid,
         participantName });

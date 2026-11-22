@@ -11,7 +11,6 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import { translate } from '../../../base/i18n/functions';
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 // eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
 import styles from '../../../video-menu/components/native/styles';
 
