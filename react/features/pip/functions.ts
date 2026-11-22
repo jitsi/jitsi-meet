@@ -311,7 +311,6 @@ export function requestPictureInPicture() {
 
         // Wait for metadata to load before requesting PiP.
         video.addEventListener('loadedmetadata', () => {
-            // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
             video.requestPictureInPicture().catch((err: Error) => {
                 logger.error(`Error while requesting PiP after metadata loaded: ${err.message}`);
             }).finally(() => {
@@ -326,7 +325,6 @@ export function requestPictureInPicture() {
         return;
     }
 
-    // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
     video.requestPictureInPicture().catch((err: Error) => {
         logger.error(`Error while requesting PiP: ${err.message}`);
     }).finally(() => {
