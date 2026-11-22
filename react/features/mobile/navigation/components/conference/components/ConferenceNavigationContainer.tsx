@@ -7,45 +7,29 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import BreakoutRooms
-// @ts-ignore
     from '../../../../../breakout-rooms/components/native/BreakoutRooms';
-// @ts-ignore
 import Chat from '../../../../../chat/components/native/Chat';
-// @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
-// @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
-// @ts-ignore
 import { arePollsDisabled } from '../../../../../conference/functions';
-// @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
-// @ts-ignore
 import GifsMenu from '../../../../../gifs/components/native/GifsMenu';
 import AddPeopleDialog
-// @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
-// @ts-ignore
 import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
-// @ts-ignore
 import StartLiveStreamDialog from '../../../../../recording/components/LiveStream/native/StartLiveStreamDialog';
 import StartRecordingDialog
-// @ts-ignore
     from '../../../../../recording/components/Recording/native/StartRecordingDialog';
 import SalesforceLinkDialog
-// @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
-// @ts-ignore
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
-// @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 import LanguageSelectorDialog
-// @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 import { isCCTabEnabled } from '../../../../../subtitles/functions.any';
 import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
-// @ts-ignore
 import { screen } from '../../../routes';
 import {
     breakoutRoomsScreenOptions,
@@ -66,17 +50,12 @@ import {
     speakerStatsScreenOptions,
     subtitlesScreenOptions,
     whiteboardScreenOptions
-    // @ts-ignore
 } from '../../../screenOptions';
-// @ts-ignore
 import ChatNavigator from '../../chat/components/ChatNavigator';
-// @ts-ignore
 import LobbyNavigationContainer from '../../lobby/components/LobbyNavigationContainer';
-// @ts-ignore
 import SettingsNavigationContainer from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
-    // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
 
 
