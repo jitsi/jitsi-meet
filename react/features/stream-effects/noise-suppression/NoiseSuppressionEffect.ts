@@ -218,7 +218,6 @@ async function _initializeKrisp(
     }
 
     if (!krispState.sdkInitialized) {
-        // @ts-ignore
         await krispState.sdk?.init();
 
         krispState.sdkInitialized = true;
@@ -226,7 +225,6 @@ async function _initializeKrisp(
 
     if (!krispState.filterNode) {
         try {
-            // @ts-ignore
             krispState.filterNode = await krispState.sdk?.createNoiseFilter(
                 {
                     audioContext,

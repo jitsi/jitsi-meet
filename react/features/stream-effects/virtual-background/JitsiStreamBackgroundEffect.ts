@@ -100,7 +100,7 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        this._outputCanvasCtx?.drawImage( // @ts-ignore
+        this._outputCanvasCtx?.drawImage(
             this._segmentationMaskCanvas,
             0,
             0,
@@ -115,13 +115,12 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        // @ts-ignore
         this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
 
         // Draw the background.
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-            this._outputCanvasCtx?.drawImage( // @ts-ignore
+            this._outputCanvasCtx?.drawImage(
                 backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
                     ? this._virtualImage : this._virtualVideo,
                 0,
@@ -132,7 +131,6 @@ export default class JitsiStreamBackgroundEffect {
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
 
-            // @ts-ignore
             this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
         }
     }
@@ -179,7 +177,7 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     resizeSource() {
-        this._segmentationMaskCtx?.drawImage( // @ts-ignore
+        this._segmentationMaskCtx?.drawImage(
             this._inputVideoElement,
             0,
             0,
