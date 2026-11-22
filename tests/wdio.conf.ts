@@ -5,6 +5,7 @@ import fs from 'fs';
 import { glob } from 'glob';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import pretty from 'pretty';
 
 import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
@@ -130,6 +131,17 @@ const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
 
+/**
+ * Converts a spec as passed by wdio (a file URL such as file:///home/x/a.spec.ts or file:///C:/x/a.spec.ts)
+ * to a native file path, which is also the {@code __filename} the spec registered its test properties with.
+ *
+ * @param {string} spec - The spec file URL or path.
+ * @returns {string}
+ */
+function specToFilePath(spec: string): string {
+    return spec.startsWith('file://') ? fileURLToPath(spec) : spec;
+}
+
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
@@ -177,8 +189,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
     //     } ]
     // ],
 
-    // Set directory to store all logs into
-    outputDir: TEST_RESULTS_DIR,
+    // Set directory to store all logs into. It must be absolute: wdio derives the Chrome --user-data-dir from it
+    // and chromedriver on Windows fails to start Chrome with a relative one.
+    outputDir: path.resolve(TEST_RESULTS_DIR),
 
     reporters: [
         [ 'junit', {
@@ -213,10 +226,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
             console.warn('We expect to run a single suite, but got more than one');
         }
 
-        const testFilePath = files[0].replace(/^file:\/\//, '');
+        const testFilePath = specToFilePath(files[0]);
         const testName = path.relative('tests/specs', testFilePath)
             .replace(/.spec.ts$/, '')
-            .replace(/\//g, '-');
+            .replace(/[\\/]/g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
         console.log(`Running test: ${testName} via worker: ${cid}`);
@@ -294,7 +307,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const originalBefore = c.before;
 
         if (spec && spec.length == 1) {
-            const testFilePath = spec[0].replace(/^file:\/\//, '');
+            const testFilePath = specToFilePath(spec[0]);
             const testProperties = await getTestProperties(testFilePath);
 
             if (testProperties.retry) {
