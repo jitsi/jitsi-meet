@@ -60,7 +60,9 @@ const VisitorsList = () => {
     return (
         <View style = { styles.meetingListContainer }>
             <View style = { styles.listDetails as ViewStyle } >
-                <Text style = { styles.visitorsLabel }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.visitorsLabel }>
                     { title }
                 </Text>
                 {
