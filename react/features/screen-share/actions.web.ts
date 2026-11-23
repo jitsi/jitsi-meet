@@ -5,6 +5,7 @@ import { shouldHideShareAudioHelper } from '../base/settings/functions.web';
 import { toggleScreensharing } from '../base/tracks/actions.web';
 
 import {
+    SET_NS_ENABLED_BEFORE_SHARE,
     SET_SCREENSHARE_TRACKS,
     SET_SCREEN_AUDIO_SHARE_STATE
 } from './actionTypes';
@@ -43,6 +44,23 @@ export function setScreenshareAudioTrack(desktopAudioTrack: any) {
     return {
         type: SET_SCREENSHARE_TRACKS,
         desktopAudioTrack
+    };
+}
+
+/**
+ * Saves the noise suppression enabled state before desktop audio sharing disables it,
+ * so it can be restored when sharing ends.
+ *
+ * @param {boolean} nsEnabledBeforeShare - Whether noise suppression was on before sharing.
+ * @returns {{
+ *     type: SET_NS_ENABLED_BEFORE_SHARE,
+ *     nsEnabledBeforeShare: boolean
+ * }}
+ */
+export function setNsEnabledBeforeShare(nsEnabledBeforeShare: boolean | undefined) {
+    return {
+        type: SET_NS_ENABLED_BEFORE_SHARE,
+        nsEnabledBeforeShare
     };
 }
 
