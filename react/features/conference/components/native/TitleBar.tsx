@@ -87,6 +87,7 @@ const TitleBar = (props: IProps) => {
                     props._roomNameEnabled
                     && <View style = { styles.roomNameView as ViewStyle }>
                         <Text
+                            accessibilityRole = 'header'
                             numberOfLines = { 1 }
                             style = { styles.roomName }>
                             { props._meetingName }
