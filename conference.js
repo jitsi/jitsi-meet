@@ -1034,11 +1034,16 @@ export default {
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
         const localTracks = await tryCreateLocalTracks;
+        const { startWithAudioMuted = false, startWithVideoMuted = false } = options ?? {};
 
         APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
+
+        // The caller passes the mute state of the tracks from the previous room. When there was no track there (for
+        // example the client started with disableInitialGUM), this is true, while base/media can still say unmuted.
+        // A track created for the move must not be sent unmuted in that case.
         localTracks.forEach(track => {
-            if ((track.isAudioTrack() && this.isLocalAudioMuted())
-                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+            if ((track.isAudioTrack() && (startWithAudioMuted || this.isLocalAudioMuted()))
+                || (track.isVideoTrack() && (startWithVideoMuted || this.isLocalVideoMuted()))) {
                 track.mute();
             }
         });
