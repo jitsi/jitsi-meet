@@ -460,12 +460,12 @@ export default {
     },
 
     editingBannerTitle: {
-        ...BaseTheme.typography.labelBold,
+        ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.action01
     },
 
     editingBannerMessage: {
-        ...BaseTheme.typography.labelRegular,
+        ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text02
     }
 };

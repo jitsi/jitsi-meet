@@ -384,7 +384,7 @@ export function canReactToMessage(state: IReduxState, message: IMessage): boolea
 
 /**
  * Whether the local participant can moderate (remove) a message of another participant.
- * Only remote messages: system and error bubbles have a local id that the server does not know.
+ * Only remote messages with a server id: system, reaction and error bubbles have a local id.
  *
  * @param {IReduxState} state - The redux state.
  * @param {IMessage} message - The message.
@@ -392,6 +392,7 @@ export function canReactToMessage(state: IReduxState, message: IMessage): boolea
  */
 export function canModerateMessage(state: IReduxState, message: IMessage): boolean {
     return message.messageType === MESSAGE_TYPE_REMOTE
+        && !message.hasLocalId
         && !message.isDeleted
         && !message.isModerated
         && state['features/chat'].messageModerationSupported

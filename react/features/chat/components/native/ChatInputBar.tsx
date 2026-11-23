@@ -73,8 +73,8 @@ interface IState {
 }
 
 /**
- * Returns whether the local participant cannot send what this input would send:
- * a private message when a recipient is selected, a group message if not.
+ * Returns whether the local participant cannot send what this input would send. In edit mode that is
+ * the target of the edited message; otherwise a private message when a recipient is selected, else a group one.
  *
  * @param {IProps} props - The props of the component.
  * @returns {boolean}
@@ -82,9 +82,12 @@ interface IState {
 function _isSendDisabled({
     _isSendGroupChatDisabled,
     _isSendPrivateChatDisabled,
-    _privateMessageRecipientId
+    _privateMessageRecipientId,
+    editingMessage
 }: IProps): boolean {
-    return _privateMessageRecipientId ? _isSendPrivateChatDisabled : _isSendGroupChatDisabled;
+    const isPrivate = editingMessage ? editingMessage.privateMessage : Boolean(_privateMessageRecipientId);
+
+    return isPrivate ? _isSendPrivateChatDisabled : _isSendGroupChatDisabled;
 }
 
 /**

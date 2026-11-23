@@ -494,6 +494,9 @@ MiddlewareRegistry.register(store => next => action => {
                 editedAt,
                 participantId: localParticipant.id
             }));
+        } else {
+            logger.warn(`Dropping edit for message ${action.messageId}: no conference, `
+                + `message not found, or not an own message.`);
         }
         break;
     }
