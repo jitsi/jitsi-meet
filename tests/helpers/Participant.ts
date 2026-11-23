@@ -407,7 +407,7 @@ export class Participant {
             );
 
             // @ts-ignore
-            if (!await this.execute(() => config.prejoinConfig?.enabled === false)) {
+            if (await this.execute(() => Boolean(config.prejoinConfig?.enabled ?? true))) {
                 // if prejoin is enabled we want to click the join button
                 const p1PreJoinScreen = this.getPreJoinScreen();
 

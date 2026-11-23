@@ -28,6 +28,16 @@ describe('Prejoin disabled', () => {
         });
 
         await checkEveryoneMuted(ctx);
+
+        await hangupAllParticipants();
+    });
+    it('joining with no prejoin - direct url param with a non-boolean value', async () => {
+        await ensureTwoParticipants({
+            skipInMeetingChecks: true,
+            urlAppendString: '&config.prejoinConfig.enabled=0'
+        });
+
+        await checkEveryoneMuted(ctx);
     });
 });
 
