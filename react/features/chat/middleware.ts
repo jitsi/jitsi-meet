@@ -518,7 +518,8 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const conference = getCurrentConference(state);
 
-        // Same guard as the UI. The role or the message can change after the UI checked it.
+        // Same guard as the UI, re-checked because the role can change after the UI checked it.
+        // action.message is the snapshot the UI passed.
         if (!canModerateMessage(state, action.message)) {
             logger.warn(`Ignoring moderation request for message ${action.message.messageId}: not allowed.`);
             break;

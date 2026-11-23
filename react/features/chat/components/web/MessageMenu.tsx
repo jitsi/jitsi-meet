@@ -28,7 +28,6 @@ export interface IProps {
     isFileMessage?: boolean;
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
-    isModerated?: boolean;
     message: IMessage;
     onEditMessage?: () => void;
     participantId: string;
@@ -95,7 +94,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, enablePr
     const restoreTriggerFocus = useRef(false);
     const focusMessageOnClose = useRef(false);
 
-    // Shared with native. Editing and deleting are applied by the server, so these also need a room that handles them.
+    // Shared with native. Deleting is applied by the server, so it also needs a room that handles it.
     const canModerate = useSelector((state: IReduxState) => canModerateMessage(state, message));
     const canRetract = useSelector((state: IReduxState) => canRetractMessage(state, message));
     const participant = useSelector((state: IReduxState) => getParticipantById(state, message.participantId));

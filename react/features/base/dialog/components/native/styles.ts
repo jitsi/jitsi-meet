@@ -9,9 +9,7 @@ import { PREFERRED_DIALOG_SIZE } from '../../constants';
 const BORDER_RADIUS = 5;
 
 /**
- * NOTE: These Material guidelines based values are currently only used in
- * dialogs (and related) but later on it would be nice to export it into a base
- * Material feature.
+ * Row size and inset shared by native dialogs and bottom sheets.
  */
 export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;

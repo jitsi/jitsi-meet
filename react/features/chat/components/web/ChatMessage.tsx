@@ -9,7 +9,6 @@ import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } f
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-// AFTER
 import {
     canEditMessage,
     canReactToMessage,
@@ -508,7 +507,6 @@ const ChatMessage = ({
                             isFileMessage = { isFileMessage(message) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
-                            isModerated = { message.isModerated }
                             message = { message }
                             onEditMessage = { handleEditMessage }
                             participantId = { message.participantId } />}
@@ -595,7 +593,6 @@ const ChatMessage = ({
                                     isFileMessage = { isFileMessage(message) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
-                                    isModerated = { message.isModerated }
                                     message = { message }
                                     onEditMessage = { handleEditMessage }
                                     participantId = { message.participantId } />}

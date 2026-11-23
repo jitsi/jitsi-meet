@@ -27,7 +27,7 @@ import ModerateMessageDialog from './ModerateMessageDialog';
 
 /**
  * Bottom sheet opened by a long press on a chat message. Reads the message from state,
- * so a retraction or moderation by someone else while it is open hides the rows.
+ * so a retraction or moderation by someone else while it is open closes the sheet.
  *
  * @returns {JSX.Element}
  */

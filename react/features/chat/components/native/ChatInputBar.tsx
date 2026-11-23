@@ -118,7 +118,7 @@ class ChatInputBar extends Component<IProps, IState> {
     }
 
     /**
-     * Fills the input with the text of the message to edit, and clears it when edit mode ends.
+     * Fills the input with the text of the message to edit, and restores the draft when edit mode ends.
      *
      * @inheritdoc
      */

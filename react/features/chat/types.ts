@@ -79,7 +79,8 @@ export interface IChatMessageProps extends WithTranslation {
     gifEnabled?: boolean;
 
     /**
-     * Whether a long press opens the message menu (native). False when the menu would be empty.
+     * Whether a long press opens the message menu (native). False when Copy would be the only row; the text
+     * is then selectable instead.
      */
     hasMenu?: boolean;
 

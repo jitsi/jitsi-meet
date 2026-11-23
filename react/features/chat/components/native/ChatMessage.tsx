@@ -1,5 +1,13 @@
 import React, { Component, createRef } from 'react';
-import { EmitterSubscription, Keyboard, Pressable, Text, View, ViewStyle } from 'react-native';
+import {
+    AccessibilityActionEvent,
+    EmitterSubscription,
+    Keyboard,
+    Pressable,
+    Text,
+    View,
+    ViewStyle
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -59,6 +67,16 @@ class ChatMessage extends Component<IChatMessageProps> {
             this._rowRef.current?.measureInWindow((x, y, width, height) => onRemeasure({ height, width, x, y }));
         });
     }
+
+    /**
+     * Opens the message menu from the screen reader long press action.
+     *
+     * @param {AccessibilityActionEvent} event - The accessibility action event.
+     * @returns {void}
+     */
+    _onAccessibilityAction = (event: AccessibilityActionEvent) => {
+        event.nativeEvent.actionName === 'longpress' && this._onLongPress();
+    };
 
     /**
      * Opens the message menu with the row's window frame, so the menu can redraw the row above its backdrop.
@@ -138,9 +156,13 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @inheritdoc
      */
     override render() {
-        const { gifEnabled, hasMenu, message, knocking, isActiveMatch, isHidden, isPreview } = this.props;
+        const { gifEnabled, hasMenu, message, knocking, isActiveMatch, isHidden, isPreview, t } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
         const { privateMessage, lobbyChat } = message;
+
+        // The bubble text is one screen reader element with an action for the menu; the reply button stays separate.
+        const canOpenMenu = Boolean(hasMenu && !isPreview);
+        const menuActions = canOpenMenu ? [ { name: 'longpress', label: t('toolbar.moreOptions') } ] : undefined;
 
         // Style arrays that need to be updated in various scenarios, such as
         // error messages or others.
@@ -203,10 +225,15 @@ class ChatMessage extends Component<IChatMessageProps> {
                 { this._renderAvatar() }
                 <View style = { detailsWrapperStyle }>
                     <Pressable
-                        disabled = { !hasMenu || isPreview }
+                        accessible = { false }
+                        disabled = { !canOpenMenu }
                         onLongPress = { this._onLongPress }
                         style = { messageBubbleStyle }>
-                        <View style = { styles.textWrapper as ViewStyle } >
+                        <View
+                            accessibilityActions = { menuActions }
+                            accessible = { canOpenMenu }
+                            onAccessibilityAction = { this._onAccessibilityAction }
+                            style = { styles.textWrapper as ViewStyle } >
                             { this._renderDisplayName() }
                             { gifEnabled && isGifMessage(messageText)
                                 ? <GifMessage message = { messageText } />
@@ -384,7 +411,7 @@ class ChatMessage extends Component<IChatMessageProps> {
     }
 
     /**
-     * Renders the reactions chip: the 3 most used reactions and the total count, as on web.
+     * Renders the reactions chip: the 3 most used reactions and the total count.
      *
      * @returns {React.ReactElement<*> | null}
      */

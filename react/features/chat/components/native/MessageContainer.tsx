@@ -34,9 +34,6 @@ interface IProps {
     t: Function;
 }
 
-/**
- * Implements a container to render all the chat messages in a conference.
- */
 interface IState {
 
     /**
@@ -46,6 +43,9 @@ interface IState {
     lift: number;
 }
 
+/**
+ * Implements a container to render all the chat messages in a conference.
+ */
 class MessageContainer extends Component<IProps, IState> {
 
     static defaultProps = {
