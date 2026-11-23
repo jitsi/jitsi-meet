@@ -91,8 +91,11 @@ ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], acti
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
-    case TRACK_UPDATED:
-        return state.map((t: ITrack) => track(t, action));
+    case TRACK_UPDATED: {
+        const newState = state.map((t: ITrack) => track(t, action));
+
+        return newState.some((t: ITrack, i: number) => t !== state[i]) ? newState : state;
+    }
     case TRACK_ADDED: {
         let withoutTrackStub = state;
 

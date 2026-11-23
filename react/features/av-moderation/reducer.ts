@@ -224,27 +224,26 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
     case PARTICIPANT_UPDATED: {
         const participant = action.participant;
         const { audioModerationEnabled, desktopModerationEnabled, videoModerationEnabled } = state;
+        const newState = { ...state };
         let hasStateChanged = false;
 
         // skips changing the reference of pendingAudio or pendingVideo,
         // if there is no change in the elements
         if (audioModerationEnabled) {
-            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.AUDIO, participant, state);
+            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.AUDIO, participant, newState);
         }
 
         if (desktopModerationEnabled) {
-            hasStateChanged = hasStateChanged || _updatePendingParticipant(MEDIA_TYPE.DESKTOP, participant, state);
+            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.DESKTOP, participant, newState) || hasStateChanged;
         }
 
         if (videoModerationEnabled) {
-            hasStateChanged = hasStateChanged || _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
+            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, newState) || hasStateChanged;
         }
 
         // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
         if (hasStateChanged) {
-            return {
-                ...state
-            };
+            return newState;
         }
 
         return state;
@@ -253,6 +252,7 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
     case PARTICIPANT_LEFT: {
         const participant = action.participant;
         const { audioModerationEnabled, desktopModerationEnabled, videoModerationEnabled } = state;
+        const newState = { ...state };
         let hasStateChanged = false;
 
         // skips changing the reference of pendingAudio or pendingVideo,
@@ -261,7 +261,7 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
             const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
 
             if (state.pendingAudio.length !== newPendingAudio.length) {
-                state.pendingAudio = newPendingAudio;
+                newState.pendingAudio = newPendingAudio;
                 hasStateChanged = true;
             }
         }
@@ -270,7 +270,7 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
             const newPendingDesktop = state.pendingDesktop.filter(pending => pending.id !== participant.id);
 
             if (state.pendingDesktop.length !== newPendingDesktop.length) {
-                state.pendingDesktop = newPendingDesktop;
+                newState.pendingDesktop = newPendingDesktop;
                 hasStateChanged = true;
             }
         }
@@ -279,16 +279,14 @@ ReducerRegistry.register<IAVModerationState>('features/av-moderation',
             const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
 
             if (state.pendingVideo.length !== newPendingVideo.length) {
-                state.pendingVideo = newPendingVideo;
+                newState.pendingVideo = newPendingVideo;
                 hasStateChanged = true;
             }
         }
 
         // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
         if (hasStateChanged) {
-            return {
-                ...state
-            };
+            return newState;
         }
 
         return state;
