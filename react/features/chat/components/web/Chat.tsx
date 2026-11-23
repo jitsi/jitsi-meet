@@ -540,13 +540,11 @@ const Chat = ({
         return (
             <Tabs
                 accessibilityLabel = { _isPollsEnabled || _isCCTabEnabled || _isFileSharingTabEnabled
-                    ? t('chat.titleWithFeatures', {
-                        features: [
-                            _isPollsEnabled ? t('chat.titleWithPolls') : '',
-                            _isCCTabEnabled ? t('chat.titleWithCC') : '',
-                            _isFileSharingTabEnabled ? t('chat.titleWithFileSharing') : ''
-                        ].filter(Boolean).join(', ')
-                    })
+                    ? `${t('chat.titleWithFeatures')} ${[
+                        _isPollsEnabled ? t('chat.titleWithPolls') : '',
+                        _isCCTabEnabled ? t('chat.titleWithCC') : '',
+                        _isFileSharingTabEnabled ? t('chat.titleWithFileSharing') : ''
+                    ].filter(Boolean).join(', ')}`
                     : t('chat.title')
                 }
                 onChange = { onChangeTab }

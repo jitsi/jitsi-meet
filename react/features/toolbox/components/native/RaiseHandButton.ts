@@ -36,6 +36,7 @@ interface IProps extends AbstractButtonProps {
  */
 class RaiseHandButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
     override icon = IconRaiseHand;
     override label = 'toolbar.raiseYourHand';
     override toggledLabel = 'toolbar.lowerYourHand';

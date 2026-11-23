@@ -57,6 +57,7 @@ interface IProps extends AbstractButtonProps {
 class RaiseHandButton extends Component<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
     label = 'toolbar.raiseYourHand';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
     toggledLabel = 'toolbar.lowerYourHand';
 
     /**
@@ -72,6 +73,7 @@ class RaiseHandButton extends Component<IProps> {
         this._onClick = this._onClick.bind(this);
         this._toggleRaisedHand = this._toggleRaisedHand.bind(this);
         this._getLabel = this._getLabel.bind(this);
+        this._getAccessibilityLabel = this._getAccessibilityLabel.bind(this);
     }
 
     /**
@@ -101,6 +103,17 @@ class RaiseHandButton extends Component<IProps> {
         sendAnalytics(createToolbarEvent('raise.hand', { enable }));
 
         this.props.dispatch(raiseHand(enable));
+    }
+
+    /**
+     * Gets the current accessibility label, taking the toggled state into account.
+     *
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        const { _raisedHand } = this.props;
+
+        return _raisedHand ? this.toggledAccessibilityLabel : this.accessibilityLabel;
     }
 
     /**
@@ -142,7 +155,7 @@ class RaiseHandButton extends Component<IProps> {
 
         return (
             <Button
-                accessibilityLabel = { this.accessibilityLabel }
+                accessibilityLabel = { this._getAccessibilityLabel() }
                 icon = { this._renderRaiseHandEmoji }
                 labelKey = { this._getLabel() }
                 onClick = { this._onClick }
