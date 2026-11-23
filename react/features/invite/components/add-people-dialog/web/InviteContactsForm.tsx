@@ -101,11 +101,9 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClearItems = this._onClearItems.bind(this);
-        this._onClearItemsKeyPress = this._onClearItemsKeyPress.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
-        this._onSubmitKeyPress = this._onSubmitKeyPress.bind(this);
         this._parseQueryResults = this._parseQueryResults.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
@@ -261,20 +259,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
     }
 
     /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {KeyboardEvent} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onSubmitKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onSubmit();
-        }
-    }
-
-    /**
      * Handles 'Enter' key in the form to trigger the invite.
      *
      * @param {KeyboardEvent} event - The key event.
@@ -425,20 +409,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
     }
 
     /**
-     * Clears the selected items from state and form.
-     *
-     * @param {KeyboardEvent} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onClearItemsKeyPress(e: KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onClearItems();
-        }
-    }
-
-    /**
      * Renders the add/cancel actions for the form.
      *
      * @returns {ReactElement|null}
@@ -459,7 +429,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
                     className = 'invite-button'
                     label = { t('dialog.Cancel') }
                     onClick = { this._onClearItems }
-                    onKeyPress = { this._onClearItemsKeyPress }
                     role = 'button'
                     type = { BUTTON_TYPES.SECONDARY } />
                 <Button
@@ -468,7 +437,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
                     disabled = { this._isAddDisabled() }
                     label = { t('addPeople.add') }
                     onClick = { this._onSubmit }
-                    onKeyPress = { this._onSubmitKeyPress }
                     role = 'button' />
             </div>
         );

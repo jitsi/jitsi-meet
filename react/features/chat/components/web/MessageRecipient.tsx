@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -56,20 +56,6 @@ const MessageRecipient = ({
     const { classes } = useStyles();
     const { t } = useTranslation();
 
-    const _onKeyPress = useCallback((e: React.KeyboardEvent) => {
-        if (
-            (_onRemovePrivateMessageRecipient || _onHideLobbyChatRecipient)
-            && (e.key === ' ' || e.key === 'Enter')
-        ) {
-            e.preventDefault();
-            if (_isLobbyChatActive && _onHideLobbyChatRecipient) {
-                _onHideLobbyChatRecipient();
-            } else if (_onRemovePrivateMessageRecipient) {
-                _onRemovePrivateMessageRecipient();
-            }
-        }
-    }, [ _onRemovePrivateMessageRecipient, _onHideLobbyChatRecipient, _isLobbyChatActive ]);
-
     if ((!_privateMessageRecipient && !_isLobbyChatActive) || !_visible) {
         return null;
     }
@@ -90,7 +76,6 @@ const MessageRecipient = ({
                 icon = { IconCloseLarge }
                 onClick = { _isLobbyChatActive
                     ? _onHideLobbyChatRecipient : _onRemovePrivateMessageRecipient }
-                onKeyPress = { _onKeyPress }
                 type = { BUTTON_TYPES.TERTIARY } />
         </div>
     );

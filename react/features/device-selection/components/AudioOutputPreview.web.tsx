@@ -45,7 +45,6 @@ class AudioOutputPreview extends Component<IProps> {
 
         this._audioElementReady = this._audioElementReady.bind(this);
         this._onClick = this._onClick.bind(this);
-        this._onKeyPress = this._onKeyPress.bind(this);
     }
 
     /**
@@ -73,7 +72,6 @@ class AudioOutputPreview extends Component<IProps> {
                     className = { this.props.className }
                     labelKey = 'deviceSelection.testAudio'
                     onClick = { this._onClick }
-                    onKeyPress = { this._onKeyPress }
                     type = { BUTTON_TYPES.SECONDARY } />
                 <Audio
                     setRef = { this._audioElementReady }
@@ -104,20 +102,6 @@ class AudioOutputPreview extends Component<IProps> {
      */
     _onClick() {
         this._audioElement?.play();
-    }
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onClick();
-        }
     }
 
     /**

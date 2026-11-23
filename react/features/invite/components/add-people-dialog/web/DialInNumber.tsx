@@ -76,20 +76,6 @@ function DialInNumber({ conferenceID, phoneNumber, t }: IProps) {
     }
 
     /**
-     * Copies the conference invitation to the clipboard.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function _onCopyTextKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            _onCopyText();
-        }
-    }
-
-    /**
      * Renders section that shows the phone number and conference ID
      * and give user the ability to copy them to the clipboard.
      *
@@ -125,9 +111,7 @@ function DialInNumber({ conferenceID, phoneNumber, t }: IProps) {
                     aria-label = { t('info.copyNumber') }
                     className = 'dial-in-copy invisible-button'
                     // eslint-disable-next-line react/jsx-no-bind
-                    onClick = { _onCopyText }
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onKeyPress = { _onCopyTextKeyPress }>
+                    onClick = { _onCopyText }>
                     <Icon src = { isClicked ? IconCheck : IconCopy } />
                 </button>
             </Tooltip>
