@@ -157,6 +157,9 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
     if (!Object.keys(actionPayload).length) {
         const state = store.getState();
 
+        // Only the token being set may name a login service: never keep the one a previous token named.
+        action.tenantTokenAuthUrl = undefined;
+
         if (jwt) {
             let jwtPayload;
 
@@ -179,6 +182,8 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     action.group = context.group;
                     action.server = context.server;
                     action.tenant = context.tenant || sub || undefined;
+                    action.tenantTokenAuthUrl = typeof context.tokenAuthUrl === 'string'
+                        ? context.tokenAuthUrl : undefined;
                     action.user = user;
 
                     const newUser = user ? { ...user } : {};

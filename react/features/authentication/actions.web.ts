@@ -22,7 +22,8 @@ const PROMPT_POPUP_NOTIFICATION_ID = 'PROMPT_POPUP_NOTIFICATION_ID';
 class PopupBlockedError extends Error {
     constructor(
             message: string = 'Popup was blocked by browser',
-            public readonly retry?: () => Window | null
+            public readonly retry?: () => Window | null,
+            public readonly nonce?: string
     ) {
         super(message);
         this.name = 'PopupBlockedError';
@@ -107,20 +108,30 @@ function generateNonce(): string {
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
  * @param {Window|undefined} popup - Authentication service URL.
+ * @param {boolean} requireNonce - Accept only a result that carries back the nonce sent to the login service.
+ * @param {string} retryNonce - The nonce of a blocked attempt whose popup {@code popup} is: that popup was opened
+ * with it, so the result must carry it.
  * @returns {Promise<any>} A promise that resolves with the authentication
  * result or rejects with an error.
  */
-export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | null): Promise<any> {
+export function loginWithPopup(
+        tokenAuthServiceUrl: string,
+        popup?: Window | null,
+        requireNonce = false,
+        retryNonce?: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-        let nonceParam = '';
+        const nonce = retryNonce ?? generateNonce();
+        let sendNonce = true;
 
         try {
-            const nonce = generateNonce();
-
             sessionStorage.setItem('oauth_nonce', nonce);
-
-            nonceParam = `&nonce=${nonce}`;
         } catch (e) {
+            // A login service that hands the nonce back in its message (see requireNonce) is checked against the
+            // value kept here, so it still works when the popup cannot read this session storage.
+            if (!requireNonce) {
+                sendNonce = false;
+            }
+
             if (e instanceof DOMException && e.name === 'SecurityError') {
                 logger.warn(
                     'sessionStorage access denied (cross-origin or restricted context) enable it to improve security',
@@ -130,6 +141,11 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
             }
         }
 
+        // Appended as is (the service URL is already encoded), with '?' when the URL has no query yet.
+        const popupUrl = sendNonce
+            ? `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('?') ? '&' : '?'}nonce=${nonce}`
+            : tokenAuthServiceUrl;
+
         const openPopup = () => {
             // Open popup
             const width = 500;
@@ -138,7 +154,7 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
             const top = window.screen.height / 2 - height / 2;
 
             return window.open(
-                `${tokenAuthServiceUrl}${nonceParam}`,
+                popupUrl,
                 `Auth-${Date.now()}`,
                 `width=${width},height=${height},left=${left},top=${top}`
             );
@@ -153,7 +169,7 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
             // on the user click without any promises(dispatches) incoved
             reject(new PopupBlockedError('Popup blocked', () => {
                 return openPopup();
-            }));
+            }, nonce));
 
             return;
         }
@@ -184,6 +200,12 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
             }
 
             if (event.data.type === 'oauth-success') {
+                if ((requireNonce || event.data.nonce !== undefined) && event.data.nonce !== nonce) {
+                    logger.warn('Ignoring a login result that does not carry this login\'s nonce');
+
+                    return;
+                }
+
                 cleanup(handler);
 
                 resolve({
@@ -265,10 +287,11 @@ export function closeLoginPopup() {
  * Opens token auth URL page.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
+ * @param {boolean} tenantLogin - The URL is the JaaS tenant's own login service, named in its token.
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
+export function openTokenAuthUrl(tokenAuthServiceUrl: string, tenantLogin = false): any {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const redirect = () => {
             if (browser.isElectron()) {
@@ -278,9 +301,10 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
             }
         };
 
-        if (!browser.isElectron() && isTokenAuthInline(getState()['features/base/config'])) {
-            const login = (popup?: Window | null) => {
-                return loginWithPopup(tokenAuthServiceUrl, popup)
+        // A tenant's own login service always runs in a popup: leaving the page would drop the embedding app.
+        if (!browser.isElectron() && (tenantLogin || isTokenAuthInline(getState()['features/base/config']))) {
+            const login = (popup?: Window | null, retryNonce?: string) => {
+                return loginWithPopup(tokenAuthServiceUrl, popup, tenantLogin, retryNonce)
                     .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
                         // @ts-ignore
                         const token: string = result.accessToken;
@@ -326,7 +350,7 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
                             dispatch(hideNotification(PROMPT_POPUP_NOTIFICATION_ID));
 
                             // the window.open will be executed directly from the onClick handler of the notification action button
-                            login(err.retry ? err.retry() : undefined)
+                            login(err.retry ? err.retry() : undefined, err.nonce)
                                 .catch(logger.error);
                         } ],
                         appearance: NOTIFICATION_TYPE.ERROR
