@@ -19,10 +19,6 @@ export interface IMessage {
     editedAt?: number;
     error?: unknown;
     fileMetadata?: IFileMetadata;
-
-    /**
-     * True when the client generated the id, so the server cannot moderate the message.
-     */
     hasLocalId?: boolean;
     isDeleted?: boolean;
     isEdited?: Boolean;
