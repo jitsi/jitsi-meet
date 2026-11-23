@@ -250,6 +250,9 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
         return (
             <TouchableHighlight
+                accessibilityLabel = { text }
+                accessibilityRole = 'button'
+                accessibilityState = {{ selected }}
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
                 style = { speakerDeviceIsNotSelected && borderRadiusHighlightStyles }
@@ -277,14 +280,18 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
      */
     _renderNoDevices() {
         const { t } = this.props;
+        const noDevicesText = t('audioDevices.none');
 
         return (
-            <View style = { styles.deviceRow as ViewStyle } >
+            <View
+                accessibilityLabel = { noDevicesText }
+                accessible = { true }
+                style = { styles.deviceRow as ViewStyle } >
                 <Icon
                     src = { deviceInfoMap.SPEAKER.icon }
                     style = { [ styles.deviceIcon, bottomSheetStyles.buttons.iconStyle ] as StyleType[] } />
                 <Text style = { [ styles.deviceText, bottomSheetStyles.buttons.labelStyle ] as TextStyle[] } >
-                    { t('audioDevices.none') }
+                    { noDevicesText }
                 </Text>
             </View>
         );
