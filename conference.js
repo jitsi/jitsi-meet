@@ -1034,20 +1034,37 @@ export default {
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
         const localTracks = await tryCreateLocalTracks;
-        const { startWithAudioMuted = false, startWithVideoMuted = false } = options ?? {};
 
         APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
 
-        // The caller passes the mute state of the tracks from the previous room. When there was no track there (for
-        // example the client started with disableInitialGUM), this is true, while base/media can still say unmuted.
-        // A track created for the move must not be sent unmuted in that case.
-        localTracks.forEach(track => {
-            if ((track.isAudioTrack() && (startWithAudioMuted || this.isLocalAudioMuted()))
-                || (track.isVideoTrack() && (startWithVideoMuted || this.isLocalVideoMuted()))) {
+        // options.startWithAudioMuted is the mute state of the audio track in the previous room, and true when there
+        // was no audio track there, for example after joining with startWithAudioMuted or disableInitialGUM and no
+        // pre-join page. base/media can still say unmuted in that case, so check both. The move always creates a new
+        // audio track and it must not be sent unmuted.
+        const audioMuted = Boolean(options?.startWithAudioMuted) || this.isLocalAudioMuted();
+        let tracks = localTracks;
+
+        // Like handleInitialTracks: stop a muted audio track instead of keeping it, so that the microphone is released
+        // (except on Safari, see there).
+        if (audioMuted && !browser.isWebKitBased()) {
+            tracks = localTracks.filter(track => {
+                if (track.isAudioTrack()) {
+                    track.stopStream();
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        tracks.forEach(track => {
+            if ((track.isAudioTrack() && audioMuted)
+                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
                 track.mute();
             }
         });
-        this._createRoom(localTracks);
+        this._createRoom(tracks);
 
         return new Promise((resolve, reject) => {
             new ConferenceConnector(resolve, reject, this).connect();
