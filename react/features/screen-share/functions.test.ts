@@ -5,7 +5,7 @@ import { IReduxState } from '../app/types';
 const env = vi.hoisted(() => {
     return {
         electron: true,
-        electronVersion: 42,
+        electronVersion: '44.0.0',
         mobile: false,
         os: 'macos'
     };
@@ -16,7 +16,7 @@ vi.mock('../base/lib-jitsi-meet', () => {
         browser: {
             isChromiumBased: () => true,
             isElectron: () => env.electron,
-            isVersionGreaterThan: (version: number) => env.electronVersion > version
+            getVersion: () => env.electronVersion
         }
     };
 });
@@ -61,13 +61,13 @@ function settleLookup() {
 
 afterEach(() => {
     vi.unstubAllGlobals();
-    Object.assign(env, { electron: true, electronVersion: 42, mobile: false, os: 'macos' });
+    Object.assign(env, { electron: true, electronVersion: '44.0.0', mobile: false, os: 'macos' });
 });
 
 describe('isElectronSystemAudioSupported', () => {
     it('is supported on Windows without the host flag', async () => {
         env.os = 'windows';
-        env.electronVersion = 30;
+        env.electronVersion = '30.0.0';
 
         const { isElectronSystemAudioSupported, isScreenAudioSupported } = await load();
 
@@ -76,10 +76,10 @@ describe('isElectronSystemAudioSupported', () => {
     });
 
     it.each([
-        [ '14.2.0', 39 ],
-        [ '15.1.0', 42 ],
-        [ '26.0.1', 43 ]
-    ])('is supported on macOS %s with Electron %i', async (platformVersion, electronVersion) => {
+        [ '14.2.0', '43.4.0' ],
+        [ '15.1.0', '44.0.0' ],
+        [ '26.0.1', '43.8.3' ]
+    ])('is supported on macOS %s with Electron %s', async (platformVersion, electronVersion) => {
         env.electronVersion = electronVersion;
 
         const { isElectronSystemAudioSupported, isScreenAudioSupported } = await load(platformVersion);
@@ -89,10 +89,12 @@ describe('isElectronSystemAudioSupported', () => {
     });
 
     it.each([
-        [ '14.1.2', 42 ],
-        [ '13.6.0', 42 ],
-        [ '15.1.0', 38 ]
-    ])('is not supported on macOS %s with Electron %i', async (platformVersion, electronVersion) => {
+        [ '14.1.2', '44.0.0' ],
+        [ '13.6.0', '44.0.0' ],
+        [ '15.1.0', '43.3.1' ],
+        [ '15.1.0', '39.0.0' ],
+        [ '15.1.0', '' ]
+    ])('is not supported on macOS %s with Electron %j', async (platformVersion, electronVersion) => {
         env.electronVersion = electronVersion;
 
         const { isElectronSystemAudioSupported, isScreenAudioSupported } = await load(platformVersion);

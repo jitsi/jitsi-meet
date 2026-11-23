@@ -1865,7 +1865,7 @@ var config = {
     // desktopSharingSources: ['screen', 'window'],
 
     // Set by Electron apps that have NSAudioCaptureUsageDescription in their macOS Info.plist. The desktop picker
-    // then offers system audio on macOS 14.2 or later with Electron 39 or later.
+    // then offers system audio on macOS 14.2 or later with Electron 43.4 or later.
     // desktopSharingMacOSSystemAudio: false,
 
     // Disables the echo cancelation for local audio tracks.

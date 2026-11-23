@@ -6,8 +6,8 @@ import { getLocalDesktopTrack } from '../base/tracks/functions';
 
 import logger from './logger';
 
-// Electron captures macOS system audio through the CoreAudio Tap API from these versions on.
-const MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO = 39;
+// macOS 14.2 has the CoreAudio Tap API; Electron 43.4 can leave its own playback out of the capture.
+const MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO = [ 43, 4 ];
 const MIN_MACOS_VERSION_FOR_AUDIO = [ 14, 2 ];
 
 // The macOS version split into numbers, read on first use. The user agent string always reports 10.15.7.
@@ -42,8 +42,19 @@ function getMacOSVersion() {
 }
 
 /**
+ * Returns whether a version is the given [major, minor] or later.
+ *
+ * @param {number[]} version - The version as numbers.
+ * @param {number[]} minVersion - The minimum version as [major, minor].
+ * @returns {boolean}
+ */
+function isVersionAtLeast([ major = 0, minor = 0 ]: number[], [ minMajor, minMinor ]: number[]) {
+    return major > minMajor || (major === minMajor && minor >= minMinor);
+}
+
+/**
  * Returns whether the Electron app can share system audio. It is supported on Windows, and on macOS 14.2 or
- * later with Electron 39 or later when the host app has declared it with {@code desktopSharingMacOSSystemAudio}.
+ * later with Electron 43.4 or later when the host app has declared it with {@code desktopSharingMacOSSystemAudio}.
  * On macOS it returns false until the macOS version has been read.
  *
  * @param {IReduxState} state - The state of the application.
@@ -59,23 +70,16 @@ export function isElectronSystemAudioSupported(state: IReduxState) {
     }
 
     // Without NSAudioCaptureUsageDescription in the host's Info.plist macOS hands out a silent track, so the host
-    // has to say it has the key. Not isVersionLessThan, which returns false for an unknown version.
+    // has to say it has the key.
     if (!isMacOS()
             || !state['features/base/config'].desktopSharingMacOSSystemAudio
-            || !browser.isVersionGreaterThan(MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO - 1)) {
+            || !isVersionAtLeast((browser.getVersion() ?? '').split('.').map(Number), MIN_ELECTRON_VERSION_FOR_MACOS_AUDIO)) {
         return false;
     }
 
     const version = getMacOSVersion();
 
-    if (!version) {
-        return false;
-    }
-
-    const [ major = 0, minor = 0 ] = version;
-    const [ minMajor, minMinor ] = MIN_MACOS_VERSION_FOR_AUDIO;
-
-    return major > minMajor || (major === minMajor && minor >= minMinor);
+    return Boolean(version) && isVersionAtLeast(version as number[], MIN_MACOS_VERSION_FOR_AUDIO);
 }
 
 /**
