@@ -496,7 +496,7 @@ MiddlewareRegistry.register(store => next => action => {
             }));
         } else {
             logger.warn(`Dropping edit for message ${action.messageId}: no conference, `
-                + `message not found, or not an own message.`);
+                + 'message not found, or not an own message.');
         }
         break;
     }
