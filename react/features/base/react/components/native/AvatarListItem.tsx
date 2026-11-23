@@ -98,6 +98,7 @@ export default class AvatarListItem extends Component<IProps> {
 
         return (
             <Container
+                accessibilityRole = { onPress || onLongPress ? 'button' : undefined }
                 onClick = { onPress }
                 onLongPress = { onLongPress }
                 style = { styles.listItem }
