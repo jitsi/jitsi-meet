@@ -21,6 +21,7 @@ Component "breakout.conference.localhost" "muc"
     modules_enabled = {
         -- breakout messages count against the main room, same options as conference.localhost
         "muc_limit_messages";
+        "muc_resource_validate";
     }
     muc_limit_messages_count = 3
     muc_limit_messages_check_token = true

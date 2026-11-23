@@ -91,6 +91,10 @@ Component "conference.jitmeet.example.com" "muc"
         --"token_verification";
         "muc_rate_limit";
         "muc_password_whitelist";
+        -- The occupant resource becomes the endpoint ID on the bridge. The
+        -- module accepts only letters, digits and underscores in it (not a
+        -- leading underscore), and refuses the reserved "transcriber".
+        "muc_resource_validate";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_password_whitelist = {
@@ -108,6 +112,7 @@ Component "breakout.jitmeet.example.com" "muc"
         "muc_domain_mapper";
         "muc_rate_limit";
         "polls";
+        "muc_resource_validate";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_room_locking = false

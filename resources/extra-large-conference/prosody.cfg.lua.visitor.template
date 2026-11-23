@@ -133,6 +133,7 @@ Component 'conference.vX.meet.jitsi' 'muc'
         's2s_bidi';
         's2s_whitelist';
         's2sout_override';
+        'muc_resource_validate';
     }
     muc_room_default_presence_broadcast = {
         visitor = false;

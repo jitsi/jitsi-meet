@@ -57,4 +57,5 @@ Component "conference.v0.meet.jitsi" "muc"
         "s2s_bidi";
         "s2s_whitelist";
         "s2sout_override";
+        "muc_resource_validate";
     }
