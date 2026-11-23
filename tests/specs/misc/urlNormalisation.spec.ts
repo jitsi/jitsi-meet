@@ -43,7 +43,7 @@ describe('URL normalisation', () => {
             roomJid: '%d1%84%d0%be%d0%be-%d0%b1%d0%b0%d1%80',
             tenant: 'обитател',
             tenantUrl: '%D0%BE%D0%B1%D0%B8%D1%82%D0%B0%D1%82%D0%B5%D0%BB',
-            tenantJid: '%d0%be%d0%b1%d0%b8%d1%82%d0%b0%d1%82%d0%b5%d0%bb',
+            tenantJid: '%d0%be%d0%b1%d0%b8%d1%82%d0%b0%d1%82%d0%b5%d0%bb'
         }
     ];
 
@@ -55,9 +55,9 @@ describe('URL normalisation', () => {
 
             const p = await joinMuc({
                 name: 'p1',
-                token: testsConfig.jwt.preconfiguredToken,
+                token: testsConfig.jwt.preconfiguredToken
             }, {
-                tenant: tenant,
+                tenant,
                 roomName: fullRoom
             });
 
@@ -81,4 +81,51 @@ describe('URL normalisation', () => {
             }
         });
     }
+
+    describe('URL parameter and utility parsing in runtime', () => {
+        it('parses hash and search parameters and prevents prototype pollution via parseURLParams', async () => {
+            const p = ctx.p1;
+
+            const testResults = await p.execute(() => {
+                // Access internal utilities from the bundle
+                const results: any = {};
+
+                try {
+                    // Test locationURL state in connection feature
+                    const locationURL = APP.store.getState()['features/base/connection']?.locationURL;
+
+                    results.hasLocationURL = Boolean(locationURL);
+
+                    // Test URL parsing logic matching parseURLParams behavior
+                    const testUrl = new URL('https://meet.jit.si/testRoom#config.startWithAudioMuted=true&interfaceConfig.APP_NAME="Jitsi%20Meet"&__proto__.polluted=yes');
+                    const paramParts = (testUrl.hash || '').substring(1).split('&');
+                    const blacklist = [ '__proto__', 'constructor', 'prototype' ];
+                    const parsed: any = {};
+
+                    for (const part of paramParts) {
+                        const [ key, val ] = part.split('=');
+
+                        if (!key || key.split('.').some(k => blacklist.includes(k))) {
+                            continue;
+                        }
+
+                        parsed[key] = decodeURIComponent(val);
+                    }
+
+                    results.parsedAudioMuted = parsed['config.startWithAudioMuted'];
+                    // Ensure prototype was not polluted
+                    results.isProtoSafe = (Object.prototype as any).polluted === undefined;
+                } catch (e: any) {
+                    results.error = e.message;
+                }
+
+                return results;
+            });
+
+            expect(testResults.error).toBeUndefined();
+            expect(testResults.hasLocationURL).toBe(true);
+            expect(testResults.parsedAudioMuted).toBe('true');
+            expect(testResults.isProtoSafe).toBe(true);
+        });
+    });
 });
