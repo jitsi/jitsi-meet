@@ -658,6 +658,7 @@ export interface IConfig {
         hideExtraJoinButtons?: Array<string>;
         preCallTestEnabled?: boolean;
         preCallTestICEUrl?: string;
+        showAudioTest?: boolean;
         showHangUp?: boolean;
     };
     raisedHands?: {

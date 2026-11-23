@@ -77,6 +77,23 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
 }
 
 /**
+ * Saves the devices chosen in the audio test, the same way as the audio settings.
+ *
+ * @param {string} [micId] - The microphone.
+ * @param {string} [speakerId] - The speakers.
+ * @param {boolean} isDisplayedOnWelcomePage - Whether the test was opened on the welcome page.
+ * @returns {Function}
+ */
+export function submitAudioTestDevices(micId: string | undefined, speakerId: string | undefined,
+        isDisplayedOnWelcomePage: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => dispatch(submitAudioDeviceSelectionTab({
+        ...getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage),
+        selectedAudioInputId: micId,
+        selectedAudioOutputId: speakerId
+    }, isDisplayedOnWelcomePage));
+}
+
+/**
  * Submits the settings related to device selection.
  *
  * @param {Object} newState - The new settings.

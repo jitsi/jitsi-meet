@@ -11,6 +11,11 @@ const JitsiTrackEvents = JitsiMeetJS.events.track;
 interface IProps {
 
     /**
+     * The number of segments of the meter.
+     */
+    sections?: number;
+
+    /**
      * The JitsiLocalTrack to show an audio level meter for.
      */
     track: any;
@@ -26,7 +31,7 @@ const useStyles = makeStyles()(theme => {
             flex: 1,
             height: '4px',
             borderRadius: '1px',
-            backgroundColor: theme.palette.labelBackground,
+            backgroundColor: theme.palette.ui03,
             marginRight: theme.spacing(1),
 
             '&:last-of-type': {
@@ -43,6 +48,7 @@ const useStyles = makeStyles()(theme => {
 const NO_OF_PREVIEW_SECTIONS = 11;
 
 const AudioInputPreview = (props: IProps) => {
+    const { sections = NO_OF_PREVIEW_SECTIONS } = props;
     const [ audioLevel, setAudioLevel ] = useState(0);
     const { classes, cx } = useStyles();
 
@@ -85,11 +91,11 @@ const AudioInputPreview = (props: IProps) => {
         setAudioLevel(0);
     }, [ props.track ]);
 
-    const audioMeterFill = Math.ceil(Math.floor(audioLevel * 100) / (100 / NO_OF_PREVIEW_SECTIONS));
+    const audioMeterFill = Math.ceil(Math.floor(audioLevel * 100) / (100 / sections));
 
     return (
         <div className = { classes.container } >
-            {new Array(NO_OF_PREVIEW_SECTIONS).fill(0)
+            {new Array(sections).fill(0)
                     .map((_, idx) =>
                         (<div
                             className = { cx(classes.section, idx < audioMeterFill && classes.activeSection) }

@@ -18,10 +18,11 @@ import Checkbox from '../../base/ui/components/web/Checkbox';
 import { setPreviewAudioTrack } from '../../settings/actions.web';
 import { disposeTrack } from '../../settings/functions.web';
 import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
+import { isAudioTestSupported as isAudioTestSupportedCheck } from '../functions.web';
 import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview.web';
-import AudioOutputPreview from './AudioOutputPreview.web';
+import AudioTestPrompt from './AudioTestPrompt.web';
 import DeviceSelector from './DeviceSelector.web';
 
 
@@ -81,12 +82,6 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     hideAudioInputPreview: boolean;
 
     /**
-     * If true, the button to play a test sound on the selected speaker will not be displayed.
-     * This needs to be hidden on browsers that do not support selecting an audio output device.
-     */
-    hideAudioOutputPreview: boolean;
-
-    /**
      * Whether or not the audio output source selector should display. If
      * true, the audio output selector and test audio link will not be
      * rendered.
@@ -107,6 +102,16 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Whether the advanced audio settings are enabled from config.
      */
     isAdvancedAudioSettingsConfigEnabled: boolean;
+
+    /**
+     * Whether the audio test can run.
+     */
+    isAudioTestSupported: boolean;
+
+    /**
+     * Whether the settings are open on the welcome page.
+     */
+    isDisplayedOnWelcomePage: boolean;
 
     /**
      * Whether noise suppression is on or not.
@@ -159,13 +164,7 @@ const styles = (theme: Theme) => {
         },
 
         outputContainer: {
-            display: 'flex',
-            alignItems: 'flex-end',
-            margin: `${theme.spacing(5)} 0`
-        },
-
-        outputButton: {
-            marginLeft: theme.spacing(3)
+            marginBottom: theme.spacing(3)
         }
     };
 };
@@ -301,12 +300,12 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             audioSettings,
             hasAudioPermission,
             hideAudioInputPreview,
-            hideAudioOutputPreview,
             hideNoiseSuppression,
             isAdvancedAudioSettingsConfigEnabled,
+            isAudioTestSupported,
+            isDisplayedOnWelcomePage,
             iAmVisitor,
             noiseSuppressionEnabled,
-            selectedAudioOutputId,
             t
         } = this.props;
         const { audioInput, audioOutput } = this._getSelectors();
@@ -385,11 +384,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                     aria-live = 'polite'
                     className = { classes.outputContainer }>
                     {this._renderSelector(audioOutput)}
-                    {!hideAudioOutputPreview && hasAudioPermission
-                        && <AudioOutputPreview
-                            className = { classes.outputButton }
-                            deviceId = { selectedAudioOutputId } />}
                 </div>
+                {isAudioTestSupported && <AudioTestPrompt isDisplayedOnWelcomePage = { isDisplayedOnWelcomePage } />}
             </div>
         );
     }
@@ -481,10 +477,11 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
     }
 }
 
-const mapStateToProps = (state: IReduxState) => {
+const mapStateToProps = (state: IReduxState, ownProps: { isDisplayedOnWelcomePage: boolean; }) => {
     return {
         availableDevices: state['features/base/devices'].availableDevices ?? {},
         isAdvancedAudioSettingsConfigEnabled: isAdvancedAudioSettingsEnabled(state),
+        isAudioTestSupported: isAudioTestSupportedCheck(state, ownProps.isDisplayedOnWelcomePage),
         iAmVisitor: iAmVisitorCheck(state),
         previewAudioTrack: state['features/settings'].previewAudioTrack
     };

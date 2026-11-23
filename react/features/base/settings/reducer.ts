@@ -15,6 +15,7 @@ import { SETTINGS_UPDATED } from './actionTypes';
  */
 const DEFAULT_STATE: ISettingsState = {
     audioOutputDeviceId: undefined,
+    audioTestDone: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
@@ -62,6 +63,7 @@ export interface ISettingsState {
     audioOutputDeviceId?: string;
     audioSettings?: IAudioSettings;
     audioSettingsVisible?: boolean;
+    audioTestDone?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;
     disableCallIntegration?: boolean;
