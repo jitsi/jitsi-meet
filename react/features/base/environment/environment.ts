@@ -26,27 +26,6 @@ const browserNameToCheck = {
 };
 
 /**
- * Returns whether or not jitsi is optimized and targeted for the  provided
- * browser name.
- *
- * @param {string} browserName - The name of the browser to check.
- * @returns {boolean}
- */
-export function isBrowsersOptimal(browserName: string) {
-    return (interfaceConfig.OPTIMAL_BROWSERS || DEFAULT_OPTIMAL_BROWSERS)
-        .includes(browserName);
-}
-
-/**
- * Returns whether or not the current OS is Mac.
- *
- * @returns {boolean}
- */
-export function isMacOS() {
-    return Platform.OS === 'macos';
-}
-
-/**
  * Returns whether or not the current OS is Windows.
  *
  * @returns {boolean}

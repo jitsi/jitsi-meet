@@ -1,21 +1,6 @@
 import { IconPhoneRinging, IconWhiteboard } from '../icons/svg';
 
 /**
- * The relative path to the default/stock avatar (image) file used on both
- * Web/React and mobile/React Native (for the purposes of consistency).
- *
- * XXX (1) Web/React utilizes relativity on the Jitsi Meet deployment.
- * (2) Mobile/React Native utilizes relativity on the local file system at build
- * time. Unfortunately, the packager of React Native cannot deal with the
- * {@code const} early enough for {@code require} to succeed at runtime.
- * Anyway, be sure to synchronize the relative path on Web and mobile for the
- * purposes of consistency.
- *
- * @type {string}
- */
-export const DEFAULT_AVATAR_RELATIVE_PATH = 'images/avatar.png';
-
-/**
  * The value for the "var" attribute of feature tag in disco-info packets.
  */
 export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol';

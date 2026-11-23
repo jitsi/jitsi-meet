@@ -1,14 +1,3 @@
-export const FACE_EXPRESSIONS_EMOJIS = {
-    happy: '😊',
-    neutral: '😐',
-    sad: '🙁',
-    surprised: '😮',
-    angry: '😠',
-    fearful: '😨'
-
-    // disgusted: '🤢'
-};
-
 export const FACE_EXPRESSIONS = [ 'happy', 'neutral', 'sad', 'surprised', 'angry', 'fearful' ];
 
 export const FACE_EXPRESSIONS_NAMING_MAPPING = {

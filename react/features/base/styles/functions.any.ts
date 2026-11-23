@@ -150,23 +150,6 @@ export function getRGBAFormat(color: string, alpha: number): string {
 }
 
 /**
- * Decides if a color is light or dark based on the ITU-R BT.709 and W3C
- * recommendations.
- *
- * NOTE: Please see https://www.w3.org/TR/WCAG20/#relativeluminancedef.
- *
- * @param {string} color - The color in rgb, rgba or hex format.
- * @returns {boolean}
- */
-export function isDarkColor(color: string): boolean {
-    const rgb = _getRGBObjectFormat(color);
-
-    return ((_getColorLuminance(rgb.r) * 0.2126)
-    + (_getColorLuminance(rgb.g) * 0.7152)
-    + (_getColorLuminance(rgb.b) * 0.0722)) <= 0.179;
-}
-
-/**
  * Converts an [0..1] alpha value into HEX.
  *
  * @param {number} alpha - The alpha value to convert.

@@ -39,16 +39,6 @@ export function sendAnalytics(event: Object) {
 }
 
 /**
- * Return saved amplitude identity info such as session id, device id and user id. We assume these do not change for
- * the duration of the conference.
- *
- * @returns {Object}
- */
-export function getAmplitudeIdentity() {
-    return analytics.amplitudeIdentityProps;
-}
-
-/**
  * Resets the analytics adapter to its initial state - removes handlers, cache,
  * disabled state, etc.
  *

@@ -141,16 +141,6 @@ export function getFullDialOutNumber(state: IReduxState): string {
 }
 
 /**
- * Selector for getting the error if any while creating streams.
- *
- * @param {IReduxState} state - The state of the app.
- * @returns {string}
- */
-export function getRawError(state: IReduxState): string {
-    return state['features/prejoin']?.rawError;
-}
-
-/**
  * Selector for getting the visibility state for the 'JoinByPhoneDialog'.
  *
  * @param {IReduxState} state - The state of the app.

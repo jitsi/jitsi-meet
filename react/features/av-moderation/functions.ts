@@ -19,14 +19,6 @@ import {
 const getState = (state: IReduxState) => state['features/av-moderation'];
 
 /**
- * We use to construct once the empty array so we can keep the same instance between calls
- * of getParticipantsAskingToAudioUnmute.
- *
- * @type {any[]}
- */
-const EMPTY_ARRAY: any[] = [];
-
-/**
  * Returns whether moderation is enabled per media type.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
@@ -127,21 +119,6 @@ export const isParticipantPending = (participant: IParticipant, mediaType: Media
     const arr = getState(state)[storeKey];
 
     return Boolean(arr.find(pending => pending.id === participant.id));
-};
-
-/**
- * Selector which returns a list with all the participants asking to audio unmute.
- * This is visible only for the moderator.
- *
- * @param {Object} state - The global state.
- * @returns {Array<Object>}
- */
-export const getParticipantsAskingToAudioUnmute = (state: IReduxState) => {
-    if (isLocalParticipantModerator(state)) {
-        return getState(state).pendingAudio;
-    }
-
-    return EMPTY_ARRAY;
 };
 
 /**

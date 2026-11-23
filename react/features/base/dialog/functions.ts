@@ -6,17 +6,6 @@ import ColorSchemeRegistry from '../color-scheme/ColorSchemeRegistry';
 import { toState } from '../redux/functions';
 
 /**
- * Checks if any {@code Dialog} is currently open.
- *
- * @param {IStateful} stateful - The redux store, the redux
- * {@code getState} function, or the redux state itself.
- * @returns {boolean}
- */
-export function isAnyDialogOpen(stateful: IStateful) {
-    return Boolean(toState(stateful)['features/base/dialog'].component);
-}
-
-/**
  * Checks if a {@code Dialog} with a specific {@code component} is currently
  * open.
  *

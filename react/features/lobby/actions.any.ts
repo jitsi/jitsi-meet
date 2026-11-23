@@ -333,21 +333,6 @@ export function onSendMessage(message: string) {
 }
 
 /**
- * Action to send lobby message to every participant. Only allowed for moderators.
- *
- * @param {Object} message - The message to be sent.
- *
- * @returns {Promise<void>}
- */
-export function sendLobbyChatMessage(message: Object) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const conference = getCurrentConference(getState);
-
-        conference?.sendLobbyMessage(message);
-    };
-}
-
-/**
  * Sets lobby listeners if lobby has been enabled.
  *
  * @returns {Function}
