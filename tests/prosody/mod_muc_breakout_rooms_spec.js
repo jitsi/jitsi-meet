@@ -347,6 +347,46 @@ describe('mod_muc_breakout_rooms', () => {
     // -------------------------------------------------------------------------
     describe('access control', () => {
 
+        it('rejects an invalid occupant resource in a breakout room', async () => {
+            // mod_muc_resource_validate is loaded on the breakout component too:
+            // the occupant resource is the endpoint ID on the bridge there as well.
+            const name = nextRoomName();
+            const { focus, moderator } = await createRoom(name);
+
+            clients.push(focus, moderator);
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_ADD, { subject: 'Breakout 1' });
+            const createPayload = await waitForBreakoutUpdate(moderator);
+            const breakoutJid = Object.values(createPayload.rooms).find(r => !r.isMainRoom)?.jid;
+
+            assert.ok(breakoutJid, 'breakout room JID must be in the create broadcast');
+            await focus.joinRoom(breakoutJid, 'focus');
+
+            // The error text shows that mod_muc_resource_validate refused the join:
+            // mod_muc_breakout_rooms answers <not-allowed/> too, with another text or none.
+            const nicks = {
+                'invalid-nick': 'Invalid resource',
+                'a"b': 'Invalid resource',
+                '_abc': 'Invalid resource',
+                'transcriber': 'Reserved resource'
+            };
+
+            for (const [ nick, text ] of Object.entries(nicks)) {
+                const rejected = await moderator.joinRoom(breakoutJid, nick);
+
+                assert.equal(rejected.attrs.type, 'error', `resource ${nick} must be rejected`);
+
+                const error = rejected.getChild('error');
+
+                assert.ok(error?.getChild('not-allowed'), `error stanza for ${nick} must contain <not-allowed/>`);
+                assert.equal(error.getChildText('text'), text, `the resource check must refuse ${nick}`);
+            }
+
+            const presence = await moderator.joinRoom(breakoutJid);
+
+            assert.notEqual(presence.attrs.type, 'error', 'a valid resource must be allowed');
+        });
+
         it('non-admin cannot create rooms on the breakout component (restrict_room_creation)', async () => {
             // Any anonymous or JWT-authenticated client that is NOT a Prosody
             // admin (i.e. not focus@auth.localhost) should receive a <forbidden/>

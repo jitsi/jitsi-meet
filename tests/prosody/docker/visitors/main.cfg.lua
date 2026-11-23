@@ -65,4 +65,6 @@ Component "conference.main.test" "muc"
         -- A component does not inherit the global s2s_whitelist module.
         "s2s_whitelist";
         "s2sout_override";
+        -- The same check as on the visitor node: the main occupants are mirrored there.
+        "muc_resource_validate";
     }

@@ -301,6 +301,36 @@ describe('visitor node s2s to the main prosody', () => {
         assert.strictEqual(delivered, false, 'invite must not be delivered');
     });
 
+    it('the visitor muc refuses an invalid occupant resource', async () => {
+        const room = `visitors-resource-${++_roomCounter}@${VISITOR_MUC}`;
+
+        assert.equal(await runLua(visitor,
+            `return prosody.hosts["${VISITOR_MUC}"].modules.muc.create_room("${room}") ~= nil`), 'true',
+            'the room must be created');
+
+        const c = await connectVisitor();
+        const nicks = {
+            'invalid-nick': 'Invalid resource',
+            'a"b': 'Invalid resource',
+            'transcriber': 'Reserved resource'
+        };
+
+        for (const [ nick, text ] of Object.entries(nicks)) {
+            const rejected = await c.joinRoom(room, nick);
+
+            assert.equal(rejected.attrs.type, 'error', `resource ${nick} must be rejected`);
+
+            const error = rejected.getChild('error');
+
+            assert.ok(error?.getChild('not-allowed'), `error stanza for ${nick} must contain <not-allowed/>`);
+            assert.equal(error.getChildText('text'), text, `the resource check must refuse ${nick}`);
+        }
+
+        const presence = await c.joinRoom(room);
+
+        assert.notEqual(presence.attrs.type, 'error', 'a valid resource must be allowed');
+    });
+
     describe('with mod_fmuc not loaded on the visitor node', () => {
         before(() => unloadModule(visitor, VISITOR_MUC, 'fmuc'));
 
