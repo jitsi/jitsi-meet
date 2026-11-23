@@ -1058,6 +1058,11 @@ export default {
             });
         }
 
+        // createInitialAVTracks set the requested types to PENDING_UNMUTE. Clear it for the types without a track (the
+        // stopped audio track, or a failed getUserMedia), like the initial join does. Otherwise the toolbar shows them
+        // as unmuted.
+        setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
+
         tracks.forEach(track => {
             if ((track.isAudioTrack() && audioMuted)
                 || (track.isVideoTrack() && this.isLocalVideoMuted())) {
