@@ -643,7 +643,13 @@ export function addHashParamsToURL(url: URL, hashParamsToAdd: Object = {}) {
  * @returns {string}
  */
 export function getDecodedURI(uri: string) {
-    return decodeURI(uri.replace(/^https?:\/\//i, ''));
+    const cleanedURI = uri.replace(/^https?:\/\//i, '');
+
+    try {
+        return decodeURI(cleanedURI);
+    } catch {
+        return cleanedURI;
+    }
 }
 
 /**
