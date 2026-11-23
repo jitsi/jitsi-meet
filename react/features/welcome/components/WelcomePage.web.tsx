@@ -148,9 +148,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
-        if (this.state.generateRoomNames) {
-            this._updateRoomName();
-        }
+        this._updateRoomName();
 
         if (this._shouldShowAdditionalContent()) {
             this._additionalContentRef?.appendChild(

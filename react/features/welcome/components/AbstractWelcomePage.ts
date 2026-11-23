@@ -61,7 +61,7 @@ export interface IProps extends WithTranslation {
 interface IState {
     _fieldFocused?: boolean;
     animateTimeoutId?: number;
-    generateRoomNames?: string;
+    generateRoomNames?: boolean;
     generatedRoomName: string;
     hintBoxAnimation?: any;
     insecureRoomName: boolean;
@@ -97,7 +97,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     override state: IState = {
         animateTimeoutId: undefined,
         generatedRoomName: '',
-        generateRoomNames: undefined,
+        generateRoomNames: true,
         insecureRoomName: false,
         joining: false,
         room: '',
@@ -262,6 +262,10 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _updateRoomName() {
+        if (!this.state.generateRoomNames) {
+            return;
+        }
+
         const generatedRoomName = generateRoomWithoutSeparator();
         const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
