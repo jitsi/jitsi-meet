@@ -70,7 +70,7 @@ export default class Container extends AbstractContainer<IProps> {
         if (element && onClickOrTouchFeedback) {
             const touchableProps = {
                 accessibilityLabel,
-                accessibilityRole: accessibilityRole ?? (onClick || onLongPress ? 'button' : undefined),
+                accessibilityRole,
                 accessible,
                 onLongPress,
                 onPress: onClick
