@@ -1,6 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
-import { ensureTwoParticipants, hangupAllParticipants } from '../../helpers/participants';
+import { ensureTwoParticipants } from '../../helpers/participants';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
@@ -66,19 +66,17 @@ describe('Breakout rooms - microphone state after a move', () => {
     });
 
     it('an unmuted participant stays unmuted', async () => {
-        await hangupAllParticipants();
-
-        // Use a new meeting, so that the breakout room from the previous test is gone. Keep the room name suffix,
-        // it matters in multi-shard testing.
-        ctx.roomName += `new-${ctx.roomName}`;
-
-        await ensureTwoParticipants();
-
         const { p1, p2 } = ctx;
 
-        await p1.waitForAudioMuted(p2, false);
-
-        await moveBothToBreakoutRoom(p1, p2);
+        // Continue in the same meeting: p2 is unmuted now, move both back to the main room.
+        for (const p of [ p2, p1 ]) {
+            await p.getBreakoutRooms().leaveBreakoutRoom();
+            await p.driver.waitUntil(
+                async () => await p.isInMuc() && !await p.isInBreakoutRoom(), {
+                    timeout: 10000,
+                    timeoutMsg: `${p.name} did not go back to the main room`
+                });
+        }
 
         await p1.waitForAudioMuted(p2, false);
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
