@@ -262,6 +262,9 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             dispatch(conferenceWillLeave(conference));
 
             conference.leave()
+                .catch((reason: Error) => {
+                    logger.info('JitsiConference.leave() rejected with:', reason);
+                })
                 .then(() => dispatch(disconnect()));
         }
 
@@ -958,41 +961,42 @@ async function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAc
                 if (!iAmVisitor(state)) {
                     const { desktopAudioTrack } = state['features/screen-share'];
 
-                    // If the user is sharing their screen and has a desktop audio track, we need to replace that with
-                    // the audio mixer effect so that the desktop audio is mixed in with the microphone audio.
-                    if (typeof APP !== 'undefined' && desktopAudioTrack && track.mediaType === MEDIA_TYPE.AUDIO) {
-                        await conference.replaceTrack(desktopAudioTrack, null);
-                        const audioMixerEffect = new AudioMixerEffect(desktopAudioTrack);
+                    try {
+                        // If the user is sharing their screen and has a desktop audio track, we need to replace that
+                        // with the audio mixer effect so that the desktop audio is mixed in with the microphone
+                        // audio.
+                        if (typeof APP !== 'undefined' && desktopAudioTrack && track.mediaType === MEDIA_TYPE.AUDIO) {
+                            await conference.replaceTrack(desktopAudioTrack, null);
+                            const audioMixerEffect = new AudioMixerEffect(desktopAudioTrack);
 
-                        await jitsiTrack.setEffect(audioMixerEffect);
+                            await jitsiTrack.setEffect(audioMixerEffect);
 
-                        // Only add the track to the conference if it isn't already there. During a breakout room
-                        // switch, replaceLocalTrack already called conference.replaceTrack which invoked
-                        // _setupNewTrack and pushed the track into rtc.localTracks. A second replaceTrack(null,
-                        // track) call would push it again, creating a duplicate that makes setOfferAnswerCycle
-                        // fail with "is already in TPC" when the JVB session offer arrives.
-                        if (!conference.getLocalTracks().includes(jitsiTrack)) {
-                            await conference.replaceTrack(null, jitsiTrack);
-                        }
-                    } else {
-                        try {
-                            await _addLocalTracksToConference(conference, [ jitsiTrack ]);
-                        } catch (error) {
-                            logger.error(
-                                `Conference refused local ${track.mediaType} track, discarding it`, error);
-
-                            jitsiTrack.dispose?.().catch(() => { /* may already be disposed */ });
-
-                            // Clears a pending TRACK_WILL_CREATE stub when no ready track of this type remains.
-                            if (!getLocalTrack(getState()['features/base/tracks'], track.mediaType)) {
-                                store.dispatch({
-                                    type: TRACK_CREATE_CANCELED,
-                                    trackType: track.mediaType
-                                });
+                            // Only add the track to the conference if it isn't already there. During a breakout room
+                            // switch, replaceLocalTrack already called conference.replaceTrack which invoked
+                            // _setupNewTrack and pushed the track into rtc.localTracks. A second replaceTrack(null,
+                            // track) call would push it again, creating a duplicate that makes setOfferAnswerCycle
+                            // fail with "is already in TPC" when the JVB session offer arrives.
+                            if (!conference.getLocalTracks().includes(jitsiTrack)) {
+                                await conference.replaceTrack(null, jitsiTrack);
                             }
-
-                            return;
+                        } else {
+                            await _addLocalTracksToConference(conference, [ jitsiTrack ]);
                         }
+                    } catch (error) {
+                        logger.error(
+                            `Conference refused local ${track.mediaType} track, discarding it`, error);
+
+                        jitsiTrack.dispose?.().catch(() => { /* may already be disposed */ });
+
+                        // Clears a pending TRACK_WILL_CREATE stub when no ready track of this type remains.
+                        if (!getLocalTrack(getState()['features/base/tracks'], track.mediaType)) {
+                            store.dispatch({
+                                type: TRACK_CREATE_CANCELED,
+                                trackType: track.mediaType
+                            });
+                        }
+
+                        return;
                     }
                 }
             } else {

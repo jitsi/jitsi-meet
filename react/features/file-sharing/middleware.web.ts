@@ -122,6 +122,15 @@ MiddlewareRegistry.register(store => next => action => {
             for (const file of action.files) {
                 uploadFile(file, store, token);
             }
+        })
+        .catch((error: any) => {
+            logger.warn('Could not get the credentials to upload files:', error);
+
+            store.dispatch(showErrorNotification({
+                titleKey: 'fileSharing.uploadFailedTitle',
+                descriptionKey: 'fileSharing.uploadFailedDescription',
+                appearance: NOTIFICATION_TYPE.ERROR
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         });
 
         return next(action);
