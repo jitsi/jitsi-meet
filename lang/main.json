@@ -301,6 +301,7 @@
         "accessibilityLabel": {
             "Cancel": "Cancel (leave dialog)",
             "Ok": "OK (save and leave dialog)",
+            "clearInput": "Clear text",
             "close": "Close dialog",
             "liveStreaming": "Live Stream",
             "sharingTabs": "Sharing options"

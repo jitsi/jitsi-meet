@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-textarea-autosize';
 import { makeStyles } from 'tss-react/mui';
 
@@ -191,6 +192,7 @@ const Input = React.forwardRef<any, IProps>(({
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
+    const { t } = useTranslation();
     const showClearIcon = clearable && value !== '' && !disabled;
     const inputAutoCompleteOff = autoComplete === 'off' ? { 'data-1p-ignore': '' } : {};
 
@@ -272,9 +274,12 @@ const Input = React.forwardRef<any, IProps>(({
                         type = { type }
                         value = { value } />
                 )}
-                {showClearIcon && <button className = { styles.clearButton }>
+                {showClearIcon && <button
+                    aria-label = { t('dialog.accessibilityLabel.clearInput') }
+                    className = { styles.clearButton }
+                    onClick = { clearInput }
+                    type = 'button'>
                     <Icon
-                        onClick = { clearInput }
                         size = { 20 }
                         src = { IconCloseCircle } />
                 </button>}
