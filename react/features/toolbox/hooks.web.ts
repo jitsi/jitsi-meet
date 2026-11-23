@@ -228,8 +228,10 @@ function useLinkToSalesforceButton() {
  *
  *  @returns {Object | undefined}
  */
-function getShareAudioButton() {
-    if (JitsiMeetJS.isDesktopSharingEnabled() && isScreenAudioSupported()) {
+function useShareAudioButton() {
+    const _isScreenAudioSupported = useSelector(isScreenAudioSupported);
+
+    if (JitsiMeetJS.isDesktopSharingEnabled() && _isScreenAudioSupported) {
         return shareAudio;
     }
 }
@@ -300,7 +302,7 @@ export function useToolboxButtons(
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
     const linktosalesforce = useLinkToSalesforceButton();
-    const shareaudio = getShareAudioButton();
+    const shareaudio = useShareAudioButton();
     const shareVideo = useSharedVideoButton();
     const whiteboard = useWhiteboardButton();
     const etherpad = useEtherpadButton();

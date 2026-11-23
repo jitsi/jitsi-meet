@@ -323,6 +323,7 @@ export interface IConfig {
         max?: number;
         min?: number;
     };
+    desktopSharingMacOSSystemAudio?: boolean;
     desktopSharingSources?: Array<DesktopSharingSourceType>;
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;

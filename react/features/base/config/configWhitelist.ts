@@ -88,6 +88,7 @@ export default [
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'desktopSharingFrameRate',
+    'desktopSharingMacOSSystemAudio',
     'desktopSharingSources',
     'disable1On1Mode',
     'disableAEC',
