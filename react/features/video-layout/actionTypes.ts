@@ -6,7 +6,7 @@
  *     enabled: boolean
  * }}
  */
-export const SET_CAR_MODE = ' SET_CAR_MODE';
+export const SET_CAR_MODE = 'SET_CAR_MODE';
 
 /**
  * The type of the action which enables or disables the feature for showing
