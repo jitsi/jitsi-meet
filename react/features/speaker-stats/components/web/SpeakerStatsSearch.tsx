@@ -89,6 +89,7 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
     const preventDismiss = useCallback((evt: React.KeyboardEvent) => {
         if (evt.key === 'Enter') {
             evt.preventDefault();
+            evt.stopPropagation();
         }
     }, []);
 
@@ -114,7 +115,7 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
                 id = { inputId }
                 name = 'speakerStatsSearch'
                 onChange = { onChange }
-                onKeyPress = { preventDismiss }
+                onKeyDown = { preventDismiss }
                 placeholder = { t('speakerStats.search') }
                 tabIndex = { 0 }
                 value = { searchValue } />
