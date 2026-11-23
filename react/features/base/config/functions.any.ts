@@ -401,10 +401,12 @@ export function setConfigFromURLParams(
             + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
     }
 
-    // When not in an iframe, start without media if the pre-join page is not enabled.
+    // When not in an iframe, start without media if the pre-join page is not enabled. The value comes from parsed JSON,
+    // so it can be any type. Use the same test as isPrejoinEnabledInConfig: undefined and null fall back to enabled,
+    // any other value counts as truthy or falsy.
     if (!isEmbedded()
-            && json.config?.prejoinConfig?.enabled === false
-            && config.prejoinConfig?.enabled === false) {
+            && json.config?.prejoinConfig?.enabled !== undefined
+            && !(config.prejoinConfig?.enabled ?? true)) {
         logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
         config.disableInitialGUM = true;
     }
