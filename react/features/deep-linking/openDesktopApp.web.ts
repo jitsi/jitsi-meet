@@ -1,5 +1,6 @@
 import { executeAfterLoad } from '../app/functions.web';
 import { IReduxState } from '../app/types';
+import Platform from '../base/react/Platform.web';
 import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 
 /**
@@ -12,8 +13,9 @@ import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 export function _openDesktopApp(_state: Object) {
     const state = _state as IReduxState;
     const deeplinkingDesktop = state['features/base/config'].deeplinking?.desktop;
+    const platforms = deeplinkingDesktop?.platforms as string[] | undefined;
 
-    if (deeplinkingDesktop?.enabled) {
+    if (deeplinkingDesktop?.enabled && (!platforms || platforms.includes(Platform.OS))) {
         const { appScheme } = deeplinkingDesktop;
         const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
