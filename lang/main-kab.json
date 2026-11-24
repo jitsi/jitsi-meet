@@ -674,25 +674,6 @@
         "calling": "Asiwel",
         "configuringDevices": "Amtawi n yibenkan…",
         "connectedWithAudioQ": "Teqqneḍ s umeslaw?",
-        "connection": {
-            "good": "Tuqqna-inek·inem internet tettban tgerrez!",
-            "nonOptimal": "Tuqqna-inek·inem internet ur tgerrez ara maḍi",
-            "poor": "Tuqqna-inek·inem internet txuṣṣ aṭas"
-        },
-        "connectionDetails": {
-            "audioClipping": "Negmen ad yettwagzem umeslaw-inek·inem.",
-            "audioHighQuality": "Negmen belli ameslaw-inek·inem ad yesεu taɣara igerrzen aṭas.",
-            "audioLowNoVideo": "Negmen belli taɣara n umeslaw-inek·inem ad tili tṣubb yerna ulac tavidyut.",
-            "goodQuality": "Gedha! Taɣara n umidyat-inek·inem ad tili tgerrez aṭas.",
-            "noMediaConnectivity": "Ur nessaweḍ ara ad nserked tuqqna n umidya i usekyed-a. Ssebba n waya deg tudet d aɣrab n tmes neɣ d NAT.",
-            "noVideo": "Negmen belli tavidyut-ik·im ad tili txuṣ aṭas.",
-            "undetectable": "Ma mazal ur tezmireḍ ara ad tsiwleḍ deg yiminig, Wali ma yella imsmeɣrzen n imesli, asawaḍ akked tkamiṛat qaɛsen ne alla, daɣen ma yella tefkiḍ izerfan i yiminig ad iseqdec asawaḍ akked tkamiṛat, daɣen ma yella tesɛiḍ lqem aneggaru n yiminig. Ma mazal ugur, nermes aneflay n usnas web.",
-            "veryPoorConnection": "Negmen belli taɣara n usiwel-inek·inem ad yili ixuṣ aṭas.",
-            "videoFreezing": "Nerǧa d akken tavidyut ad teḥbes, ad tuɣal d taberkant neɣ texreb.",
-            "videoHighQuality": "Negmen belli tavidyut-ik·im ad tesεu taɣara igerrzen.",
-            "videoLowQuality": "Nerǧa tavidyut ad tenɣes deg tɣara deg wayen icudden ɣer ubeqqeḍ ines.",
-            "videoTearing": "Nerǧa tavidyut ad tenɣes deg ipiksilen neɣ ad tesɛu cammat."
-        },
         "copyAndShare": "Nɣel & bḍu aseɣwen n temlilit",
         "dialInMeeting": "Qqen ɣer temlilit",
         "dialInPin": "Qqen ɣer temlilit syen sekcem tangalt PIN:",

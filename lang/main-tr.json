@@ -907,28 +907,6 @@
         "calling": "Arama",
         "configuringDevices": "Cihazlar yapılandırılıyor…",
         "connectedWithAudioQ": "Sese bağlı mısınız?",
-        "connection": {
-            "failed": "Bağlantı testi başarısız!",
-            "good": "İnternet bağlantınız iyi görünüyor!",
-            "nonOptimal": "İnternet bağlantınız uygun değil",
-            "poor": "İnternet bağlantınız zayıf",
-            "running": "Bağlantı testi çalıştırılıyor…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Sesinizin kırpılmasını bekliyoruz.",
-            "audioHighQuality": "Sesinizin mükemmel kalitede olmasını bekliyoruz.",
-            "audioLowNoVideo": "Ses kalitenizin düşük olmasını ve video olmamasını bekliyoruz.",
-            "goodQuality": "Mükemmel! Medya kaliteniz harika olacak.",
-            "noMediaConnectivity": "Bu test için medya bağlantısı kurmanın bir yolunu bulamadık. Buna genellikle bir güvenlik duvarı veya NAT neden olur.",
-            "noVideo": "Videonuzun korkunç olmasını bekliyoruz.",
-            "testFailed": "Bağlantı testinde beklenmeyen sorunlarla karşılaşıldı, ancak bu durum deneyiminizi etkilemeyebilir.",
-            "undetectable": "Tarayıcıda hala arama yapamıyorsanız, hoparlörlerinizin, mikrofonunuzun ve kameranızın doğru şekilde kurulduğundan, tarayıcınıza mikrofon ve kameranızı kullanma haklarını verdiğinizden ve tarayıcı sürümünüzün güncel olduğundan emin olmanızı öneririz. Arama konusunda hala sorun yaşıyorsanız, web uygulaması geliştiricisi ile iletişime geçmelisiniz.",
-            "veryPoorConnection": "Çağrı kalitenizin gerçekten korkunç olmasını bekliyoruz.",
-            "videoFreezing": "Videonuzun donmasını, kararmasını ve piksellenmesini bekliyoruz.",
-            "videoHighQuality": "Videonuzun kaliteli olmasını bekliyoruz.",
-            "videoLowQuality": "Videonuzun kare hızı ve çözünürlük açısından düşük kalitede olmasını bekliyoruz.",
-            "videoTearing": "Videonuzun pikselli olmasını veya görsel problemler içermesini bekliyoruz."
-        },
         "copyAndShare": "Toplantı bağlantısını kopyala ve paylaş",
         "dialInMeeting": "Toplantıya telefon et",
         "dialInPin": "Toplantıya telefon edin ve PIN kodunu girin:",

@@ -895,25 +895,6 @@
         "calling": "Menelepon",
         "configuringDevices": "Mengkonfigurasi perangkat…",
         "connectedWithAudioQ": "Anda terhubung dengan audio?",
-        "connection": {
-            "good": "Koneksi internet Anda terlihat baik!",
-            "nonOptimal": "Koneksi internet Anda tidak optimal",
-            "poor": "Anda memiliki koneksi internet yang buruk"
-        },
-        "connectionDetails": {
-            "audioClipping": "Kami mengharapkan audio Anda dipotong.",
-            "audioHighQuality": "Kami mengharapkan audio Anda memiliki kualitas yang sangat baik.",
-            "audioLowNoVideo": "Kami mengharapkan kualitas audio Anda rendah dan tidak ada video.",
-            "goodQuality": "Hebat! Kualitas media Anda akan sangat baik.",
-            "noMediaConnectivity": "Kami tidak dapat menemukan cara untuk menetapkan konektivitas media untuk tes ini. Ini biasanya disebabkan oleh firewall atau NAT.",
-            "noVideo": "Kami mengharapkan bahwa video Anda akan buruk.",
-            "undetectable": "Jika Anda masih tidak dapat melakukan panggilan di browser, kami sarankan Anda memastikan speaker, mikrofon, dan kamera Anda sudah diatur dengan benar, bahwa Anda telah memberikan izin browser Anda untuk menggunakan mikrofon dan kamera, dan bahwa versi browser Anda terbaru. Jika Anda masih mengalami masalah saat menelepon, Anda harus menghubungi pengembang aplikasi web.",
-            "veryPoorConnection": "Kami mengharapkan kualitas panggilan Anda benar-benar buruk.",
-            "videoFreezing": "Kami mengharapkan bahwa video Anda akan membeku, menjadi hitam, dan berpixel.",
-            "videoHighQuality": "Kami mengharapkan video Anda memiliki kualitas yang baik.",
-            "videoLowQuality": "Kami mengharapkan bahwa video Anda akan memiliki kualitas rendah dalam hal frame rate dan resolusi.",
-            "videoTearing": "Kami mengharapkan bahwa video Anda akan berpixel atau memiliki artefak visual."
-        },
         "copyAndShare": "Salin & bagikan tautan pertemuan",
         "dialInMeeting": "Dial ke pertemuan",
         "dialInPin": "Dial ke pertemuan dan masukkan kode PIN:",

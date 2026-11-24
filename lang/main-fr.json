@@ -1008,28 +1008,6 @@
         "calling": "Appel",
         "configuringDevices": "Configuration des appareils…",
         "connectedWithAudioQ": "Êtes-vous connecté avec le microphone ?",
-        "connection": {
-            "failed": "Le test de connexion a échoué !",
-            "good": "Votre connexion Internet est bonne !",
-            "nonOptimal": "Votre connexion n'est pas optimale",
-            "poor": "Vous avez une mauvaise connexion",
-            "running": "Exécution du test de connexion…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Attendez vous à ce que votre son soit coupé.",
-            "audioHighQuality": "Votre son sera de bonne qualité.",
-            "audioLowNoVideo": "Attendez vous à une faible qualité audio et aucune vidéo",
-            "goodQuality": "Impressionnant ! La qualité de vos médias sera excellente",
-            "noMediaConnectivity": "Nous n'avons pas pu trouver un moyen d'établir une connectivité multimédia pour ce test. Cela est généralement causé par un pare-feu ou un NAT.",
-            "noVideo": "Attendez vous à ce que votre qualité vidéo soit très mauvaise.",
-            "testFailed": "Le test de connexion a rencontré des problèmes inattendus, mais cela pourrait ne pas affecter votre expérience.",
-            "undetectable": "Si vous ne parvenez toujours pas à passer des appels dans le navigateur, nous vous recommandons de vous assurer que vos haut-parleurs, microphone et caméra sont correctement configurés, que vous avez accordé à votre navigateur les droits d'utiliser votre microphone et votre caméra et que la version de votre navigateur est à jour. Si vous rencontrez toujours des difficultés pour appeler, vous devez contacter le développeur de l'application Web.",
-            "veryPoorConnection": "Attendez vous à ce que la qualité de votre appel soit très mauvaise",
-            "videoFreezing": "Attendez vous à ce que votre vidéo saute, soit noire, et pixelisée.",
-            "videoHighQuality": "Votre vidéo sera de bonne qualité",
-            "videoLowQuality": "Votre vidéo sera de basse qualité en terme d'images par seconde et de résolution.",
-            "videoTearing": "Attendez vous à ce que votre vidéo soit pixélisée ou contienne des artefacts visuels."
-        },
         "copyAndShare": "Copier & partager le lien",
         "dialInMeeting": "Participez à la réunion",
         "dialInPin": "Participez à la réunion et saisir le code PIN :",

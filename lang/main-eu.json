@@ -586,25 +586,6 @@
         "calling": "Deitzen",
         "configuringDevices": "Gailuak konfiguratzen…",
         "connectedWithAudioQ": "Audioarekin konektatuta zaude?",
-        "connection": {
-            "good": "Zure internet konexioa ondo dabil!",
-            "nonOptimal": "Zure internet konexioa ez da onena",
-            "poor": "Zure internet konexioa kaxkarra da"
-        },
-        "connectionDetails": {
-            "audioClipping": "Zure audioa ez da guztiz ondo entzungo.",
-            "audioHighQuality": "Zure audioak kalitate bikaina izango du.",
-            "audioLowNoVideo": "Zura audioa kaxkarra izango da eta ez da bideorik egongo.",
-            "goodQuality": "Izugarria! Zure deiaren kalitatea ona izango da.",
-            "noMediaConnectivity": "Ezin izan dugu proba hau egiteko inora konektatu. Hau firewall edo suebaki bat dagoelako eta NATagatik gertatu ohi da.",
-            "noVideo": "Zure bideoa oso txarra izango da.",
-            "undetectable": "Oraindik ere ezin baduzu nabigatzailean dieirk egin, ziurtatu zure bozgorailu, mikrofono eta kamera piztuta daudela eta ondo dabiltzala eta nabigatzaileari berauek erabiltzeko baimena eman diozula.",
-            "veryPoorConnection": "Zure deiaren kalitatea oso txarra izango da.",
-            "videoFreezing": "Zure bideoa gelditu, belztu eta pixelatu egingo da.",
-            "videoHighQuality": "Zure bideoak kalitate ona izango du.",
-            "videoLowQuality": "Zure bideoak kalitate txikia izango du.",
-            "videoTearing": "Zure bideoa pixelatuta agertuko da eta ez da ondo ikusiko."
-        },
         "copyAndShare": "Kopiatu eta partekatu bileraren esteka",
         "dialInMeeting": "Telefono dei bat eginez sartu",
         "dialInPin": "Deitu bilerara eta idatzi kode hau:",

@@ -1,3 +1,5 @@
+import { createPreCallTestEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
@@ -23,30 +25,44 @@ export function setUnsafeRoomConsent(consent: boolean) {
 }
 
 /**
- * Initializes the 'precallTest' and executes one test, storing the results.
+ * Checks whether the browser can connect through the TURN servers from the config, and over which transport, and
+ * stores the result. The last result stays in place while checking again.
  *
  * @returns {Function}
  */
 export function runPreCallTest() {
     return async function(dispatch: Function, getState: IStore['getState']) {
+        const { result: lastResult } = getState()['features/base/premeeting'].preCallTestState;
+
+        dispatch(setPreCallTestResults({
+            result: lastResult,
+            status: PreCallTestStatus.RUNNING
+        }));
+
         try {
-
-            dispatch(setPreCallTestResults({ status: PreCallTestStatus.RUNNING }));
-
             const turnCredentialsUrl = getPreCallICEUrl(getState());
 
             if (!turnCredentialsUrl) {
                 throw new Error('No TURN credentials URL provided in config');
             }
 
+            if (typeof JitsiMeetJS.runIceConnectivityCheck !== 'function') {
+                throw new Error('lib-jitsi-meet has no ICE connectivity check');
+            }
+
             const turnCredentials = await fetch(turnCredentialsUrl);
             const { iceServers } = await turnCredentials.json();
-            const result: IPreCallResult = await JitsiMeetJS.runPreCallTest(iceServers);
+            const result: IPreCallResult = await JitsiMeetJS.runIceConnectivityCheck(iceServers);
 
-            dispatch(setPreCallTestResults({ status: PreCallTestStatus.FINISHED,
-                result }));
+            logger.info('Pre-call connectivity check', result);
+            sendAnalytics(createPreCallTestEvent(result));
+            dispatch(setPreCallTestResults({
+                result,
+                status: PreCallTestStatus.FINISHED
+            }));
         } catch (error) {
-            logger.error('Failed to run pre-call test', error);
+            // Says nothing about the user's network, e.g. the credentials URL is down, so nothing is shown.
+            logger.warn('Failed to run the pre-call connectivity check', error);
 
             dispatch(setPreCallTestResults({ status: PreCallTestStatus.FAILED }));
         }

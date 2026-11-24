@@ -790,25 +790,6 @@
         "calling": "zwónjenje",
         "configuringDevices": "rědy se konfigurěruju…",
         "connectedWithAudioQ": "Sćo Wy z audio zwězane?",
-        "connection": {
-            "good": "Wašo zwězanje z internetom zda se dobre byś!",
-            "nonOptimal": "Wašo zwězanje z internetom njejo optimalne.",
-            "poor": "Wy maśo wjelgin ryjne zwězanje z internetom."
-        },
-        "connectionDetails": {
-            "audioClipping": "Waš zuk buźo se nejskerjej pśetergowaś.",
-            "audioHighQuality": "Waš zuk změjo nejskerjej wjelgin dobru kwalitu .",
-            "audioLowNoVideo": "Waš zuk buźo nejskerjej wót ryjneje kwality a žeden wideo njebuźo.",
-            "goodQuality": "Prima! Kwalita Wašogo wideo a zuka buźo super.",
-            "noMediaConnectivity": "Za ten test njejo se dało žedno medijowe zwězanje natwariś. Wina na tom jo zwětšego firewall abo NAT.",
-            "noVideo": "Waš wideo změjo nejskerjej ryjnu kwalitu.",
-            "undetectable": "Gaž změjośo nadalej problemy na konferencach ze swójim browserom, ga dejśo pśizamknjenje a funkciju głosnikow, mikrofona a kamery pśekontrolěrowaś. Wušej togo wobwěsććo se, až Waš browser ma wšykne pšawa, ako su trjebne za pśistup k mikrofononoju a kamerje, a až maśo pśecej nejnowšu wersiju browsera instalěrowanu. Gaž pak problemy budu pśeto dalej wobstojaś, ga wobrośćo se na support aplikacije, kótaruž wužywaśo.",
-            "veryPoorConnection": "Kwalita Wašeje konference buźo nejskerjej wjelgin ryjna.",
-            "videoFreezing": "Waš wideo buźo nejskerjej zatykaś, carny wordowaś a rozpušćenje buźo niske.",
-            "videoHighQuality": "Waš wideo buźo wjelgin derje wuglědaś.",
-            "videoLowQuality": "Waš wideo změjo nejskerjej ryjne rozpušćenje a frekwencu.",
-            "videoTearing": "Waš wideo změjo nejskerjej ryjne rozpušćenje a frekwencu abo artefakty."
-        },
         "copyAndShare": "Link ku konferency kopěrowaś & a drugim sobu źěliś",
         "dialInMeeting": "se zwězaś pśez telefon",
         "dialInPin": "se pśez telefon z konferencu zwězaś a PIN zapódaś:",

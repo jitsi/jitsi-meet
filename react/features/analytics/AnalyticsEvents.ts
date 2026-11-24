@@ -490,6 +490,42 @@ export function createPollEvent(action: string) {
 }
 
 /**
+ * Creates an event with the result of the pre-call connectivity check.
+ *
+ * @param {Object} result - The result of the check.
+ * @param {boolean} result.connected - Whether the browser connected through the TURN servers.
+ * @param {number} result.durationMs - How long the check took.
+ * @param {string} [result.relayProtocol] - The transport to the TURN servers, when connected.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createPreCallTestEvent({ connected, durationMs, relayProtocol }: {
+    connected: boolean; durationMs: number; relayProtocol?: string; }) {
+    return {
+        action: 'precall.test.finished',
+        attributes: {
+            connected,
+            'duration_ms': durationMs,
+            'relay_protocol': relayProtocol
+        }
+    };
+}
+
+/**
+ * Creates an event which indicates that the user opened the full network test from the pre-call connectivity warning.
+ *
+ * @param {string} problem - The problem the warning was about: 'blocked' or 'udpBlocked'.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createPreCallTestHelpEvent(problem: string) {
+    return {
+        action: 'precall.test.help.clicked',
+        attributes: {
+            problem
+        }
+    };
+}
+
+/**
  * Creates an event which indicates that a button in the profile panel was
  * clicked.
  *

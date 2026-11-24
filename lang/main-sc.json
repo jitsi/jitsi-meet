@@ -987,28 +987,6 @@
         "calling": "Mutende",
         "configuringDevices": "Cunfigurende is dispositivos…",
         "connectedWithAudioQ": "Tenes connessione de àudio?",
-        "connection": {
-            "failed": "Faddina in su test de connessione.",
-            "good": "Sa connessione internet tua paret bona.",
-            "nonOptimal": "Sa connessione internet no est òtima",
-            "poor": "Sa connessione internet tua est pòbera",
-            "running": "Test de connessione in cursu…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Est probàbile chi s'àudio tuo tèngiat interrutziones.",
-            "audioHighQuality": "Est probàbile chi s'àudio tuo siat de calidade òtima.",
-            "audioLowNoVideo": "Est probàbile chi sa calidade de s'àudio siat bàscia e chi no tèngias vìdeu.",
-            "goodQuality": "Fantàsticu! Sa calidade de is elementos multimediales at a èssere perfeta.",
-            "noMediaConnectivity": "Impossìbile istabilire connessione multimediale pro custa proa. A s'ispissu, custu est a càusa de unu firewall o NAT.",
-            "noVideo": "Est probàbile chi s'àudio tuo siat de calidade bàscia meda.",
-            "testFailed": "Su test de connessione at agatadu problemas imprevistos, ma forsis no ant a tènnere cunsighèntzias in sa sessione tua.",
-            "undetectable": "Si ancora non renesses a mutire dae su navigadore, assegura·ti chi is altoparlantes, sa càmera e su micròfonu tuos sunt cunfigurados bene, chia as donadu is permissos a su navigadore pro impreare sa càmera e su micròfonu e chi sa versione de su navigadore tuo est atualizada. Si tenes problemas in is mutidas, cuntata cun s'iscuadra de isvilupu de s'aplicatzione web.",
-            "veryPoorConnection": "Est probàbile chi sa calidade de sa mutida siat bàscia meda.",
-            "videoFreezing": "Est probàbile chi su vìdeu tuo s'at a cungelare, at a torrare nieddu o at a bènnere pixeladu. ",
-            "videoHighQuality": "Est probàbile chi su vìdeu tuo tèngiat una calidade bona.",
-            "videoLowQuality": "Est probàbile chi su vìdeu tuo tèngiat una calidade bàscia in contu de lestresa de fotogrammas e risolutzione.",
-            "videoTearing": "Est probàbile chi su vìdeu tuo bèngiat pixeladu o tèngiat difetos visuales."
-        },
         "copyAndShare": "Còpia e cumpartzi su ligòngiu de sa riunione",
         "dialInMeeting": "Intra a sa riunione cun unu nùmeru telefònicu",
         "dialInPin": "Intra a sa riunione cun unu nùmeru telefònicu e inserta su còdighe PIN:",

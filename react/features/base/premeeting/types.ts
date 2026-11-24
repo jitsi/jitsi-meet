@@ -17,9 +17,11 @@ export interface IPreCallTestState {
 }
 
 export interface IPreCallResult {
-    fractionalLoss: number;
-    jitter: number;
-    mediaConnectivity: boolean;
-    rtt: number;
-    throughput: number;
+
+    // Whether the browser could connect through the TURN servers.
+    connected: boolean;
+    durationMs: number;
+
+    // The transport to the TURN servers, when connected.
+    relayProtocol?: 'tcp' | 'udp';
 }

@@ -997,28 +997,6 @@
         "calling": "正在呼叫",
         "configuringDevices": "正在配置设备……",
         "connectedWithAudioQ": "你已连接音频？",
-        "connection": {
-            "failed": "连接测试失败！",
-            "good": "你的网络连接看起来很好！",
-            "nonOptimal": "你的网络连接不太理想",
-            "poor": "你的网络连接较差",
-            "running": "正在测试连接……"
-        },
-        "connectionDetails": {
-            "audioClipping": "预计你的音频可能会断断续续",
-            "audioHighQuality": "你的音频质量预计会很清晰",
-            "audioLowNoVideo": "预计你的音频质量较差且无法显示视频画面",
-            "goodQuality": "网络和设备状态都很好，体验会很流畅",
-            "noMediaConnectivity": "无法建立音视频连接，通常是防火墙或NAT设置导致",
-            "noVideo": "预计你的视频画面可能会很糟糕",
-            "testFailed": "连接测试遇到异常，但不一定会影响实际体验",
-            "undetectable": "如果你仍无法正常通话，请检查扬声器、麦克风、摄像头设置，并确保浏览器有相关权限且为最新版本。如仍有问题，建议联系技术支持。",
-            "veryPoorConnection": "你的通话质量可能会非常差",
-            "videoFreezing": "预计你的视频会出现卡顿、黑屏或马赛克",
-            "videoHighQuality": "你的视频质量预计会很清晰",
-            "videoLowQuality": "预计你的视频帧率和分辨率会很低或画面不流畅",
-            "videoTearing": "预计你的视频画面会有马赛克或其它异常现象"
-        },
         "copyAndShare": "复制并分享会议链接",
         "dialInMeeting": "拨电话接入会议",
         "dialInPin": "电话接入会议并输入PIN码：",

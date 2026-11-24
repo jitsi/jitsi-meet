@@ -605,14 +605,6 @@
         "calling": "Hívás",
         "configuringDevices": "Eszköz beállítás…",
         "connectedWithAudioQ": "Csak hanggal szeretne csatlakozni?",
-        "connection": {
-            "good": "Az internet kapcsolat jónak tűnik!",
-            "nonOptimal": "Az internet kapcsolat nem optimális",
-            "poor": "Az internet kapcsolat nagyon gyenge!"
-        },
-        "connectionDetails": {
-            "goodQuality": "Fantasztikus! A média minősége kiváló lesz."
-        },
         "copyAndShare": "Másolom és megosztom az értekezlet linkjét",
         "dialInMeeting": "Behívás az értekezletbe",
         "dialInPin": "Behívás az értkezeletbe és megadom a PIN kódot:",

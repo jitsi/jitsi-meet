@@ -228,8 +228,6 @@ const PreMeetingScreen = ({
         <div className = { clsx('premeeting-screen', classes.container, className) }>
             <div style = { style }>
                 <div className = { classes.content }>
-                    {_isPreCallTestEnabled && <ConnectionStatus />}
-
                     <div className = { classes.contentControls }>
                         <div className = { classes.paddedContent }>
                             <h1 className = { classes.title }>
@@ -261,6 +259,7 @@ const PreMeetingScreen = ({
                             {skipPrejoinButton}
                             {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                             {showDeviceStatus && <DeviceStatus />}
+                            {_isPreCallTestEnabled && <ConnectionStatus />}
                             {showRecordingWarning && <RecordingWarning />}
                         </div>
                     </div>

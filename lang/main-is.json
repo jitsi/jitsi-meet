@@ -877,25 +877,6 @@
         "calling": "Hringi",
         "configuringDevices": "Stilli tæki…",
         "connectedWithAudioQ": "Ert þú tengd/ur með hljóði?",
-        "connection": {
-            "good": "Internettengingin þín lítur vel út!",
-            "nonOptimal": "Internettengingin þín er ekki upp á sitt besta",
-            "poor": "Þú ert með lélega internettengingu"
-        },
-        "connectionDetails": {
-            "audioClipping": "Við gerum ráð fyrir að hljóðið frá þér klippist.",
-            "audioHighQuality": "Við gerum ráð fyrir að hljóðið frá þér sé með góð gæði.",
-            "audioLowNoVideo": "Við gerum ráð fyrir að hljóðið frá þér sé lélegt og ekkert myndmerki berist.",
-            "goodQuality": "Frábært! Hljóð og myndgæðin frá þér ættu að vera góð.",
-            "noMediaConnectivity": "Við fundum enga leið til að koma á gagnatengingu fyrir þessa prófun. Venjulega gerist slíkt af völdum eldveggja eða NAT.",
-            "noVideo": "Við gerum ráð fyrir að myndmerkið frá þér verði ömurlegt.",
-            "undetectable": "Ef þú getur enn ekki hringt inni í vafranum, þá mælum við með að þú athugir vandlega hvort hátalarar, hljóðnemi og myndavél séu rétt sett upp, að þú hafir gefið vafranum þínum heimildir til að nota hljóðnemann þinn og myndavélina, og að vafrinn þinn sé uppfærður í nýjustu útgáfu. Ef þú átt þá enn í vandræðum með hringingar, ættirðu að hafa samband við forritara vefforritsins.",
-            "veryPoorConnection": "Við gerum ráð fyrir að gæði símtala frá þér verði verulega ömurleg.",
-            "videoFreezing": "Við gerum ráð fyrir að myndmerkið þitt frjósi, verði svart eða sé stallað.",
-            "videoHighQuality": "Við gerum ráð fyrir að myndmerkið frá þér sé með góð gæði.",
-            "videoLowQuality": "Við gerum ráð fyrir að myndmerkið frá þér sé með lítil gæði varðandi rammatíðni og upplausn.",
-            "videoTearing": "Við gerum ráð fyrir að myndmerkið þitt sé stallað eða sé með sjónrænar truflanir."
-        },
         "copyAndShare": "Afrita og deila fundartengli",
         "dialInMeeting": "Hringdu inn á fundinn",
         "dialInPin": "Hringdu inn á fundinn og settu inn PIN-kóða:",

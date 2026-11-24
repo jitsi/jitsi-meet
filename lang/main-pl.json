@@ -812,25 +812,6 @@
         "calling": "Wybieranie",
         "configuringDevices": "Konfigurowanie urządzeń…",
         "connectedWithAudioQ": "Jesteś połączony głosowo?",
-        "connection": {
-            "good": "Twoje połączenie internetowe wygląda dobrze!",
-            "nonOptimal": "Twoje połączenie internetowe nie jest optymalne.",
-            "poor": "Masz złe połączenie internetowe."
-        },
-        "connectionDetails": {
-            "audioClipping": "Twój dźwięk będzie się przycinał.",
-            "audioHighQuality": "Twój dźwięk będzie miał doskonałą jakość.",
-            "audioLowNoVideo": "Twój dźwięk prawdopodobnie będzie zły i nie będzie wideo.",
-            "goodQuality": "Świetnie! Jakość obrazu i dźwięku powinna być bardzo dobra.",
-            "noMediaConnectivity": "Nie można nawiązać połączenia z mediami. Jest to zwykle wywoływane przez zaporę sieciową lub NAT.",
-            "noVideo": "Twój obraz będzie słabej jakości.",
-            "undetectable": "Jeśli podczas spotkania nadal będziesz mieć problemy z przeglądarką, sprawdź połączenie oraz działanie głośników, mikrofonu i kamery. Upewnij się również, że Twoja przeglądarka ma niezbędne uprawnienia dostępu do mikrofonu i kamery oraz że masz zainstalowaną najnowszą wersję przeglądarki. Jeśli nadal masz problemy, skontaktuj się z obsługą aplikacji.",
-            "veryPoorConnection": "Twoja jakość konferencji będzie prawdopodobnie bardzo słaba.",
-            "videoFreezing": "Twój obraz będzie się przycinał, stanie się czarny i będzie miał niską rozdzielczość.",
-            "videoHighQuality": "Twój obraz będzie dobrej jakości.",
-            "videoLowQuality": "Twój obraz będzie miał niską rozdzielczość oraz liczbę klatek na sekundę.",
-            "videoTearing": "Twój obraz będzie miał niską rozdzielczość, a na ekranie pojawią się nieporządane artefakty."
-        },
         "copyAndShare": "Kopiuj i udostępnij link spotkania",
         "dialInMeeting": "Wdzwoń się na spotkanie",
         "dialInPin": "Wdzwoń się na spotkanie i wprowadź kod PIN:",

@@ -1155,28 +1155,6 @@
         "calling": "Zəng edilir",
         "configuringDevices": "Cihazlar konfiqurasiya olunur…",
         "connectedWithAudioQ": "Səs ilə qoşulmusunuz?",
-        "connection": {
-            "failed": "Bağlantı sınağı uğursuz oldu!",
-            "good": "İnternet bağlantınız yaxşı görünür!",
-            "nonOptimal": "İnternet bağlantınız optimal deyil",
-            "poor": "Zəif internet bağlantınız var",
-            "running": "Bağlantı sınağı icra olunur…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Səsinizdə kəsilmələr gözlənilir.",
-            "audioHighQuality": "Səsinizin əla keyfiyyətdə olacağı gözlənilir.",
-            "audioLowNoVideo": "Səs keyfiyyətinizin aşağı olacağı və videonun olmayacağı gözlənilir.",
-            "goodQuality": "Əla! Media keyfiyyətiniz çox yaxşı olacaq.",
-            "noMediaConnectivity": "Bu sınaq üçün media bağlantısı qurmaq yolu tapılmadı. Bu adətən şəbəkə ekranı (firewall) və ya NAT səbəbindən olur.",
-            "noVideo": "Videonuzun çox zəif olacağı gözlənilir.",
-            "testFailed": "Bağlantı sınağında gözlənilməz problemlər yarandı, lakin bu təcrübənizə təsir etməyə bilər.",
-            "undetectable": "Hələ də brauzerdə zəng edə bilmirsinizsə, dinamiklərinizin, mikrofonunuzun və kameranızın düzgün qurulduğundan, brauzerinizə mikrofondan və kameradan istifadə hüquqları verdiyinizdən və brauzer versiyanızın güncəl olduğundan əmin olmağınızı tövsiyə edirik. Hələ də zəng etməkdə çətinlik çəkirsinizsə, veb tətbiq tərtibatçısı ilə əlaqə saxlamalısınız.",
-            "veryPoorConnection": "Zəng keyfiyyətinizin həqiqətən də bərbad olacağı gözlənilir.",
-            "videoFreezing": "Videonuzun donması, qaralması və pikselləşməsi gözlənilir.",
-            "videoHighQuality": "Videonuzun yaxşı keyfiyyətdə olacağı gözlənilir.",
-            "videoLowQuality": "Videonuzun kadr tezliyi və çözünürlük baxımından aşağı keyfiyyətli olacağı gözlənilir.",
-            "videoTearing": "Videonuzun pikselləşməsi və ya vizual qüsurların olması gözlənilir."
-        },
         "copyAndShare": "Görüş keçidini kopyala və paylaş",
         "dialInMeeting": "Görüşə telefonla qoşulun",
         "dialInPin": "Görüşə telefonla zəng edin və PIN kodu daxil edin:",

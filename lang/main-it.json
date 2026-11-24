@@ -1016,28 +1016,6 @@
         "calling": "Chiamata in corso",
         "configuringDevices": "Configurazione dispositivi in corso…",
         "connectedWithAudioQ": "Sei connesso con l'audio?",
-        "connection": {
-            "failed": "Test di connessione fallito!",
-            "good": "La tua connessione internet è buona!",
-            "nonOptimal": "La tua connessione internet non è ottimale",
-            "poor": "La tua connessione internet è scarsa",
-            "running": "Test di connessione in corso..."
-        },
-        "connectionDetails": {
-            "audioClipping": "È probabile che il tuo audio vada a singhiozzo.",
-            "audioHighQuality": "Il tuo audio dovrebbe essere eccellente.",
-            "audioLowNoVideo": "È probabile che la tua qualità audio sia bassa e che il video sia assente.",
-            "goodQuality": "Ottimo! La tua qualità multimediale sarà alta.",
-            "noMediaConnectivity": "Impossibile stabilire una connessione multimediale per fare questo test. Questo è solitamente causato da un firewall o dal NAT.",
-            "noVideo": "È probabile che la tua qualità video sia pessima.",
-            "testFailed": "Il test di connessione ha avuto problemi inaspettati, però questo potrebbe non avere impatti sulla tua esperienza.",
-            "undetectable": "Se non riesci ancora a fare chiamate nel browser, verifica che il microfono e la videocamera siano configurate correttamente, che tu abbia autorizzato il browser l'utilizzo del microfono e della videocamera e che il tuo browser sia aggiornato all'ultima versione. Se avessi ancora problemi, dovresti contattare lo sviluppatore dell'applicazione web.",
-            "veryPoorConnection": "È probabile che la tua qualità della chiamata sia terribile.",
-            "videoFreezing": "È probabile che il tuo video si blocchi, sparisca, o sia molto pixellato.",
-            "videoHighQuality": "Il tuo video dovrebbe essere di buona qualità.",
-            "videoLowQuality": "È probabile che il tuo video abbia pochi fotogrammi al secondo e sia a bassa risoluzione.",
-            "videoTearing": "È probabile che il tuo video sia pixellato o abbia artefatti."
-        },
         "copyAndShare": "Copia e condividi il collegamento della riunione",
         "dialInMeeting": "Chiama per collegarti alla riunione",
         "dialInPin": "Chiama per collegarti alla riunione e inserisci il PIN:",

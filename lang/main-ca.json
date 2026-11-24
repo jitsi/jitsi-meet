@@ -1155,28 +1155,6 @@
         "calling": "S'està trucant",
         "configuringDevices": "S'estan configurant els aparells…",
         "connectedWithAudioQ": "Heu connectat amb àudio?",
-        "connection": {
-            "failed": "Ha fallat la prova de connexió!",
-            "good": "La vostra connexió a internet sembla bona!",
-            "nonOptimal": "La vostra connexió a internet no és òptima",
-            "poor": "Teniu una connexió a internet de poca qualitat",
-            "running": "S'està executant la prova de connexió..."
-        },
-        "connectionDetails": {
-            "audioClipping": "És esperable que es talli l'àudio.",
-            "audioHighQuality": "És esperable que l'àudio tingui una qualitat excel·lent.",
-            "audioLowNoVideo": "Es esperable que la qualitat de l'àudio sigui baixa i no hi hagi vídeo.",
-            "goodQuality": "Increïble! Teniu una qualitat multimèdia fantàstica.",
-            "noMediaConnectivity": "No hem pogut trobar un camí per a establir la connectivitat multimèdia per a aquesta prova. Això, habitualment, és a causa d'un tallafoc o NAT.",
-            "noVideo": "És esperable que el vídeo sigui terrible.",
-            "testFailed": "La prova de connexió ha trobat problemes inesperats, però això pot no afectar la vostra experiència.",
-            "undetectable": "Si encara no podeu fer trucades al navegador, us recomanem que verifiqueu que els auriculars, el micròfon i la càmera estan connectats i configurats correctament, que heu garantit permisos al navegador per a usar el micròfon i la càmera, i que el navegador està actualitzat a l'última versió. Si encara teniu problemes per a trucar, podeu contactar amb el desenvolupador de l'aplicació web.",
-            "veryPoorConnection": "És esperable que la qualitat de la trucada sigui realment terrible.",
-            "videoFreezing": "És esperable que el vídeo es congeli, passi a negre i aparegui pixelat.",
-            "videoHighQuality": "És esperable que el vídeo tingui una bona qualitat.",
-            "videoLowQuality": "És esperable que el vídeo sigui de poca qualitat en termes de fotogrames per segon i resolució.",
-            "videoTearing": "És esperable que el vídeo aparegui pixelat o amb defectes visuals."
-        },
         "copyAndShare": "Copia i comparteix l'enllaç de la reunió",
         "dialInMeeting": "Marca la reunió",
         "dialInPin": "Marqueu la trucada i introduïu el codi PIN:",

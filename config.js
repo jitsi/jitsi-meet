@@ -952,9 +952,12 @@ var config = {
     //     // List of buttons to hide from the extra join options dropdown.
     //     hideExtraJoinButtons: ['no-audio', 'by-phone'],
     //     // Configuration for pre-call test
-    //     // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
-    //     // ICE server credentials need to be provided over the preCallTestICEUrl
+    //     // By setting preCallTestEnabled, the prejoin page checks that the browser can connect through the TURN
+    //     // servers, and warns when the network blocks it or allows only TCP. Nothing is shown otherwise.
+    //     // preCallTestICEUrl returns the TURN servers and their credentials as { iceServers: [...] }.
+    //     // preCallTestHelpUrl, if set, is linked from the warning, e.g. a page with a full network test.
     //     preCallTestEnabled: false,
+    //     preCallTestHelpUrl: '',
     //     preCallTestICEUrl: '',
     //     // Shows the hangup button in the lobby screen.
     //     showHangUp: true,

@@ -913,28 +913,6 @@
         "calling": "Ringer",
         "configuringDevices": "Konfigurerer enheter…",
         "connectedWithAudioQ": "Er du tilkoblet med lyd?",
-        "connection": {
-            "failed": "Tilkoblingstesten mislyktes!",
-            "good": "Internettforbindelsen din ser bra ut!",
-            "nonOptimal": "Internettforbindelsen din er ikke optimal",
-            "poor": "Du har en dårlig internettforbindelse",
-            "running": "Kjører tilkoblingstest…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Vi forventer at lyden din vil bli avkuttet.",
-            "audioHighQuality": "Vi forventer at lyden din vil ha utmerket kvalitet.",
-            "audioLowNoVideo": "Vi forventer at lydkvaliteten din vil være lav, og at det ikke vil være video.",
-            "goodQuality": "Fantastisk! Mediekvaliteten din kommer til å være utmerket.",
-            "noMediaConnectivity": "Vi kunne ikke finne en måte å opprette medietilkobling for denne testen. Dette skyldes vanligvis en brannmur eller NAT.",
-            "noVideo": "Vi forventer at videokvaliteten din vil være svært dårlig.",
-            "testFailed": "Tilkoblingstesten støtte på uventede problemer, men dette vil kanskje ikke påvirke opplevelsen din.",
-            "undetectable": "Hvis du fortsatt ikke kan foreta anrop i nettleseren, anbefaler vi at du sjekker at høyttalere, mikrofon og kamera er riktig konfigurert, at du har gitt nettleseren tillatelse til å bruke mikrofon og kamera, og at nettleseren din er oppdatert. Hvis du fortsatt har problemer, bør du kontakte utvikleren av nettapplikasjonen.",
-            "veryPoorConnection": "Vi forventer at samtalekvaliteten din vil være svært dårlig.",
-            "videoFreezing": "Vi forventer at videoen din vil fryse, bli svart eller ha pikselerte forstyrrelser.",
-            "videoHighQuality": "Vi forventer at videoen din vil ha god kvalitet.",
-            "videoLowQuality": "Vi forventer at videoen din vil ha lav kvalitet når det gjelder bildefrekvens og oppløsning.",
-            "videoTearing": "Vi forventer at videoen din vil være pikselert eller ha visuelle artefakter."
-        },
         "copyAndShare": "Kopier og del møtelenken",
         "dialInMeeting": "Ring inn til møtet",
         "dialInPin": "Ring inn til møtet og tast inn PIN-kode:",

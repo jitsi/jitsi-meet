@@ -675,25 +675,6 @@
         "calling": "Klicanje",
         "configuringDevices": "Nastavljanje naprav…",
         "connectedWithAudioQ": "Ste povezani z zvokom?",
-        "connection": {
-            "good": "Vaša internetna povezava je dobra!",
-            "nonOptimal": "Vaša internetna povezava ni optimalna",
-            "poor": "Imate slabo internetno povezavo"
-        },
-        "connectionDetails": {
-            "audioClipping": "Vaš zvok bo verjetno odrezan.",
-            "audioHighQuality": "Vaš zvok bi moral biti zelo kvaliteten.",
-            "audioLowNoVideo": "Vaš zvok bo verjetno slabše kvalitete in brez videa.",
-            "goodQuality": "Super! Kvaliteva vaše medije bo odlična.",
-            "noMediaConnectivity": "Preverjanje povezave neuspešno. To lahko povzroči požarni zid ali NAT.",
-            "noVideo": "Vaš video bo verjetno zelo slab.",
-            "undetectable": "Če še vedno ne morete opravljati klicev v brskalniku, se prepričajte, da vaši zvočniki, mikrofon in kamera delujejo pravilno, da ste brskalniku dovolili dostop in da uporabljate zadnjo verzijo brskalnika. Če imate še vedno težave, kontaktirajte razvijalce spletne aplikacije.",
-            "veryPoorConnection": "Kvaliteva klica bo verjetno zelo slaba.",
-            "videoFreezing": "Vaš video bo verjetno zmrzoval.",
-            "videoHighQuality": "Vaš video bo verjento visoke kvalitete.",
-            "videoLowQuality": "Vaš video bo verjetno slašbe kvalitete.",
-            "videoTearing": "Vaš video bo imel verjetno vizualne artefakte."
-        },
         "copyAndShare": "Kopiraj in deli povezavo sestanka",
         "dialInMeeting": "Sestanku se pridruži s klicem",
         "dialInPin": "Sestanku se pridružite s klicem in vnesite kodo PIN:",
