@@ -115,7 +115,6 @@ export const ContextMenuMore = () => {
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.lowerAllHands')}</Text>
             </TouchableOpacity> }
             {isModerationSupported && <>
-                {/* @ts-ignore */}
                 <Divider style = { styles.divider } />
                 <View style = { styles.contextMenuItem as ViewStyle }>
                     <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.allow')}</Text>
