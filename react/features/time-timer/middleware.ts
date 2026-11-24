@@ -1,5 +1,10 @@
 import { IStore } from '../app/types';
-import { CONFERENCE_JOINED, CONFERENCE_LEFT, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
+    NON_PARTICIPANT_MESSAGE_RECEIVED
+} from '../base/conference/actionTypes';
 import { getRoomName } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { parseURIString } from '../base/util/uri';
@@ -83,6 +88,13 @@ function _notifyExpiredOnce(store: IStore) {
 }
 
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+    // Read before the reducers run: CONFERENCE_FAILED clears the conference from the state. Only the failure of the
+    // conference that was joined ends the meeting the timer belongs to. A failure while joining (password, lobby,
+    // authentication, ...) must not drop a timer an embedder set ahead of the join, nor a failure of an older
+    // conference the timer of the current one.
+    const failedJoinedConference = action.type === CONFERENCE_FAILED
+        && Boolean(action.conference)
+        && action.conference === store.getState()['features/base/conference'].conference;
     const result = next(action);
     const { dispatch, getState } = store;
 
@@ -142,6 +154,15 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             if (duration > 0) {
                 dispatch(startTimeTimer(duration, Math.max(0, elapsed || 0)));
             }
+        }
+        break;
+    }
+    case CONFERENCE_FAILED: {
+        // A joined meeting can end with a failure and no CONFERENCE_LEFT after it, e.g. when the room is destroyed
+        // (the meeting is ended for everyone or runs out of time) or the connection drops. Reset as on leave.
+        if (failedJoinedConference) {
+            _clearTick();
+            dispatch(stopTimeTimer());
         }
         break;
     }
