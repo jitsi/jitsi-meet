@@ -1,3 +1,5 @@
+import { Key } from 'webdriverio';
+
 import BasePageObject from './BasePageObject';
 
 /**
@@ -33,7 +35,10 @@ export default class ChatPanel extends BasePageObject {
         const inputField = this.participant.driver.$('#chat-input');
 
         await inputField.click();
-        await this.participant.driver.keys(`${message}\n`);
+        await this.participant.driver.keys(message);
+
+        // A typed '\n' sends the message in Chrome only. Firefox needs the Return key.
+        await this.participant.driver.keys(Key.Return);
     }
 
     /**
