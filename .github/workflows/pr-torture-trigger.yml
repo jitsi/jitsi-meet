@@ -6,6 +6,8 @@
 #            with "test this please"
 # Any other PR runs only when an admin starts it, and only for the commit the PR is at then.
 # The dial-in tests, which need the VoxImplant credentials, run only for PRs of admins and trusted members.
+# The same decision also starts the downstream prosody tests, if the PR changes the prosody plugins
+# or their tests (see the downstream-prosody-tests job).
 #
 # The authorize job never checks out the PR. pull_request_target and issue_comment run this file from
 # the default branch, a PR cannot change it.
@@ -130,3 +132,64 @@ jobs:
       VOX_API_KEY: ${{ secrets.VOX_API_KEY }}
       VOX_ACCOUNT_ID: ${{ secrets.VOX_ACCOUNT_ID }}
       VOX_HEALTH_CHECK_IN_RULE_ID: ${{ secrets.VOX_HEALTH_CHECK_IN_RULE_ID }}
+
+  # Starts the prosody tests of a downstream repo. That repo has its own prosody plugins.
+  # The job runs only when the authorize job decides to run the tests, and only when the PR changes
+  # the prosody plugins or their tests.
+  # It starts the workflow prosody-tests.yml on the master branch of that repo, with the inputs
+  # jitsi_meet_commit (the head SHA of the PR) and pr_number. The downstream workflow tests that
+  # commit and must post its result as a check run on it.
+  # This job reads the list of changed files and sends the dispatch. It never checks out the PR.
+  # The job is off until the repo variables DOWNSTREAM_TESTS_OWNER and DOWNSTREAM_TESTS_REPO are set.
+  # The secrets DOWNSTREAM_TESTS_APP_CLIENT_ID and DOWNSTREAM_TESTS_APP_KEY hold the client ID and
+  # the private key of a GitHub App. The App must be installed on that repo with "Actions: write".
+  # Keep the two secrets in the environment downstream-prosody-tests, not in the repo. Allow only the
+  # master branch in its deployment branch policy. Then a workflow on another branch cannot use the
+  # App key to start the downstream tests without the authorize job.
+  downstream-prosody-tests:
+    needs: authorize
+    if: >-
+      needs.authorize.outputs.run == 'true' &&
+      vars.DOWNSTREAM_TESTS_OWNER != '' && vars.DOWNSTREAM_TESTS_REPO != ''
+    environment: downstream-prosody-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Check the changed files
+        id: files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.authorize.outputs.pr-number }}
+        run: |
+          FILES=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')
+          if grep -qE '^(resources/prosody-plugins|tests/prosody)/' <<< "$FILES"; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+              echo "The PR does not change the prosody plugins or their tests"
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: GitHub App token
+        id: app-token
+        if: steps.files.outputs.changed == 'true'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          client-id: ${{ secrets.DOWNSTREAM_TESTS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.DOWNSTREAM_TESTS_APP_KEY }}
+          owner: ${{ vars.DOWNSTREAM_TESTS_OWNER }}
+          repositories: ${{ vars.DOWNSTREAM_TESTS_REPO }}
+          permission-actions: write
+
+      - name: Start the downstream tests
+        if: steps.files.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_REPO: ${{ vars.DOWNSTREAM_TESTS_OWNER }}/${{ vars.DOWNSTREAM_TESTS_REPO }}
+          PR_NUMBER: ${{ needs.authorize.outputs.pr-number }}
+          HEAD_SHA: ${{ needs.authorize.outputs.head-sha }}
+        run: |
+          gh workflow run prosody-tests.yml -R "$TARGET_REPO" --ref master \
+            -f jitsi_meet_commit="$HEAD_SHA" -f pr_number="$PR_NUMBER"
+          echo "Started the prosody tests of $TARGET_REPO for $HEAD_SHA"
