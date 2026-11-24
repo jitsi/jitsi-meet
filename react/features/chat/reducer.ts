@@ -100,7 +100,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             participantId: action.participantId,
             isEdited: Boolean(action.isEdited),
             isReaction: action.isReaction,
-            // Reaction, system and error messages carry no id; give them one so every message is addressable.
+            hasLocalId: !action.messageId,
             messageId: action.messageId ?? uuidv4(),
             messageType: action.messageType,
             message: action.message,

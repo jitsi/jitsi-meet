@@ -145,6 +145,8 @@
         "messageCopied": "Message copied",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "moderateMessageReason": "Reason (optional)",
+        "moderateMessageTitle": "Delete this message?",
         "moderatedMessage": "Deleted by a moderator.",
         "moderationReason": "Reason: {{reason}}",
         "newMessages": "New messages",

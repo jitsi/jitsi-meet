@@ -3,6 +3,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
+import { QUICK_REACTIONS } from '../../constants';
+
 interface IProps {
     onSelect: (emoji: string) => void;
 }
@@ -30,14 +32,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         }
     };
 });
-
-const EMOJIS = [
-    { name: 'thumbsUp', emoji: '👍', labelKey: 'toolbar.accessibilityLabel.like' },
-    { name: 'redHeart', emoji: '❤️', labelKey: 'chat.reactions.redHeart' },
-    { name: 'faceWithTearsOfJoy', emoji: '😂', labelKey: 'chat.reactions.faceWithTearsOfJoy' },
-    { name: 'faceWithOpenMouth', emoji: '😮', labelKey: 'toolbar.accessibilityLabel.surprised' },
-    { name: 'fire', emoji: '🔥', labelKey: 'chat.reactions.fire' }
-] as const;
 
 const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     const { classes } = useStyles();
@@ -80,7 +74,7 @@ const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
             className = { classes.emojiGrid }
             onKeyDown = { handleKeyDown }
             role = 'listbox'>
-            {EMOJIS.map(({ name, emoji, labelKey }) => (
+            {QUICK_REACTIONS.map(({ name, emoji, labelKey }) => (
                 <button
                     aria-label = { t(labelKey) }
                     className = { classes.emojiButton }

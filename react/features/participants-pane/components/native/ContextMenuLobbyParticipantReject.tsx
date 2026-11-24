@@ -50,7 +50,6 @@ const ContextMenuLobbyParticipantReject = ({ participant: p }: IProps) => {
 
     return (
         <BottomSheet
-            addScrollViewPadding = { false }
             /* eslint-disable-next-line react/jsx-no-bind */
             renderHeader = { renderMenuHeader }
             showSlidingView = { Boolean(knockParticipantIsAvailable) }>
