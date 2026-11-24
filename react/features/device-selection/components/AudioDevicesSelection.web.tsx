@@ -173,6 +173,10 @@ const styles = (theme: Theme) => {
         outputContainer: {
             display: 'flex',
             alignItems: 'flex-end',
+            margin: `${theme.spacing(5)} 0`
+        },
+
+        outputContainerWithTest: {
             marginBottom: theme.spacing(3)
         },
 
@@ -398,7 +402,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                 </fieldset>
                 <div
                     aria-live = 'polite'
-                    className = { classes.outputContainer }>
+                    className = { isAudioTestSupported ? classes.outputContainerWithTest : classes.outputContainer }>
                     {this._renderSelector(audioOutput)}
                     {!isAudioTestSupported && !hideAudioOutputPreview && hasAudioPermission
                         && <AudioOutputPreview

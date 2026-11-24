@@ -581,6 +581,11 @@ const AudioTest = ({
         recording && URL.revokeObjectURL(recording.url);
     }, [ recording ]);
 
+    // Leaving the last step without pressing Done, e.g. by joining from the pre-join screen, finishes the test too.
+    useEffect(() => () => {
+        step === 'done' && dispatch(updateSettings({ audioTestDone: true }));
+    }, [ step ]);
+
     const play = useCallback(async () => {
         const audio = audioRef.current;
 
@@ -614,12 +619,36 @@ const AudioTest = ({
         step === 'listen' && play();
     }, [ recording, step ]);
 
+    // Applied as soon as the user is happy with them, so that the meeting uses them even if the user then joins, or
+    // closes the test, without pressing Done.
+    const acceptDevices = useCallback(() => {
+        dispatch(submitAudioTestDevices(micId, canSelectSpeaker ? speakerId : undefined, isDisplayedOnWelcomePage));
+        setStep('done');
+    }, [ canSelectSpeaker, isDisplayedOnWelcomePage, micId, speakerId ]);
+
     // Finished or skipped, so that the pre-join screen doesn't offer it again. Opened from the settings, it goes back
     // to them.
     const close = useCallback(() => {
         dispatch(updateSettings({ audioTestDone: true }));
         inline || dispatch(openSettingsDialog(SETTINGS_TABS.AUDIO, isDisplayedOnWelcomePage));
     }, [ inline, isDisplayedOnWelcomePage ]);
+    const finish = useCallback(() => {
+        dispatch(updateSettings({ audioTestDone: true }));
+        if (!inline) {
+            dispatch(hideDialog());
+            dispatch(openAudioSettingsWhenApplied(micId, canSelectSpeaker ? speakerId : undefined,
+                isDisplayedOnWelcomePage));
+        }
+    }, [ canSelectSpeaker, inline, isDisplayedOnWelcomePage, micId, speakerId ]);
+
+    // The user may have changed the devices while the intro showed, e.g. on the pre-join screen.
+    const leaveIntro = useCallback(() => {
+        const devices = getStartDevices();
+
+        setMicId(devices.micId);
+        setSpeakerId(devices.speakerId);
+        setStep('choose');
+    }, []);
     const onIssueChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setIssue(e.target.value as Issue), []);
     const onMicChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => setMicId(e.target.value), []);
     const onPlaybackEnded = useCallback(() => setPlaybackTime(recording?.duration ?? 0), [ recording ]);
@@ -627,21 +656,11 @@ const AudioTest = ({
     const onSpeakerChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => setSpeakerId(e.target.value), []);
     const onTimeUpdate = useCallback(() => setPlaybackTime(audioRef.current?.currentTime ?? 0), []);
     const retryTrack = useCallback(() => setTrackAttempt(attempt => attempt + 1), []);
-    const showChoose = useCallback(() => setStep('choose'), []);
-    const showDone = useCallback(() => setStep('done'), []);
     const showTroubleshoot = useCallback(() => setStep('troubleshoot'), []);
     const stop = useCallback(() => recorderRef.current?.stop(), []);
 
-    const save = useCallback(() => {
-        const speaker = canSelectSpeaker ? speakerId : undefined;
-
-        dispatch(updateSettings({ audioTestDone: true }));
-        dispatch(submitAudioTestDevices(micId, speaker, isDisplayedOnWelcomePage));
-        if (!inline) {
-            dispatch(hideDialog());
-            dispatch(openAudioSettingsWhenApplied(micId, speaker, isDisplayedOnWelcomePage));
-        }
-    }, [ canSelectSpeaker, inline, isDisplayedOnWelcomePage, micId, speakerId ]);
+    // On the last step the devices are applied already, so closing the test there finishes it.
+    const dismiss = step === 'done' ? finish : close;
 
     const start = useCallback(() => {
         setRecordingTime(0);
@@ -854,7 +873,7 @@ const AudioTest = ({
                             accessibilityLabel = { t('audioTest.introStart') }
                             fullWidth = { true }
                             labelKey = 'audioTest.introStart'
-                            onClick = { showChoose } />
+                            onClick = { leaveIntro } />
                         <Button
                             accessibilityLabel = { t('audioTest.skip') }
                             fullWidth = { true }
@@ -909,7 +928,7 @@ const AudioTest = ({
                             accessibilityLabel = { t('audioTest.yes') }
                             fullWidth = { true }
                             labelKey = 'audioTest.yes'
-                            onClick = { showDone } />
+                            onClick = { acceptDevices } />
                         <Button
                             accessibilityLabel = { t('audioTest.no') }
                             fullWidth = { true }
@@ -951,7 +970,7 @@ const AudioTest = ({
                             accessibilityLabel = { t('audioTest.done') }
                             fullWidth = { true }
                             labelKey = 'audioTest.done'
-                            onClick = { save } />
+                            onClick = { finish } />
                     </div>
                 </>
             );
@@ -995,7 +1014,7 @@ const AudioTest = ({
                             accessibilityLabel = { t('audioTest.useAnyway') }
                             fullWidth = { true }
                             labelKey = 'audioTest.useAnyway'
-                            onClick = { showDone }
+                            onClick = { acceptDevices }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </div>
                 </>
@@ -1032,7 +1051,7 @@ const AudioTest = ({
                     accessibilityLabel = { t('dialog.accessibilityLabel.close') }
                     icon = { IconCloseLarge }
                     id = { inline ? undefined : 'modal-header-close-button' }
-                    onClick = { close } />
+                    onClick = { dismiss } />
             </div>
             { renderStep() }
         </div>
@@ -1053,7 +1072,7 @@ const AudioTest = ({
 
     return (
         <BaseDialog
-            onClose = { close }
+            onClose = { dismiss }
             title = { title }>
             { content }
         </BaseDialog>
