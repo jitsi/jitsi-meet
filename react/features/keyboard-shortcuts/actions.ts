@@ -91,6 +91,7 @@ type KeyHandler = ((e: KeyboardEvent) => void) | undefined;
 
 let keyDownHandler: KeyHandler;
 let keyUpHandler: KeyHandler;
+let blurHandler: (() => void) | undefined;
 
 /**
  * Initialise global shortcuts.
@@ -184,25 +185,40 @@ export function initKeyboardShortcuts() {
         // chaining at all.
         let mutePromise = Promise.resolve();
 
+        // Whether the microphone was unmuted by a push to talk press which has not been released yet. Once set, the
+        // release has to mute again whatever happened in between: the shortcuts may have been disabled or another
+        // element may have taken the focus while the space bar was held.
+        let pttActive = false;
+
+        const releasePushToTalk = () => {
+            clearTimeout(pttTimeout);
+            pttTimeout = undefined;
+
+            if (!pttActive) {
+                return;
+            }
+
+            pttActive = false;
+            sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_RELEASED));
+            logger.log('Talk shortcut released');
+            mutePromise = mutePromise.then(() =>
+                APP.conference.muteAudio(true).catch(() => { /* nothing to be done */ }));
+        };
+
         keyUpHandler = (e: KeyboardEvent) => {
+            const key = getKeyboardKey(e).toUpperCase();
+
+            if (key === ' ' && pttActive) {
+                clearTimeout(pttTimeout);
+                pttTimeout = window.setTimeout(releasePushToTalk, pttDelay);
+            }
+
             const state = getState();
             const enabled = areKeyboardShortcutsEnabled(state);
             const shortcuts = getKeyboardShortcuts(state);
 
             if (!enabled || getPriorityFocusedElement()) {
                 return;
-            }
-
-            const key = getKeyboardKey(e).toUpperCase();
-
-            if (key === ' ') {
-                clearTimeout(pttTimeout);
-                pttTimeout = window.setTimeout(() => {
-                    sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_RELEASED));
-                    logger.log('Talk shortcut released');
-                    mutePromise = mutePromise.then(() =>
-                        APP.conference.muteAudio(true).catch(() => { /* nothing to be done */ }));
-                }, pttDelay);
             }
 
             if (shortcuts.has(key)) {
@@ -223,6 +239,7 @@ export function initKeyboardShortcuts() {
 
             if (key === ' ' && !focusedElement) {
                 clearTimeout(pttTimeout);
+                pttActive = true;
                 sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_PRESSED));
                 logger.log('Talk shortcut pressed');
                 mutePromise = mutePromise.then(() =>
@@ -232,8 +249,13 @@ export function initKeyboardShortcuts() {
             }
         };
 
+        // The window gets no keyup for a key released after it lost the focus (switching to another application or
+        // tab, or clicking into an iframe), which would leave the microphone open, so end push to talk right away.
+        blurHandler = releasePushToTalk;
+
         window.addEventListener('keyup', keyUpHandler);
         window.addEventListener('keydown', keyDownHandler);
+        window.addEventListener('blur', blurHandler);
     };
 }
 
@@ -249,6 +271,7 @@ export function disposeKeyboardShortcuts() {
 
         keyUpHandler && window.removeEventListener('keyup', keyUpHandler);
         keyDownHandler && window.removeEventListener('keydown', keyDownHandler);
-        keyDownHandler = keyUpHandler = undefined;
+        blurHandler && window.removeEventListener('blur', blurHandler);
+        keyDownHandler = keyUpHandler = blurHandler = undefined;
     };
 }
