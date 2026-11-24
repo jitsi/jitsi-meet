@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlus } from '../../base/icons/svg';
-import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
 
@@ -31,11 +31,6 @@ interface IProps extends WithTranslation {
      * If a label should be displayed alongside the button.
      */
     showLabel: boolean;
-
-    /**
-     * A list of images locally stored.
-     */
-    storedImages: Array<Image>;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -74,7 +69,6 @@ function UploadImageButton({
     setOptions,
     setStoredImages,
     showLabel,
-    storedImages,
     t
 }: IProps) {
     const { classes } = useStyles();
@@ -101,8 +95,8 @@ function UploadImageButton({
             const url = await resizeImage(reader.result);
             const uuId = uuidv4();
 
-            setStoredImages([
-                ...storedImages,
+            setStoredImages(images => [
+                ...images,
                 {
                     id: uuId,
                     src: url
@@ -121,7 +115,7 @@ function UploadImageButton({
             setLoading(false);
             logger.error('Failed to upload virtual image!');
         };
-    }, [ storedImages ]);
+    }, [ setLoading, setOptions, setStoredImages ]);
 
     return (
         <>

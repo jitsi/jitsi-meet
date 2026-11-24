@@ -384,8 +384,7 @@ function VirtualBackgrounds({
                         setLoading = { setLoading }
                         setOptions = { onOptionsChange }
                         setStoredImages = { setStoredImages }
-                        showLabel = { previewIsLoaded }
-                        storedImages = { storedImages } />}
+                        showLabel = { previewIsLoaded } />}
                     <div
                         aria-describedby = 'virtual-background-current-info'
                         aria-label = { t('virtualBackground.accessibilityLabel.selectBackground') }
