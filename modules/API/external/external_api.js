@@ -135,6 +135,7 @@ const events = {
     'data-channel-closed': 'dataChannelClosed',
     'data-channel-opened': 'dataChannelOpened',
     'device-list-changed': 'deviceListChanged',
+    'device-permissions-changed': 'devicePermissionsChanged',
     'display-name-change': 'displayNameChange',
     'dominant-speaker-changed': 'dominantSpeakerChanged',
     'email-change': 'emailChange',

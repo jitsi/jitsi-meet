@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { explainBeforePrompt } from '../../device-permissions/actions.web';
 import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { setAudioSettings } from '../../settings/actions.web';
@@ -283,18 +284,25 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
             });
         }
     } else if (!muted && ensureTrack) {
-        // TODO(saghul): reconcile these 2 types.
-        dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
+        dispatch(explainBeforePrompt([ 'audio' ], true)).then(devices => {
+            // Declined, or turned on meanwhile.
+            if (!devices.length || getLocalTrack(getState()['features/base/tracks'], MEDIA_TYPE.AUDIO, true)) {
+                return;
+            }
 
-        const createTrackOptions: ITrackOptions = {
-            devices: [ MEDIA_TYPE.AUDIO ],
-        };
+            // TODO(saghul): reconcile these 2 types.
+            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
 
-        dispatch(createLocalTracksA(createTrackOptions)).then(() => {
-            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
-            const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+            const createTrackOptions: ITrackOptions = {
+                devices: [ MEDIA_TYPE.AUDIO ],
+            };
 
-            dispatch(setAudioSettings(updatedSettings));
+            dispatch(createLocalTracksA(createTrackOptions)).then(() => {
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
+                const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+
+                dispatch(setAudioSettings(updatedSettings));
+            });
         });
     }
 }

@@ -9,7 +9,11 @@ import {
 } from '../base/conference/actionTypes';
 import { SET_CONFIG } from '../base/config/actionTypes';
 import { getPageUnloadEventName } from '../base/config/functions.any';
-import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices/actionTypes';
+import {
+    DEVICE_PERMISSION_STATUS_CHANGED,
+    NOTIFY_CAMERA_ERROR,
+    NOTIFY_MIC_ERROR
+} from '../base/devices/actionTypes';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -161,6 +165,10 @@ MiddlewareRegistry.register(store => next => action => {
         );
         break;
     }
+
+    case DEVICE_PERMISSION_STATUS_CHANGED:
+        APP.API.notifyDevicePermissionsChanged(action.permissionStatus);
+        break;
 
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {

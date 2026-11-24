@@ -794,9 +794,7 @@
     },
     "poweredby": "με τη δύναμη του",
     "prejoin": {
-        "audioAndVideoError": "Σφάλμα ήχου και βίντεο:",
         "audioDeviceProblem": "Υπάρχει πρόβλημα με τη συσκευή ήχου σας",
-        "audioOnlyError": "Σφάλμα ήχου:",
         "audioTrackError": "Δεν ήταν δυνατή η δημιουργία κομματιού ήχου.",
         "callMe": "Καλέστε με",
         "callMeAtNumber": "Καλέστε με σε αυτό το νούμερο:",
@@ -848,7 +846,6 @@
         "premeeting": "Προ σύσκεψη",
         "screenSharingError": "Σφάλμα διαμοιρασμού οθόνης:",
         "startWithPhone": "Ξεκινήστε με ήχο τηλεφώνου",
-        "videoOnlyError": "Σφάλμα βίντεο:",
         "videoTrackError": "Δεν ήταν δυνατή η δημιουργία κομματιού βίντεο.",
         "viewAllNumbers": "προβολή όλων των αριθμών"
     },

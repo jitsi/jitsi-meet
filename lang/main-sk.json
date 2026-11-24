@@ -523,8 +523,6 @@
     },
     "poweredby": "založené na",
     "prejoin": {
-        "audioAndVideoError": "Chyba zvuku a videa:",
-        "audioOnlyError": "Chyba zvuku:",
         "audioTrackError": "Nemôžem vytvoriť zvukovú stopu.",
         "callMe": "Zavolať mi",
         "callMeAtNumber": "Zavolajte mi na toto číslo:",
@@ -552,7 +550,6 @@
         "or": "alebo",
         "screenSharingError": "Chyba pri zdieľaní obrazovky:",
         "startWithPhone": "Začať so zvukom cez telefón",
-        "videoOnlyError": "Chyba videa:",
         "videoTrackError": "Nemôžem vytvoriť video stopu.",
         "viewAllNumbers": "zobraziť všetky čísla"
     },

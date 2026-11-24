@@ -888,9 +888,7 @@
     },
     "poweredby": "dipersembahkan oleh",
     "prejoin": {
-        "audioAndVideoError": "Kesalahan audio dan video:",
         "audioDeviceProblem": "Ada masalah dengan perangkat audio Anda",
-        "audioOnlyError": "Kesalahan audio:",
         "audioTrackError": "Tidak bisa membuat trek audio.",
         "callMe": "Hubungi saya",
         "callMeAtNumber": "Hubungi saya di nomor ini:",
@@ -945,7 +943,6 @@
         "screenSharingError": "Kesalahan berbagi layar:",
         "startWithPhone": "Mulai dengan audio ponsel",
         "unsafeRoomConsent": "Saya memahami risikonya, saya ingin bergabung dengan pertemuan",
-        "videoOnlyError": "Kesalahan video:",
         "videoTrackError": "Tidak bisa membuat trek video.",
         "viewAllNumbers": "lihat semua nomor"
     },

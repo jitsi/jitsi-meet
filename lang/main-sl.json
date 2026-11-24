@@ -668,9 +668,7 @@
     },
     "poweredby": "Poganja ga",
     "prejoin": {
-        "audioAndVideoError": "Napaka zvoka in videa:",
         "audioDeviceProblem": "Napaka z vašo zvočno napravo",
-        "audioOnlyError": "Napaka zvoka:",
         "audioTrackError": "Ni bilo možno ustvariti zvoka",
         "callMe": "Pokliči me",
         "callMeAtNumber": "Pokliči me na tej številki:",
@@ -721,7 +719,6 @@
         "premeeting": "Pred sestanek",
         "screenSharingError": "Napaka deljenja zaslona:",
         "startWithPhone": "Začni z zvokom telefona",
-        "videoOnlyError": "Napaka videa:",
         "videoTrackError": "Ni bilo mogoče ustvariti videa.",
         "viewAllNumbers": "poglej vse številke"
     },

@@ -1004,9 +1004,7 @@
     },
     "poweredby": "bazuar në",
     "prejoin": {
-        "audioAndVideoError": "Gabim audio dhe video:",
         "audioDeviceProblem": "Ka një problem me pajisjen tuaj audio",
-        "audioOnlyError": "Gabim audio:",
         "audioTrackError": "S’u krijua dot pistë audio.",
         "callMe": "Thirrmë",
         "callMeAtNumber": "Thirrmë në këtë numër:",
@@ -1064,7 +1062,6 @@
         "screenSharingError": "Gabim ndarjeje ekrani me të tjerë:",
         "startWithPhone": "Nise me audio telefoni",
         "unsafeRoomConsent": "I kuptoj rreziqet, dëshiroj të marr pjesë te takimi",
-        "videoOnlyError": "Gabim video:",
         "videoTrackError": "S’u krijua dot pistë video.",
         "viewAllNumbers": "shihni krejt numrat"
     },

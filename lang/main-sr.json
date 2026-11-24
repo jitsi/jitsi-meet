@@ -404,8 +404,6 @@
     },
     "poweredby": "",
     "prejoin": {
-        "audioAndVideoError": "Грешка звука и видеа:",
-        "audioOnlyError": "Грешка звука:",
         "audioTrackError": "Креирање аудио траке није успјело.",
         "callMe": "Позовите ме",
         "callMeAtNumber": "Позовите ме на овај број:",
@@ -434,7 +432,6 @@
         "premeeting": "Пред придруживањем",
         "screenSharingError": "Грешка дијељења екрана:",
         "startWithPhone": "Започети са телефонском везом.",
-        "videoOnlyError": "Грешка видеа:",
         "videoTrackError": "Креирање видео траке није успјело.",
         "viewAllNumbers": "преглед свих учесника"
     },

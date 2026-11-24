@@ -1053,9 +1053,7 @@
     },
     "poweredby": "powered by",
     "prejoin": {
-        "audioAndVideoError": "ऑडियो और वीडियो त्रुटि:",
         "audioDeviceProblem": "आपके ऑडियो डिवाइस में कोई समस्या है",
-        "audioOnlyError": "ऑडियो त्रुटि:",
         "audioTrackError": "ऑडियो ट्रैक नहीं बना सका।",
         "callMe": "मुझे कॉल करें",
         "callMeAtNumber": "मुझे इस नंबर पर कॉल करें:",
@@ -1113,7 +1111,6 @@
         "screenSharingError": "स्क्रीन शेयरिंग त्रुटि:",
         "startWithPhone": "फोन ऑडियो से शुरू करें",
         "unsafeRoomConsent": "मैं जोखिम समझता हूं, मैं मीटिंग में शामिल होना चाहता हूं",
-        "videoOnlyError": "वीडियो त्रुटि:",
         "videoTrackError": "वीडियो ट्रैक नहीं बना सका।",
         "viewAllNumbers": "सभी नंबर देखें"
     },

@@ -3,6 +3,7 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import {
     ADD_PENDING_DEVICE_REQUEST,
     DEVICE_PERMISSIONS_CHANGED,
+    DEVICE_PERMISSION_STATUS_CHANGED,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
@@ -20,6 +21,7 @@ const DEFAULT_STATE: IDevicesState = {
         videoInput: []
     },
     pendingRequests: [],
+    permissionStatus: {},
     permissions: {
         audio: false,
         video: false
@@ -79,6 +81,12 @@ ReducerRegistry.register<IDevicesState>(
             return {
                 ...state,
                 permissions: action.permissions
+            };
+        }
+        case DEVICE_PERMISSION_STATUS_CHANGED: {
+            return {
+                ...state,
+                permissionStatus: action.permissionStatus
             };
         }
         default:

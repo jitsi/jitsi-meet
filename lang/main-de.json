@@ -1156,9 +1156,7 @@
     },
     "poweredby": "Betrieben von",
     "prejoin": {
-        "audioAndVideoError": "Audio- und Videofehler:",
         "audioDeviceProblem": "Es gibt ein Problem mit Ihrem Audiogerät",
-        "audioOnlyError": "Audiofehler:",
         "audioTrackError": "Audiotrack konnte nicht erstellt werden.",
         "callMe": "Mich anrufen",
         "callMeAtNumber": "Mich unter dieser Nummer anrufen:",
@@ -1217,7 +1215,6 @@
         "screenSharingError": "Fehler bei Bildschirmfreigabe:",
         "startWithPhone": "Mit Telefonaudio starten",
         "unsafeRoomConsent": "Ich verstehe das Risiko und möchte der Konferenz beitreten",
-        "videoOnlyError": "Videofehler:",
         "videoTrackError": "Videotrack konnte nicht erstellt werden.",
         "viewAllNumbers": "alle Nummern anzeigen"
     },

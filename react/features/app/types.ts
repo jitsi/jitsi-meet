@@ -34,6 +34,7 @@ import { ICalendarSyncState } from '../calendar-sync/reducer';
 import { IChatState } from '../chat/reducer';
 import { ICustomPanelState } from '../custom-panel/reducer';
 import { IDeepLinkingState } from '../deep-linking/reducer';
+import { IDevicePermissionsState } from '../device-permissions/reducer';
 import { IDropboxState } from '../dropbox/reducer';
 import { IDynamicBrandingState } from '../dynamic-branding/reducer';
 import { IE2EEState } from '../e2ee/reducer';
@@ -128,6 +129,7 @@ export interface IReduxState {
     'features/chat': IChatState;
     'features/custom-panel': ICustomPanelState;
     'features/deep-linking': IDeepLinkingState;
+    'features/device-permissions': IDevicePermissionsState;
     'features/dropbox': IDropboxState;
     'features/dynamic-branding': IDynamicBrandingState;
     'features/e2ee': IE2EEState;

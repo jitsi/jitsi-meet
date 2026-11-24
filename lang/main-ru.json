@@ -936,9 +936,7 @@
     },
     "poweredby": "работает на",
     "prejoin": {
-        "audioAndVideoError": "Ошибка звука и видео:",
         "audioDeviceProblem": "Проблема с вашим аудиоустройством",
-        "audioOnlyError": "Ошибка звука:",
         "audioTrackError": "Не удалось создать аудио дорожку.",
         "callMe": "Позвоните мне",
         "callMeAtNumber": "Позвоните мне по этому номеру:",
@@ -993,7 +991,6 @@
         "screenSharingError": "Ошибка показа экрана:",
         "startWithPhone": "Начать с телефонной связью",
         "unsafeRoomConsent": "Я понимаю риски и хочу присоединиться к встрече",
-        "videoOnlyError": "Ошибка видео:",
         "videoTrackError": "Не удалось создать видео дорожку.",
         "viewAllNumbers": "посмотреть всех участников"
     },

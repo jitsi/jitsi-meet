@@ -1099,9 +1099,7 @@
     },
     "poweredby": "قدرت‌گرفته از",
     "prejoin": {
-        "audioAndVideoError": "خطا در صدا و تصویر:",
         "audioDeviceProblem": "مشکلی در دستگاه صوتی شما وجود دارد",
-        "audioOnlyError": "خطا در صدا:",
         "audioTrackError": "قطعهٔ صوتی ایجاد نشد.",
         "callMe": "با من تماس بگیرید",
         "callMeAtNumber": "با این شماره با من تماس بگیرید:",
@@ -1159,7 +1157,6 @@
         "screenSharingError": "خطا در اشتراک‌گذاری صفحه:",
         "startWithPhone": "شروع با صدای گوشی",
         "unsafeRoomConsent": "من خطر احتمالی را درک می‌کنم؛ می‌خواهم به جلسه بلینکم",
-        "videoOnlyError": "خطای ویدیو:",
         "videoTrackError": "قطعهٔ ویدیویی ایجاد نشد.",
         "viewAllNumbers": "مشاهدهٔ همهٔ شماره‌ها"
     },

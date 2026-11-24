@@ -1,6 +1,10 @@
 import { AnyAction } from 'redux';
 
+import { createDevicePermissionDeniedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
+import { ignoreTrackEnd } from '../../device-permissions/actions.web';
+import { shouldShowGuidance } from '../../device-permissions/functions';
 import { processExternalDeviceRequest } from '../../device-selection/functions';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
@@ -16,6 +20,7 @@ import { getLocalTrack } from '../tracks/functions';
 
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    DEVICE_PERMISSION_STATUS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     SET_AUDIO_INPUT_DEVICE,
@@ -23,6 +28,7 @@ import {
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import {
+    devicePermissionStatusChanged,
     devicePermissionsChanged,
     removePendingDeviceRequests,
     setAudioInputDevice,
@@ -34,6 +40,7 @@ import {
     formatDeviceLabel,
     logDevices
 } from './functions';
+import { IDevicesState } from './types';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -57,6 +64,7 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
  * A listener for device permissions changed reported from lib-jitsi-meet.
  */
 let permissionsListener: Function | undefined;
+let permissionStatusListener: Function | undefined;
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -88,6 +96,32 @@ MiddlewareRegistry.register(store => next => action => {
         .catch(() => {
             // Ignore errors.
         });
+
+        // Older lib-jitsi-meet versions only report whether the permissions were granted.
+        if (JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED) {
+            let statusReceived = false;
+            const _permissionStatusListener = (permissionStatus: IDevicesState['permissionStatus']) => {
+                statusReceived = true;
+                store.dispatch(devicePermissionStatusChanged(permissionStatus));
+            };
+
+            permissionStatusListener = _permissionStatusListener;
+            mediaDevices.addEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED, permissionStatusListener);
+            Promise.all([
+                mediaDevices.getPermissionStatus('audio'),
+                mediaDevices.getPermissionStatus('video')
+            ])
+
+            // A status reported while reading is newer than the one read.
+            .then(([ audio, video ]) => !statusReceived && _permissionStatusListener({
+                audio,
+                video
+            }))
+            .catch(() => {
+                // Ignore errors.
+            });
+        }
         break;
     }
     case APP_WILL_UNMOUNT:
@@ -96,7 +130,25 @@ MiddlewareRegistry.register(store => next => action => {
                 JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
             permissionsListener = undefined;
         }
+        if (typeof permissionStatusListener === 'function') {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_STATUS_CHANGED, permissionStatusListener);
+            permissionStatusListener = undefined;
+        }
         break;
+    case DEVICE_PERMISSION_STATUS_CHANGED: {
+        const previous = store.getState()['features/base/devices'].permissionStatus;
+
+        for (const mediaType of [ 'audio', 'video' ] as const) {
+            const status = action.permissionStatus[mediaType];
+
+            if (status?.state === 'denied'
+                    && (previous[mediaType]?.state !== 'denied' || previous[mediaType]?.reason !== status.reason)) {
+                sendAnalytics(createDevicePermissionDeniedEvent(mediaType, status.reason));
+            }
+        }
+        break;
+    }
     case NOTIFY_CAMERA_ERROR: {
         if (!action.error) {
             break;
@@ -113,14 +165,18 @@ MiddlewareRegistry.register(store => next => action => {
         const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
             ? 'deviceError.cameraPermission' : 'deviceError.cameraError';
 
-        store.dispatch(showWarningNotification({
-            description: additionalCameraErrorMsg,
-            descriptionKey: cameraErrorMsg,
-            titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        // The guidance dialog explains a denial instead.
+        if (name !== JitsiTrackErrors.PERMISSION_DENIED || !shouldShowGuidance(store.getState(), 'video')) {
+            store.dispatch(showWarningNotification({
+                description: additionalCameraErrorMsg,
+                descriptionKey: cameraErrorMsg,
+                titleKey
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
 
         if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(setDeviceStatusWarning(titleKey));
+            store.dispatch(setDeviceStatusWarning(
+                name === JitsiTrackErrors.PERMISSION_DENIED ? 'prejoin.errorNoCameraPermission' : titleKey));
         }
 
         break;
@@ -142,14 +198,18 @@ MiddlewareRegistry.register(store => next => action => {
             ? 'deviceError.microphonePermission'
             : 'deviceError.microphoneError';
 
-        store.dispatch(showWarningNotification({
-            description: additionalMicErrorMsg,
-            descriptionKey: micErrorMsg,
-            titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        // The guidance dialog explains a denial instead.
+        if (name !== JitsiTrackErrors.PERMISSION_DENIED || !shouldShowGuidance(store.getState(), 'audio')) {
+            store.dispatch(showWarningNotification({
+                description: additionalMicErrorMsg,
+                descriptionKey: micErrorMsg,
+                titleKey
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
 
         if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(setDeviceStatusWarning(titleKey));
+            store.dispatch(setDeviceStatusWarning(
+                name === JitsiTrackErrors.PERMISSION_DENIED ? 'prejoin.errorNoMicPermission' : titleKey));
         }
 
         break;
@@ -166,6 +226,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         // on mobile devices the video stream has to be stopped before replacing it
         if (isMobileBrowser() && localTrack && !localTrack.muted) {
+            ignoreTrackEnd(localTrack.jitsiTrack);
             localTrack.jitsiTrack.stopStream();
         }
         if (isPrejoinPageVisible(store.getState())) {
@@ -239,10 +300,18 @@ function _processPendingRequests({ dispatch, getState }: IStore, next: Function,
 function _checkAndNotifyForNewDevice(store: IStore, newDevices: MediaDeviceInfo[], oldDevices: MediaDeviceInfo[]) {
     const { dispatch } = store;
 
+    // Without access to a kind of device, the browser lists it without ids. The devices listed once access is granted
+    // aren't new.
+    const listedWithoutIds = (kind: string) => {
+        const old = oldDevices.filter(device => device.kind === kind);
+
+        return old.length > 0 && old.every(device => !device.deviceId);
+    };
+
     // let's intersect both newDevices and oldDevices and handle thew newly
     // added devices
     const onlyNewDevices = newDevices.filter(
-        nDevice => !oldDevices.find(
+        nDevice => !listedWithoutIds(nDevice.kind) && !oldDevices.find(
             device => device.deviceId === nDevice.deviceId));
 
     // we group devices by groupID which normally is the grouping by physical device

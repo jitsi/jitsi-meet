@@ -143,6 +143,11 @@ export class Participant {
                 }
             }
         },
+
+        // Firefox reports the devices as not yet allowed although the tests turn its prompts off, so the explanation
+        // would wait for an answer.
+        disablePermissionPromptDialog: true,
+
         resolution: process.env.VIDEO_CAPTURE_FILE ? undefined : 360,
 
         requireDisplayName: false,

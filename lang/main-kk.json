@@ -998,9 +998,7 @@
     },
     "poweredby": "әзірлеген",
     "prejoin": {
-        "audioAndVideoError": "Аудио және бейне қатесі:",
         "audioDeviceProblem": "Аудио құрылғыңызда мәселе бар",
-        "audioOnlyError": "Аудио қатесі:",
         "audioTrackError": "Аудио жолын құру мүмкін болмады.",
         "callMe": "Маған қоңырау шалу",
         "callMeAtNumber": "Маған осы нөмірге қоңырау шалу:",
@@ -1058,7 +1056,6 @@
         "screenSharingError": "Экран бөлісу қатесі:",
         "startWithPhone": "Телефон аудиосымен бастау",
         "unsafeRoomConsent": "Мен тәуекелдерді түсінемін, жиналысқа қосылғым келеді",
-        "videoOnlyError": "Бейне қатесі:",
         "videoTrackError": "Бейне жолын құру мүмкін болмады.",
         "viewAllNumbers": "барлық нөмірлерді көру"
     },

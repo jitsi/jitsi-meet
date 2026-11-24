@@ -308,6 +308,23 @@ export function createDeviceChangedEvent(mediaType: string, deviceType: string) 
 }
 
 /**
+ * Creates an event which indicates that access to the camera or the microphone was denied.
+ *
+ * @param {string} mediaType - The media type of the device ('audio' or 'video').
+ * @param {string} [reason] - Why access was denied: 'user', 'browser', 'os' or 'policy'.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createDevicePermissionDeniedEvent(mediaType: string, reason?: string) {
+    return {
+        action: 'device.permission.denied',
+        attributes: {
+            'media_type': mediaType,
+            reason
+        }
+    };
+}
+
+/**
  * Creates an event indicating that an action related to E2EE occurred.
  *
  * @param {string} action - The action which occurred.

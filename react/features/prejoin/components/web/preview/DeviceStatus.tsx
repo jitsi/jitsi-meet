@@ -70,7 +70,7 @@ function DeviceStatus() {
             <span
                 aria-level = { 3 }
                 role = 'heading'>
-                {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText ?? '')}
+                {t(deviceStatusText ?? '')}
             </span>
         </div>
     );
