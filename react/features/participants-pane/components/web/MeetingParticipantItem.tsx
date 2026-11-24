@@ -193,7 +193,6 @@ function MeetingParticipantItem({
 }: IProps) {
 
     const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
-    const [ registeredEvent, setRegisteredEvent ] = useState(false);
 
     const _updateAudioLevel = useCallback(level => {
         const audioLevel = typeof level === 'number' && !isNaN(level)
@@ -203,23 +202,18 @@ function MeetingParticipantItem({
     }, []);
 
     useEffect(() => {
-        if (_audioTrack && !registeredEvent) {
-            const { jitsiTrack } = _audioTrack;
+        const jitsiTrack = _audioTrack?.jitsiTrack;
 
-            if (jitsiTrack) {
-                jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
-                setRegisteredEvent(true);
-            }
+        if (!jitsiTrack) {
+            return;
         }
 
-        return () => {
-            if (_audioTrack && registeredEvent) {
-                const { jitsiTrack } = _audioTrack;
+        jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
 
-                jitsiTrack?.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
-            }
+        return () => {
+            jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
         };
-    }, [ _audioTrack ]);
+    }, [ _audioTrack, _updateAudioLevel ]);
 
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;

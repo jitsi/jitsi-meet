@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -30,8 +30,7 @@ const useStyles = makeStyles()(theme => {
         container: {
             display: 'flex',
             flexDirection: 'column',
-            flex: 1,
-            minHeight: 0
+            flex: '0 1 auto'
         },
 
         headingW: {
@@ -57,10 +56,11 @@ const useStyles = makeStyles()(theme => {
         },
 
         listContainer: {
-            flex: 1,
-            minHeight: '200px',
+            flex: '0 1 auto',
+            margin: `0 -${participantsPaneTheme.panePadding}px`,
             maxHeight: '100%',
-            position: 'relative'
+            position: 'relative',
+            width: `calc(100% + ${participantsPaneTheme.panePadding * 2}px)`
         }
     };
 });
@@ -111,6 +111,32 @@ function MeetingParticipants({
 
     const { classes: styles } = useStyles();
 
+    const [ isMediumWidth, setIsMediumWidth ] = useState(() =>
+        typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+            ? window.matchMedia(`(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`).matches
+            : false
+    );
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+            return;
+        }
+
+        const mediaQuery = window.matchMedia(`(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`);
+        const handleChange = (e: MediaQueryListEvent) => setIsMediumWidth(e.matches);
+
+        setIsMediumWidth(mediaQuery.matches);
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
+
+    // ListItem height is 56px on desktop (including padding), 72px under MD_BREAKPOINT.
+    const itemSize = isMediumWidth ? 72 : 56;
+    const contentHeight = sortedParticipantIds.length * itemSize;
+
     return (
         <div className = { styles.container }>
             <span
@@ -138,19 +164,26 @@ function MeetingParticipants({
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <div className = { styles.listContainer }>
-                <MeetingParticipantItems
-                    isInBreakoutRoom = { isBreakoutRoom }
-                    lowerMenu = { lowerMenu }
-                    openDrawerForParticipant = { openDrawerForParticipant }
-                    overflowDrawer = { overflowDrawer }
-                    participantActionEllipsisLabel = { participantActionEllipsisLabel }
-                    participantIds = { sortedParticipantIds }
-                    raiseContextId = { raiseContext.entity }
-                    searchString = { normalizeAccents(searchString) }
-                    toggleMenu = { toggleMenu }
-                    youText = { youText } />
-            </div>
+            {sortedParticipantIds.length > 0 && (
+                <div
+                    className = { styles.listContainer }
+                    style = {{
+                        height: contentHeight,
+                        minHeight: Math.min(200, contentHeight)
+                    }}>
+                    <MeetingParticipantItems
+                        isInBreakoutRoom = { isBreakoutRoom }
+                        itemSize = { itemSize }
+                        lowerMenu = { lowerMenu }
+                        openDrawerForParticipant = { openDrawerForParticipant }
+                        overflowDrawer = { overflowDrawer }
+                        participantActionEllipsisLabel = { participantActionEllipsisLabel }
+                        participantIds = { sortedParticipantIds }
+                        raiseContextId = { raiseContext.entity }
+                        toggleMenu = { toggleMenu }
+                        youText = { youText } />
+                </div>
+            )}
             <MeetingParticipantContextMenu
                 closeDrawer = { closeDrawer }
                 drawerParticipant = { drawerParticipant }
@@ -172,14 +205,17 @@ function MeetingParticipants({
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState, ownProps: any) {
-    let sortedParticipantIds: any = getSortedParticipantIds(state);
+function _mapStateToProps(state: IReduxState, ownProps: Pick<IProps, 'searchString'>) {
     const _iAmVisitor = iAmVisitor(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
     // participants in the participants pane.
     // Filter local participant when in visitor mode
-    sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
+    let sortedParticipantIds = getSortedParticipantIds(state).filter((id): id is string => {
+        if (!id) {
+            return false;
+        }
+
         const participant = getParticipantById(state, id);
 
         if (_iAmVisitor && participant?.local) {
@@ -200,7 +236,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     if (searchString) {
         const normalizedSearch = normalizeAccents(searchString);
 
-        sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
+        sortedParticipantIds = sortedParticipantIds.filter((id: string) => {
             const participant = getParticipantById(state, id);
 
             return participantMatchesSearch(participant, normalizedSearch);

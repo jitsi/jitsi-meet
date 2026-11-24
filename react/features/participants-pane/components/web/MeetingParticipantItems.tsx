@@ -3,6 +3,8 @@ import React, { useCallback, useMemo } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
+import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
+
 import MeetingParticipantItem from './MeetingParticipantItem';
 
 interface IProps {
@@ -16,6 +18,11 @@ interface IProps {
      * Whether or not the local participant is in a breakout room.
      */
     isInBreakoutRoom: boolean;
+
+    /**
+     * Height of each participant row in pixels.
+     */
+    itemSize: number;
 
     /**
      * Callback for the mouse leaving this item.
@@ -48,14 +55,9 @@ interface IProps {
     participantIds: Array<string>;
 
     /**
-     * The if of the participant for which the context menu should be open.
+     * The id of the participant for which the context menu should be open.
      */
     raiseContextId?: string;
-
-    /**
-     * Current search string.
-     */
-    searchString?: string;
 
     /**
      * Callback for the activation of this item's context menu.
@@ -68,24 +70,68 @@ interface IProps {
     youText: string;
 }
 
+/**
+ * Data passed to each virtualized participant row via {@code react-window}.
+ */
 interface IItemData {
+
+    /**
+     * Whether or not the local participant is in a breakout room.
+     */
     isInBreakoutRoom: boolean;
+
+    /**
+     * Callback for the mouse leaving an item.
+     */
     lowerMenu: Function;
+
+    /**
+     * Callback used to open an actions drawer for a participant.
+     */
     openDrawerForParticipant: Function;
+
+    /**
+     * True if an overflow drawer should be displayed.
+     */
     overflowDrawer?: boolean;
+
+    /**
+     * The aria-label for the ellipsis action.
+     */
     participantActionEllipsisLabel: string;
+
+    /**
+     * The meeting participant IDs.
+     */
     participantIds: Array<string>;
+
+    /**
+     * The id of the participant for which the context menu should be open.
+     */
     raiseContextId?: string;
-    searchString?: string;
+
+    /**
+     * Callback for the activation of an item's context menu.
+     */
     toggleMenu: Function;
+
+    /**
+     * The translated "you" text.
+     */
     youText: string;
 }
 
+/**
+ * Inline styles for the virtualized list scroll container.
+ */
 const listStyles = {
     overflowX: 'hidden' as const,
     overflowY: 'auto' as const
 };
 
+/**
+ * Inner list element for {@code FixedSizeList} with {@code role="list"} for accessibility.
+ */
 const InnerListElement = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => (
     <div
         { ...props }
@@ -95,6 +141,12 @@ const InnerListElement = React.forwardRef<HTMLDivElement, React.HTMLAttributes<H
 
 InnerListElement.displayName = 'MeetingParticipantInnerList';
 
+/**
+ * Renders a single virtualized participant row.
+ *
+ * @param {ListChildComponentProps<IItemData>} props - The row props provided by {@code react-window}.
+ * @returns {ReactElement}
+ */
 const Row = React.memo(({ index, style, data }: ListChildComponentProps<IItemData>) => {
     const {
         isInBreakoutRoom,
@@ -104,27 +156,31 @@ const Row = React.memo(({ index, style, data }: ListChildComponentProps<IItemDat
         participantActionEllipsisLabel,
         participantIds,
         raiseContextId,
-        searchString,
         toggleMenu,
         youText
     } = data;
     const id = participantIds[index];
+    const rowStyle = {
+        ...style,
+        boxSizing: 'border-box' as const,
+        padding: `0 ${participantsPaneTheme.panePadding}px`
+    };
 
     return (
         <div
-            role = 'presentation'
-            style = { style }>
+            aria-posinset = { index + 1 }
+            aria-setsize = { participantIds.length }
+            role = 'listitem'
+            style = { rowStyle }>
             <MeetingParticipantItem
                 isHighlighted = { raiseContextId === id }
                 isInBreakoutRoom = { isInBreakoutRoom }
-                key = { id }
                 onContextMenu = { toggleMenu(id) }
                 onLeave = { lowerMenu }
                 openDrawerForParticipant = { openDrawerForParticipant }
                 overflowDrawer = { overflowDrawer }
                 participantActionEllipsisLabel = { participantActionEllipsisLabel }
                 participantID = { id }
-                searchString = { searchString }
                 youText = { youText } />
         </div>
     );
@@ -139,6 +195,7 @@ Row.displayName = 'MeetingParticipantRow';
  */
 function MeetingParticipantItems({
     isInBreakoutRoom,
+    itemSize,
     lowerMenu,
     toggleMenu,
     participantIds = [],
@@ -146,7 +203,6 @@ function MeetingParticipantItems({
     overflowDrawer,
     raiseContextId,
     participantActionEllipsisLabel,
-    searchString,
     youText
 }: IProps) {
     const itemData = useMemo(() => ({
@@ -157,7 +213,6 @@ function MeetingParticipantItems({
         participantActionEllipsisLabel,
         participantIds,
         raiseContextId,
-        searchString,
         toggleMenu,
         youText
     }), [
@@ -168,13 +223,24 @@ function MeetingParticipantItems({
         participantActionEllipsisLabel,
         participantIds,
         raiseContextId,
-        searchString,
         toggleMenu,
         youText
     ]);
 
+    /**
+     * Returns a stable key for each participant row.
+     *
+     * @param {number} index - The index of the row.
+     * @param {IItemData} data - The list item data.
+     * @returns {string}
+     */
     const itemKey = useCallback((index: number, data: IItemData) => data.participantIds[index], []);
 
+    /**
+     * Closes the context menu when scrolling the list.
+     *
+     * @returns {void}
+     */
     const onScroll = useCallback(() => {
         if (raiseContextId) {
             lowerMenu(true);
@@ -185,30 +251,22 @@ function MeetingParticipantItems({
         return null;
     }
 
-    // ListItem height is 56px on desktop (including padding), 72px on mobile/drawer mode.
-    const itemSize = overflowDrawer ? 72 : 56;
-
     return (
         <AutoSizer>
-            {({ height, width }) => {
-                const contentHeight = participantIds.length * itemSize;
-                const listHeight = Math.max(height, Math.min(200, contentHeight));
-
-                return (
-                    <FixedSizeList
-                        height = { listHeight }
-                        innerElementType = { InnerListElement }
-                        itemCount = { participantIds.length }
-                        itemData = { itemData }
-                        itemKey = { itemKey }
-                        itemSize = { itemSize }
-                        onScroll = { onScroll }
-                        style = { listStyles }
-                        width = { width }>
-                        { Row }
-                    </FixedSizeList>
-                );
-            }}
+            {({ height, width }) => (
+                <FixedSizeList
+                    height = { height }
+                    innerElementType = { InnerListElement }
+                    itemCount = { participantIds.length }
+                    itemData = { itemData }
+                    itemKey = { itemKey }
+                    itemSize = { itemSize }
+                    onScroll = { onScroll }
+                    style = { listStyles }
+                    width = { width }>
+                    { Row }
+                </FixedSizeList>
+            )}
         </AutoSizer>
     );
 }
