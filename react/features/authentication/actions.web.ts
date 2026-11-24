@@ -48,8 +48,10 @@ class LoginCancelledError extends Error {
  * and settles its pending promise. It is set while a popup is open and cleared
  * once the popup is closed, so it can be used to dismiss the popup when it is no
  * longer needed (e.g. when the participant is admitted to the conference).
+ * Unless {@code clearStorage} is false, it also clears the login data kept in
+ * the session storage.
  */
-let closeActiveLoginPopup: (() => void) | undefined;
+let closeActiveLoginPopup: ((clearStorage?: boolean) => void) | undefined;
 
 /**
  * Cancels {@ink LoginDialog}.
@@ -112,6 +114,11 @@ function generateNonce(): string {
  */
 export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | null): Promise<any> {
     return new Promise<any>((resolve, reject) => {
+        // Only one login popup at a time. A new login (e.g. the login button clicked again while the popup is hidden
+        // behind the meeting) replaces the pending one, which would otherwise also take the tokens of the new popup
+        // and authenticate a second time. Keep the session storage: it now holds the code verifier of the new login.
+        closeActiveLoginPopup?.(false);
+
         let nonceParam = '';
 
         try {
@@ -159,11 +166,20 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
         }
 
         let closedPollInterval: ReturnType<typeof setInterval> | undefined = undefined;
-        const cleanup = (handler: (event: MessageEvent) => void) => {
+        const thisLogin: { close?: typeof closeActiveLoginPopup; } = {};
+        const cleanup = (handler: (event: MessageEvent) => void, clearStorage = true) => {
             window.removeEventListener('message', handler);
             clearInterval(closedPollInterval);
             popup?.close();
-            closeActiveLoginPopup = undefined;
+
+            // A newer login may have replaced this one already: leave its closer in place.
+            if (closeActiveLoginPopup === thisLogin.close) {
+                closeActiveLoginPopup = undefined;
+            }
+
+            if (!clearStorage) {
+                return;
+            }
 
             try {
                 sessionStorage.removeItem('oauth_nonce');
@@ -204,10 +220,11 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
         // Expose a way to close this popup externally, so it can be dismissed
         // when it is no longer needed (e.g. the participant was admitted to the
         // conference while the popup was still open).
-        closeActiveLoginPopup = () => {
-            cleanup(handler);
+        thisLogin.close = (clearStorage = true) => {
+            cleanup(handler, clearStorage);
             reject(new LoginCancelledError());
         };
+        closeActiveLoginPopup = thisLogin.close;
 
         // Detect manual popup close before authentication completes
         closedPollInterval = setInterval(() => {
