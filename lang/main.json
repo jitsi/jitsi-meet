@@ -67,7 +67,8 @@
         "microphone": "Microphone",
         "microphoneLevel": "Microphone level",
         "no": "No, something's off",
-        "notNow": "Not now",
+        "noiseSuppressionHint": "Noise suppression is on, so others will hear less background noise than in this recording.",
+        "playbackError": "Couldn't play the recording. Press Replay to try again.",
         "playbackProgress": "Playback progress",
         "promptButton": "Test my audio devices",
         "promptDescription": "Record a few seconds and hear it played back.",
@@ -78,19 +79,27 @@
         "recording": "Recording · {{seconds}} seconds",
         "recordingProgress": "Recording progress",
         "replay": "Replay",
-        "skip": "Skip for now",
+        "retry": "Try again",
+        "settingsTip": {
+            "autoGainControl": "You can also try turning Automatic gain control on or off in Settings › Audio.",
+            "echoCancellation": "Acoustic echo cancellation is off. Turn it on in Settings › Audio to reduce echo.",
+            "noiseSuppression": "You can also turn on Extra noise suppression from the toolbar."
+        },
+        "skip": "Skip",
         "speakers": "Speakers",
+        "speakersError": "Couldn't play on the chosen speakers, so it played on your default ones.",
         "start": "Start test",
         "step": "Step {{step}} of 3 · {{name}}",
         "stop": "Stop and play back",
         "testAgain": "Test again",
         "tip": {
             "echo": "Try headphones, or move your microphone away from your speakers.",
-            "quiet": "Move closer to your microphone, or choose a different one below.",
-            "silent": "Check that your volume is up and not muted, or choose different speakers below."
+            "quiet": "Move closer to your microphone, check its input volume in your computer's sound settings, or choose a different one below.",
+            "silent": "Check that your microphone and speakers aren't muted in your computer's sound settings, or choose different speakers below."
         },
         "troubleshootDescription": "What went wrong?",
         "troubleshootTitle": "Let's sort it out",
+        "unmutedHint": "You're unmuted, so others in the meeting will hear your test.",
         "useAnyway": "Use these devices anyway",
         "waveform": "Waveform of the recording",
         "yes": "Yes, sounds good"

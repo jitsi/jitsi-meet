@@ -1,11 +1,13 @@
 import { alpha } from '@mui/material/styles';
+import { uniqueId } from 'lodash-es';
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../app/types';
+import { isAdvancedAudioSettingsEnabled } from '../../base/config/functions.any';
 import { formatDeviceLabel, getDefaultDeviceId, getDeviceLabelById } from '../../base/devices/functions.web';
 import { hideDialog } from '../../base/dialog/actions';
 import Icon from '../../base/icons/components/Icon';
@@ -16,17 +18,26 @@ import {
     IconInfoCircle,
     IconMic,
     IconReplay,
-    IconVolumeUp
+    IconVolumeUp,
+    IconWarning
 } from '../../base/icons/svg';
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors, JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
+import { MEDIA_TYPE } from '../../base/media/constants';
 import { updateSettings } from '../../base/settings/actions';
+import { getUserSelectedMicDeviceId, getUserSelectedOutputDeviceId } from '../../base/settings/functions.web';
+import { getLocalJitsiAudioTrackSettings, isLocalTrackMuted } from '../../base/tracks/functions.any';
 import BaseDialog from '../../base/ui/components/web/BaseDialog';
 import Button from '../../base/ui/components/web/Button';
 import ClickableIcon from '../../base/ui/components/web/ClickableIcon';
 import Select from '../../base/ui/components/web/Select';
 import { BUTTON_TYPES } from '../../base/ui/constants.web';
-import { submitAudioTestDevices } from '../actions.web';
+import { isNoiseSuppressionEnabled } from '../../noise-suppression/functions';
+import { openSettingsDialog } from '../../settings/actions.web';
+import { SETTINGS_TABS } from '../../settings/constants';
+import { isButtonEnabled } from '../../toolbox/functions.any';
+import { iAmVisitor } from '../../visitors/functions';
+import { openAudioSettingsWhenApplied, submitAudioTestDevices } from '../actions.web';
 import { getAudioTestDevices } from '../functions.web';
 import logger from '../logger';
 
@@ -43,6 +54,16 @@ interface IProps {
      * Whether the test was opened from the settings on the welcome page.
      */
     isDisplayedOnWelcomePage?: boolean;
+
+    /**
+     * The microphone to start with, e.g. the one chosen in the audio settings.
+     */
+    micId?: string;
+
+    /**
+     * The speakers to start with, e.g. the ones chosen in the audio settings.
+     */
+    speakerId?: string;
 }
 
 type Issue = 'echo' | 'quiet' | 'silent';
@@ -52,6 +73,13 @@ type Step = 'choose' | 'done' | 'intro' | 'listen' | 'record' | 'troubleshoot';
 const ISSUES: Issue[] = [ 'silent', 'quiet', 'echo' ];
 
 const METER_SECTIONS = 16;
+
+const MIC_ERRORS: { [name: string]: string; } = {
+    [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
+    [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
+    [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError',
+    [JitsiTrackErrors.TIMEOUT]: 'dialog.micTimeoutError'
+};
 
 const RECORDING_DURATION = 5000;
 
@@ -318,6 +346,12 @@ const useStyles = makeStyles()(theme => {
                 flexShrink: 0
             }
         },
+        tipBody: {
+            alignItems: 'flex-start',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: theme.spacing(2)
+        },
         title: {
             ...theme.typography.heading5,
             color: theme.palette.dialogText,
@@ -344,38 +378,97 @@ const useStyles = makeStyles()(theme => {
  * @param {IProps} props - The component's props.
  * @returns {JSX.Element}
  */
-const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps) => {
+const AudioTest = ({
+    inline = false,
+    isDisplayedOnWelcomePage = false,
+    micId: initialMicId,
+    speakerId: initialSpeakerId
+}: IProps) => {
     const { classes, cx, theme } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const store = useStore<IReduxState>();
+
+    // The inline test and a dialog can show at the same time.
+    const [ id ] = useState(() => uniqueId('audio-test-'));
     const availableDevices = useSelector((state: IReduxState) => state['features/base/devices'].availableDevices);
     const { audioInput = [], audioOutput = [] } = availableDevices;
     const canSelectSpeaker = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output') && audioOutput.length > 0;
+    const isUnmutedInMeeting = useSelector((state: IReduxState) => Boolean(state['features/base/conference'].conference)
+        && !isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO));
+    const noiseSuppressionEnabled = useSelector(isNoiseSuppressionEnabled);
     const [ issue, setIssue ] = useState<Issue>('silent');
-    const [ micId, setMicId ] = useState(() => getAudioTestDevices(availableDevices).micId);
+
+    // Settings that may help, where the user can change them: in a meeting, and not while the extra noise suppression
+    // disables the others.
+    const settingsTips = useSelector((state: IReduxState) => {
+        if (!state['features/base/conference'].conference || iAmVisitor(state) || isNoiseSuppressionEnabled(state)) {
+            return [];
+        }
+
+        const isAdvanced = isAdvancedAudioSettingsEnabled(state);
+        const audioSettings = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
+
+        switch (issue) {
+        case 'echo':
+            return [
+                isAdvanced && !audioSettings?.echoCancellation && 'audioTest.settingsTip.echoCancellation',
+                isButtonEnabled('noisesuppression', state) && 'audioTest.settingsTip.noiseSuppression'
+            ].filter(Boolean) as string[];
+        case 'quiet':
+            return isAdvanced ? [ 'audioTest.settingsTip.autoGainControl' ] : [];
+        default:
+            return [];
+        }
+    }, shallowEqual);
+
+    // The devices the user chose, in the audio settings or before, or else the OS defaults.
+    const getStartDevices = () => {
+        const state = store.getState();
+        const { userSelectedAudioOutputDeviceId, userSelectedMicDeviceId } = state['features/base/settings'];
+
+        return getAudioTestDevices(state['features/base/devices'].availableDevices, {
+            micId: initialMicId ?? (userSelectedMicDeviceId && getUserSelectedMicDeviceId(state)),
+            speakerId: initialSpeakerId ?? (userSelectedAudioOutputDeviceId && getUserSelectedOutputDeviceId(state))
+        });
+    };
+    const [ micId, setMicId ] = useState(() => getStartDevices().micId);
+    const [ playbackError, setPlaybackError ] = useState<string>();
     const [ playbackTime, setPlaybackTime ] = useState(0);
     const [ recording, setRecording ] = useState<{ duration: number; levels: number[]; url: string; }>();
     const [ recordingTime, setRecordingTime ] = useState(0);
-    const [ speakerId, setSpeakerId ] = useState(() => getAudioTestDevices(availableDevices).speakerId);
+    const [ speakerId, setSpeakerId ] = useState(() => getStartDevices().speakerId);
+
     // In the pre-join preview it first says why it shows, and opens the microphone only once the user goes on.
     const [ step, setStep ] = useState<Step>(inline ? 'intro' : 'choose');
     const [ track, setTrack ] = useState<any>(null);
+    const [ trackAttempt, setTrackAttempt ] = useState(0);
+    const [ trackError, setTrackError ] = useState<string>();
     const isIntro = step === 'intro';
     const audioRef = useRef<HTMLAudioElement>(null);
     const recorderRef = useRef<MediaRecorder>();
     const speakerName = useSelector((state: IReduxState) => {
-        const id = speakerId === 'default' ? getDefaultDeviceId(state, 'audioOutput') ?? speakerId : speakerId;
+        const deviceId = speakerId === 'default' ? getDefaultDeviceId(state, 'audioOutput') ?? speakerId : speakerId;
 
-        return formatDeviceLabel(getDeviceLabelById(state, id ?? '', 'audioOutput') ?? '');
+        return formatDeviceLabel(getDeviceLabelById(state, deviceId ?? '', 'audioOutput') ?? '');
     });
     const micLabel = audioInput.find(({ deviceId }) => deviceId === micId)?.label;
     const speakerLabel = audioOutput.find(({ deviceId }) => deviceId === speakerId)?.label;
 
+    // A recording that was cut short by losing the microphone is dropped.
+    const restartTrack = useCallback(() => {
+        setStep(current => (current === 'record' ? 'choose' : current));
+        setTrackAttempt(attempt => attempt + 1);
+    }, []);
+
     // The devices may be listed only after the test shows, e.g. on the pre-join screen, or go away while it shows.
     useEffect(() => {
-        const defaults = getAudioTestDevices(availableDevices);
+        const defaults = getStartDevices();
 
-        audioInput.some(({ deviceId }) => deviceId === micId) || setMicId(defaults.micId);
+        if (!audioInput.some(({ deviceId }) => deviceId === micId)) {
+            setMicId(defaults.micId);
+            setStep(current => (current === 'record' ? 'choose' : current));
+        }
         audioOutput.some(({ deviceId }) => deviceId === speakerId) || setSpeakerId(defaults.speakerId);
     }, [ availableDevices ]);
 
@@ -384,11 +477,18 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
             return;
         }
 
+        const state = store.getState();
         let created: any;
         let replaced = false;
 
         setTrack(null);
-        createLocalTrack('audio', micId ?? null, TRACK_TIMEOUT)
+        setTrackError(undefined);
+
+        // The same audio processing as the meeting's microphone, but not its noise suppression: the effect shares an
+        // audio context with the meeting's microphone, and stopping it here would stop that one too.
+        createLocalTrack('audio', micId ?? null, TRACK_TIMEOUT, isAdvancedAudioSettingsEnabled(state) ? {
+            constraints: { audio: state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state) }
+        } : undefined)
             .then((jitsiTrack: any) => {
                 if (replaced) {
                     jitsiTrack.dispose();
@@ -396,22 +496,41 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                     return;
                 }
                 created = jitsiTrack;
+
+                // E.g. the device was unplugged.
+                jitsiTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, restartTrack);
                 setTrack(jitsiTrack);
             })
-            .catch((error: Error) => logger.warn('Failed to create the audio test track', error));
+            .catch((error: any) => {
+                logger.warn('Failed to create the audio test track', error);
+                replaced || setTrackError(MIC_ERRORS[error?.name] ?? 'dialog.micUnknownError');
+            });
 
         return () => {
             replaced = true;
+            created?.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, restartTrack);
             created?.dispose();
         };
-    }, [ isIntro, micId ]);
+    }, [ isIntro, micId, trackAttempt ]);
 
     useEffect(() => {
         if (step !== 'record' || !track) {
             return;
         }
 
-        const recorder = new MediaRecorder(track.getOriginalStream());
+        let recorder: MediaRecorder;
+
+        try {
+            recorder = new MediaRecorder(track.getOriginalStream());
+            recorder.start();
+        } catch (error) {
+            // E.g. the microphone stopped after its track was created.
+            logger.warn('Failed to start recording the audio test', error);
+            restartTrack();
+
+            return;
+        }
+
         const chunks: Blob[] = [];
         const levels: number[] = [];
         const startedAt = Date.now();
@@ -429,6 +548,12 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
 
         recorder.ondataavailable = ({ data }) => chunks.push(data);
         recorder.onstop = () => {
+            // The microphone stopped, so the recording was cut short.
+            if (!track.getOriginalStream().active) {
+                setStep('choose');
+
+                return;
+            }
             setRecording({
                 duration: (Date.now() - startedAt) / 1000,
                 levels,
@@ -436,13 +561,12 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
             });
             setStep('listen');
         };
-        track.on(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED, onLevel);
-        recorder.start();
+        track.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, onLevel);
         recorderRef.current = recorder;
 
         return () => {
             window.clearInterval(timer);
-            track.off(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED, onLevel);
+            track.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, onLevel);
             recorderRef.current = undefined;
 
             // Closing the dialog drops the recording.
@@ -464,14 +588,25 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
             return;
         }
         audio.currentTime = 0;
+        setPlaybackError(undefined);
         setPlaybackTime(0);
 
+        if (canSelectSpeaker && speakerId) {
+            try {
+                await audio.setSinkId(speakerId);
+            } catch (error) {
+                logger.warn('Failed to play the audio test recording on the chosen speakers', error);
+                setPlaybackError('audioTest.speakersError');
+                await audio.setSinkId('').catch(() => undefined);
+            }
+        }
+
         try {
-            canSelectSpeaker && speakerId && await audio.setSinkId(speakerId);
             await audio.play();
         } catch (error) {
             // E.g. the browser blocks playing without a click, which Replay is.
             logger.warn('Failed to play the audio test recording', error);
+            setPlaybackError('audioTest.playbackError');
         }
     }, [ canSelectSpeaker, speakerId ]);
 
@@ -479,25 +614,34 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
         step === 'listen' && play();
     }, [ recording, step ]);
 
-    // Finished or skipped, so that the pre-join screen doesn't offer it again.
+    // Finished or skipped, so that the pre-join screen doesn't offer it again. Opened from the settings, it goes back
+    // to them.
     const close = useCallback(() => {
         dispatch(updateSettings({ audioTestDone: true }));
-        inline || dispatch(hideDialog());
-    }, [ inline ]);
+        inline || dispatch(openSettingsDialog(SETTINGS_TABS.AUDIO, isDisplayedOnWelcomePage));
+    }, [ inline, isDisplayedOnWelcomePage ]);
     const onIssueChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setIssue(e.target.value as Issue), []);
     const onMicChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => setMicId(e.target.value), []);
     const onPlaybackEnded = useCallback(() => setPlaybackTime(recording?.duration ?? 0), [ recording ]);
+    const onPlaybackError = useCallback(() => setPlaybackError('audioTest.playbackError'), []);
     const onSpeakerChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => setSpeakerId(e.target.value), []);
     const onTimeUpdate = useCallback(() => setPlaybackTime(audioRef.current?.currentTime ?? 0), []);
+    const retryTrack = useCallback(() => setTrackAttempt(attempt => attempt + 1), []);
     const showChoose = useCallback(() => setStep('choose'), []);
     const showDone = useCallback(() => setStep('done'), []);
     const showTroubleshoot = useCallback(() => setStep('troubleshoot'), []);
     const stop = useCallback(() => recorderRef.current?.stop(), []);
 
     const save = useCallback(() => {
-        close();
-        dispatch(submitAudioTestDevices(micId, canSelectSpeaker ? speakerId : undefined, isDisplayedOnWelcomePage));
-    }, [ canSelectSpeaker, isDisplayedOnWelcomePage, micId, speakerId ]);
+        const speaker = canSelectSpeaker ? speakerId : undefined;
+
+        dispatch(updateSettings({ audioTestDone: true }));
+        dispatch(submitAudioTestDevices(micId, speaker, isDisplayedOnWelcomePage));
+        if (!inline) {
+            dispatch(hideDialog());
+            dispatch(openAudioSettingsWhenApplied(micId, speaker, isDisplayedOnWelcomePage));
+        }
+    }, [ canSelectSpeaker, inline, isDisplayedOnWelcomePage, micId, speakerId ]);
 
     const start = useCallback(() => {
         setRecordingTime(0);
@@ -506,14 +650,39 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
 
     const Heading = inline ? 'h2' : 'h1';
 
+    // The ids of the dialogs, which the inline test leaves to them.
+    const headingId = inline ? undefined : 'dialog-title';
+
     const renderHeading = (title: string, description: string) => (
         <div className = { classes.heading }>
             <Heading
                 className = { classes.title }
-                id = 'dialog-title'>
+                id = { headingId }>
                 { title }
             </Heading>
             <p className = { classes.description }>{ description }</p>
+        </div>
+    );
+
+    const renderHint = (icon: Function, text: string) => (
+        <div className = { classes.hint }>
+            <Icon
+                color = { theme.palette.dialogSecondaryText }
+                size = { 15 }
+                src = { icon } />
+            { text }
+        </div>
+    );
+
+    const renderTip = (icon: Function, content: ReactNode) => (
+        <div
+            aria-live = 'polite'
+            className = { classes.tip }>
+            <Icon
+                color = { theme.palette.dialogText }
+                size = { 16 }
+                src = { icon } />
+            { content }
         </div>
     );
 
@@ -565,7 +734,7 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
             <div className = { classes.field }>
                 <label
                     className = { classes.fieldLabel }
-                    htmlFor = { `audio-test-${kind}` }>
+                    htmlFor = { `${id}-${kind}` }>
                     <Icon
                         color = { theme.palette.dialogSecondaryText }
                         size = { 15 }
@@ -573,7 +742,7 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                     { t(labelKey) }
                 </label>
                 <Select
-                    id = { `audio-test-${kind}` }
+                    id = { `${id}-${kind}` }
                     onChange = { onChange }
                     options = { devices.map(({ deviceId, label }) => {
                         return {
@@ -582,7 +751,18 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                         };
                     }) }
                     value = { value ?? '' } />
-                { kind === 'mic' && step === 'choose' && renderMeter() }
+                { kind === 'mic' && trackError && renderTip(IconWarning, (
+                    <div className = { classes.tipBody }>
+                        { t(trackError) }
+                        <Button
+                            accessibilityLabel = { t('audioTest.retry') }
+                            labelKey = 'audioTest.retry'
+                            onClick = { retryTrack }
+                            size = 'small'
+                            type = { BUTTON_TYPES.SECONDARY } />
+                    </div>
+                )) }
+                { kind === 'mic' && !trackError && step === 'choose' && renderMeter() }
             </div>
         );
     };
@@ -591,15 +771,8 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
         <div className = { classes.fields }>
             { renderSelect('mic') }
             { canSelectSpeaker && renderSelect('speakers') }
-            { step === 'choose' && (
-                <div className = { classes.hint }>
-                    <Icon
-                        color = { theme.palette.dialogSecondaryText }
-                        size = { 15 }
-                        src = { IconDeviceHeadphone } />
-                    { t('audioTest.headphonesHint') }
-                </div>
-            ) }
+            { step === 'choose' && renderHint(IconDeviceHeadphone, t('audioTest.headphonesHint')) }
+            { isUnmutedInMeeting && renderHint(IconInfoCircle, t('audioTest.unmutedHint')) }
         </div>
     );
 
@@ -614,7 +787,7 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
             </div>
             <Heading
                 className = { classes.title }
-                id = 'dialog-title'>
+                id = { headingId }>
                 { title }
             </Heading>
             <p className = { classes.description }>{ description }</p>
@@ -683,9 +856,9 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                             labelKey = 'audioTest.introStart'
                             onClick = { showChoose } />
                         <Button
-                            accessibilityLabel = { t('audioTest.notNow') }
+                            accessibilityLabel = { t('audioTest.skip') }
                             fullWidth = { true }
-                            labelKey = 'audioTest.notNow'
+                            labelKey = 'audioTest.skip'
                             onClick = { close }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </div>
@@ -722,8 +895,11 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                             size = 'small'
                             type = { BUTTON_TYPES.TERTIARY } />
                     </div>
+                    { playbackError && renderTip(IconWarning, t(playbackError)) }
+                    { noiseSuppressionEnabled && renderHint(IconInfoCircle, t('audioTest.noiseSuppressionHint')) }
                     <audio
                         onEnded = { onPlaybackEnded }
+                        onError = { onPlaybackError }
                         onTimeUpdate = { onTimeUpdate }
                         ref = { audioRef }
                         src = { recording?.url } />
@@ -792,7 +968,7 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                                 key = { value }>
                                 <input
                                     checked = { issue === value }
-                                    name = 'audio-test-issue'
+                                    name = { `${id}-issue` }
                                     onChange = { onIssueChange }
                                     type = 'radio'
                                     value = { value } />
@@ -800,15 +976,12 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                             </label>
                         )) }
                     </fieldset>
-                    <div
-                        aria-live = 'polite'
-                        className = { classes.tip }>
-                        <Icon
-                            color = { theme.palette.dialogText }
-                            size = { 16 }
-                            src = { IconInfoCircle } />
-                        { t(`audioTest.tip.${issue}`) }
-                    </div>
+                    { renderTip(IconInfoCircle, (
+                        <div className = { classes.tipBody }>
+                            { t(`audioTest.tip.${issue}`) }
+                            { settingsTips.map(key => <span key = { key }>{ t(key) }</span>) }
+                        </div>
+                    )) }
                     { renderSelects() }
                     <div className = { classes.actions }>
                         <Button
@@ -858,7 +1031,7 @@ const AudioTest = ({ inline = false, isDisplayedOnWelcomePage = false }: IProps)
                 <ClickableIcon
                     accessibilityLabel = { t('dialog.accessibilityLabel.close') }
                     icon = { IconCloseLarge }
-                    id = 'modal-header-close-button'
+                    id = { inline ? undefined : 'modal-header-close-button' }
                     onClick = { close } />
             </div>
             { renderStep() }

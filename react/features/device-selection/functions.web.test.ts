@@ -120,6 +120,44 @@ describe('getAudioTestDevices', () => {
         });
     });
 
+    it('uses the devices the user chose when they are listed', () => {
+        expect(getAudioTestDevices({
+            audioInput: [ device('audioinput', 'default', 'headset'), builtInMic, headsetMic ],
+            audioOutput: [ device('audiooutput', 'default', 'headset'), builtInSpeakers, headsetSpeakers ]
+        }, {
+            micId: 'built-in-mic',
+            speakerId: 'built-in-speakers'
+        })).toEqual({
+            micId: 'built-in-mic',
+            speakerId: 'built-in-speakers'
+        });
+    });
+
+    it('pairs the speakers with the chosen microphone when no speakers were chosen', () => {
+        expect(getAudioTestDevices({
+            audioInput: [ device('audioinput', 'default', 'built-in'), builtInMic, headsetMic ],
+            audioOutput: [ device('audiooutput', 'default', 'built-in'), builtInSpeakers, headsetSpeakers ]
+        }, {
+            micId: 'headset-mic'
+        })).toEqual({
+            micId: 'headset-mic',
+            speakerId: 'headset-speakers'
+        });
+    });
+
+    it('falls back to the OS defaults when the chosen devices are gone', () => {
+        expect(getAudioTestDevices({
+            audioInput: [ device('audioinput', 'default', 'built-in'), builtInMic ],
+            audioOutput: [ device('audiooutput', 'default', 'built-in'), builtInSpeakers ]
+        }, {
+            micId: 'headset-mic',
+            speakerId: 'headset-speakers'
+        })).toEqual({
+            micId: 'default',
+            speakerId: 'default'
+        });
+    });
+
     it('has no speakers where the browser lists none', () => {
         expect(getAudioTestDevices({
             audioInput: [ builtInMic ]

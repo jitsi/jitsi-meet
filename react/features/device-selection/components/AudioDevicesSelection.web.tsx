@@ -22,6 +22,7 @@ import { isAudioTestSupported as isAudioTestSupportedCheck } from '../functions.
 import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview.web';
+import AudioOutputPreview from './AudioOutputPreview.web';
 import AudioTestPrompt from './AudioTestPrompt.web';
 import DeviceSelector from './DeviceSelector.web';
 
@@ -80,6 +81,12 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
      * non-responsive mic preview from displaying.
      */
     hideAudioInputPreview: boolean;
+
+    /**
+     * If true, the button to play a test sound on the selected speaker will not be displayed.
+     * This needs to be hidden on browsers that do not support selecting an audio output device.
+     */
+    hideAudioOutputPreview: boolean;
 
     /**
      * Whether or not the audio output source selector should display. If
@@ -164,7 +171,13 @@ const styles = (theme: Theme) => {
         },
 
         outputContainer: {
+            display: 'flex',
+            alignItems: 'flex-end',
             marginBottom: theme.spacing(3)
+        },
+
+        outputButton: {
+            marginLeft: theme.spacing(3)
         }
     };
 };
@@ -300,12 +313,15 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             audioSettings,
             hasAudioPermission,
             hideAudioInputPreview,
+            hideAudioOutputPreview,
             hideNoiseSuppression,
             isAdvancedAudioSettingsConfigEnabled,
             isAudioTestSupported,
             isDisplayedOnWelcomePage,
             iAmVisitor,
             noiseSuppressionEnabled,
+            selectedAudioInputId,
+            selectedAudioOutputId,
             t
         } = this.props;
         const { audioInput, audioOutput } = this._getSelectors();
@@ -384,8 +400,15 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                     aria-live = 'polite'
                     className = { classes.outputContainer }>
                     {this._renderSelector(audioOutput)}
+                    {!isAudioTestSupported && !hideAudioOutputPreview && hasAudioPermission
+                        && <AudioOutputPreview
+                            className = { classes.outputButton }
+                            deviceId = { selectedAudioOutputId } />}
                 </div>
-                {isAudioTestSupported && <AudioTestPrompt isDisplayedOnWelcomePage = { isDisplayedOnWelcomePage } />}
+                {isAudioTestSupported && <AudioTestPrompt
+                    isDisplayedOnWelcomePage = { isDisplayedOnWelcomePage }
+                    micId = { selectedAudioInputId }
+                    speakerId = { selectedAudioOutputId } />}
             </div>
         );
     }

@@ -14,6 +14,16 @@ interface IProps {
      * Whether the settings are open on the welcome page.
      */
     isDisplayedOnWelcomePage: boolean;
+
+    /**
+     * The microphone chosen in the settings.
+     */
+    micId?: string;
+
+    /**
+     * The speakers chosen in the settings.
+     */
+    speakerId?: string;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -50,14 +60,16 @@ const useStyles = makeStyles()(theme => {
  * @param {IProps} props - The component's props.
  * @returns {JSX.Element}
  */
-const AudioTestPrompt = ({ isDisplayedOnWelcomePage }: IProps) => {
+const AudioTestPrompt = ({ isDisplayedOnWelcomePage, micId, speakerId }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const openTest = useCallback(() => dispatch(openDialog('AudioTest', AudioTest, {
-        isDisplayedOnWelcomePage
-    })), [ isDisplayedOnWelcomePage ]);
+        isDisplayedOnWelcomePage,
+        micId,
+        speakerId
+    })), [ isDisplayedOnWelcomePage, micId, speakerId ]);
 
     return (
         <div className = { classes.card }>

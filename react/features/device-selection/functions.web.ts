@@ -78,6 +78,7 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
         disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
         hasAudioPermission: permissions.audio,
         hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats() || disablePreviews,
+        hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
         hideNoiseSuppression,
         isDisplayedOnWelcomePage,
@@ -88,20 +89,27 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
 }
 
 /**
- * Returns the devices that the audio test starts with: the OS default microphone, and the speakers of the same device,
- * e.g. of a headset, or else the OS default speakers.
+ * Returns the devices that the audio test starts with: the preferred ones when they are listed, e.g. the ones the user
+ * chose, or else the OS default microphone, and the speakers of the same device, e.g. of a headset, or else the OS
+ * default speakers.
  *
  * @param {Object} availableDevices - The available devices, split by kind.
+ * @param {Object} [preferred] - The preferred devices.
+ * @param {string} [preferred.micId] - The preferred microphone.
+ * @param {string} [preferred.speakerId] - The preferred speakers.
  * @returns {Object}
  */
-export function getAudioTestDevices({ audioInput = [], audioOutput = [] }: IDevicesState['availableDevices']) {
+export function getAudioTestDevices({ audioInput = [], audioOutput = [] }: IDevicesState['availableDevices'],
+        preferred: { micId?: string; speakerId?: string; } = {}) {
+    const find = (devices: MediaDeviceInfo[], id?: string) =>
+        id ? devices.find(({ deviceId }) => deviceId === id) : undefined;
+
     // Chromium lists the OS default a second time with the 'default' id, the other browsers list it first.
-    const getOsDefault = (devices: MediaDeviceInfo[]) =>
-        devices.find(({ deviceId }) => deviceId === 'default') ?? devices[0];
-    const mic = getOsDefault(audioInput);
+    const getOsDefault = (devices: MediaDeviceInfo[]) => find(devices, 'default') ?? devices[0];
+    const mic = find(audioInput, preferred.micId) ?? getOsDefault(audioInput);
     const sameDevice = audioOutput.filter(({ deviceId, groupId }) =>
         mic?.groupId && groupId === mic.groupId && deviceId !== 'communications');
-    const speaker = getOsDefault(sameDevice) ?? getOsDefault(audioOutput);
+    const speaker = find(audioOutput, preferred.speakerId) ?? getOsDefault(sameDevice) ?? getOsDefault(audioOutput);
 
     return {
         micId: mic?.deviceId,
