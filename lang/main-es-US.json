@@ -674,25 +674,6 @@
         "calling": "Llamando",
         "configuringDevices": "Configurando dispositivos…",
         "connectedWithAudioQ": "¿Estás está conectado con audio?",
-        "connection": {
-            "good": "¡Su conexión a internet es buena!",
-            "nonOptimal": "Su conexión a internet no es óptima",
-            "poor": "Tiene una conexión a internet pobre"
-        },
-        "connectionDetails": {
-            "audioClipping": "Prevemos que su audio tendrá recortes.",
-            "audioHighQuality": "Prevemos que su audio tendrá excelente calidad.",
-            "audioLowNoVideo": "Prevemos que la calidad de su audio será baja y sin video.",
-            "goodQuality": "¡Genial! La calidad de sus medios será excelente.",
-            "noMediaConnectivity": "No pudimos encontrar una forma de establecer la conectividad de medios para esta prueba. Esto suele ser causado por un firewall o NAT.",
-            "noVideo": "Prevemos que su video será terrible.",
-            "undetectable": "Si aún no puede realizar llamadas en el navegador, le recomendamos que se asegure de que los altavoces, el micrófono y la cámara estén configurados correctamente, que haya concedido los derechos de su navegador para usar el micrófono y la cámara, y que la versión de su navegador esté actualizada. Si aún tiene problemas para llamar, debería comunicarse con el desarrollador de la aplicación web.",
-            "veryPoorConnection": "Prevemos que la calidad de su llamada será realmente terrible.",
-            "videoFreezing": "Prevemos que su video se congelará, se volverá negro y se pixelará.",
-            "videoHighQuality": "Prevemos que su video tendrá buena calidad.",
-            "videoLowQuality": "Prevemos que su video tendrá baja calidad en términos de velocidad de fotogramas y resolución.",
-            "videoTearing": "Prevemos que su video se pixelará o tendrá artefactos visuales."
-        },
         "copyAndShare": "Copia y comparte el link de la reuinión",
         "dialInMeeting": "Entrar con llamada telefónica",
         "dialInPin": "Marca a la reunión e ingresa el código:",

@@ -764,25 +764,6 @@
         "calling": "wołanje",
         "configuringDevices": "Nastroje so konfigurěruja …",
         "connectedWithAudioQ": "Sće z awdijom zwjazany/a?",
-        "connection": {
-            "good": "Waš zwisk z internetom je dobry!",
-            "nonOptimal": "Waš zwisk z internetom njeje optimalny.",
-            "poor": "Waš zwisk z internetom je hubjeny."
-        },
-        "connectionDetails": {
-            "audioClipping": "Waš zwuk budźe najskerje jakoćiwy.",
-            "audioHighQuality": "Waš zwuk by dyrbjał wuběrny być.",
-            "audioLowNoVideo": "Waš zwuk budźe najskerje hubjeny a widejo njebudźe fungować.",
-            "goodQuality": "Wulkotnje! Kwalita zwuka a wobraza by dyrbjała wuběrna być.",
-            "noMediaConnectivity": "Za tutón test njemóžeše so žadyn medijowy zwisk natwarić. Pričina je zwjetša firewall abo NAT.",
-            "noVideo": "Waš wobraz změje najskerje hubjenu kwalitu. ",
-            "undetectable": "Jeli maće z Wašim browserom dale ćeže z konferencami, pruwujće prošu zwisk a funkciju wótřerěčaka, mikrofona a kamery. Zawěsćće so tohorunja, zo ma browser trěbne prawa   za přistup k mikrofonej a kamerje, a zo maće najnowšu wersiju browsera. Jeli maće přeco hišće problemy,skontaktujće prošu wuwiwarja programa.",
-            "veryPoorConnection": "Waša kwalita konferency budźe najskerje jara hubjena.",
-            "videoFreezing": "Waš wobraz budźe najskerje zamjerznyć, so čornić a změje snadne rozpušćenje.",
-            "videoHighQuality": "Waš wobraz by dyrbjał dobry być.",
-            "videoLowQuality": "Waš wobraz změje naskerje snadne rozpušćenje a wobrazowospjetnu frekwencu.",
-            "videoTearing": " Waš wobraz změje naskerje snadne rozpušćenje abo artefakty."
-        },
         "copyAndShare": "Link za konferencu kopěrować & dźělić",
         "dialInMeeting": "so zawolić",
         "dialInPin": "Do konferency so zawolić a PIN zapodać:",

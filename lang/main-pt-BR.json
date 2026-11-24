@@ -876,25 +876,6 @@
         "calling": "Ligando",
         "configuringDevices": "Configurando dispositivos…",
         "connectedWithAudioQ": "Você está conectado com áudio?",
-        "connection": {
-            "good": "Sua conexão com a internet parece boa!",
-            "nonOptimal": "Sua conexão com a internet não é boa",
-            "poor": "Você tem uma conexão a internet ruim"
-        },
-        "connectionDetails": {
-            "audioClipping": "Espera-se um áudio que pique.",
-            "audioHighQuality": "Espera-se um áudio de excelente qualidade.",
-            "audioLowNoVideo": "Espera-se uma qualidade baixa de áudio e sem vídeo.",
-            "goodQuality": "Muito bom! Qualidade da mídia será muito boa.",
-            "noMediaConnectivity": "Não conseguimos estabelcer conexão com as mídias para o teste. Normalmente é um problema de firewall ou NAT.",
-            "noVideo": "Espera-se um vídeo de qualidade ruim.",
-            "undetectable": "Se você continuar fazendo a chamada no browser, recomenda-se que o alto-falante, microfones e câmera estejam corretamente configurados, que você permitiu que o browser acesse seu microfone e câmera, e o browser esteja atualizado. Se ainda assim tenha problemas na chamada, contacte o desenvolvedor da aplicação.",
-            "veryPoorConnection": "Espera-se que a qualidade da chamada seja ruim.",
-            "videoFreezing": "Espera-se um vídeo congelado, preto ou pixelado.",
-            "videoHighQuality": "Espera-se um vídeo de boa qualidade.",
-            "videoLowQuality": "Espera-se um vídeo de baixa qualidade em termos de taxa de frame e resolução.",
-            "videoTearing": "Espera-se um vídeo pixelado ou com artefatos visuais."
-        },
         "copyAndShare": "Copiar e compartilhar o link da reunião",
         "dialInMeeting": "Discar para a reunião",
         "dialInPin": "Discar para a reunião e inserir o código PIN:",

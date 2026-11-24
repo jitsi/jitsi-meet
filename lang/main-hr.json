@@ -780,25 +780,6 @@
         "calling": "Nazivanje",
         "configuringDevices": "Konfiguriranje uređaja …",
         "connectedWithAudioQ": "Jesi li povezan/a s audio uređajem?",
-        "connection": {
-            "good": "Tvoja internetska veza izgleda u redu!",
-            "nonOptimal": "Tvoja internetska veza nije optimalna",
-            "poor": "Imaš slabu internetsku vezu"
-        },
-        "connectionDetails": {
-            "audioClipping": "Očekujemo da će tvoj zvuk biti ispresijecan.",
-            "audioHighQuality": "Očekujemo da će tvoj zvuk biti izvrsne kvalitete.",
-            "audioLowNoVideo": "Očekujemo da će tvoj zvuk biti loše kvalitete i bez videa.",
-            "goodQuality": "Super! Kvaliteta tvojih medija će biti izvrsna.",
-            "noMediaConnectivity": "Nismo mogli pronaći način za uspostavljanje povezanosti medija za ovaj test. Razlog tome je obično vatrozid ili NAT.",
-            "noVideo": "Očekujemo da će tvoj video biti grozan.",
-            "undetectable": "Ako i dalje ne možeš nazivati u pregledniku, preporučujemo da provjeriš jesu li zvučnici, mikrofon i kamera pravilno postavljeni, da su pregledniku dodijeljena prava za korištenje mikrofona i kamere te da je verzija preglednika aktualna. Ako i dalje imaš problema s nazivanjem, obrati se programeru web-aplikacije.",
-            "veryPoorConnection": "Očekujemo da će kvaliteta tvog poziva biti grozna.",
-            "videoFreezing": "Očekujemo da će se tvoj video zamrznuti, prikazati crnu sliku i da će se prikazati pikselasto.",
-            "videoHighQuality": "Očekujemo da će tvoj video biti dobre kvalitete.",
-            "videoLowQuality": "Očekujemo da će tvoj video biti loše kvalitete što se tiče broja sličica u sekundi i rezolucije.",
-            "videoTearing": "Očekujemo da će se tvoj video prikazati pikselasto ili da će imati vizualne greške."
-        },
         "copyAndShare": "Kopiraj i dijeli poveznicu sastanka",
         "dialInMeeting": "Nazovi satanak",
         "dialInPin": "Nazovi satanak i upiši PIN kod:",

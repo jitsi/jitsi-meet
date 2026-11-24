@@ -1097,28 +1097,6 @@
         "calling": "Zvana",
         "configuringDevices": "Notiek ierīču konfigurēšana…",
         "connectedWithAudioQ": "Vai esat pievienojies audio?",
-        "connection": {
-            "failed": "Savienojuma pārbaude neizdevās!",
-            "good": "Jūsu interneta savienojums ir labs!",
-            "nonOptimal": "Jūsu interneta savienojums nav optimāls",
-            "poor": "Jums ir slikts interneta savienojums",
-            "running": "Notiek savienojuma pārbaude…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Mēs sagaidām, ka jūsu audio raustīsies.",
-            "audioHighQuality": "Mēs sagaidām, ka jūsu audio kvalitāte būs izcila.",
-            "audioLowNoVideo": "Mēs sagaidām, ka jūsu audio kvalitāte būs zema un video nebūs.",
-            "goodQuality": "Satriecoši! Jūsu multivides kvalitāte būs lieliska.",
-            "noMediaConnectivity": "Mēs nevarējām atrast veidu, kā šim testam izveidot multivides savienojumu. To parasti izraisa ugunsmūris vai NAT.",
-            "noVideo": "Mēs sagaidām, ka jūsu video kvalitāte būs briesmīga.",
-            "testFailed": "Savienojuma testā radās neparedzētas problēmas, tomēr tas var neietekmēt jūsu pieredzi.",
-            "undetectable": "Ja pārlūkprogrammā joprojām nevarat veikt zvanus, iesakām pārliecināties, vai skaļruņi, mikrofons un kamera ir pareizi iestatīti, vai esat piešķīris pārlūkprogrammai tiesības izmantot mikrofonu un kameru un vai pārlūkprogrammas versija ir atjaunināta. Ja joprojām neizdodas zvanīt, sazinieties ar tīmekļa lietojumprogrammas izstrādātāju.",
-            "veryPoorConnection": "Mēs sagaidām, ka jūsu zvanu kvalitāte būs patiešām briesmīga.",
-            "videoFreezing": "Mēs sagaidām, ka jūsu video sastings, kļūs melns un pikseļosies.",
-            "videoHighQuality": "Mēs sagaidām, ka jūsu videoklipam būs laba kvalitāte.",
-            "videoLowQuality": "Mēs sagaidām, ka jūsu videoklipam būs zema kvalitāte kadru ātruma un izšķirtspējas ziņā.",
-            "videoTearing": "Mēs sagaidām, ka jūsu videoklipam būs pikseļi vai vizuāli artefakti."
-        },
         "copyAndShare": "Kopējiet un kopīgojiet sapulces saiti",
         "dialInMeeting": "Iezvanietie sapulcē",
         "dialInPin": "Iezvanieties sapulcē un ievadiet PIN kodu:",

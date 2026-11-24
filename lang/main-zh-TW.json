@@ -997,28 +997,6 @@
         "calling": "撥打中",
         "configuringDevices": "設定裝置中…",
         "connectedWithAudioQ": "您已接通會議音訊了嗎？",
-        "connection": {
-            "failed": "連線測試失敗！",
-            "good": "您的連線品質良好！",
-            "nonOptimal": "您的連線品質不理想",
-            "poor": "您的連線品質不佳",
-            "running": "正在測試連線中…"
-        },
-        "connectionDetails": {
-            "audioClipping": "您的音訊將會斷斷續續。",
-            "audioHighQuality": "您的音訊品質極佳。",
-            "audioLowNoVideo": "您的音訊品質較差，且無視訊功能。",
-            "goodQuality": "太好了！您的媒體品質良好。",
-            "noMediaConnectivity": "我們無法為此測試建立媒體連線，通常是防火牆或 NAT 的問題。",
-            "noVideo": "您的視訊畫質將會很糟糕。",
-            "testFailed": "連線測試遇到異常，但不一定會影響會議。",
-            "undetectable": "如果您仍無法在瀏覽器中進行通話，我們建議您檢查喇叭、麥克風、及網路攝影機的設置，確認是否允許瀏覽器存取麥克風及網路攝影機，並將瀏覽器更新到最新版本。如果以上步驟無法解決問題，請聯絡網頁程式的開發者。",
-            "veryPoorConnection": "您的通話品質將會非常糟糕。",
-            "videoFreezing": "您的視訊將會突然黑頻、卡住、或像素化。",
-            "videoHighQuality": "您的視訊畫質良好。",
-            "videoLowQuality": "您的螢幕的影格率及解析度將較低。",
-            "videoTearing": "您的螢幕可能會有瑕疵或像素化。"
-        },
         "copyAndShare": "複製並分享會議連結",
         "dialInMeeting": "撥入會議",
         "dialInPin": "撥打進會議室並輸入 PIN 碼：",

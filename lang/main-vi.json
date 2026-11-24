@@ -887,25 +887,6 @@
         "calling": "Đang gọi",
         "configuringDevices": "Đang cấu hình thiết bị…",
         "connectedWithAudioQ": "Bạn đã kết nối với âm thanh?",
-        "connection": {
-            "good": "Kết nối internet của bạn trông rất tốt!",
-            "nonOptimal": "Kết nối internet của bạn không tối ưu",
-            "poor": "Kết nối internet của bạn kém"
-        },
-        "connectionDetails": {
-            "audioClipping": "Chúng tôi dự kiến âm thanh của bạn sẽ bị cắt.",
-            "audioHighQuality": "Chúng tôi dự kiến âm thanh của bạn sẽ có chất lượng tuyệt vời.",
-            "audioLowNoVideo": "Chúng tôi dự kiến chất lượng âm thanh của bạn sẽ thấp và không có video.",
-            "goodQuality": "Tuyệt vời! Chất lượng phương tiện của bạn sẽ tuyệt vời.",
-            "noMediaConnectivity": "Chúng tôi không thể tìm cách thiết lập kết nối phương tiện cho bài kiểm tra này. Điều này thường là do tường lửa hoặc NAT.",
-            "noVideo": "Chúng tôi dự kiến video của bạn sẽ rất tệ.",
-            "undetectable": "Nếu bạn vẫn không thể thực hiện cuộc gọi trong trình duyệt, chúng tôi khuyến nghị bạn đảm bảo loa, micro và camera của bạn được cài đặt đúng cách, bạn đã cấp quyền cho trình duyệt sử dụng micro và camera của bạn và phiên bản trình duyệt của bạn là mới nhất. Nếu bạn vẫn gặp sự cố khi gọi, bạn nên liên hệ với nhà phát triển ứng dụng web.",
-            "veryPoorConnection": "Chúng tôi dự kiến chất lượng cuộc gọi của bạn sẽ thực sự tệ.",
-            "videoFreezing": "Chúng tôi dự kiến video của bạn sẽ bị đóng băng, đen màn hình và bị pixel.",
-            "videoHighQuality": "Chúng tôi dự kiến video của bạn sẽ có chất lượng tốt.",
-            "videoLowQuality": "Chúng tôi dự kiến video của bạn sẽ có chất lượng thấp về tốc độ khung hình và độ phân giải.",
-            "videoTearing": "Chúng tôi dự kiến video của bạn sẽ bị rối loạn hoặc có hiện tượng nghệ thuật hình ảnh."
-        },
         "copyAndShare": "Sao chép & chia sẻ liên kết cuộc họp",
         "dialInMeeting": "Gọi vào cuộc họp",
         "dialInPin": "Gọi vào cuộc họp và nhập mã PIN:",

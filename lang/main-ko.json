@@ -912,28 +912,6 @@
         "calling": "전화 중",
         "configuringDevices": "장치 구성 중…",
         "connectedWithAudioQ": "오디오에 연결되어 있습니까?",
-        "connection": {
-            "failed": "연결 테스트 실패!",
-            "good": "인터넷 연결이 좋아 보입니다!",
-            "nonOptimal": "인터넷 연결이 최적이 아닙니다",
-            "poor": "인터넷 연결이 좋지 않습니다",
-            "running": "연결 테스트 실행 중…"
-        },
-        "connectionDetails": {
-            "audioClipping": "오디오가 클리핑될 것으로 예상됩니다.",
-            "audioHighQuality": "오디오가 우수한 품질일 것으로 예상됩니다.",
-            "audioLowNoVideo": "오디오 품질이 낮고 비디오는 없을 것으로 예상됩니다.",
-            "goodQuality": "멋져요! 미디어 품질이 훌륭할 것입니다.",
-            "noMediaConnectivity": "이 테스트를 위해 미디어 연결성을 설정할 수 있는 방법을 찾을 수 없었습니다. 이는 일반적으로 방화벽이나 NAT로 인해 발생합니다.",
-            "noVideo": "비디오가 매우 나쁠 것으로 예상됩니다.",
-            "testFailed": "연결 테스트에서 예기치 않은 문제가 발생했지만 이것이 귀하의 경험에 영향을 미치지 않을 수 있습니다.",
-            "undetectable": "브라우저에서 여전히 전화를 걸 수 없는 경우, 스피커, 마이크 및 카메라가 제대로 설정되었는지 확인하고 브라우저에 마이크 및 카메라 사용 권한을 부여했는지 확인하고 브라우저 버전이 최신인지 확인하는 것이 좋습니다. 여전히 통화에 문제가 있는 경우 웹 애플리케이션 개발자에게 문의해야 합니다.",
-            "veryPoorConnection": "통화 품질이 정말 나쁠 것으로 예상됩니다.",
-            "videoFreezing": "비디오가 멈추거나, 검은 화면이 되거나, 픽셀화될 것으로 예상됩니다.",
-            "videoHighQuality": "비디오 품질이 좋을 것으로 예상됩니다.",
-            "videoLowQuality": "프레임 속도와 해상도 측면에서 비디오 품질이 낮을 것으로 예상됩니다.",
-            "videoTearing": "비디오가 픽셀화되거나 시각적 결함이 있을 것으로 예상됩니다."
-        },
         "copyAndShare": "회의 링크 복사 및 공유",
         "dialInMeeting": "회의에 전화 접속",
         "dialInPin": "회의에 전화 접속하고 PIN 코드를 입력하세요:",

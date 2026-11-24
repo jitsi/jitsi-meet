@@ -1005,28 +1005,6 @@
         "calling": "Ringer",
         "configuringDevices": "Konfiguration af enheder ...",
         "connectedWithAudioQ": "Du er forbundet med lyd?",
-        "connection": {
-            "failed": "Forbindelsestest fejlede!",
-            "good": "Din internetforbindelse ser god ud!",
-            "nonOptimal": "Din internetforbindelse er ikke optimal",
-            "poor": "Du har en dårlig internetforbindelse",
-            "running": "Kører forbindelses test"
-        },
-        "connectionDetails": {
-            "audioClipping": "Vi forventer, at din lyd bliver klippet.",
-            "audioHighQuality": "Vi forventer, at din lyd har fremragende kvalitet.",
-            "audioLowNoVideo": "Vi forventer, at din lydkvalitet er lav og ingen video.",
-            "goodQuality": "Fantastisk! Din mediekvalitet bliver god.",
-            "noMediaConnectivity": "Vi kunne ikke finde en måde at etablere medieforbindelse til denne test. Dette er typisk forårsaget af en firewall eller NAT.",
-            "noVideo": "Vi forventer, at din video vil være forfærdelig.",
-            "testFailed": "Forbindelsestesten løb ind i uventede problemer, men det påvirker muligvis ikke din oplevelse.",
-            "undetectable": "Hvis du stadig ikke kan foretage opkald i browseren, anbefaler vi, at du sørger for, at dine højttalere, mikrofon og kamera er korrekt oprettet-dato. Hvis du stadig har problemer med at ringe, skal du kontakte webapplikationsudvikleren.",
-            "veryPoorConnection": "Vi forventer, at din opkaldskvalitet er virkelig forfærdelig.",
-            "videoFreezing": "Vi forventer, at din video fryser, bliver sort og bliver pixeleret.",
-            "videoHighQuality": "Vi forventer, at din video har god kvalitet.",
-            "videoLowQuality": "Vi forventer, at din video har lav kvalitet med hensyn til billedfrekvens og opløsning.",
-            "videoTearing": "Vi forventer, at din video bliver pixelerede eller har visuelle artefakter."
-        },
         "copyAndShare": "Kopier og del mødelink",
         "dialInMeeting": "Ring ind på mødet",
         "dialInPin": "Ring ind på mødet, og indtast PIN-koden:",

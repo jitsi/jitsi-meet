@@ -876,25 +876,6 @@
         "calling": "Voko…",
         "configuringDevices": "Agordo de la aparatoj…",
         "connectedWithAudioQ": "Ĉu vi estas konektita kun aŭdaĵo?",
-        "connection": {
-            "good": "Via interreta konekto ŝajnas bone!",
-            "nonOptimal": "Via interreta konekto ne estas optimuma",
-            "poor": "Vi havas malbonan interretan konekton"
-        },
-        "connectionDetails": {
-            "audioClipping": "Verŝajne via sono estos tranĉita.",
-            "audioHighQuality": "Verŝajne via sono estos bonega.",
-            "audioLowNoVideo": "Verŝajne via sono estos malbona kaj ne estos videaĵo.",
-            "goodQuality": "Bonege! Via media kvalito estos tre bona.",
-            "noMediaConnectivity": "Ni ne sukcesis starigi aŭdvidan konekton por ĉi-tiu testo. Tion kutime kaŭzas fajroŝirmilo aŭ NAT.",
-            "noVideo": "Veŝajne via videaĵo estos malbonega.",
-            "undetectable": "Se vi ankoraŭ ne povas voki per retumilo, ni rekomendas, ke vi certiĝu, ke viaj laŭtparoliloj, mikrofono kaj kamerao estas ĝuste agorditaj; ke vi donis rajtojn al via retumilo uzi viajn mikrofonon kaj kameraon; ke via retumilo estas ĝisdata. Se vi ankoraŭ ne povas voki, vi devus kontakti la programiston de la retejo.",
-            "veryPoorConnection": "Verŝajne la kvalito de via voko estos malbonega.",
-            "videoFreezing": "Verŝajne via videaĵo frostiĝos, nigriĝos, kaj estos bilderigita.",
-            "videoHighQuality": "Verŝajne via videaĵo estos bonega.",
-            "videoLowQuality": "Verŝajne via videaĵo estos malaltdistingiva kaj havos malbonan bildrapidon.",
-            "videoTearing": "Verŝajne via videaĵo estos bilderigita aŭ enhavos vidajn artefaktojn."
-        },
         "copyAndShare": "Kopii & kunhavigi ligilon de la renkontiĝo",
         "dialInMeeting": "Eniru la renkontiĝon per voko",
         "dialInPin": "Eniru la kunvenon per voko kaj entajpu PIN kodon:",

@@ -1015,28 +1015,6 @@
         "calling": "Ringer",
         "configuringDevices": "Konfigurerar enheter…",
         "connectedWithAudioQ": "Är din mikrofon ansluten?",
-        "connection": {
-            "failed": "Anslutningstest misslyckades!",
-            "good": "Din internetanslutning fungerar bra!",
-            "nonOptimal": "Din internetanslutning är inte optimal",
-            "poor": "Din internetanslutning fungerar dåligt",
-            "running": "Kör anslutningstest..."
-        },
-        "connectionDetails": {
-            "audioClipping": "Ditt ljud kan upplevas hackigt.",
-            "audioHighQuality": "Vi förväntar oss att ditt ljud har utmärkt kvalitet.",
-            "audioLowNoVideo": "Vi förväntar oss att din ljudkvalitet är låg och ingen video.",
-            "goodQuality": "Grymt bra! Din mediekvalitet kommer att bli bra.",
-            "noMediaConnectivity": "Vi kunde inte upprätta mediaanslutning för det här testet. Det orsakas vanligtvis av en brandvägg eller NAT.",
-            "noVideo": "Vi förväntar oss att din video kommer ha låg kvalitet eller inte fungera.",
-            "testFailed": "Anslutningstestet stötte på oväntade problem, men det behöver inte påverka din upplevelse.",
-            "undetectable": "Om du fortfarande inte kan ringa i webbläsaren rekommenderar vi att du ser till att dina högtalare, mikrofon och kamera är korrekt inställda, att du har beviljat din webbläsare rättigheter att använda din mikrofon och kamera och att din webbläsarversion är uppdaterad.",
-            "veryPoorConnection": "Vi förväntar oss att din samtalskvalitet är riktigt dålig.",
-            "videoFreezing": "Vi förväntar oss att din video fryser, blir svart och pixeleras.",
-            "videoHighQuality": "Vi förväntar oss att din video har bra kvalitet.",
-            "videoLowQuality": "Vi förväntar oss att din video har låg kvalitet när det gäller bildhastighet och upplösning.",
-            "videoTearing": "Vi förväntar oss att din video ska vara pixelerad eller ha visuella artefakter."
-        },
         "copyAndShare": "Kopiera och dela möteslänk",
         "dialInMeeting": "Ring in till mötet",
         "dialInPin": "Ring in till mötet och ange PIN-kod:",

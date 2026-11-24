@@ -1155,28 +1155,6 @@
         "calling": "Bellen",
         "configuringDevices": "Apparaten instellen…",
         "connectedWithAudioQ": "Bent u verbonden met audio?",
-        "connection": {
-            "failed": "Verbindingstest is mislukt!",
-            "good": "Uw internetverbinding lijkt goed te zijn!",
-            "nonOptimal": "Uw internetverbinding is niet optimaal",
-            "poor": "Uw internetverbinding is slecht",
-            "running": "Verbindingstest uitvoeren…"
-        },
-        "connectionDetails": {
-            "audioClipping": "We verwachten dat uw audio wordt overstuurd.",
-            "audioHighQuality": "Wij verwachten dat uw audio een uitstekende kwaliteit heeft.",
-            "audioLowNoVideo": "Wij verwachten dat uw audiokwaliteit laag is en dat er geen video is.",
-            "goodQuality": "Fantastisch! Uw mediakwaliteit wordt geweldig.",
-            "noMediaConnectivity": "We konden geen manier vinden om voor deze test een mediaverbinding tot stand te brengen. Dit wordt doorgaans veroorzaakt door een firewall of NAT.",
-            "noVideo": "We verwachten dat je video verschrikkelijk zal zijn.",
-            "testFailed": "De verbindingstest stuitte op onverwachte problemen, maar dit heeft mogelijk geen invloed op uw ervaring.",
-            "undetectable": "Als u nog steeds niet in de browser kunt bellen, raden wij u aan ervoor te zorgen dat uw luidsprekers, microfoon en camera goed zijn ingesteld, dat u uw browser rechten heeft verleend om uw microfoon en camera te gebruiken en dat uw browserversie up-to-date is. Als u nog steeds problemen ondervindt met bellen, kunt u contact opnemen met de ontwikkelaar van de webapplicatie.",
-            "veryPoorConnection": "We verwachten dat uw gesprekskwaliteit echt verschrikkelijk is.",
-            "videoFreezing": "We verwachten dat uw video bevriest, zwart wordt en gepixeld is.",
-            "videoHighQuality": "Wij verwachten dat uw video van goede kwaliteit is.",
-            "videoLowQuality": "We verwachten dat uw video een lage kwaliteit heeft qua framesnelheid en resolutie.",
-            "videoTearing": "We verwachten dat uw video gepixeld is of visuele artefacten heeft."
-        },
         "copyAndShare": "Link naar vergadering kopiëren & delen",
         "dialInMeeting": "Inbellen naar de vergadering",
         "dialInPin": "Inbellen naar de vergadering en pincode invoeren:",

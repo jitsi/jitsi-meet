@@ -660,6 +660,7 @@ export interface IConfig {
         hideDisplayName?: boolean;
         hideExtraJoinButtons?: Array<string>;
         preCallTestEnabled?: boolean;
+        preCallTestHelpUrl?: string;
         preCallTestICEUrl?: string;
         showHangUp?: boolean;
     };

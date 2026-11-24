@@ -913,28 +913,6 @@
         "calling": "Volá se",
         "configuringDevices": "Nastavují se zařízení…",
         "connectedWithAudioQ": "Jste připojen/a se zvukem?",
-        "connection": {
-            "failed": "Test připojení se nezdařil!",
-            "good": "Vaše internetové připojení vypadá dobře!",
-            "nonOptimal": "Vaše internetové připojení není optimální",
-            "poor": "Máte slabé internetové připojení",
-            "running": "Probíhá test připojení…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Váš zvuk bude pravděpodobně osekaný.",
-            "audioHighQuality": "Váš zvuk bude pravděpodobně mít výbornou kvalitu.",
-            "audioLowNoVideo": "Váš zvuk bude pravděpodobně mít nízkou kvalitu a bez videa.",
-            "goodQuality": "Bezva! Budete mít skvělou kvalitu médií.",
-            "noMediaConnectivity": "Pro tento test se nám nepovedlo navázat mediální připojení. Většinou za to může firewall nebo NAT.",
-            "noVideo": "Vaše video bude pravděpodobně hrozné.",
-            "testFailed": "Při testu připojení došlo k neočekávaným problémům, ale to nemusí mít vliv na vaše spojení.",
-            "undetectable": "Pokud v prohlížeči stále nemůžete volat, ujistěte se, že máte správně nastavené reproduktory, mikrofon a kameru, že jste v prohlížeči povolil/a přístup k mikrofonu a kameře a že máte aktuální verzi prohlížeče. Pokud stále narážíte na potíže, kontaktujte vývojáře této webové aplikace.",
-            "veryPoorConnection": "Kvalita vašeho hovoru pravděpodobně bude opravdu hrozná.",
-            "videoFreezing": "Video vám pravděpodobně bude zamrzávat, přepínat se do černé a bude kostkované.",
-            "videoHighQuality": "Vaše video pravděpodobně bude mít dobrou kvalitu.",
-            "videoLowQuality": "Vaše video pravděpodobně bude mít nízkou kvalitu po stránce snímkové rychlosti a rozlišení.",
-            "videoTearing": "Vaše video pravděpodobně bude kostkované nebo s obrazovými artefakty."
-        },
         "copyAndShare": "Kopírovat a sdílet odkaz na setkání",
         "dialInMeeting": "Vytočit setkání po telefonu",
         "dialInPin": "Vytočte setkání na telefonu a zadejte kód PIN:",

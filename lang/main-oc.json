@@ -913,28 +913,6 @@
         "calling": "A sonar",
         "configuringDevices": "Parametratge dels aparelhs…",
         "connectedWithAudioQ": "Sètz connectat amb l’àudio ?",
-        "connection": {
-            "failed": "Ensag de connexion fracassat !",
-            "good": "Vòstra connexion Internet sembla bona !",
-            "nonOptimal": "Vòstra connexion Internet es pas optimala",
-            "poor": "Vòstra connexion Internet es febla",
-            "running": "Execucion de l'ensag de connexion…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Nos esperam a trobar vòstre àudio troncat.",
-            "audioHighQuality": "Nos esperam a trobar vòstra qualitat àudio excellenta.",
-            "audioLowNoVideo": "Nos esperam a trobar vòstra qualitat àudio febla e cap de vidèo.",
-            "goodQuality": "Crane ! Vòstra qualitat serà geniala.",
-            "noMediaConnectivity": "Avèm pas trobat cap de biais d'establir una connectivitat mèdia per aquesta pròva. Sovent es a causat d'un parafòc o un NAT.",
-            "noVideo": "Nos esperam a trobat vòstra qualitat vidèo òrra.",
-            "testFailed": "L'ensag de connexion a rescontrat de problèmas, mas se poiriá qu'aquò afècta pas vòstra experiéncia.",
-            "undetectable": "Se capitatz totjorn pas de sonar del navigador estant, vos recomandam de vos assegurar que vos naut-parlaires, lo microfòn e la camèra son corrèctament configurats, qu’avètz donadas las autorizacions al navegador pel microfòn e la camèra e que lo navigador es a jorn. Se tenètz d’aver de dificultats per sonar, devètz contactar lo desvolopaire de l’aplicacion Web.",
-            "veryPoorConnection": "Nos esperam a trobar vòstra qualitat vidèo plan òrra.",
-            "videoFreezing": "Nos esperam a veire vòstra vidèo se gelar, venir negra e se pixelizar.",
-            "videoHighQuality": "Nos esperam a trobar vòstra qualitat vidèo de bona qualitat.",
-            "videoLowQuality": "Presumissèm que vòstra vidèo aurà una baissa qualitat tocant la frequéncia d’imatge e la resolucion.",
-            "videoTearing": "Presumissèm que vòstra vidèo serà pixelizada e aurà d’artefacts visuals."
-        },
         "copyAndShare": "Copiar e partejar lo ligam de reünion",
         "dialInMeeting": "Participatz a la reünion",
         "dialInPin": "Participar a la reünion e picar lo còdi PIN :",

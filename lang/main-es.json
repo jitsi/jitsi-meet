@@ -1118,28 +1118,6 @@
         "calling": "Llamando",
         "configuringDevices": "Configurando dispositivos…",
         "connectedWithAudioQ": "¿Está conectado con audio?",
-        "connection": {
-            "failed": "¡Prueba de conexión fallida!",
-            "good": "¡Su conexión a internet es buena!",
-            "nonOptimal": "Su conexión a internet no es óptima",
-            "poor": "Tiene una conexión a internet deficiente",
-            "running": "Ejecutando prueba de conexión…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Prevemos que su audio tendrá recortes.",
-            "audioHighQuality": "Prevemos que su audio tendrá excelente calidad.",
-            "audioLowNoVideo": "Prevemos que la calidad de su audio será baja y sin vídeo.",
-            "goodQuality": "¡Genial! La calidad de sus medios será excelente.",
-            "noMediaConnectivity": "No pudimos encontrar una forma de establecer la conectividad de medios para esta prueba. Esto suele ser causado por un firewall o NAT.",
-            "noVideo": "Prevemos que su vídeo será muy malo.",
-            "testFailed": "La prueba de conexión encontró problemas inesperados, pero esto podría no afectar su experiencia.",
-            "undetectable": "Si aún no puede realizar llamadas en el navegador, le recomendamos que se asegure de que los altavoces, el micrófono y la cámara estén configurados correctamente, de que haya concedido a su navegador permiso para usar el micrófono y la cámara, y de que la versión de su navegador esté actualizada. Si aún tiene problemas para llamar, debería ponerse en contacto con el desarrollador de la aplicación web.",
-            "veryPoorConnection": "Prevemos que la calidad de su llamada será realmente terrible.",
-            "videoFreezing": "Prevemos que su vídeo se congelará, se pondrá en negro y se pixelará.",
-            "videoHighQuality": "Prevemos que su vídeo tendrá buena calidad.",
-            "videoLowQuality": "Prevemos que su vídeo tendrá baja calidad en cuanto a velocidad de fotogramas y resolución.",
-            "videoTearing": "Prevemos que su vídeo se pixelará o tendrá artefactos visuales."
-        },
         "copyAndShare": "Copia y comparta el enlace de la reunión",
         "dialInMeeting": "Entrar con llamada telefónica",
         "dialInPin": "Llame a la reunión e introduzca el código PIN:",

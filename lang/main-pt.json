@@ -1058,28 +1058,6 @@
         "calling": "A chamar",
         "configuringDevices": "A configurar os dispositivos…",
         "connectedWithAudioQ": "Está ligado com áudio?",
-        "connection": {
-            "failed": "Falha no teste de ligação!",
-            "good": "A sua ligação à Internet parece boa!",
-            "nonOptimal": "A sua ligação à Internet não é óptima",
-            "poor": "Tem uma ligação à Internet fraca",
-            "running": "A realizar teste de ligação..."
-        },
-        "connectionDetails": {
-            "audioClipping": "Prevemos que o seu áudio tenha cortes.",
-            "audioHighQuality": "Prevemos que o seu áudio tenha excelente qualidade.",
-            "audioLowNoVideo": "Prevemos que a qualidade do seu áudio seja baixa e sem vídeo.",
-            "goodQuality": "Fantástico! A qualidade dos seus meios de comunicação vai ser óptima.",
-            "noMediaConnectivity": "Não foi possível encontrar uma forma de estabelecer a conectividade dos meios de comunicação para este teste. Isto é tipicamente causado por uma firewall ou NAT.",
-            "noVideo": "Prevemos que o seu vídeo seja terrível.",
-            "testFailed": "O teste de ligação encontrou problemas inesperados, mas isso pode não afetar a sua experiência.",
-            "undetectable": "Se mesmo assim não conseguir fazer chamadas no browser, recomendamos que se certifique de que os seus altifalantes, microfone e câmara estão devidamente configurados, que concedeu ao seu browser direitos de utilização do seu microfone e câmara, e que a versão do seu browser está actualizada. Se mesmo assim tiver problemas em telefonar, deverá contactar o criador da aplicação web.",
-            "veryPoorConnection": "Prevemos que a qualidade da sua chamada seja realmente terrível.",
-            "videoFreezing": "Prevemos que o seu vídeo congele, fique preto, e seja pixelizado.",
-            "videoHighQuality": "Prevemos que o seu vídeo tenha boa qualidade.",
-            "videoLowQuality": "Prevemos que o seu vídeo tenha baixa qualidade em termos de velocidade de fotogramas e resolução.",
-            "videoTearing": "Prevemos que o seu vídeo seja pixelizado ou que tenha artefactos visuais."
-        },
         "copyAndShare": "Copiar e partilhar o link da reunião.",
         "dialInMeeting": "Entrar com chamada telefónica",
         "dialInPin": "Entrar com chamada telefónica e introduzir o código PIN:",

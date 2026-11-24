@@ -1009,28 +1009,6 @@
         "calling": "Soitetaan",
         "configuringDevices": "Määritetään laitteita…",
         "connectedWithAudioQ": "Olet yhdistetty äänellä?",
-        "connection": {
-            "failed": "Yhteystesti epäonnistui!",
-            "good": "Internetyhteytesi näyttää hyvältä!",
-            "nonOptimal": "Internetyhteytesi ei ole optimaalinen",
-            "poor": "Internetyhteytesi on huono",
-            "running": "Suoritetaan yhteystestiä…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Äänesi saattaa pätkiä.",
-            "audioHighQuality": "Äänesi laatu on erinomainen.",
-            "audioLowNoVideo": "Äänesi laatu on heikko eikä videota ole.",
-            "goodQuality": "Mahtavaa! Median laatu tulee olemaan erinomainen.",
-            "noMediaConnectivity": "Emme löytäneet tapaa muodostaa mediayhteyttä tätä testiä varten. Tämä johtuu yleensä palomuurista tai NAT:sta.",
-            "noVideo": "Videolaatusi tulee olemaan huono.",
-            "testFailed": "Yhteytestissä ilmeni odottamattomia ongelmia, mutta tämä ei välttämättä vaikuta kokemukseesi.",
-            "undetectable": "Jos et vieläkään pysty soittamaan selaimessa, suosittelemme varmistamaan, että kaiuttimet, mikrofoni ja kamera on määritetty oikein, että olet myöntänyt selaimelle oikeudet käyttää mikrofonia ja kameraa ja että selaimesi versio on ajan tasalla. Jos sinulla on edelleen ongelmia, ota yhteyttä sovelluksen kehittäjään.",
-            "veryPoorConnection": "Puhelun laatu tulee olemaan erittäin huono.",
-            "videoFreezing": "Videosi saattaa jäätyä, muuttua mustaksi ja pikselöityä.",
-            "videoHighQuality": "Videon laatu tulee olemaan hyvä.",
-            "videoLowQuality": "Videon laatu tulee olemaan heikko kuvataajuuden ja resoluution osalta.",
-            "videoTearing": "Videossasi saattaa olla pikselöitymistä tai visuaalisia artefakteja."
-        },
         "copyAndShare": "Kopioi ja jaa kokouslinkki",
         "dialInMeeting": "Soita kokoukseen",
         "dialInPin": "Soita kokoukseen ja syötä PIN-koodi:",
