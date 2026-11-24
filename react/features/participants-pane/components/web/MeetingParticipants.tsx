@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
@@ -197,6 +198,90 @@ function MeetingParticipants({
     );
 }
 
+type IStateProps = Omit<IProps, 'searchString' | 'setSearchString'>;
+
+/**
+ * Memoized selector that computes the filtered and sorted participant IDs and total count
+ * only when participant state, visitor status, or the search string changes.
+ */
+const getFilteredParticipantIds = createSelector(
+    (state: IReduxState) => state['features/base/participants'],
+    iAmVisitor,
+    (_state: IReduxState, searchString: string) => searchString,
+    (participants, _iAmVisitor, searchString) => {
+        const participantsState = { 'features/base/participants': participants } as IReduxState;
+
+        // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
+        // participants in the participants pane.
+        // Filter local participant when in visitor mode
+        const baseIds = getSortedParticipantIds(participantsState).filter((id): id is string => {
+            if (!id) {
+                return false;
+            }
+
+            const participant = getParticipantById(participantsState, id);
+
+            if (_iAmVisitor && participant?.local) {
+                return false;
+            }
+
+            return !isScreenShareParticipant(participant);
+        });
+
+        const participantsCount = baseIds.length;
+
+        if (!searchString) {
+            return {
+                participantsCount,
+                sortedParticipantIds: baseIds
+            };
+        }
+
+        const normalizedSearch = normalizeAccents(searchString);
+
+        return {
+            participantsCount,
+            sortedParticipantIds: baseIds.filter((id: string) => {
+                const participant = getParticipantById(participantsState, id);
+
+                return participantMatchesSearch(participant, normalizedSearch);
+            })
+        };
+    }
+);
+
+/**
+ * Compares state props by value, including element-wise comparison of {@code sortedParticipantIds},
+ * so {@code MeetingParticipants} does not re-render when the list of IDs is unchanged.
+ *
+ * @param {IStateProps} next - Next state props.
+ * @param {IStateProps} prev - Previous state props.
+ * @returns {boolean}
+ */
+function _areStatePropsEqual(next: IStateProps, prev: IStateProps) {
+    if (next.currentRoom !== prev.currentRoom
+        || next.overflowDrawer !== prev.overflowDrawer
+        || next.participantsCount !== prev.participantsCount
+        || next.showInviteButton !== prev.showInviteButton) {
+        return false;
+    }
+
+    const nextIds = next.sortedParticipantIds ?? [];
+    const prevIds = prev.sortedParticipantIds ?? [];
+
+    if (nextIds.length !== prevIds.length) {
+        return false;
+    }
+
+    for (let i = 0; i < nextIds.length; i++) {
+        if (nextIds[i] !== prevIds[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /**
  * Maps (parts of) the redux state to the associated props for this component.
  *
@@ -206,42 +291,11 @@ function MeetingParticipants({
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: Pick<IProps, 'searchString'>) {
-    const _iAmVisitor = iAmVisitor(state);
-
-    // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
-    // participants in the participants pane.
-    // Filter local participant when in visitor mode
-    let sortedParticipantIds = getSortedParticipantIds(state).filter((id): id is string => {
-        if (!id) {
-            return false;
-        }
-
-        const participant = getParticipantById(state, id);
-
-        if (_iAmVisitor && participant?.local) {
-            return false;
-        }
-
-        return !isScreenShareParticipant(participant);
-    });
-
-    const participantsCount = sortedParticipantIds.length;
+    const { participantsCount, sortedParticipantIds } = getFilteredParticipantIds(state, ownProps.searchString);
     const showInviteButton = shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
-
-    const { searchString } = ownProps;
-
-    if (searchString) {
-        const normalizedSearch = normalizeAccents(searchString);
-
-        sortedParticipantIds = sortedParticipantIds.filter((id: string) => {
-            const participant = getParticipantById(state, id);
-
-            return participantMatchesSearch(participant, normalizedSearch);
-        });
-    }
 
     return {
         currentRoom,
@@ -252,4 +306,9 @@ function _mapStateToProps(state: IReduxState, ownProps: Pick<IProps, 'searchStri
     };
 }
 
-export default connect(_mapStateToProps)(MeetingParticipants);
+export default connect(
+    _mapStateToProps,
+    undefined,
+    undefined,
+    { areStatePropsEqual: _areStatePropsEqual }
+)(MeetingParticipants);
