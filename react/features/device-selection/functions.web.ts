@@ -48,7 +48,6 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedMic = getUserSelectedMicDeviceId(state);
     const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
-    const hideNoiseSuppression = isPrejoinPageVisible(state) || isDisplayedOnWelcomePage;
     const audioSettings = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
 
     // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
@@ -78,7 +77,6 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
         hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats() || disablePreviews,
         hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
-        hideNoiseSuppression,
         noiseSuppressionEnabled,
         selectedAudioInputId,
         selectedAudioOutputId

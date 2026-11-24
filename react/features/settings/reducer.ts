@@ -1,3 +1,4 @@
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { IAudioSettings } from '../base/settings/reducer';
 
@@ -14,6 +15,9 @@ export interface ISettingsState {
     previewAudioTrack?: any | null;
     videoSettingsVisible?: boolean;
 }
+
+// Keeps the audio settings for the next meetings, e.g. when they are chosen on the welcome page, which reloads to join.
+PersistenceRegistry.register('features/settings', { audioSettings: true });
 
 ReducerRegistry.register('features/settings', (state: ISettingsState = {}, action) => {
     switch (action.type) {

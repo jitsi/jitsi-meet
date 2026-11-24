@@ -94,11 +94,6 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     hideAudioOutputSelect: boolean;
 
     /**
-     * Whether to hide noise suppression checkbox or not.
-     */
-    hideNoiseSuppression: boolean;
-
-    /**
      * Whether we are in visitors mode.
      */
     iAmVisitor: boolean;
@@ -302,7 +297,6 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             hasAudioPermission,
             hideAudioInputPreview,
             hideAudioOutputPreview,
-            hideNoiseSuppression,
             isAdvancedAudioSettingsConfigEnabled,
             iAmVisitor,
             noiseSuppressionEnabled,
@@ -315,8 +309,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
         const isAudioSettingsEnabled = Boolean(audioSettings?.autoGainControl || audioSettings?.channelCount === 2 || audioSettings?.echoCancellation || audioSettings?.noiseSuppression);
 
-        const shouldDisplayNoiseSuppressionCheckbox = !hideNoiseSuppression && !iAmVisitor;
-        const shouldDisplayAdvancedAudioSettingsCheckboxes = !hideNoiseSuppression && !iAmVisitor && isAdvancedAudioSettingsConfigEnabled && Boolean(audioSettings);
+        const shouldDisplayNoiseSuppressionCheckbox = !iAmVisitor;
+        const shouldDisplayAdvancedAudioSettingsCheckboxes = !iAmVisitor && isAdvancedAudioSettingsConfigEnabled && Boolean(audioSettings);
 
         const shouldDisabledNoiseSupressionCheckbox = shouldDisplayAdvancedAudioSettingsCheckboxes && (isAudioSettingsEnabled && !noiseSuppressionEnabled);
 
