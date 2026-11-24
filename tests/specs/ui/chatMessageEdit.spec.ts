@@ -67,9 +67,19 @@ describe('Chat message edit', () => {
                 timeoutMsg: 'p2 did not receive the message'
             });
 
-        const message = await getChatMessage(p1, ORIGINAL_TEXT);
+        // The sender adds its own message when the room sends it back, which can be after p2 has it.
+        let message: IMessage | undefined;
 
-        expect(message).toBeDefined();
+        await p1.driver.waitUntil(
+            async () => {
+                message = await getChatMessage(p1, ORIGINAL_TEXT);
+
+                return Boolean(message);
+            }, {
+                timeout: 5000,
+                timeoutMsg: 'p1 did not receive its own message'
+            });
+
         messageId = message!.messageId;
     });
 
