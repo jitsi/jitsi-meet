@@ -87,7 +87,6 @@ class SharedVideoMenu extends PureComponent<IProps> {
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
-                {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <SharedVideoButton { ...buttonProps } />
             </BottomSheet>
