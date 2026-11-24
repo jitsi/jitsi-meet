@@ -265,6 +265,15 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {
+                    _knocking
+                    && <Button
+                        accessibilityLabel = 'dialog.Cancel'
+                        labelKey = 'dialog.Cancel'
+                        onClick = { this._onCancel }
+                        style = { preJoinStyles.joinButton }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                }
+                {
                     _renderPassword
                     && <Button
                         accessibilityLabel = 'lobby.enterPasswordButton'
@@ -317,3 +326,4 @@ function _mapStateToProps(state: IReduxState) {
 }
 
 export default translate(connect(_mapStateToProps)(LobbyScreen));
+
