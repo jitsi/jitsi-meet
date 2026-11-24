@@ -38,6 +38,11 @@ export interface IProps extends WithTranslation {
     customClass?: string;
 
     /**
+     * Whether to suppress the tooltip while preserving the accessibility label.
+     */
+    disableTooltip?: boolean;
+
+    /**
      * Extra styles which will be applied in conjunction with `styles` or
      * `toggledStyles` when the button is disabled;.
      */
@@ -266,6 +271,19 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
     }
 
     /**
+     * Gets the props used to interpolate the label's translation. Subclasses can
+     * override this to compute them from the current props so the label stays in
+     * sync with state changes (a static {@code labelProps} field is only evaluated
+     * once on construction).
+     *
+     * @protected
+     * @returns {Object}
+     */
+    _getLabelProps() {
+        return this.labelProps;
+    }
+
+    /**
      * Gets the current accessibility label, taking the toggled state into
      * account. If no toggled label is provided, the regular accessibility label
      * will also be used in the toggled state.
@@ -322,6 +340,16 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
         return (this._isToggled() ? this.toggledTooltip : this.tooltip)
             || this.tooltip
             || '';
+    }
+
+    /**
+     * Why the button is disabled, as a translation key, for subclasses that can say. Only consulted while disabled.
+     *
+     * @protected
+     * @returns {string|undefined}
+     */
+    _getDisabledReason(): string | undefined {
+        return undefined;
     }
 
     /**
@@ -388,10 +416,11 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
         const props: any = {
             ...this.props,
             accessibilityLabel: this._getAccessibilityLabel(),
+            disabledReason: this._isDisabled() ? this._getDisabledReason() : undefined,
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
             label: this._getLabel(),
-            labelProps: this.labelProps,
+            labelProps: this._getLabelProps(),
             styles: this._getStyles(),
             toggled: this._isToggled(),
             tooltip: this._getTooltip()

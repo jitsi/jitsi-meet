@@ -8,13 +8,12 @@ local array = require 'util.array';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
-local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
-local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local table_compare = util.table_compare;
 
@@ -41,6 +40,9 @@ local function validate_polls(data)
     if data.type ~= 'polls' or type(data.pollId) ~= 'string' then
         return false;
     end
+    if data.command == 'close-poll' then
+        return true;
+    end
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
@@ -50,6 +52,10 @@ local function validate_polls(data)
 
     if data.command == "new-poll" then
         if type(data.question) ~= 'string' then
+            return false;
+        end
+
+        if data.singleAnswer ~= nil and type(data.singleAnswer) ~= 'boolean' then
             return false;
         end
 
@@ -89,6 +95,24 @@ local function get_occupant_details(occupant)
         return nil
     end
     return { ["occupant_id"] = occupant_id, ["occupant_name"] = occupant_name }
+end
+
+--- Returns the room and the voter id of a vote forwarded by a visitor node, which sends it from the voter's
+--- jid in the room on the visitor node, e.g. room@conference.v1.meet.jitsi/<occupant-id> (see 'answer-poll' in mod_fmuc).
+--- Returns nil when the sender is not in a room the visitor node is connected to.
+local function get_vnode_room_and_voter(from)
+    local room_node, host, occupant_id = jid.split(from);
+    local prefix = muc_domain_prefix..'.';
+    if not room_node or not occupant_id or host:sub(1, #prefix) ~= prefix then
+        return nil;
+    end
+    local room = get_room_from_jid(jid.join(room_node, muc_domain_prefix..'.'..main_virtual_host));
+    -- mod_visitors_component keys _connected_vnodes as <vnode>.meet.jitsi (see connect_vnode_received), so this
+    -- finds only visitor nodes with that domain
+    if not room or not room._connected_vnodes or room._connected_vnodes:get(host:sub(#prefix + 1)) == nil then
+        return nil;
+    end
+    return room, occupant_id;
 end
 
 local function send_polls_message(room, data_str, to)
@@ -131,32 +155,25 @@ end
 
         local room;
         local occupant;
+        local vnode_voter_id;
         if session.type == 's2sin' then
-            if not json_message.attr.roomJid then
-                module:log('warn', 'No room jid found in %s', stanza);
-                return;
+            room, vnode_voter_id = get_vnode_room_and_voter(stanza.attr.from);
+            if not room then
+                module:log('warn', 'Poll msg %s not from a visitor node connected to the room', stanza);
+                return true;
             end
-            room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
         else
             local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             local occupant_jid = stanza.attr.from;
 
-            occupant = main_room:get_occupant_by_real_jid(occupant_jid);
-
-            if main_room._data.breakout_rooms_active and not occupant then
-                -- let's find is this participant in the main room or in some breakout room
-                -- not in main room, let's check breakout rooms
-                for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
-                    local breakout_room = get_room_from_jid(breakout_room_jid);
-                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                    if occupant then
-                        room = breakout_room;
-                        break;
-                    end
-                end
-            else
-                room = main_room;
+            if not main_room then
+                module:log('warn', 'No main room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+                return;
             end
+
+            local found_room;
+            occupant, found_room = get_occupant_by_real_jid(main_room, occupant_jid);
+            room = found_room or main_room;
 
             if not occupant then
                 module:log('error', 'Occupant sending poll msg %s was not found in room %s', occupant_jid, room.jid)
@@ -181,7 +198,8 @@ end
             return true;
         end
 
-        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
+        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll"
+                and data.command ~= "close-poll") then
             return;
         end
 
@@ -200,14 +218,17 @@ end
                 return
             end
         else
-            -- this is a message from a visitor prosody, we will trust it
-            occupant_details = { occupant_id = data.senderId; occupant_name = data.senderName; };
+            -- this is a vote from a visitor node connected to the room, we will trust the name it sends
+            occupant_details = { occupant_id = vnode_voter_id; occupant_name = data.senderName; };
         end
 
         if data.command == "new-poll" then
-            if is_visitor_prosody then
+            -- visitors cannot create polls, so visitor nodes only forward answers
+            if is_visitor_prosody or session.type == 's2sin' then
                 module:log("error", "Poll cannot be created on visitor node.");
-                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
+                end
                 return true;
             end
 
@@ -243,7 +264,9 @@ end
                 senderId = poll_creator.occupant_id,
                 senderName = poll_creator.occupant_name,
                 question = data.question,
-                answers = answers
+                answers = answers,
+                -- a voter can choose only one answer of such a poll
+                singleAnswer = data.singleAnswer == true or nil
             };
 
             room.polls.by_id[data.pollId] = poll
@@ -258,11 +281,16 @@ end
                     senderId = poll_creator.occupant_id,
                     senderName = poll_creator.occupant_name,
                     question = data.question,
-                    answers = compact_answers
+                    answers = compact_answers,
+                    singleAnswer = poll.singleAnswer
                 }
             }
 
             -- now send message to all participants
+            -- Only relay the sanitized answers (name only) so no unexpected
+            -- fields from the sender's payload are forwarded to participants.
+            data.answers = answers;
+            data.singleAnswer = poll.singleAnswer;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);
@@ -279,7 +307,87 @@ end
                 return;
             end
 
+            if poll.closed then
+                module:log('warn', 'Answer for closed poll %s', data.pollId);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll is closed'));
+                end
+                return true;
+            end
+
+            if #data.answers ~= #poll.answers then
+                module:log("warn", "answering poll %s with mismatched answer count. Sender: %s",
+                    data.pollId, stanza.attr.from);
+                return true;
+            end
+
+            if poll.singleAnswer then
+                -- Keep only the first chosen answer instead of dropping the vote. The voter's
+                -- client has already registered the vote and gets no error reply, so storing and
+                -- broadcasting this one keeps every client, the voter's included, consistent with
+                -- the server, also clients that do not know about singleAnswer.
+                local kept = false;
+                local dropped = false;
+                local single = {};
+                for idx, vote_flag in ipairs(data.answers) do
+                    if vote_flag and not kept then
+                        single[idx] = true;
+                        kept = true;
+                    else
+                        if vote_flag then
+                            dropped = true;
+                        end
+                        single[idx] = false;
+                    end
+                end
+                if dropped then
+                    module:log('debug', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
+                        data.pollId, stanza.attr.from);
+                end
+                data.answers = single;
+            end
+
             local voter = occupant_details;
+
+            -- Capture the voter's current vote state so we can detect changes.
+            local previous_answers = {};
+            for idx, answer in ipairs(poll.answers) do
+                previous_answers[idx] = false;
+                if answer.voters then
+                    for _, v in ipairs(answer.voters) do
+                        if v.id == voter.occupant_id then
+                            previous_answers[idx] = true;
+                            break;
+                        end
+                    end
+                end
+            end
+
+            -- Skip processing if the vote is identical to the previous one.
+            local vote_changed = false;
+            for idx, vote_flag in ipairs(data.answers) do
+                if previous_answers[idx] ~= vote_flag then
+                    vote_changed = true;
+                    break;
+                end
+            end
+            if not vote_changed then
+                return true;
+            end
+
+            -- Remove any previous votes by this voter before recording new ones,
+            -- preventing duplicate votes for the same option.
+            for _, answer in ipairs(poll.answers) do
+                if answer.voters then
+                    local filtered = {};
+                    for _, v in ipairs(answer.voters) do
+                        if v.id ~= voter.occupant_id then
+                            table.insert(filtered, v);
+                        end
+                    end
+                    answer.voters = filtered;
+                end
+            end
 
             local answers = {};
             for vote_option_idx, vote_flag in ipairs(data.answers) do
@@ -326,6 +434,49 @@ end
             send_polls_message_to_all(room, json_msg_str);
 
             module:context(jid.host(room.jid)):fire_event('answer-poll',  answerData);
+        elseif data.command == "close-poll" then
+            -- A visitor node learns about a closed poll from the main prosody, see jitsi-polls-update.
+            if session.type == 's2sin' or is_visitor_prosody then
+                module:log('warn', 'Poll cannot be closed from a visitor node, room:%s', room.jid);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be closed from a visitor node'));
+                end
+                return true;
+            end
+
+            local poll = room.polls.by_id[data.pollId];
+            if poll == nil then
+                module:log("warn", "closing inexistent poll %s", data.pollId);
+                return true;
+            end
+
+            -- Only the creator of the poll and a moderator can close it.
+            if poll.senderId ~= occupant_details.occupant_id and occupant.role ~= 'moderator' then
+                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Closing the poll not allowed'));
+                return true;
+            end
+
+            if poll.closed then
+                return true;
+            end
+
+            poll.closed = true;
+
+            -- No answers: the occupants here have them from the answer-poll broadcasts. Only a visitor node, that
+            -- may have taken votes the main prosody refused, sends them (see jitsi-polls-update).
+            local json_msg_str, error = json.encode({
+                command = 'close-poll',
+                pollId = data.pollId,
+                senderId = occupant_details.occupant_id,
+                type = 'polls'
+            });
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                return true;
+            end
+            send_polls_message_to_all(room, json_msg_str);
+
+            module:context(jid.host(room.jid)):fire_event('poll-closed', { room = room; pollId = data.pollId; });
         end
 
     return true;
@@ -427,7 +578,9 @@ local setup_muc_component = function(host_module, host)
                 senderId = poll.senderId,
                 senderName = poll.senderName,
                 question = poll.question,
-                answers = poll.answers
+                answers = poll.answers,
+                singleAnswer = poll.singleAnswer,
+                closed = poll.closed
             };
         end
 
@@ -453,6 +606,32 @@ local setup_muc_component = function(host_module, host)
             return;
         end
 
+        -- the polls that the main prosody closed, the update may also carry a new poll or a vote
+        local closed_any = false;
+        for _, v in pairs(polls_command.polls) do
+            local existing_poll = room.polls.by_id[v.pollId];
+
+            if existing_poll and v.closed and not existing_poll.closed then
+                closed_any = true;
+                existing_poll.closed = true;
+                -- the main prosody's answers, without a vote taken here that it refused as the poll was closed
+                existing_poll.answers = v.answers;
+
+                local json_msg_str, error = json.encode({
+                    answers = v.answers,
+                    command = 'close-poll',
+                    pollId = v.pollId,
+                    roomJid = internal_room_jid_match_rewrite(room.jid),
+                    type = 'polls'
+                });
+                if json_msg_str then
+                    send_polls_message_to_all(room, json_msg_str);
+                else
+                    module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                end
+            end
+        end
+
         -- at this point we need to find which is the new poll
         local new_poll;
         for _, v in pairs(polls_command.polls) do
@@ -467,7 +646,9 @@ local setup_muc_component = function(host_module, host)
             local updatedPoll, senderId, answers = find_updated_poll(room.polls.by_id, polls_command.polls);
 
             if not updatedPoll then
-                module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                if not closed_any then
+                    module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                end
                 return;
             end
 
@@ -501,6 +682,8 @@ local setup_muc_component = function(host_module, host)
             command = 'new-poll',
             pollId = new_poll.pollId,
             question = new_poll.question,
+            singleAnswer = new_poll.singleAnswer,
+            closed = new_poll.closed,
             senderId = new_poll.senderId,
             roomJid = internal_room_jid_match_rewrite(room.jid),
             type = 'polls'

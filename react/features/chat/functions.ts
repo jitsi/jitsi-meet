@@ -3,24 +3,37 @@ import aliases from 'react-emoji-render/data/aliases';
 // eslint-disable-next-line lines-around-comment
 // @ts-expect-error
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
+import { createSelector } from 'reselect';
 
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getParticipantById, isPrivateChatEnabled } from '../base/participants/functions';
+import {
+    getParticipantById,
+    isLocalParticipantModerator,
+    isPrivateChatEnabled
+} from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
+import { getCustomPanelWidth } from '../custom-panel/functions';
 import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { getParticipantsPaneWidth } from '../participants-pane/functions';
 import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
-import { IMessage } from './types';
+import {
+    ChatTabs,
+    MAX_PENDING_ENTRIES,
+    MESSAGE_TYPE_ERROR,
+    MESSAGE_TYPE_LOCAL,
+    MESSAGE_TYPE_REMOTE,
+    TIMESTAMP_FORMAT
+} from './constants';
+import { IMessage, IPendingMap } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -228,6 +241,41 @@ export function getMessageText(message: IMessage): string {
         : message.message;
 }
 
+/**
+ * Escapes regexp special characters in a string.
+ *
+ * @param {string} value - The string to escape.
+ * @returns {string}
+ */
+export function escapeSearchRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Splits message text into segments, flagging which ones match the search
+ * query (case-insensitive), so callers can render matches with a highlight
+ * style. Shared between web and native so both wrap matches identically.
+ *
+ * @param {string} text - The message text.
+ * @param {string} query - The search query.
+ * @returns {Array<Object>}
+ */
+export function getHighlightSegments(text: string, query: string): Array<{ match: boolean; text: string; }> {
+    if (!query) {
+        return [ { match: false,
+            text } ];
+    }
+
+    const regexp = new RegExp(`(${escapeSearchRegExp(query)})`, 'gi');
+
+    return text
+        .split(regexp)
+        .filter(part => part.length > 0)
+        .map(part => ({
+            match: part.toLowerCase() === query.toLowerCase(),
+            text: part
+        }));
+}
 
 /**
  * Returns whether a message can be replied to.
@@ -261,6 +309,97 @@ export function getCanReplyToMessage(state: IReduxState, message: IMessage): boo
 }
 
 /**
+ * Returns the current chat message with the given id, if it is still in state.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} messageId - The message id.
+ * @returns {IMessage | undefined}
+ */
+export function getChatMessageById(state: IReduxState, messageId: string): IMessage | undefined {
+    return state['features/chat'].messages.find(m => m.messageId === messageId);
+}
+
+/**
+ * Whether the local participant can retract (delete) their own message. The server applies it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canRetractMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.isDeleted
+        && !message.isModerated
+        && state['features/chat'].messageModerationSupported;
+}
+
+/**
+ * Whether the local participant can still send to the target of a message: its private recipient, or the group.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+function canSendToMessageTarget(state: IReduxState, message: IMessage): boolean {
+    return message.privateMessage ? !isSendPrivateChatDisabled(state) : !isSendGroupChatDisabled(state);
+}
+
+/**
+ * Whether the local participant can edit their own text message. The server applies the edit,
+ * and the participant must still be allowed to send to the message target.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canEditMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isFromVisitor
+        && !message.isDeleted
+        && !message.isModerated
+        && !isFileMessage(message)
+        && state['features/chat'].messageModerationSupported
+        && canSendToMessageTarget(state, message);
+}
+
+/**
+ * Whether the local participant can react to a message: a group message of another participant,
+ * not lobby, deleted or moderated, in a room where the participant can send to the group.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canReactToMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_REMOTE
+        && !message.privateMessage
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isDeleted
+        && !message.isModerated
+        && !isSendGroupChatDisabled(state);
+}
+
+/**
+ * Whether the local participant can moderate (remove) a message of another participant.
+ * Only remote messages with a server id: system, reaction and error bubbles have a local id.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message.
+ * @returns {boolean}
+ */
+export function canModerateMessage(state: IReduxState, message: IMessage): boolean {
+    return message.messageType === MESSAGE_TYPE_REMOTE
+        && !message.hasLocalId
+        && !message.isDeleted
+        && !message.isModerated
+        && state['features/chat'].messageModerationSupported
+        && isLocalParticipantModerator(state);
+}
+
+/**
  * Returns the message that is displayed as a notice for private messages.
  *
  * @param {IMessage} message - The message to be checked.
@@ -287,17 +426,52 @@ export function getPrivateNoticeMessage(message: IMessage): string {
 /**
  * Check if participant is not allowed to send group messages.
  *
+ * Group chat is restricted either by the dynamic branding or by the room metadata. The server sets
+ * the restriction in the metadata from the settings of the meeting, and a moderator can change it.
+ *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
  */
 export function isSendGroupChatDisabled(state: IReduxState): boolean {
     const { groupChatRequiresPermission } = state['features/dynamic-branding'];
 
-    if (!groupChatRequiresPermission) {
+    if (!groupChatRequiresPermission && !isGroupChatRestricted(state)) {
         return false;
     }
 
     return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_GROUPCHAT, false);
+}
+
+/**
+ * Returns whether the room restricts group chat to the participants that hold
+ * the permission for it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isGroupChatRestricted(state: IReduxState): boolean {
+    return Boolean(state['features/chat'].groupChatWithPermissions);
+}
+
+/**
+ * Check if participant is not allowed to send private messages.
+ *
+ * This reads the restriction from the room metadata, which the server sets from
+ * the settings of the meeting and a moderator toggles at runtime. The server applies the
+ * same check in mod_filter_messages, and pushes the permissions of a participant
+ * that it promotes to moderator, so this selector follows a promotion.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - Returns true if the participant is not allowed to send private messages.
+ */
+export function isSendPrivateChatDisabled(state: IReduxState): boolean {
+    const { privateChatWithPermissions } = state['features/chat'];
+
+    if (!privateChatWithPermissions) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_PRIVATE_MESSAGE, false);
 }
 
 /**
@@ -311,7 +485,10 @@ export function isSendGroupChatDisabled(state: IReduxState): boolean {
 export function getChatMaxSize(state: IReduxState): number {
     const { clientWidth } = state['features/base/responsive-ui'];
 
-    return Math.max(clientWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);
+    return Math.max(
+        clientWidth - getParticipantsPaneWidth(state) - getCustomPanelWidth(state) - VIDEO_SPACE_MIN_SIZE,
+        0
+    );
 }
 
 /**
@@ -353,3 +530,103 @@ export function getDisplayNameSuffix(message: IMessage): string {
 export function isFileMessage(message: IMessage): boolean {
     return Boolean(message?.fileMetadata);
 }
+
+/**
+ * Inserts a pending entry (an edit or a moderation for a message that has not arrived yet) into
+ * the map, evicting the oldest entry if the cap is exceeded.
+ *
+ * @param {Object} pendingEntries - The current pending entries map.
+ * @param {string} messageId - The id of the message the entry targets.
+ * @param {Object} entry - The pending entry to insert.
+ * @returns {Object} The updated pending entries map.
+ */
+export function addPendingEntry<T>(
+        pendingEntries: IPendingMap<T>,
+        messageId: string,
+        entry: T
+): IPendingMap<T> {
+    const next = { ...pendingEntries, [messageId]: entry };
+    const keys = Object.keys(next);
+
+    if (keys.length > MAX_PENDING_ENTRIES) {
+        // Object key order is insertion order for string keys in JS, so the first key is the oldest.
+        delete next[keys[0]];
+    }
+
+    return next;
+}
+
+/*
+ * Returns the current chat search query.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string}
+ */
+export function getChatSearchQuery(state: IReduxState): string {
+    return state['features/chat'].searchQuery || '';
+}
+
+/**
+ * Stable empty-array reference returned when there is no active search query, so repeated
+ * "no query" calls return the same reference instead of a new empty array each time.
+ */
+const NO_SEARCH_MATCHES: IMessage[] = [];
+
+const _getMessages = (state: IReduxState) => state['features/chat'].messages;
+
+/**
+ * Returns all messages matching the current search query, in display order.
+ * Reaction and file messages are excluded since they have no searchable text, and deleted or
+ * moderated messages are excluded since their original text is no longer shown.
+ * Memoized: only recomputes when messages or the search query change.
+ *
+ * @returns {IMessage[]}
+ */
+export const getChatSearchMatches = createSelector(
+    _getMessages,
+    getChatSearchQuery,
+    (messages, searchQuery): IMessage[] => {
+        const query = searchQuery?.trim().toLowerCase();
+
+        if (!query) {
+            return NO_SEARCH_MATCHES;
+        }
+
+        // The reducer already clears the text of deleted and moderated messages; skip them
+        // here as well as a safeguard, so a removed message never shows up in the results.
+        return messages.filter(message =>
+            !message.isReaction
+            && !message.isDeleted
+            && !message.isModerated
+            && !isFileMessage(message)
+            && getMessageText(message).toLowerCase().includes(query));
+    }
+);
+
+/**
+ * Returns the index of the currently focused search match. The stored index is kept within the
+ * current matches, as the matches can shrink while the search is open, e.g. when the focused
+ * match is deleted or moderated.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getChatSearchMatchIndex(state: IReduxState): number {
+    const index = state['features/chat'].searchMatchIndex || 0;
+    const { length } = getChatSearchMatches(state);
+
+    return length ? Math.min(index, length - 1) : 0;
+}
+
+/**
+ * Returns the message that is the currently focused search match, if any.
+ * Memoized via getChatSearchMatches — this is called from every ChatMessage's
+ * mapStateToProps, so keeping it cheap matters.
+ *
+ * @returns {IMessage | undefined}
+ */
+export const getActiveChatSearchMatch = createSelector(
+    getChatSearchMatches,
+    getChatSearchMatchIndex,
+    (matches, index): IMessage | undefined => matches[index]
+);

@@ -89,6 +89,12 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Removes AV1 from the codec list on Firefox so that it is not advertised and other endpoints do not send
+        // it. Firefox stalls on AV1 streams that carry spatial layers, see
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=2071030. Note: enableAV1ForFF only changes what Firefox
+        // encodes, this also stops it being sent to Firefox.
+        // disableAV1DecodeForFF: false,
+
         // Enables AV1 codec for FF. Note: By default it is disabled.
         // enableAV1ForFF: false,
 
@@ -139,6 +145,18 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Shows/hides the "Allow only one answer" option when creating a poll. The option is sent with
+    // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus enable this
+    // only when both support it. With visitors, enable it only once the main and all visitor prosodies run a
+    // mod_polls_component with single answer support: an old visitor node shows checkboxes and keeps multi-answer
+    // votes locally.
+    // showPollSingleAnswerSetting: false,
+
+    // Shows/hides the "End poll" button for the poll's creator and moderators. Closing a poll is enforced by
+    // the mod_polls_component prosody module, thus enable this only when the server runs a version of that
+    // module that supports it.
+    // showEndPollButton: false,
+
     // Disables chat feature entirely including notifications, sounds, and private messages.
     // disableChat: false,
 
@@ -151,8 +169,23 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
-    // Shows/hides the moderator setting for chat permissions.
+    // Shows/hides the moderator settings that restrict group chat and private chat to the participants with the
+    // `send-groupchat` and `send-private-message` permissions. The restrictions are enforced by the
+    // mod_filter_messages prosody module, thus enable this only when that module is loaded on the main MUC
+    // component and on the breakout rooms MUC component.
     // showChatPermissionsModeratorSetting: false,
+
+    // Shows/hides the moderator setting that restricts video sharing to the participants with the
+    // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
+    // thus enable this only when that module is loaded on the main MUC component and on the breakout rooms MUC
+    // component.
+    // showSharedVideoPermissionsModeratorSetting: false,
+
+    // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator
+    // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus enable this
+    // only when the server runs a version of that module that supports it. Older clients still show Join while
+    // the restriction is on: the server refuses that join and lib-jitsi-meet moves them back to the main room.
+    // showBreakoutRoomJoinPermissionsModeratorSetting: false,
 
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
@@ -184,6 +217,15 @@ var config = {
 
     // audioLevelsInterval: 200,
 
+    // Speaker (audio output device) switching.
+    // audioOutput: {
+    //     // Switches the speaker through lib-jitsi-meet's audio output manager, which waits for every audio element
+    //     // to switch, keeps the previous speaker when none could, and reports the participants that did not switch.
+    //     manager: false,
+    //     // With the manager, how long switching an audio element may take before it counts as failed, in ms.
+    //     switchTimeout: 5000,
+    // },
+
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
     // input and will suggest another valid device if one is present.
@@ -206,13 +248,16 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    // startLowBandwidthMode: false,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // This option is not read from config.js by the main app; the value comes
+    // from the URL hash (#config.startWithAudioMuted=true) or the user's saved
+    // settings.
     // startWithAudioMuted: false,
 
     // Enabling it (with #params) will disable local audio output of remote
@@ -226,10 +271,47 @@ var config = {
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
     // Specify enableOpusDtx to enable support for opus-dtx where
     // audio packets won’t be transmitted while participant is silent or muted.
+    // Specify enableAdvancedAudioSettings to show advanced audio settings (custom mic
+    // constraints) in the device selection dialog. Enabled by default; not available on
+    // WebKit-based browsers.
     // audioQuality: {
     //     stereo: false,
     //     opusMaxAverageBitrate: null, // Value to fit the 6000 to 510000 range.
     //     enableOpusDtx: false,
+    //     enableAdvancedAudioSettings: true,
+    // },
+
+    // Audio translation feature (requires bridge backend support).
+    // audioTranslation: {
+    //     enabled: false,
+    //
+    //     // Volume (0..1) a speaker's original audio is ducked to while its translation plays.
+    //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
+    //     // element volume cannot be lowered there.
+    //     duckedVolume: 0.15,
+    //
+    //     // Target languages offered in the audio-translation picker, as the codes the
+    //     // deployment's speech-to-speech translation provider accepts (they are sent to the
+    //     // bridge verbatim, and the translated track is named <source>.<code>). Defaults to the
+    //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
+    //     // vi. Extend this only if the translation service accepts more: a language the
+    //     // provider rejects is dropped server-side and the picker entry produces no audio.
+    //     // A code must be 1-20 ASCII letters: prosody's audio-translation component refuses any
+    //     // other language with bad-request, and one bad code in a meeting-wide request fails
+    //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
+    //     // 'pt_BR' are dropped from the list with a warning. A list that is
+    //     // set but leaves nothing usable offers no language at all, with a warning, rather
+    //     // than the defaults. Codes outside the default list are labelled with the language's
+    //     // own name where the platform has Intl.DisplayNames (browsers; the mobile apps do not),
+    //     // else with the English name from lang/translation-languages.json. Same keys as
+    //     // transcription.translationLanguages.
+    //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
+    //
+    //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike
+    //     // transcription.translationLanguagesHead this only reorders: a head entry that is not
+    //     // in the offered list is ignored, so it cannot add a language the provider may reject,
+    //     // and it takes the list's spelling.
+    //     translationLanguagesHead: [ 'en' ],
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -317,7 +399,7 @@ var config = {
     //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
     //     // 'role', <- Moderators on top.
     //     // 'name', <- Alphabetically by name.
-    //     // 'hasLeft', <- The ones that have left in the bottom.
+    //     // 'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position.
     //     order: [
     //         'role',
     //         'name',
@@ -334,7 +416,7 @@ var config = {
     // speakerStatsOrder: [
     //  'role', <- Moderators on top
     //  'name', <- Alphabetically by name
-    //  'hasLeft', <- The ones that have left in the bottom
+    //  'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position
     // ], <- the order of the array elements determines priority
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
@@ -364,6 +446,9 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // This option is not read from config.js by the main app; the value comes
+    // from the URL hash (#config.startWithVideoMuted=true) or the user's saved
+    // settings.
     // startWithVideoMuted: false,
 
     // Desktop sharing
@@ -422,6 +507,15 @@ var config = {
     //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
+    // Voice agents: server-side AI participants provisioned through the voice-agent API.
+    // voiceAgents: {
+    //     // Ask each participant before an agent may hear them (they are muted until they decide, and only
+    //     // participants who allow the agent hear it). By default agents are let in without asking.
+    //     // requireConsent: false,
+    //     // Link for the consent dialog's "Learn more" link.
+    //     // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
+    // },
+
     // recordingService: {
     //     // When integrations like dropbox are enabled only that will be shown,
     //     // by enabling fileRecordingsServiceEnabled, we show both the integrations
@@ -457,6 +551,10 @@ var config = {
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
+    // When googleApiApplicationClientID is set, termsLink and dataPrivacyLink default to YouTube/Google
+    // links, and validatorRegExpString defaults to the 4-group YouTube key format.
+    // When googleApiApplicationClientID is not set, termsLink and dataPrivacyLink are not shown by default
+    // unless configured here, and validatorRegExpString defaults to accepting RTMP/RTMPS URLs and stream keys.
     // liveStreaming: {
     //    // Whether to enable live streaming or not.
     //    enabled: false,
@@ -493,6 +591,9 @@ var config = {
     //     // Translation languages.
     //     // Available languages can be found in
     //     // ./lang/translation-languages.json.
+    //     // Whether to enable translation (language selection) UI. Defaults to true.
+    //     translationEnabled: true,
+
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
 
     //     // Important languages to show on the top of the language list.
@@ -531,6 +632,19 @@ var config = {
     //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
+    //
+    //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
+    //     // events from non-0 speakers.
+    //     renderTranscriptDetails: false,
+    //
+    //     // Requests that the transcriber diarize (split by speaker) this participant's own audio, i.e. label
+    //     // segments as coming from different speakers. Enable it only for endpoints that genuinely carry
+    //     // multiple speakers on a single audio stream (conference-room systems, dial-in/PSTN legs); on a
+    //     // normal single-person stream a diarizer can spuriously split one talker into several speakers.
+    //     // The flag is advertised to jicofo in MUC presence and takes effect only at join time (it must be
+    //     // set before joining, e.g. via this config or the #config.transcription.diarize=true URL override;
+    //     // toggling it mid-call has no effect). Defaults to false.
+    //     diarize: false
 
     // },
 
@@ -578,7 +692,6 @@ var config = {
     //          ultraHd: 4000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
@@ -590,8 +703,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true
+    //      }
     //    },
     //    vp8: {
     //      maxBitratesVideo: {
@@ -601,8 +713,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: false
+    //      }
     //    },
     //    vp9: {
     //      maxBitratesVideo: {
@@ -613,7 +724,6 @@ var config = {
     //          ultraHd: 5000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
@@ -649,7 +759,7 @@ var config = {
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
-    // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'unload' event.
+    // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'pagehide' event.
     // disableBeforeUnloadHandlers: true,
 
     // Disables or enables TCC support in this client (default: enabled).
@@ -662,10 +772,20 @@ var config = {
     // the bridge going down.
     // enableForcedReload: true,
 
+    // Enables in-place ICE restarts of the bridge connection (e.g. after a network change), instead of the
+    // legacy recovery flow which re-creates the whole media session. Requires support in jitsi-videobridge
+    // (default: disabled).
+    // enableIceRestart: false,
+
+    // Whether an in-place ICE restart is requested proactively when the device changes network (mobile only),
+    // instead of waiting for ICE to fail. Only has an effect when 'enableIceRestart' is enabled
+    // (default: enabled).
+    // enableIceRestartOnNetworkChange: true,
+
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
-    // useTurnUdp: false
+    // useTurnUdp: false,
 
     // Enable support for encoded transform in supported browsers. This allows
     // E2EE to work in Safari if the corresponding flag is enabled in the browser.
@@ -696,9 +816,6 @@ var config = {
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
-
-    // Enables webhid functionality for Audio.
-    // enableWebHIDFeature: false,
 
     // DEPRECATED! Use 'welcomePage.disabled' instead.
     // Whether to use a welcome page or not. In case it's false a random room
@@ -738,6 +855,14 @@ var config = {
     // Disable initial browser getUserMedia requests.
     // This is useful for scenarios where users might want to start a conference for screensharing only
     // disableInitialGUM: false,
+
+    // Disables the dialog that guides the user through unblocking the microphone or camera, in the browser or in the
+    // OS settings, after access was denied.
+    // disablePermissionGuidanceDialog: false,
+
+    // Disables the dialog that explains why the microphone and camera are needed before the browser asks for
+    // access, on the pre-join screen and when unmuting.
+    // disablePermissionPromptDialog: false,
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
@@ -787,6 +912,34 @@ var config = {
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
+
+    // Picture-in-Picture configuration.
+    // pip: {
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false. Leave it unset to let
+    //     // users turn browser PiP on or off for themselves from the Experimental tab of the settings dialog;
+    //     // their browser remembers the choice. A value set here, through URL parameters or the iframe API is
+    //     // final and hides that setting.
+    //     enableBrowserPiP: false,
+    //     // Disable Picture-in-Picture entirely. Defaults to false.
+    //     disabled: false,
+    //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
+    //     showOnPrejoin: false,
+    //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
+    //     showToolbarButton: true,
+    //     documentPiP: {
+    //         windowOptions: {
+    //             // Hide the browser control that returns to the opener. Defaults to false.
+    //             disallowReturnToOpener: false,
+    //             // Initial window height in pixels. Defaults to 160.
+    //             height: 160,
+    //             // Prefer the default initial placement instead of reusing the previous position and size.
+    //             // Defaults to false.
+    //             preferInitialWindowPlacement: false,
+    //             // Initial window width in pixels. Defaults to 284.
+    //             width: 284
+    //         }
+    //     }
+    // },
 
     // Configs for prejoin page.
     // prejoinConfig: {
@@ -861,7 +1014,6 @@ var config = {
     //    'embedmeeting',
     //    'etherpad',
     //    'feedback',
-    //    'filmstrip',
     //    'fullscreen',
     //    'hangup',
     //    'help',
@@ -1036,6 +1188,21 @@ var config = {
     // An array with custom option buttons for the toolbar
     // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
+
+    // The custom panel (AI Assist), rendered in a side panel on web and on its own screen
+    // on mobile. It needs `enabled`, `url`, `advisorAvailabilityUrl` and a JWT.
+    // `url` has no default: without one the panel stays hidden on both platforms.
+    // `advisorAvailabilityUrl` is called after joining with the JWT and the meeting id; the
+    // button shows only if it confirms an advisor is deployed for the meeting.
+    // Both can also come from `customPanelUrl: { url, advisorAvailabilityUrl }` in the
+    // dynamic branding data, which takes precedence over the values set here.
+    // NOTE: `url` and `advisorAvailabilityUrl` cannot be overwritten through
+    // `configOverwrite`, because both receive the meeting JWT. Only `enabled` is whitelisted.
+    // customPanel: {
+    //     enabled: false,
+    //     url: 'https://example.com/ai-assist',
+    //     advisorAvailabilityUrl: 'https://example.com/advisor-resolve',
+    // },
 
     // Stats
     //
@@ -1403,6 +1570,9 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // The url loaded in the custom panel (AI Assist). It overwrites `customPanel.url`
+        // from this file. The panel also needs `customPanel.enabled` set to true.
+        customPanelUrl: 'https://example.com/ai-assist',
         // Endpoint that enables support for salesforce integration with in-meeting resource linking
         // This is required for:
         // listing the most recent records - salesforceUrl/records/recents
@@ -1420,11 +1590,13 @@ var config = {
         // Object containing customized icons that should replace the default ones.
         // The keys need to be the exact same icon names used in here:
         // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
+        // The values are either URLs of svg files or the svg xml markup itself. Inline markup is
+        // applied without any extra request, so the icons show up faster.
         // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
-        // files containing svg xml icons in the size that the default icons come in.
+        // xml icons in the size that the default icons come in.
         customIcons: {
             IconArrowUp: 'https://example.com/arrow-up.svg',
-            IconDownload: 'https://example.com/download.svg',
+            IconDownload: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">...</svg>',
             IconRemoteControlStart: 'https://example.com/remote-start.svg',
         },
         // Object containing a theme's properties. It also supports partial overwrites of the main theme.
@@ -1489,15 +1661,80 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When true, virtual background feature will be disabled.
-    // disableVirtualBackground: false,
-
-    // When true the user cannot add more images to be used as virtual background.
-    // Only the default ones from will be available.
-    // disableAddingBackgroundImages: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
+
+    // @deprecated Use `virtualBackground.disabled` instead. When true, the virtual background
+    // feature is disabled. Kept here for backwards compatibility; will be removed in a future release.
+    // disableVirtualBackground: false,
+
+    // @deprecated Use `virtualBackground.disableAddingImages` instead. When true the user cannot
+    // add more images to be used as virtual background; only the default ones will be available.
+    // Kept here for backwards compatibility; will be removed in a future release.
+    // disableAddingBackgroundImages: false,
+
+    // Virtual background options.
+    // All fields are optional; omitting a field uses the default/auto-detected value.
+    virtualBackground: {
+
+        // When true, virtual background feature will be disabled.
+        // disabled: false,
+
+        // When true the user cannot add more images to be used as virtual background.
+        // Only the default ones will be available.
+        // disableAddingImages: false,
+
+        // Enable the V2 processing engine. When false (default), the legacy
+        // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
+        // enableV2: false,
+
+        // V2-only tuning knobs. These have no effect when enableV2 is false. Defaults are
+        // tuned for typical hardware; most deployments should not need to override them.
+        // advanced: {
+
+        //     // Force a specific device tier regardless of what the browser supports.
+        //     // Useful for testing lower-tier behaviour on high-end hardware.
+        //     // Values: 'high' | 'medium' | 'low' — null means auto-detect (default).
+        //     // tierOverride: null,
+
+        //     // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM
+        //     // and HIGH tiers only (TF.js input canvas). LOW tier (TFLite) always runs
+        //     // at 256x144, fixed by the selfie_segmentation_landscape model and not
+        //     // affected by this setting.
+        //     // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
+        //     // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
+
+        //     // Override the target frame rate for the effect.
+        //     // targetFps: null,           // auto: 30 (all tiers)
+
+        //     // Temporal mask blend ratio (0-1). Higher = smoother motion, slower to respond
+        //     // to fast movement. 0 = raw mask each frame (no temporal smoothing).
+        //     // temporalBlendRatio: 0.75,
+
+        //     // Smoothstep edge thresholds for the WebGL compositor (0-1).
+        //     // Pixels with segmentation confidence below edgeLow are fully transparent;
+        //     // above edgeHigh they are fully opaque; between the two they feather.
+        //     // Defaults are tier-specific (tuned per model's confidence distribution):
+        //     //   LOW tier    (TFLite selfie_segmentation_landscape): edgeLow = 0.10, edgeHigh = 0.50
+        //     //   MEDIUM/HIGH (TF.js MediaPipe body-segmentation):    edgeLow = 0.28, edgeHigh = 0.65
+        //     // Lower edgeLow = more hair retained at the cost of slight background bleed.
+        //     // Higher edgeHigh = harder edge transition.
+        //     // edgeLow: 0.28,
+        //     // edgeHigh: 0.65,
+
+        //     // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
+        //     // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
+        //     // Web Worker. Set to false to force the legacy captureStream path instead.
+        //     // useInsertableStreams: false,
+
+        //     // LOW tier (TFLite) inference stride. Inference is skipped on alternate frames;
+        //     // skipped frames reuse the previous mask. Higher values = lower CPU usage at the
+        //     // cost of reduced mask update frequency. Set to 1 to run inference every frame.
+        //     //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
+        //     //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
+        //     // inferenceStride: 1,
+        // },
+    },
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
@@ -1507,6 +1744,15 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // Multi-screen support: lets an embedder (via the iframe External API `setSecondScreen` command)
+    // render a meeting surface (the active-speaker stage, the screenshare, or a pinned participant) on
+    // a second display, in its own fullscreen window. Disabled by default; it is Chromium-only and
+    // intended for managed/kiosk room appliances, which must also delegate `allow="window-management;
+    // fullscreen"` to the iframe and grant the window-management + automatic-fullscreen permissions.
+    // secondScreen: {
+    //     enabled: false
+    // },
+
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
     // disableTileEnlargement: true,
@@ -1515,7 +1761,7 @@ var config = {
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
     // conferenceInfo: {
     //     // those labels will not be hidden in tandem with the toolbox.
-    //     alwaysVisible: ['recording', 'raised-hands-count'],
+    //     alwaysVisible: ['recording', 'raised-hands-count', 'time-timer'],
     //     // those labels will be auto-hidden in tandem with the toolbox buttons.
     //     autoHide: [
     //         'subject',
@@ -1540,6 +1786,11 @@ var config = {
 
     // Hides the participants stats
     // hideParticipantsStats: true,
+
+    // Hides the warning which is shown when the server signals that this client does not advertise a capability that
+    // the deployment expects (i.e. that the client needs an update). The error which is shown when the client is not
+    // allowed in the conference at all is always shown.
+    // hideMissingCapabilityWarnings: false,
 
     // Sets the conference subject
     // subject: 'Conference Subject',
@@ -1620,6 +1871,10 @@ var config = {
     // },
     // The default type of desktop sharing sources that will be used in the electron app.
     // desktopSharingSources: ['screen', 'window'],
+
+    // Set by Electron apps that have NSAudioCaptureUsageDescription in their macOS Info.plist. The desktop picker
+    // then offers system audio on macOS 14.2 or later with Electron 43.4 or later.
+    // desktopSharingMacOSSystemAudio: false,
 
     // Disables the echo cancelation for local audio tracks.
     // disableAEC: true,
@@ -1715,6 +1970,10 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.audioOutputAttachFailedTitle', // shown when a participant could not be switched to the speaker
+    //     'notify.audioOutputChangeFailedTitle', // shown when the speaker could not be switched
+    //     'notify.audioOutputPartlyChangedTitle', // shown when the speaker was switched for some participants only
+    //     'notify.audioPlaybackBlockedTitle', // shown when the browser blocks remote audio until the user interacts
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.connectedOneMember', // show when a participant joined
@@ -1732,6 +1991,11 @@ var config = {
     //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.localRecordingStarted', // shown when the local recording has been started
     //     'notify.localRecordingStopped', // shown when the local recording has been stopped
+    //     'notify.mediaConnectivityAtRisk', // shown when connecting takes long or the network may be blocking the call
+    //     'notify.mediaConnectivityDegraded', // shown when the call is carried over TCP, so media may lag
+    //     'notify.mediaConnectivityFailed', // shown when audio and video could not be connected
+    //     'notify.mediaConnectivityInterrupted', // shown when audio and video dropped during the call
+    //     'notify.mediaConnectivityRestored', // shown when audio and video are back after dropping or failing
     //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
@@ -1772,8 +2036,25 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
-    // Prevent the filmstrip from autohiding when screen width is under a certain threshold
-    // disableFilmstripAutohiding: false,
+    // A notification shown to every user, with a button which opens a link. It is shown when the user joins a
+    // meeting, until the user clicks "Don't show again", and on the welcome page.
+    // systemWideUserNotification: {
+    //     // Identifies the notification. The users who chose not to see it again see it again when the id changes.
+    //     // Defaults to the url.
+    //     id: 'announcement-1',
+    //     // The link opened by the button.
+    //     url: 'https://example.com/announcement',
+    //     // The texts, by language code. A missing language or text falls back to English. The button and
+    //     // dontShowAgain texts have defaults.
+    //     labels: {
+    //         en: {
+    //             title: 'Things are changing',
+    //             description: 'Read about what is new.',
+    //             button: 'Learn more',
+    //             dontShowAgain: 'Don\'t show again',
+    //         },
+    //     },
+    // },
 
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
@@ -1851,6 +2132,25 @@ var config = {
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
 
+    // Meeting-pace timer shown in the conference info bar. It only appears
+    // once a meeting duration is known — from a calendar event (calendar
+    // sync), the `mod_time_restricted` Prosody plugin, or pushed at runtime
+    // via the `setMeetingTimer` iframe API command. With no such info nothing
+    // is shown, so it is enabled by default; set `enabled: false` to hide it
+    // even when that info exists.
+    // `suppressForSeconds` keeps the countdown off screen for the first N
+    // seconds of the meeting even though the duration is already known, so it
+    // only appears once the meeting is far enough along to be worth pacing.
+    // It is measured from the meeting's scheduled start, not from when this
+    // participant joined, so everyone sees it appear at the same moment and a
+    // late joiner past the threshold sees it right away. 0 (the default)
+    // shows it as soon as the duration is known. It delays the countdown
+    // display only — the end-of-meeting notification is unaffected.
+    // timeTimer: {
+    //     enabled: true,
+    //     suppressForSeconds: 0,
+    // },
+
     // Settings for the Excalidraw whiteboard integration.
     // whiteboard: {
     //     // Whether the feature is enabled or not.
@@ -1863,6 +2163,10 @@ var config = {
     //     userLimit: 25,
     //     // The url for more info about the whiteboard and its usage limitations.
     //     limitUrl: 'https://example.com/blog/whiteboard-limits',
+
+    //     //Backend URL for storing whiteboard scenes and images
+    //     //This backend service handles scene persistence and file uploads
+    //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
     // The watchRTC initialize config params as described :

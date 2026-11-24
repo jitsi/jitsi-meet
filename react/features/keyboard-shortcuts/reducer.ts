@@ -5,9 +5,11 @@ import {
     DISABLE_KEYBOARD_SHORTCUTS,
     ENABLE_KEYBOARD_SHORTCUTS,
     REGISTER_KEYBOARD_SHORTCUT,
+    SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED,
     UNREGISTER_KEYBOARD_SHORTCUT
 } from './actionTypes';
 import { IKeyboardShortcutsState } from './types';
+import { getShortcutKey } from './utils';
 
 /**
  * The redux subtree of this feature.
@@ -15,14 +17,15 @@ import { IKeyboardShortcutsState } from './types';
 const STORE_NAME = 'features/keyboard-shortcuts';
 
 const defaultState = {
+    ctrlAltReactionShortcutsEnabled: true,
     enabled: true,
-    shortcuts: new Map(),
-    shortcutsHelp: new Map()
+    shortcuts: new Map()
 };
 
 PersistenceRegistry.register(STORE_NAME, {
+    ctrlAltReactionShortcutsEnabled: true,
     enabled: true
-});
+}, defaultState);
 
 ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
 (state = defaultState, action): IKeyboardShortcutsState => {
@@ -37,33 +40,30 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
             ...state,
             enabled: false
         };
+    case SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED:
+        return {
+            ...state,
+            ctrlAltReactionShortcutsEnabled: action.enabled
+        };
     case REGISTER_KEYBOARD_SHORTCUT: {
-        const shortcutKey = action.shortcut.alt ? `:${action.shortcut.character}` : action.shortcut.character;
+        const { alt, character, ctrl } = action.shortcut;
+        const shortcutKey = getShortcutKey(character, alt, ctrl);
 
         return {
             ...state,
             shortcuts: new Map(state.shortcuts)
-                .set(shortcutKey, action.shortcut),
-            shortcutsHelp: action.shortcut.helpDescription
-                ? new Map(state.shortcutsHelp)
-                .set(action.shortcut.helpCharacter ?? shortcutKey, action.shortcut.helpDescription)
-                : state.shortcutsHelp
+                .set(shortcutKey, action.shortcut)
         };
     }
     case UNREGISTER_KEYBOARD_SHORTCUT: {
-        const shortcutKey = action.alt ? `:${action.character}` : action.character;
+        const shortcutKey = getShortcutKey(action.character, action.alt, action.ctrl);
         const shortcuts = new Map(state.shortcuts);
 
         shortcuts.delete(shortcutKey);
 
-        const shortcutsHelp = new Map(state.shortcutsHelp);
-
-        shortcutsHelp.delete(shortcutKey);
-
         return {
             ...state,
-            shortcuts,
-            shortcutsHelp
+            shortcuts
         };
     }
     }

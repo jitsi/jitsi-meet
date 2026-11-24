@@ -1,13 +1,13 @@
-import { NavigationContainer, Theme } from '@react-navigation/native';
+import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { getConferenceState } from '../../../base/conference/functions';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
-import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions.native';
 import VisitorsQueue from '../../../visitors/components/native/VisitorsQueue';
 // eslint-disable-next-line
 // @ts-ignore
@@ -42,9 +42,9 @@ interface IProps {
     dispatch: IStore['dispatch'];
 
     /**
-    * Is unsafe room warning available?
-    */
-    isUnsafeRoomWarningAvailable: boolean;
+     * True if a room is already set at launch time (background SDK launch).
+     */
+    hasRoomOnLaunch: boolean;
 
     /**
     * Is welcome page available?
@@ -53,9 +53,13 @@ interface IProps {
 }
 
 
-const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWelcomePageAvailable }: IProps) => {
+const RootNavigationContainer = ({ dispatch, hasRoomOnLaunch, isWelcomePageAvailable }: IProps) => {
+    // Background SDK launch goes straight to conference; normal launch shows the connecting spinner.
     const initialRouteName = isWelcomePageAvailable
-        ? screen.welcome.main : screen.connecting;
+        ? screen.welcome.main
+        : hasRoomOnLaunch
+            ? screen.conference.root
+            : screen.connecting;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
@@ -64,53 +68,44 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
     }, [ dispatch ]);
 
     return (
-        <NavigationContainer
-            independent = { true }
-            onReady = { onReady }
-            ref = { rootNavigationRef }
-            theme = { navigationContainerTheme as Theme }>
-            <RootStack.Navigator
-                initialRouteName = { initialRouteName }>
-                {
-                    isWelcomePageAvailable
-                        && <>
-                            <RootStack.Screen // @ts-ignore
-                                component = { WelcomePage }
-                                name = { screen.welcome.main }
-                                options = { welcomeScreenOptions } />
-                            <RootStack.Screen
-
-                                // @ts-ignore
-                                component = { DialInSummary }
-                                name = { screen.dialInSummary }
-                                options = { dialInSummaryScreenOptions } />
-                        </>
-                }
-                <RootStack.Screen
-                    component = { ConnectingPage }
-                    name = { screen.connecting }
-                    options = { connectingScreenOptions } />
-                <RootStack.Screen
-                    component = { Prejoin }
-                    name = { screen.preJoin }
-                    options = { preJoinScreenOptions } />
-                {
-                    isUnsafeRoomWarningAvailable
-                    && <RootStack.Screen
+        <NavigationIndependentTree>
+            <NavigationContainer
+                onReady = { onReady }
+                ref = { rootNavigationRef }
+                theme = { navigationContainerTheme }>
+                <RootStack.Navigator
+                    initialRouteName = { initialRouteName }>
+                    <RootStack.Screen // @ts-ignore
+                        component = { WelcomePage }
+                        name = { screen.welcome.main }
+                        options = { welcomeScreenOptions } />
+                    <RootStack.Screen // @ts-ignore
+                        component = { DialInSummary }
+                        name = { screen.dialInSummary }
+                        options = { dialInSummaryScreenOptions } />
+                    <RootStack.Screen
+                        component = { ConnectingPage }
+                        name = { screen.connecting }
+                        options = { connectingScreenOptions } />
+                    <RootStack.Screen
+                        component = { Prejoin }
+                        name = { screen.preJoin }
+                        options = { preJoinScreenOptions } />
+                    <RootStack.Screen
                         component = { UnsafeRoomWarning }
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
-                }
-                <RootStack.Screen
-                    component = { VisitorsQueue }
-                    name = { screen.visitorsQueue }
-                    options = { visitorsScreenOptions } />
-                <RootStack.Screen
-                    component = { ConferenceNavigationContainer }
-                    name = { screen.conference.root }
-                    options = { conferenceNavigationContainerScreenOptions } />
-            </RootStack.Navigator>
-        </NavigationContainer>
+                    <RootStack.Screen
+                        component = { VisitorsQueue }
+                        name = { screen.visitorsQueue }
+                        options = { visitorsScreenOptions } />
+                    <RootStack.Screen
+                        component = { ConferenceNavigationContainer }
+                        name = { screen.conference.root }
+                        options = { conferenceNavigationContainerScreenOptions } />
+                </RootStack.Navigator>
+            </NavigationContainer>
+        </NavigationIndependentTree>
     );
 };
 
@@ -121,8 +116,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
+    const { room } = getConferenceState(state);
+
     return {
-        isUnsafeRoomWarningAvailable: isUnsafeRoomWarningEnabled(state),
+        hasRoomOnLaunch: Boolean(room),
         isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
 }

@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { NativeModules, Platform, StyleSheet, View } from 'react-native';
+import { AppState, NativeModules, Platform, StyleSheet, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 // @ts-ignore
@@ -153,7 +153,17 @@ export class App extends AbstractApp<IProps> {
             }, 50);
         });
 
-        await rootNavigationReady;
+        // SDK launched in background (device locked, no screen unlock):
+        // - AppState !== 'active' means UI is not on screen
+        // - url is already set meaning host app started SDK with a specific room
+        // In this case NavigationContainer.onReady will never fire until the screen
+        // is unlocked, causing the polling loop to hang indefinitely.
+        const isBackgroundSDKLaunch = AppState.currentState !== 'active'
+            && typeof url !== 'undefined';
+
+        if (!isBackgroundSDKLaunch) {
+            await rootNavigationReady;
+        }
 
         // Update specified server URL.
         if (typeof url !== 'undefined') {

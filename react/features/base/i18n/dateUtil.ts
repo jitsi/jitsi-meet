@@ -14,6 +14,7 @@ dayjs.extend(localizedFormatPlugin);
 // the app.
 import 'dayjs/locale/af';
 import 'dayjs/locale/ar';
+import 'dayjs/locale/az';
 import 'dayjs/locale/be';
 import 'dayjs/locale/bg';
 import 'dayjs/locale/ca';
@@ -40,6 +41,7 @@ import 'dayjs/locale/id';
 import 'dayjs/locale/is';
 import 'dayjs/locale/it';
 import 'dayjs/locale/ja';
+import 'dayjs/locale/kk';
 import 'dayjs/locale/ko';
 import 'dayjs/locale/lt';
 import 'dayjs/locale/lv';
@@ -69,12 +71,8 @@ import 'dayjs/locale/zh-tw';
 const LOCALE_MAPPING: Record<string, string> = {
     // i18next -> dayjs
     'hy': 'hy-am',
-    'oc': 'oc-lnc',
-    'zhCN': 'zh-cn',
-    'zhTW': 'zh-tw',
-    'ptBR': 'pt-br',
-    'esUS': 'es-us',
-    'frCA': 'fr-ca'
+    'no': 'nb',
+    'oc': 'oc-lnc'
 };
 
 /**
@@ -91,26 +89,37 @@ export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
 }
 
 /**
- * Returns a localized duration formatter initialized with a
- * specific duration ({@code number}).
+ * Formats a duration in milliseconds as a human-readable timer string.
+ *
+ * Output depends on length.
+ * - Under 1 hour: {@code MM:SS}
+ * - 1 hour or more (under 1 day): {@code H:MM:SS}
+ * - 1 day or more: {@code Dd HH:MM:SS}.
  *
  * @private
- * @param {number} duration - The duration (ms)
- * to format.
- * @returns {Object}
+ * @param {number} duration - The duration in milliseconds to format.
+ * @returns {string} The formatted duration string.
  */
 export function getLocalizedDurationFormatter(duration: number) {
-    // If the conference is under an hour long we want to display it without
-    // showing the hour and we want to include the hour if the conference is
-    // more than an hour long
+    // Format duration with increasing precision by length: MM:SS under an hour,
+    // H:MM:SS from one hour up, and Dd HH:MM:SS once the duration reaches a day.
 
     const d = dayjs.duration(duration);
+    const totalDays = Math.floor(d.asDays());
+    const hours = d.hours();
+    const minutes = d.minutes();
+    const seconds = d.seconds();
 
-    if (d.hours() !== 0) {
-        return d.format('H:mm:ss');
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    if (totalDays > 0) {
+        return `${totalDays}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+    if (hours > 0) {
+        return `${hours}:${pad(minutes)}:${pad(seconds)}`;
     }
 
-    return d.format('mm:ss');
+    return `${pad(minutes)}:${pad(seconds)}`;
 }
 
 /**
@@ -121,8 +130,13 @@ export function getLocalizedDurationFormatter(duration: number) {
  */
 function _getSupportedLocale() {
     const availableLocales = Object.keys(dayjs.Ls);
-    const i18nLocale = i18next.language;
-    let supportedLocale;
+
+    // Day.js locale names are lowercase, for example 'zh-tw' for 'zh-TW'.
+    const i18nLocale = i18next.language?.toLowerCase();
+
+    if (!i18nLocale) {
+        return 'en';
+    }
 
     if (LOCALE_MAPPING[i18nLocale]) {
         return LOCALE_MAPPING[i18nLocale];
@@ -132,19 +146,8 @@ function _getSupportedLocale() {
         return i18nLocale;
     }
 
-    if (i18nLocale) {
-        const localeRegexp = new RegExp('^([a-z]{2,2})(-)*([a-z]{2,2})*$');
-        const localeResult = localeRegexp.exec(i18nLocale.toLowerCase());
+    // Fall back to the language without the region instead of another dialect.
+    const [ language ] = i18nLocale.split('-');
 
-        if (localeResult) {
-            const currentLocaleRegexp
-                = new RegExp(
-                    `^${localeResult[1]}(-)*${`(${localeResult[3]})*` || ''}`);
-
-            supportedLocale
-                = availableLocales.find(lang => currentLocaleRegexp.exec(lang));
-        }
-    }
-
-    return supportedLocale || 'en';
+    return availableLocales.includes(language) ? language : 'en';
 }

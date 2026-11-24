@@ -31,7 +31,9 @@ interface IProps extends WithTranslation {
 function FormSection({ children, label, t }: IProps) {
     return (
         <View>
-            {label && <Text style = { styles.formSectionTitleText }>
+            {label && <Text
+                accessibilityRole = 'header'
+                style = { styles.formSectionTitleText }>
                 { t(label) }
             </Text>}
             { children }

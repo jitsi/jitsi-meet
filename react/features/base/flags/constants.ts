@@ -27,7 +27,13 @@ export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
  * Flag indicating that the Audio only button in the overflow menu is enabled.
  * Default: enabled (true).
  */
-export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+export const LOW_BANDWIDTH_MODE_BUTTON_ENABLED = 'low-bandwidth-mode.enabled';
+
+/**
+ * Flag indicating if the audio-translation feature should be enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_TRANSLATION_ENABLED = 'audio-translation.enabled';
 
 /**
  * Flag indicating that the Breakout Rooms button in the overflow menu is enabled.
@@ -59,12 +65,6 @@ export const CAR_MODE_ENABLED = 'car-mode.enabled';
  * Default: enabled (true).
  */
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
-
-/**
- * Flag indicating if conference timer should be enabled.
- * Default: enabled (true).
- */
-export const CONFERENCE_TIMER_ENABLED = 'conference-timer.enabled';
 
 /**
  * Flag indicating if chat should be enabled.

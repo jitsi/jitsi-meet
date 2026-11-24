@@ -89,6 +89,7 @@ class RecentListItemMenu extends PureComponent<IProps> {
                     styles.entryNameContainer as ViewStyle
                 ] }>
                 <Text
+                    accessibilityRole = 'header'
                     ellipsizeMode = { 'middle' }
                     numberOfLines = { 1 }
                     style = { styles.entryNameLabel as TextStyle }>

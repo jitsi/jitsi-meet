@@ -1,7 +1,6 @@
 -- Token authentication
 -- Copyright (C) 2021-present 8x8, Inc.
 
-local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = module:require "luajwtjitsi";
@@ -20,7 +19,7 @@ local get_room_from_jid = main_util.get_room_from_jid;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 local nr_retries = 3;
 local ssl = require "ssl";
@@ -45,6 +44,25 @@ if f then
     ASAPKey = f:read('*all');
     f:close();
 end
+
+-- counts the tokens with a verified signature that flag their room claim as a
+-- Lua pattern
+local measure_regex_room_claim = module:measure('regex_room_claim', 'counter');
+
+--- Tells whether a token asks for its room claim to be used as a Lua pattern,
+-- which the context.room.regex field marks.
+-- @param room_context the context.room value from the token
+-- @return true when the room claim is a pattern
+local function is_regex_room_claim(room_context)
+    if type(room_context) ~= 'table' then
+        return false;
+    end
+
+    return room_context['regex'] == true or room_context['regex'] == 'true';
+end
+
+-- matches a room name against a room claim that is flagged as a pattern
+local match_room_pattern = module:require "token/room_pattern".match;
 
 local Util = {}
 Util.__index = Util
@@ -103,6 +121,18 @@ function Util.new(module)
     -- when disabled checking domain name and tenant if available will be skipped, we will check only room name.
     self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
+    --[[
+        A room claim that is flagged with context.room.regex is a pattern with
+        at most one '.*' (see token/room_pattern.lib.lua). It is not a Lua
+        pattern, so a match does not backtrack and its cost is linear. The
+        length limit is not needed for the match time. It stays as a bound on
+        the work per join and on the size of the claim in the log: a room name
+        longer than the limit is not matched, and a pattern longer than the
+        limit plus the two characters of '.*' cannot match and is refused.
+     --]]
+    self.regexEnabled = module:get_option_boolean('token_regex_enabled', true);
+    self.regexRoomMaxLength = module:get_option_number('token_regex_room_max_length', 128);
+
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
     end
@@ -143,12 +173,20 @@ function Util.new(module)
         self.cachedKeys = {};
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            -- stop refreshing once set_asap_key_server() has replaced the key sources
+            if not self.cacheKeysUrl then
+                return;
+            end
             local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
+            if not self.cacheKeysUrl then
+                -- the key sources were replaced while fetching
+                return;
+            end
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
-                for k, v in pairs(cjson_safe.decode(content)) do
+                for k, v in pairs(cjson_safe.decode(content) or {}) do
                     -- JWKS format
                     if k == "keys" and type(v) == "table" then
                         for _, key in ipairs(v) do
@@ -168,6 +206,9 @@ function Util.new(module)
                 end
                 -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
                 timer.add_task(90*60, function ()
+                    if not self.cachedKeys then
+                        return;
+                    end
                     for k, _ in pairs(keys_to_delete) do
                         self.cachedKeys[k] = nil;
                     end
@@ -202,8 +243,23 @@ function Util.new(module)
     return self
 end
 
+--- Makes the given key server the only source of public keys: the JWKS
+-- (cache_keys_url) and the app_secret read from the host config are dropped.
+-- Used by the HTTP API modules that accept only tokens signed with the keys
+-- from prosody_password_public_key_repo_url.
+-- The cached public keys are kept: a caller can set the key server before each
+-- token it verifies, and get_public_key caches a key per key server, so a key
+-- from another server is never returned.
+-- @param asapKeyServer the key server URL
 function Util:set_asap_key_server(asapKeyServer)
     self.asapKeyServer = asapKeyServer;
+    self.cacheKeysUrl = nil;
+    self.cachedKeys = nil;
+    self.appSecret = nil;
+    -- the key server serves RSA keys, an algorithm derived from app_secret does not apply
+    if not starts_with(self.signatureAlgorithm, "RS") then
+        self.signatureAlgorithm = "RS256";
+    end
 end
 
 function Util:set_asap_accepted_issuers(acceptedIssuers)
@@ -226,7 +282,11 @@ end
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
-    local content = self.cache:get(keyId);
+    -- The key server is part of the cache key, as set_asap_key_server can change it between two calls.
+    -- Its length comes first, so the cache key is the same only for the same key server and kid.
+    local keyServer = tostring(self.asapKeyServer);
+    local cacheKey = #keyServer..'|'..keyServer..keyId;
+    local content = self.cache:get(cacheKey);
     local code;
     if content == nil then
         -- If the key is not found in the cache.
@@ -235,7 +295,7 @@ function Util:get_public_key(keyId)
         -- module:log("debug", "Fetching public key from: %s", keyurl);
         content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
-            self.cache:set(keyId, content);
+            self.cache:set(cacheKey, content);
         else
             if code == nil then
                 -- this is timeout after nr_retries retries
@@ -279,7 +339,9 @@ function Util:process_and_verify_token(session)
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
-        local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        local headerPartEncoded = jwt.from_url64(session.auth_token:sub(1,dotFirst-1));
+        if not headerPartEncoded then return false, "not-allowed", "Invalid token" end
+        local header, err = json_safe.decode(headerPartEncoded);
         if err then
             return false, "not-allowed", "bad token format";
         end
@@ -325,13 +387,16 @@ function Util:process_and_verify_token(session)
         if self.requireRoomClaim then
             local roomClaim = claims["room"];
             if roomClaim == nil then
-                return false, "'room' claim is missing";
+                return false, "not-authorized", "room claim is missing";
             end
         end
 
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
+        if claims["sub"] == nil then
+            return false, "not-authorized", "sub claim is missing";
+        end
         session.jitsi_meet_domain = claims["sub"];
         session.jitsi_meet_auth_issuer = claims["iss"];
 
@@ -354,6 +419,14 @@ function Util:process_and_verify_token(session)
           end
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
+
+            -- the signature is verified at this point, so report the tokens
+            -- that ask for their room claim to be used as a pattern
+            if is_regex_room_claim(claims["context"]["room"]) then
+                measure_regex_room_claim(1);
+                module:log('info', 'Room claim is a pattern. tenant:%s iss:%s room:%s',
+                    claims["context"]["tenant"], claims["iss"], claims["room"]);
+            end
           end
         elseif claims["user_id"] then
           session.jitsi_meet_context_user = {};
@@ -406,12 +479,16 @@ function Util:verify_room(session, room_address)
         return true;
     end
 
+    local auth_room_is_pattern = is_regex_room_claim(session.jitsi_meet_context_room);
+
     local auth_room = session.jitsi_meet_room;
     if auth_room then
         if type(auth_room) == 'string' then
+            -- Room names are lowercase. Lowercase the room claim so that a
+            -- token with uppercase letters still matches.
             auth_room = string.lower(auth_room);
         else
-            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+            module:log('warn', 'session.jitsi_meet_room not string: %s', serialize(auth_room));
         end
     end
 
@@ -447,13 +524,39 @@ function Util:verify_room(session, room_address)
         end
     else
         -- no wildcard, so check room against authorized room from the token
-        if session.jitsi_meet_context_room and (session.jitsi_meet_context_room["regex"] == true or session.jitsi_meet_context_room["regex"] == "true") then
-            if target_room ~= nil then
-                -- room with subdomain
-                room_to_check = target_room:match(auth_room);
-            else
-                room_to_check = room_node:match(auth_room);
+        if auth_room_is_pattern then
+            if not self.regexEnabled then
+                module:log('warn', 'Room claim patterns are disabled, refusing the claim: %s', auth_room);
+                return false, 'invalid-regex', 'Room claim patterns are not enabled';
             end
+
+            local match_target = target_room ~= nil and target_room or room_node;
+
+            if #match_target > self.regexRoomMaxLength then
+                module:log('warn', 'Room name is longer than %s, not matching it against a pattern: %s',
+                    self.regexRoomMaxLength, match_target);
+                return false, 'invalid-regex', 'Room name is too long to match against the room claim';
+            end
+
+            if type(auth_room) == 'string' and #auth_room > self.regexRoomMaxLength + 2 then
+                module:log('warn', 'Room claim pattern is longer than %s, refusing it: %s...',
+                    self.regexRoomMaxLength + 2, auth_room:sub(1, 32));
+                return false, 'invalid-regex', 'Room claim pattern is too long';
+            end
+
+            local matches, reason = match_room_pattern(auth_room, match_target);
+            if matches == nil then
+                module:log('warn', 'Room claim pattern is not supported (%s): %s', reason, tostring(auth_room));
+                return false, 'invalid-regex', 'Room claim pattern is not supported';
+            end
+
+            if not matches then
+                -- The claim is present and does not match. This is not a
+                -- missing claim, so it is refused also when the room claim is
+                -- optional (asap_require_room_claim = false).
+                return false, 'room-name-does-not-match', 'Room name does not match the room claim pattern.';
+            end
+            room_to_check = match_target;
         else
             -- not a regex
             room_to_check = auth_room;

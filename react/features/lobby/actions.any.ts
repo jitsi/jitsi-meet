@@ -5,7 +5,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { onLobbyChatInitialized, removeLobbyChatParticipant, sendMessage } from '../chat/actions.any';
 import { LOBBY_CHAT_MESSAGE } from '../chat/constants';
-import { handleLobbyMessageReceived } from '../chat/middleware';
+import { handleLobbyMessageReceived, handleLobbyMessageRetracted } from '../chat/middleware';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { LOBBY_NOTIFICATION_ID } from '../notifications/constants';
 import { joinConference } from '../prejoin/actions';
@@ -238,15 +238,19 @@ export function startKnocking() {
 /**
  * Action to toggle lobby mode on or off.
  *
- * @param {boolean} enabled - The desired (new) state of the lobby mode.
+ * @param {boolean} [enabled] - The desired (new) state of the lobby mode. If undefined, toggles the current state.
  * @returns {Function}
  */
-export function toggleLobbyMode(enabled: boolean) {
+export function toggleLobbyMode(enabled?: boolean) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const conference = getCurrentConference(getState);
+        const state = getState();
+        const conference = getCurrentConference(state);
+        const shouldEnable = typeof enabled === 'undefined'
+            ? !getLobbyEnabled(state)
+            : enabled;
 
-        if (enabled) {
-            if (isEnablingLobbyAllowed(getState())) {
+        if (shouldEnable) {
+            if (isEnablingLobbyAllowed(state)) {
                 conference?.enableLobby();
             } else {
                 logger.info('Ignoring enable lobby request because there are visitors in the call already.');
@@ -415,7 +419,7 @@ export function setLobbyMessageListener() {
 
         conference?.addLobbyMessageListener((message: any, participantId: string) => {
             if (message.type === LOBBY_CHAT_MESSAGE) {
-                return dispatch(handleLobbyMessageReceived(message.message, participantId));
+                return dispatch(handleLobbyMessageReceived(message.message, participantId, message.messageId));
             }
             if (message.type === LOBBY_CHAT_INITIALIZED) {
                 return dispatch(handleLobbyChatInitialized(message));
@@ -423,6 +427,10 @@ export function setLobbyMessageListener() {
             if (message.type === MODERATOR_IN_CHAT_WITH_LEFT) {
                 return dispatch(updateLobbyParticipantOnLeave(message.moderatorId));
             }
+        });
+
+        conference?.addLobbyMessageRetractionListener((messageId: string, participantId: string) => {
+            dispatch(handleLobbyMessageRetracted(messageId, participantId));
         });
     };
 }

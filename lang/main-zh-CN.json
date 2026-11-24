@@ -39,9 +39,6 @@
         "phone": "电话",
         "speaker": "扬声器"
     },
-    "audioOnly": {
-        "audioOnly": "省流"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "例如，10000000为10兆",
         "assumedBandwidthBpsWarning": "较高的数值可能会导致网络问题。",
@@ -227,7 +224,7 @@
     "deepLinking": {
         "appNotInstalled": "你需要在手机上安装{{app}}的APP才能加入此会议。",
         "description": "没反应？我们已经尝试在{{app}}的电脑应用程序中加入会议，请重试或在{{app}}网页端中启动。",
-        "descriptionNew": "没反应？我们已经尝试在{{app}}的电脑应用程序中加入会议。<br /><br />你可以重试，或在网页端中启动。",
+        "descriptionNew": "没反应？我们已经尝试在{{app}}的电脑应用程序中加入会议。<0/><0/>你可以重试，或在网页端中启动。",
         "descriptionWithoutWeb": "没反应？我们已经尝试在{{app}}的电脑应用程序中加入会议。",
         "downloadApp": "下载APP",
         "downloadMobileApp": "前往App Store下载",
@@ -241,7 +238,7 @@
         "noDesktopApp": "还没有安装桌面客户端？",
         "noMobileApp": "还没有安装手机App？",
         "or": "或",
-        "termsAndConditions": "继续操作即表示你同意我们的<a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>条款和条件。</a>",
+        "termsAndConditions": "继续操作即表示你同意我们的<0>条款和条件。</0>",
         "title": "正在{{app}}中加入会议……",
         "titleNew": "正在启动你的会议……",
         "tryAgainButton": "请在电脑应用程序中重试",
@@ -256,12 +253,6 @@
         "microphonePermission": "获取麦克风权限时出错"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "呼叫控制",
-            "connectedDevices": "已连接的设备：",
-            "deleteDevice": "删除设备",
-            "pairDevice": "配对设备"
-        },
         "noPermission": "未获得授权",
         "previewUnavailable": "无法预览",
         "selectADevice": "选择设备",
@@ -283,7 +274,6 @@
         "Submit": "提交",
         "Understand": "我已知晓，暂时保持静音",
         "UnderstandAndUnmute": "我已知晓，请为我解除静音",
-        "WaitForHostMsg": "会议尚未开始，主持人还未入会。如需成为主持人请先登录，或耐心等待会议开始。",
         "WaitForHostNoAuthMsg": "会议尚未开始，暂无主持人入会，请耐心等待",
         "WaitingForHostButton": "等待主持人",
         "WaitingForHostTitle": "正在等待主持人加入……",
@@ -483,7 +473,7 @@
         "shareScreenWarningH1": "如果你只想共享屏幕：",
         "shareScreenWarningTitle": "在共享你的屏幕之前，你需要停止共享音频",
         "shareVideoConfirmPlay": "即将打开外部网站，是否继续？",
-        "shareVideoConfirmPlayTitle": "需先停止音频共享才能分享屏幕",
+        "shareVideoConfirmPlayTitle": "{{name}} 向您分享了一个视频。",
         "shareVideoLinkError": "请提供正确的视频链接。",
         "shareVideoLinkStopped": "{{name}}向你分享了一个视频",
         "shareVideoTitle": "分享视频",
@@ -521,7 +511,7 @@
             "tokenExpired": "Token已过期。"
         },
         "tokenAuthFailedTitle": "验证失败",
-        "tokenAuthFailedWithReasons": "抱歉，你无法加入此通话，原因：",
+        "tokenAuthFailedWithReasons": "抱歉，您无权加入此通话。可能的原因：{{reason}}",
         "tokenAuthUnsupported": "Token地址不支持",
         "transcribing": "转录中",
         "unauthenticatedAccessDisabled": "此会议需要身份验证，请先登录后继续。",
@@ -791,12 +781,14 @@
         "button": "邀请其他人",
         "youAreAlone": "你是会议中唯一一个人"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "省流"
+    },
     "me": "我",
     "notify": {
         "OldElectronAPPTitle": "安全漏洞！",
         "allowAll": "允许全部",
         "allowAudio": "允许开启麦克风",
-        "allowBoth": "允许音视频",
         "allowDesktop": "允许屏幕共享",
         "allowVideo": "允许开启摄像头",
         "allowedUnmute": "你可以解除麦克风静音、启动摄像头或共享屏幕。",
@@ -814,7 +806,7 @@
         "desktopMutedRemotelyTitle": "你的屏幕共享已被{{participantDisplayName}}停止",
         "disabledIframe": "嵌入仅用于演示，本次通话将在{{timeout}}分钟后自动断开",
         "disabledIframeSecondaryNative": "嵌入{{domain}}仅用于演示，本次通话将在{{timeout}}分钟后自动断开",
-        "disabledIframeSecondaryWeb": "嵌入{{domain}}仅用于演示，本次通话将在{{timeout}}分钟后自动断开。如需在正式环境嵌入，请使用<a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi服务</a>！",
+        "disabledIframeSecondaryWeb": "嵌入{{domain}}仅用于演示，本次通话将在{{timeout}}分钟后自动断开。如需在正式环境嵌入，请使用<0>Jitsi服务</0>！",
         "disconnected": "已断开连接",
         "displayNotifications": "显示通知",
         "dontRemindMe": "不要提醒我",
@@ -887,7 +879,7 @@
         "somebody": "某人",
         "startSilentDescription": "重新加入会议以开启音频",
         "startSilentTitle": "你加入时没有开启音频！",
-        "suboptimalBrowserWarning": "我们担心你本次会议体验欠佳，我们正在寻找改进的方法。与此同时，请尝试使用<a href='{{recommendedBrowserPageLink}}' target='_blank'>完全支持的浏览器</a>。",
+        "suboptimalBrowserWarning": "我们担心你本次会议体验欠佳，我们正在寻找改进的方法。与此同时，请尝试使用<0>完全支持的浏览器</0>。",
         "suboptimalExperienceTitle": "浏览器提示",
         "suggestRecordingAction": "开始录制",
         "suggestRecordingDescription": "是否需要录制本次会议？",
@@ -979,8 +971,7 @@
             "pollQuestion": "投票内容",
             "questionPlaceholder": "请输入你的问题",
             "removeOption": "删除选项",
-            "save": "保存",
-            "send": "发布"
+            "save": "保存"
         },
         "errors": {
             "notUniqueOption": "选项必须是唯一的"
@@ -999,9 +990,7 @@
     },
     "poweredby": "技术支持由",
     "prejoin": {
-        "audioAndVideoError": "音频和视频错误：",
         "audioDeviceProblem": "你的音频设备存在问题",
-        "audioOnlyError": "音频错误：",
         "audioTrackError": "无无法创建音频轨道",
         "callMe": "呼叫我",
         "callMeAtNumber": "请拨打我的号码：",
@@ -1059,7 +1048,6 @@
         "screenSharingError": "屏幕共享出错：",
         "startWithPhone": "用电话音频开始",
         "unsafeRoomConsent": "我了解风险，仍然加入会议",
-        "videoOnlyError": "视频出错：",
         "videoTrackError": "无法创建视频轨道",
         "viewAllNumbers": "查看所有号码"
     },
@@ -1139,19 +1127,16 @@
         "recordAudioAndVideo": "",
         "recordTranscription": "",
         "saveLocalRecording": "本地保存录制文件（测试版）",
-        "serviceDescription": "录制将由录制服务保存",
         "serviceDescriptionCloud": "云录制",
         "serviceDescriptionCloudInfo": "录制的会议将在录制后的24小时内自动清除。",
         "serviceName": "录制服务",
         "sessionAlreadyActive": "此会议已经在录制或直播中",
-        "showAdvancedOptions": "高级选项",
         "signIn": "登录",
         "signOut": "注销",
         "surfaceError": "请选择当前选项卡。",
         "title": "录制中",
         "unavailable": "糟糕！{{serviceName}}目前无法使用，我们正在努力解决这个问题，请稍后再试。",
-        "unavailableTitle": "录制不可用",
-        "uploadToCloud": "上传至云端"
+        "unavailableTitle": "录制不可用"
     },
     "screenshareDisplayName": "{{name}}的屏幕",
     "sectionList": {
@@ -1161,7 +1146,7 @@
         "about": "你可以为会议添加一个$t(lockRoomPassword)，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "aboutReadOnly": "主持人可以为会议添加一个$t(lockRoomPassword))，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "insecureRoomNameWarningNative": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息",
-        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">这里</a>。",
+        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<0>这里</0>。",
         "title": "安全选项",
         "unsafeRoomActions": {
             "meeting": "考虑使用安全按钮保护你的会议。",
@@ -1294,7 +1279,6 @@
         "Settings": "打开设置",
         "accessibilityLabel": {
             "Settings": "切换设置",
-            "audioOnly": "切换仅音频模式",
             "audioRoute": "选择音频设备",
             "boo": "嘘声",
             "breakoutRooms": "分组讨论室",
@@ -1337,6 +1321,7 @@
             "localRecording": "切换本地录制",
             "lockRoom": "设置/取消会议密码",
             "love": "爱心",
+            "lowBandwidthMode": "切换仅音频模式",
             "lowerHand": "取消举手",
             "moreActions": "更多操作",
             "moreActionsMenu": "更多操作菜单",
@@ -1399,8 +1384,6 @@
                 "label": "立体声"
             }
         },
-        "audioOnlyOff": "关闭省流模式",
-        "audioOnlyOn": "开启省流模式",
         "audioRoute": "选择音频设备",
         "audioSettings": "音频设置",
         "authenticate": "身份验证",
@@ -1442,6 +1425,8 @@
         "login": "登录",
         "logout": "注销",
         "love": "爱心",
+        "lowBandwidthModeOff": "关闭省流模式",
+        "lowBandwidthModeOn": "开启省流模式",
         "lowerYourHand": "取消举手",
         "moreActions": "更多操作",
         "moreOptions": "显示更多选项",
@@ -1507,7 +1492,7 @@
         "labelTooltipExtra": "会后将提供转录文本",
         "openClosedCaptions": "打开字幕",
         "original": "原文",
-        "sourceLanguageDesc": "当前会议语言设置为<b>{{sourceLanguage}}</b><br/>你可以在这里",
+        "sourceLanguageDesc": "当前会议语言设置为<0>{{sourceLanguage}}</0><1/>你可以在这里",
         "sourceLanguageHere": "更改",
         "start": "开启显示字幕",
         "stop": "停止显示字幕",
@@ -1532,8 +1517,6 @@
     },
     "videoStatus": {
         "adjustFor": "调整为：",
-        "audioOnly": "仅语音",
-        "audioOnlyExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "bestPerformance": "最佳性能",
         "callQuality": "视频质量（0 表示最佳性能，3 表示最高质量）",
         "hd": "高清",
@@ -1541,9 +1524,11 @@
         "highDefinition": "高清晰度",
         "highestQuality": "最佳品质",
         "labelTooiltipNoVideo": "无视频",
-        "labelTooltipAudioOnly": "省流模式已开启",
+        "labelTooltipLowBandwidthMode": "省流模式已开启",
         "ld": "低清",
         "ldTooltip": "观看低清视频",
+        "lowBandwidthMode": "仅语音",
+        "lowBandwidthModeExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "lowDefinition": "低清晰度",
         "performanceSettings": "性能设置",
         "recording": "正在进行录制",
@@ -1664,7 +1649,7 @@
         "mobileDownLoadLinkAndroid": "从Google Play下载安卓版手机APP",
         "mobileDownLoadLinkFDroid": "从F-Droid下载安卓版手机APP",
         "mobileDownLoadLinkIos": "下载iOS版手机APP",
-        "moderatedMessage": "或者以主持人身份<a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">提前预定会议</a>。",
+        "moderatedMessage": "或者以主持人身份<0>提前预定会议</0>。",
         "privacy": "隐私",
         "recentList": "近期会议",
         "recentListDelete": "删除",

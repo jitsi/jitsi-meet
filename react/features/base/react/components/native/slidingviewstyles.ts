@@ -7,7 +7,7 @@ export default {
      * The topmost container of the side bar.
      */
     sliderViewContainer: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         zIndex: OVERLAY_Z_INDEX
     },
 
@@ -23,7 +23,7 @@ export default {
      * open.
      */
     sliderViewShadow: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         backgroundColor: 'rgba(0, 0, 0, 0.5)'
     }
 };

@@ -1,5 +1,3 @@
-import { expect } from '@wdio/globals';
-
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
@@ -116,6 +114,100 @@ describe('Chat', () => {
         await p2.getIframeAPI().clearEventResults('incomingMessage');
 
         await testSendGroupMessageWithChatOpen(p1, p2);
+    });
+
+    it('endpoint text message', async () => {
+        await p1.switchToIFrame();
+        await p1.waitForSendReceiveData();
+        await p1.switchToMainFrame();
+
+        await p2.switchToIFrame();
+        await p2.waitForSendReceiveData();
+        await p2.switchToMainFrame();
+
+        await p1.getIframeAPI().addEventListener('endpointTextMessageReceived');
+        await p2.getIframeAPI().addEventListener('endpointTextMessageReceived');
+
+        const p1EndpointId = await p1.getEndpointId();
+        const p2EndpointId = await p2.getEndpointId();
+        const testMessage = 'Hello from p1 direct';
+
+        await p2.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+
+        await p1.getIframeAPI().executeCommand('sendEndpointTextMessage', p2EndpointId, testMessage);
+
+        const receivedEvent = await p2.getIframeAPI().waitForEventResult(
+            'endpointTextMessageReceived',
+            'endpointTextMessageReceived event was not received by p2'
+        );
+
+        expect(receivedEvent?.data?.senderInfo?.id).toBe(p1EndpointId);
+        expect(receivedEvent?.data?.eventData?.text).toBe(testMessage);
+
+        // bidirectional reply from p2 to p1
+        const replyMessage = 'Acknowledgment reply from p2';
+
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+
+        await p2.getIframeAPI().executeCommand('sendEndpointTextMessage', p1EndpointId, replyMessage);
+
+        const replyEvent = await p1.getIframeAPI().waitForEventResult(
+            'endpointTextMessageReceived',
+            'endpointTextMessageReceived reply was not received by p1'
+        );
+
+        expect(replyEvent?.data?.senderInfo?.id).toBe(p2EndpointId);
+        expect(replyEvent?.data?.eventData?.text).toBe(replyMessage);
+
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+        await p2.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+    });
+
+    it('chatUpdated is sent when the panel is closed from the polls tab', async () => {
+        // The chat panel is still open from the previous tests. Move to the polls tab and close it from there.
+        await p2.switchToIFrame();
+        await p2.getChatPanel().openPollsTab();
+        await p2.switchToMainFrame();
+
+        await p2.getIframeAPI().clearEventResults('chatUpdated');
+        await p2.getIframeAPI().executeCommand('toggleChat');
+
+        const chatUpdatedEvent: {
+            isOpen: boolean;
+            unreadCount: number;
+        } = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('chatUpdated'), {
+            timeout: 3000,
+            timeoutMsg: 'chatUpdated was not received when closing the panel from the polls tab'
+        });
+
+        expect(chatUpdatedEvent).toEqual({
+            isOpen: false,
+            unreadCount: 0
+        });
+    });
+
+    it('chatUpdated is sent when the panel is opened on the polls tab', async () => {
+        await p2.getIframeAPI().clearEventResults('chatUpdated');
+
+        // The polls button opens the side panel directly on the polls tab, without going through the chat tab.
+        await p2.switchToIFrame();
+        await p2.getToolbar().clickPollsButton();
+        await p2.switchToMainFrame();
+
+        const chatUpdatedEvent: {
+            isOpen: boolean;
+            unreadCount: number;
+        } = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('chatUpdated'), {
+            timeout: 3000,
+            timeoutMsg: 'chatUpdated was not received when opening the panel on the polls tab'
+        });
+
+        // All the messages were read when the panel was closed in the previous test.
+        expect(chatUpdatedEvent).toEqual({
+            isOpen: true,
+            unreadCount: 0
+        });
     });
 });
 

@@ -1,6 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { RESET_WHITEBOARD, SETUP_WHITEBOARD } from './actionTypes';
+import { RESET_WHITEBOARD, SETUP_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
 
 export interface IWhiteboardState {
 
@@ -20,6 +20,7 @@ export interface IWhiteboardState {
      * @type {boolean}
      */
     isOpen: boolean;
+
 }
 
 const DEFAULT_STATE: IWhiteboardState = {
@@ -44,6 +45,11 @@ export interface IWhiteboardAction extends Partial<IWhiteboardState> {
      * The action type.
      */
     type: string;
+
+    /**
+     * Whether the action was triggered by a user interaction.
+     */
+    userInitiated?: boolean;
 }
 
 ReducerRegistry.register(
@@ -53,9 +59,14 @@ ReducerRegistry.register(
         case SETUP_WHITEBOARD: {
             return {
                 ...state,
-                isOpen: true,
                 collabDetails: action.collabDetails,
                 collabServerUrl: action.collabServerUrl
+            };
+        }
+        case SET_WHITEBOARD_OPEN: {
+            return {
+                ...state,
+                isOpen: Boolean(action.isOpen)
             };
         }
         case RESET_WHITEBOARD:

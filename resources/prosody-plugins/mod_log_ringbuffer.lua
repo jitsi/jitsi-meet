@@ -1,3 +1,7 @@
+-- Registers a custom Prosody log sink that buffers recent log lines in memory
+-- using a ringbuffer (or a fixed-line queue) and dumps the buffer to a file
+-- when triggered by a configured OS signal or Prosody event.
+-- Source: https://hg.prosody.im/prosody-modules/file/tip/mod_log_ringbuffer/mod_log_ringbuffer.lua
 module:set_global();
 
 local loggingmanager = require "core.loggingmanager";

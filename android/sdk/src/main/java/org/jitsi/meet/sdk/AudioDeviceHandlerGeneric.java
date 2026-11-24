@@ -20,6 +20,7 @@ import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,6 +61,16 @@ class AudioDeviceHandlerGeneric implements
      * Indicator that we have lost audio focus.
      */
     private boolean audioFocusLost = false;
+
+    /**
+     * Last audio mode we requested; used to detect the system resetting it mid-call.
+     */
+    private int lastRequestedMode = AudioModeModule.DEFAULT;
+
+    /**
+     * Re-asserts the audio mode when the system resets it mid-call (API >= 31).
+     */
+    private AudioManager.OnModeChangedListener modeChangedListener;
 
     /**
      * {@link AudioManager} instance used to interact with the Android audio
@@ -193,6 +204,17 @@ class AudioDeviceHandlerGeneric implements
         // Setup runtime device change detection.
         audioManager.registerAudioDeviceCallback(audioDeviceCallback, null);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            modeChangedListener = newMode -> {
+                if (lastRequestedMode != AudioModeModule.DEFAULT
+                        && newMode != AudioManager.MODE_IN_COMMUNICATION) {
+                    JitsiMeetLogger.w(TAG + " Re-asserting audio mode after mid-call reset");
+                    module.resetAudioRoute();
+                }
+            };
+            audioManager.addOnModeChangedListener(module::runInAudioThread, modeChangedListener);
+        }
+
         // Do an initial detection.
         onAudioDeviceChange();
     }
@@ -200,6 +222,11 @@ class AudioDeviceHandlerGeneric implements
     @Override
     public void stop() {
         audioManager.unregisterAudioDeviceCallback(audioDeviceCallback);
+
+        if (modeChangedListener != null) {
+            audioManager.removeOnModeChangedListener(modeChangedListener);
+            modeChangedListener = null;
+        }
     }
 
     @Override
@@ -213,6 +240,8 @@ class AudioDeviceHandlerGeneric implements
 
     @Override
     public boolean setMode(int mode) {
+        lastRequestedMode = mode;
+
         if (mode == AudioModeModule.DEFAULT) {
             audioFocusLost = false;
             audioManager.setMode(AudioManager.MODE_NORMAL);

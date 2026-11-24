@@ -6,7 +6,11 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isVoiceAgentParticipant
+} from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
@@ -15,10 +19,12 @@ import ConnectionIndicatorContent from
     '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { renderConnectionStatus } from '../../actions.web';
+import { hasVoiceAgentMenuItems } from '../../functions.web';
 
 import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
+import VoiceAgentContextMenu from './VoiceAgentContextMenu';
 
 /**
  * The type of the React {@code Component} props of
@@ -30,6 +36,11 @@ interface IProps {
      * Whether the remote video context menu is disabled.
      */
     _disabled: Boolean;
+
+    /**
+     * Whether a voice agent's context menu would have anything in it on the thumbnail.
+     */
+    _hasAgentMenu: boolean;
 
     /**
      * Shared video local participant owner.
@@ -122,6 +133,7 @@ const useStyles = makeStyles()(() => {
 
 const RemoteVideoMenuTriggerButton = ({
     _disabled,
+    _hasAgentMenu,
     _localVideoOwner,
     _menuPosition,
     _participant,
@@ -160,6 +172,10 @@ const RemoteVideoMenuTriggerButton = ({
             thumbnailMenu: true
         };
 
+        if (isVoiceAgentParticipant(_participant)) {
+            return <VoiceAgentContextMenu { ...props } />;
+        }
+
         if (_participant?.fakeParticipant) {
             return (
                 <FakeParticipantContextMenu
@@ -179,7 +195,7 @@ const RemoteVideoMenuTriggerButton = ({
 
     if (_showConnectionInfo) {
         content = <ConnectionIndicatorContent participantId = { participantID } />;
-    } else if (!_disabled) {
+    } else if (!_disabled && (_hasAgentMenu || !isVoiceAgentParticipant(_participant))) {
         content = _renderRemoteVideoMenu();
     }
 
@@ -261,6 +277,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _disabled: Boolean(remoteVideoMenu?.disabled),
+        _hasAgentMenu: hasVoiceAgentMenuItems(state, true),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
         _participant: participant ?? { id: '' },

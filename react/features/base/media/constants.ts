@@ -34,7 +34,7 @@ export const MEDIA_TYPE: {
  * @enum {number}
  */
 export const SCREENSHARE_MUTISM_AUTHORITY = {
-    AUDIO_ONLY: 1 << 0,
+    LOW_BANDWIDTH_MODE: 1 << 0,
     USER: 1 << 2
 };
 
@@ -53,7 +53,7 @@ export enum AudioSupportedLanguage {
  * @enum {number}
  */
 export const VIDEO_MUTISM_AUTHORITY = {
-    AUDIO_ONLY: 1 << 0,
+    LOW_BANDWIDTH_MODE: 1 << 0,
     BACKGROUND: 1 << 1,
     USER: 1 << 2,
     CAR_MODE: 1 << 3

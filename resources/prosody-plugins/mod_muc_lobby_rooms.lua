@@ -1,3 +1,42 @@
+-- mod_muc_lobby_rooms
+--
+-- Implements the Jitsi "lobby" feature: a waiting room that holds participants
+-- until a moderator admits or rejects them.
+--
+-- How it works:
+--   When a moderator sets a room to members-only (muc#roomconfig_membersonly),
+--   a paired persistent lobby MUC room is created on the lobby component.
+--   Subsequent join attempts by non-members are rejected with a 407 error that
+--   includes the lobby room JID, redirecting the client to wait there.
+--   Moderators (owners in the main room) are also owners in the lobby room and
+--   can admit participants by inviting them or deny them by kicking.
+--
+-- Join-gate logic (muc-occupant-pre-join, priority -4):
+--   1. Healthcheck rooms, focus nick (/focus suffix) -> pass through.
+--   2. Whitelisted JID/domain (muc_lobby_whitelist) or correct password -> grant
+--      member affiliation and pass through.
+--   3. Missing display name -> 406 not-acceptable with <displayname-required>.
+--   4. No affiliation -> 407 registration-required with <lobbyroom> JID.
+--   5. Existing member/owner affiliation -> pass through to the MUC layer.
+--
+-- Presence/message filtering:
+--   Stanzas from the lobby component are filtered so lobby participants can only
+--   see and message moderators, not each other.
+--
+-- Notifications:
+--   Broadcasts JSON groupchat messages (type "lobby-notify") to the main room
+--   when lobby is enabled/disabled (LOBBY-ENABLED) or when a participant is
+--   admitted (LOBBY-ACCESS-GRANTED) or denied (LOBBY-ACCESS-DENIED).
+--
+-- Backend API:
+--   Handles global events "create-lobby-room" and "destroy-lobby-room" so that
+--   other Prosody modules (e.g. jicofo bridge) can manage the lobby
+--   programmatically without a moderator submitting a config form.
+--
+-- Required configuration (on the main VirtualHost):
+--   lobby_muc = "lobby.jitmeet.example.com"
+--   main_muc  = "conference.jitmeet.example.com"
+--
 -- This module added under the main virtual host domain
 -- It needs a lobby muc component
 --
@@ -46,10 +85,12 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
-local ends_with = util.ends_with;
+local is_focus = util.is_focus;
+local is_focus_jid = util.is_focus_jid;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
@@ -308,9 +349,12 @@ function handle_admin_query_set_command_item(self, origin, stanza, item)
             local room_nick = self.jid.."/"..item.attr.nick;
             local existing_occupant = self:get_occupant_by_nick(room_nick);
             if existing_occupant and existing_occupant.bare_jid ~= item.attr.jid then
-                module:log("debug", "Existing occupant for %s: %s does not match %s", room_nick, existing_occupant.bare_jid, item.attr.jid);
-                self:set_role(true, room_nick, nil, "This nickname is reserved");
-            end
+                module:log("debug", "Existing occupant for %s: %s does not match %s - need to kick", room_nick, existing_occupant.bare_jid, item.attr.jid);
+                success, errtype, err = self:set_role(actor, room_nick, nil, "This nickname is reserved");
+                if not success then
+                    origin.send(st.error_reply(stanza, errtype, err));
+                    return true;
+                end            end
             module:log("debug", "Reserving %s for %s (%s)", item.attr.nick, item.attr.jid, item.attr.affiliation);
             registration_data = { reserved_nickname = item.attr.nick };
         end
@@ -337,9 +381,10 @@ function handle_mediated_invite(room, origin, stanza, payload, host_module)
     elseif host_module:fire_event("muc-pre-invite", {room = room, origin = origin, stanza = stanza}) then
         return true;
     end
-    local invite = muc_util.filter_muc_x(st.clone(stanza));
-    invite.attr.from = room.jid;
-    invite.attr.to = invitee;
+    -- Build the invite from scratch instead of cloning the incoming stanza. The invite is sent from the bare
+    -- room jid, and clients read messages from that address as sent by the room itself, so it carries
+    -- only the invite and nothing else from the incoming stanza.
+    local invite = st.message({ from = room.jid, to = invitee, id = stanza.attr.id });
     invite:tag('x', { xmlns = MUC_USER_NS })
             :tag('invite', {from = stanza.attr.from;})
                 :tag('reason'):text(payload:get_child_text("reason")):up()
@@ -384,14 +429,31 @@ local prosody_overrides = {
         if type == nil or type == "normal" then
             local x = stanza:get_child("x", MUC_USER_NS);
             if x then
-                local handled = false;
-                for _, payload in pairs(x.tags) do
-                    if payload ~= nil and payload.name == "invite" and payload.attr.to then
-                        handled = true;
-                        handle_mediated_invite(room, origin, stanza, payload, host_module)
+                local invites = {};
+                for _, payload in ipairs(x.tags) do
+                    if payload.name == "invite" and payload.attr.to then
+                        table.insert(invites, payload);
                     end
                 end
-                return handled;
+
+                if #invites == 0 then
+                    return false;
+                end
+
+                -- Only a moderator of the room, or of one of its breakout rooms, can invite. Admitting a
+                -- participant from the lobby is such an invite. A moderator in a breakout room sends it to
+                -- the main room.
+                local occupant = get_occupant_by_real_jid(room, stanza.attr.from);
+
+                if not occupant or occupant.role ~= 'moderator' then
+                    origin.send(st.error_reply(stanza, "auth", "forbidden"));
+                    return true;
+                end
+
+                for _, payload in ipairs(invites) do
+                    handle_mediated_invite(room, origin, stanza, payload, host_module);
+                end
+                return true;
             end
         end
     end
@@ -404,6 +466,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 
     -- enable filtering presences in the lobby muc rooms
     filters.add_filter_hook(filter_session);
+
+    -- No flow invites into a lobby room. Admitting from the lobby is an invite to the main room.
+    host_module:hook('muc-pre-invite', util.refuse_mediated_invite);
 
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
     module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);
@@ -419,7 +484,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
             if room and room._data.lobby_disabled then
                 -- we cannot remove the child from the stanza so let's just change the type
                 local lobby_identity = reply:get_child_with_attr('identity', nil, 'type', LOBBY_IDENTITY_TYPE);
-                lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
+                if lobby_identity then
+                    lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
+                end
             end
 
             if check_display_name_required and room and room._data.lobbyroom then
@@ -488,8 +555,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local actor, room = event.actor, event.room;
-        local actor_node = jid_split(actor);
-        if actor_node == 'focus' then
+        if is_focus_jid(actor) then
             return;
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
@@ -539,7 +605,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-pre-join', function (event)
         local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-        if is_healthcheck_room(room.jid) or not room:get_members_only() or ends_with(occupant.nick, '/focus') then
+        if is_healthcheck_room(room.jid) or not room:get_members_only() or is_focus(occupant.nick) then
             return;
         end
 
@@ -576,7 +642,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         elseif room:get_password() then
             local affiliation = room:get_affiliation(invitee);
             -- if pre-approved and password is set for the room, add the password to allow joining
-            if affiliation == 'member' and not password then
+            if valid_affiliations[affiliation or 'none'] >= valid_affiliations.member and not password then
                 join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
             end
         end

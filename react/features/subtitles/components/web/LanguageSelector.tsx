@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Select from '../../../base/ui/components/web/Select';
 import { setRequestingSubtitles } from '../../actions.any';
-import { getAvailableSubtitlesLanguages } from '../../functions.any';
+import { getAvailableSubtitlesLanguages, isTranslationEnabled } from '../../functions.any';
 
 /**
  * The styles for the LanguageSelector component.
@@ -50,11 +50,9 @@ function LanguageSelector() {
         state,
         selectedLanguage?.replace('translation-languages:', '')
     ));
-    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
-        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
+    const translationEnabled = useSelector(isTranslationEnabled);
 
-    // Hide the "Translate to" option when asyncTranscription is enabled
-    if (isAsyncTranscriptionEnabled) {
+    if (!translationEnabled) {
         return null;
     }
 

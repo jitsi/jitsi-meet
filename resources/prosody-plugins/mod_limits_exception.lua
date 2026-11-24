@@ -1,7 +1,5 @@
--- we use async to detect Prosody 0.10 and earlier
-local have_async = pcall(require, 'util.async');
-
-if not have_async then
+if not pcall(require, 'util.async') then
+	module:log('warn', 'util.async not available; mod_limits_exception requires Prosody 0.11+, not loading');
 	return;
 end
 
@@ -13,6 +11,8 @@ local unlimited_stanza_size_limit = module:get_option_number("unlimited_size", 1
 if unlimited_jids:empty() then
 	return;
 end
+
+module:log('info', 'loaded; unlimited_jids=%s unlimited_size=%d', tostring(unlimited_jids), unlimited_stanza_size_limit);
 
 module:hook("authentication-success", function (event)
 	local session = event.session;

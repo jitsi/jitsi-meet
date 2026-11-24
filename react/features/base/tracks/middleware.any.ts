@@ -2,6 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
+import { explainBeforePrompt } from '../../device-permissions/actions';
 import { getCurrentConference } from '../conference/functions';
 import {
     SET_CAMERA_FACING_MODE,
@@ -27,12 +28,12 @@ import {
     destroyLocalTracks,
     trackMuteUnmuteFailed,
     trackRemoved
-} from './actions';
+} from './actions.any';
 import {
     getLocalTrack,
     isUserInteractionRequiredForUnmute,
     setTrackMuted
-} from './functions';
+} from './functions.any';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -78,6 +79,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case TOGGLE_CAMERA_FACING_MODE: {
+        const result = next(action);
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
         let jitsiTrack;
 
@@ -90,7 +92,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             // Don't mirror the video of the back/environment-facing camera.
             const mirror
-                = jitsiTrack.getCameraFacingMode() === CAMERA_FACING_MODE.USER;
+                = store.getState()['features/base/media']?.video?.facingMode === CAMERA_FACING_MODE.USER;
 
             store.dispatch({
                 type: TRACK_UPDATED,
@@ -100,7 +102,8 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             });
         }
-        break;
+
+        return result;
     }
     }
 
@@ -188,12 +191,23 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
                 .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack) {
-        // TODO(saghul): reconcile these 2 types.
-        const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
+        const explained: Promise<string[]> = mediaType === MEDIA_TYPE.VIDEO
+            ? dispatch(explainBeforePrompt([ 'video' ], true))
+            : Promise.resolve([ mediaType ]);
 
-        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
-        dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
-            typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
+        explained.then(devices => {
+            // Declined, or turned on meanwhile, e.g. both the toolbar and the conference unmute it.
+            if (!devices.length || _getLocalTrack(store, mediaType, /* includePending */ true)) {
+                return;
+            }
+
+            // TODO(saghul): reconcile these 2 types.
+            const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
+
+            typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+            dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
+                typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
+            });
         });
     }
 }

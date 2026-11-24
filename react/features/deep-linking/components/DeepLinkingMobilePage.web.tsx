@@ -10,6 +10,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { IDeeplinkingConfig, IDeeplinkingMobileConfig } from '../../base/config/configType';
 import { isSupportedMobileBrowser } from '../../base/environment/environment';
+import { isIosMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
 import Button from '../../base/ui/components/web/Button';
@@ -104,6 +105,12 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
     const dispatch = useDispatch();
     const { classes: styles } = useStyles();
 
+    const showOpenAppButton = useMemo(() => {
+        const iosAppScheme = deeplinkingCfg?.ios?.appScheme;
+
+        return !isIosMobileBrowser() || Boolean(iosAppScheme && !/^https?$/i.test(iosAppScheme));
+    }, [ deeplinkingCfg ]);
+
     const generateDownloadURL = useCallback(() => {
         const { downloadLink }
             = (deeplinkingCfg?.[Platform.OS as keyof typeof deeplinkingCfg] || {}) as IDeeplinkingMobileConfig;
@@ -170,16 +177,18 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
 
                 <div className = { styles.launchingMeetingLabel }>{ t(`${_TNS}.launchMeetingLabel`) }</div>
                 <div className = ''>{room}</div>
-                <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.joinMeetWrapper }
-                    href = { deepLinkingUrl }
-                    onClick = { onOpenApp }
-                    target = '_top'>
-                    <Button
-                        fullWidth = { true }
-                        label = { t(`${_TNS}.joinInAppNew`) } />
-                </a>
+                {showOpenAppButton && (
+                    <a
+                        { ...onOpenLinkProperties }
+                        className = { styles.joinMeetWrapper }
+                        href = { deepLinkingUrl }
+                        onClick = { onOpenApp }
+                        target = '_top'>
+                        <Button
+                            fullWidth = { true }
+                            label = { t(`${_TNS}.joinInAppNew`) } />
+                    </a>
+                )}
                 <div className = { styles.labelDescription }>{ t(`${_TNS}.noMobileApp`) }</div>
                 <a
                     { ...onOpenLinkProperties }

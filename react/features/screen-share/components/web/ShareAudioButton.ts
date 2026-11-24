@@ -64,7 +64,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _isAudioOnlySharing: Boolean(isAudioOnlySharing(state)),
-        visible: JitsiMeetJS.isDesktopSharingEnabled() && isScreenAudioSupported()
+        visible: JitsiMeetJS.isDesktopSharingEnabled() && isScreenAudioSupported(state)
     };
 }
 

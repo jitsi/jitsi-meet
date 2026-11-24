@@ -26,10 +26,13 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
      * @returns {React$Component}
      */
     _renderSwitch() {
+        const moderationAudioLabel = this.props.t('dialog.moderationAudioLabel');
+
         return (
             this.props.exclude.length === 0
             && <Dialog.Switch
-                label = { this.props.t('dialog.moderationAudioLabel') }
+                accessibilityLabel = { moderationAudioLabel }
+                label = { moderationAudioLabel }
                 onValueChange = { this._onToggleModeration }
                 value = { !this.state.audioModerationEnabled } />
         );

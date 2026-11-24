@@ -1,10 +1,10 @@
-local basexx = require "basexx";
+local base64 = require "util.encodings".base64;
 
 local M = {}
 
 -- Helper function to encode bytes to base64
 function base64_encode(bytes)
-    return basexx.to_base64(bytes)
+    return base64.encode(bytes)
 end
 
 -- Pure Lua ASN.1 DER encoder (no external dependencies)
@@ -86,11 +86,14 @@ function base64url_decode(str)
     if padding > 0 then
         str = str .. string.rep('=', 4 - padding)
     end
-    return basexx.from_base64(str)
+    return base64.decode(str)
 end
 
 -- Helper function to convert JWK to PEM format
 function M.jwk_to_pem(jwk)
+    if not jwk.n or not jwk.e then
+        return nil;
+    end
     -- Decode the modulus (n) and exponent (e) from base64url
     local n_bytes = base64url_decode(jwk.n)
     local e_bytes = base64url_decode(jwk.e)
@@ -130,5 +133,8 @@ function M.jwk_to_pem(jwk)
     -- Convert to PEM format
     return ASN1.der_to_pem(spki, "PUBLIC KEY")
 end
+
+-- Expose internals for unit testing (harmless in production).
+M.ASN1 = ASN1
 
 return M

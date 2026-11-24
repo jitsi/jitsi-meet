@@ -48,6 +48,18 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
 
 
 /**
+ * Determines if translation (language selection) is enabled.
+ *
+ * @param {IReduxState} state - The Redux state object.
+ * @returns {boolean} A boolean indicating whether translation is enabled.
+ */
+export function isTranslationEnabled(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return transcription?.translationEnabled !== false;
+}
+
+/**
  * Determines if closed captions are enabled.
  *
  * @param {IReduxState} state - The Redux state object.

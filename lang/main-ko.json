@@ -39,9 +39,6 @@
         "phone": "폰",
         "speaker": "스피커"
     },
-    "audioOnly": {
-        "audioOnly": "음성 전용"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "예: 10000000 (10 Mbps)",
         "assumedBandwidthBpsWarning": "더 높은 값은 네트워크 문제를 일으킬 수 있습니다.",
@@ -207,9 +204,9 @@
         "yesterday": "어제"
     },
     "deepLinking": {
-        "appNotInstalled": "회의에 참여하려면 모바일 앱 설치가 필요합니다",
+        "appNotInstalled": "휴대전화에서 이 회의에 참여하려면 {{app}} 모바일 앱이 필요합니다.",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
-        "descriptionNew": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다. <br /><br /> 다시 시도하거나 웹에서 실행할 수 있습니다.",
+        "descriptionNew": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다. <0/><0/> 다시 시도하거나 웹에서 실행할 수 있습니다.",
         "descriptionWithoutWeb": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다.",
         "downloadApp": "앱 다운로드",
         "downloadMobileApp": "앱 스토어에서 다운로드",
@@ -223,7 +220,7 @@
         "noDesktopApp": "앱이 없으신가요?",
         "noMobileApp": "앱이 없으신가요?",
         "or": "또는",
-        "termsAndConditions": "계속하면 <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>이용 약관</a>에 동의하게 됩니다.",
+        "termsAndConditions": "계속하면 <0>이용 약관</0>에 동의하게 됩니다.",
         "title": "{{app}}에서 회의 시작…",
         "titleNew": "회의를 시작하는 중...",
         "tryAgainButton": "데스크톱에서 다시 시도하십시오",
@@ -238,12 +235,6 @@
         "microphonePermission": "마이크 권한을 얻는 중 오류가 발생했습니다"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "통화 제어",
-            "connectedDevices": "연결된 장치:",
-            "deleteDevice": "장치 삭제",
-            "pairDevice": "장치 연결"
-        },
         "noPermission": "허가 거부",
         "previewUnavailable": "미리보기를 사용할 수 없음",
         "selectADevice": "장치 선택",
@@ -263,7 +254,6 @@
         "Remove": "제거",
         "Share": "공유",
         "Submit": "제출",
-        "WaitForHostMsg": "회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
         "WaitForHostNoAuthMsg": "회의가 시작되지 않았습니다. 호스트가 도착할 때까지 기다리십시오.",
         "WaitingForHostButton": "호스트를 기다립니다",
         "WaitingForHostTitle": "호스트를 기다리는 중…",
@@ -727,16 +717,18 @@
         "button": "초대하기",
         "youAreAlone": "회의에 참여자가 없습니다."
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "음성 전용"
+    },
     "me": "나",
     "notify": {
         "OldElectronAPPTitle": "보안 취약성!",
-        "allowAction": "허용",
         "allowedUnmute": "마이크 음소거 해제, 카메라 시작 또는 화면 공유를 할 수 있습니다.",
         "audioUnmuteBlockedDescription": "시스템 제한으로 인해 마이크 음소거 해제 작업이 일시적으로 차단되었습니다.",
         "audioUnmuteBlockedTitle": "마이크 음소거 해제 차단됨!",
         "chatMessages": "채팅 메시지",
         "connectedOneMember": "{{name}}님이 회의에 참여했습니다.",
-        "connectedThreePlusMembers": "{{name}}님 외 {{count}}명이 회의에 참여했습니다.",
+        "connectedThreePlusMembers": "{{name}} 님 외 여러 명이 회의에 참여했습니다",
         "connectedTwoMembers": "{{first}}님과 {{second}}님이 회의에 참여했습니다.",
         "connectionFailed": "연결 실패. 나중에 다시 시도하십시오!",
         "dataChannelClosed": "비디오 품질이 저하될 수 있습니다",
@@ -744,7 +736,6 @@
         "dataChannelClosedDescriptionWithAudio": "브리지 채널이 다운되어 오디오 및 비디오에 장애가 발생할 수 있습니다.",
         "dataChannelClosedWithAudio": "오디오 및 비디오 품질이 저하될 수 있습니다",
         "disabledIframe": "임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다.",
-        "disabledIframeSecondary": "{{domain}} 임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다. 프로덕션 임베딩을 위해 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>를 사용하세요!",
         "disconnected": "연결이 끊김",
         "displayNotifications": "다음에 대한 알림 표시",
         "dontRemindMe": "다시 알리지 않기",
@@ -804,7 +795,7 @@
         "passwordRemovedRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 제거했습니다.",
         "passwordSetRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 설정했습니다.",
         "raiseHandAction": "손 들기",
-        "raisedHand": "{{name}}님이 말하고 싶어합니다.",
+        "raisedHand": "참여를 원합니다.",
         "raisedHands": "{{participantName}}님과 {{raisedHands}}명이 더",
         "reactionSounds": "소리 비활성화",
         "reactionSoundsForAll": "모든 사람의 소리 비활성화",
@@ -816,7 +807,7 @@
         "somebody": "누군가",
         "startSilentDescription": "오디오를 사용하려면 회의에 다시 참여하세요.",
         "startSilentTitle": "오디오 출력없이 참여했습니다!",
-        "suboptimalBrowserWarning": "여기에서 회의 경험이 좋지 않을 것 같습니다. 이를 개선하기 위해 노력하고 있지만 그때까지 <a href='{{recommendedBrowserPageLink}}' target='_blank'>완전히 지원되는 브라우저</a> 중 하나를 사용해보세요.",
+        "suboptimalBrowserWarning": "여기에서 회의 경험이 좋지 않을 것 같습니다. 이를 개선하기 위해 노력하고 있지만 그때까지 <0>완전히 지원되는 브라우저</0> 중 하나를 사용해보세요.",
         "suboptimalExperienceTitle": "브라우저 경고",
         "suggestRecordingAction": "시작",
         "suggestRecordingDescription": "녹화를 시작하시겠습니까?",
@@ -895,8 +886,7 @@
             "pollQuestion": "투표 질문",
             "questionPlaceholder": "질문을 입력하세요",
             "removeOption": "옵션 제거",
-            "save": "저장",
-            "send": "보내기"
+            "save": "저장"
         },
         "errors": {
             "notUniqueOption": "옵션은 고유해야합니다"
@@ -915,9 +905,7 @@
     },
     "poweredby": "제공:",
     "prejoin": {
-        "audioAndVideoError": "오디오 및 비디오 오류:",
         "audioDeviceProblem": "오디오 장치에 문제가 있습니다",
-        "audioOnlyError": "오디오 오류:",
         "audioTrackError": "오디오 트랙을 생성할 수 없습니다.",
         "callMe": "나에게 전화하기",
         "callMeAtNumber": "이 번호로 전화하기:",
@@ -975,7 +963,6 @@
         "screenSharingError": "화면 공유 오류:",
         "startWithPhone": "전화 오디오로 시작",
         "unsafeRoomConsent": "위험을 이해하며 회의에 참여하고 싶습니다",
-        "videoOnlyError": "비디오 오류:",
         "videoTrackError": "비디오 트랙을 생성할 수 없습니다.",
         "viewAllNumbers": "모든 번호 보기"
     },
@@ -1055,19 +1042,16 @@
         "recordAudioAndVideo": "오디오와 비디오 녹화",
         "recordTranscription": "자막 녹화",
         "saveLocalRecording": "녹화 파일을 로컬에 저장 (베타)",
-        "serviceDescription": "녹화는 녹화 서비스에 의해 저장됩니다.",
         "serviceDescriptionCloud": "클라우드 녹화",
         "serviceDescriptionCloudInfo": "녹화된 회의는 녹화 후 24시간 후에 자동으로 삭제됩니다.",
         "serviceName": "녹화 서비스",
         "sessionAlreadyActive": "이 세션은 이미 녹화되거나 라이브 스트림 중입니다.",
-        "showAdvancedOptions": "고급 옵션",
         "signIn": "로그인",
         "signOut": "로그아웃",
         "surfaceError": "현재 탭을 선택해 주세요.",
         "title": "녹화",
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
-        "unavailableTitle": "녹화를 사용할 수 없습니다",
-        "uploadToCloud": "클라우드에 업로드"
+        "unavailableTitle": "녹화를 사용할 수 없습니다"
     },
     "screenshareDisplayName": "{{name}}의 화면",
     "sectionList": {
@@ -1077,7 +1061,7 @@
         "about": "회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "insecureRoomNameWarningNative": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법을 알아보세요",
-        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">여기</a>에서 알아보세요.",
+        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <0>여기</0>에서 알아보세요.",
         "title": "보안 옵션",
         "unsafeRoomActions": {
             "meeting": "회의 보안을 위해 보안 버튼을 사용하세요.",
@@ -1206,7 +1190,6 @@
         "Settings": "설정",
         "accessibilityLabel": {
             "Settings": "설정 전환",
-            "audioOnly": "음성 전용 모드 전환",
             "audioRoute": "음성 장비 선택하기",
             "boo": "야유",
             "breakoutRooms": "소회의실",
@@ -1248,6 +1231,7 @@
             "localRecording": "로컬 녹화 제어 전환",
             "lockRoom": "회의 비밀번호 전환",
             "love": "하트",
+            "lowBandwidthMode": "음성 전용 모드 전환",
             "lowerHand": "손 내리기",
             "moreActions": "추가 작업",
             "moreActionsMenu": "추가 작업 메뉴",
@@ -1296,8 +1280,6 @@
             "videounmute": "카메라 시작"
         },
         "addPeople": "통화에 사용자 추가",
-        "audioOnlyOff": "음성전용 모드 끄기",
-        "audioOnlyOn": "음성전용 모드 켜기",
         "audioRoute": "음성 장비 선택하기",
         "audioSettings": "오디오 설정",
         "authenticate": "인증중",
@@ -1338,6 +1320,8 @@
         "login": "로그인",
         "logout": "로그아웃",
         "love": "하트",
+        "lowBandwidthModeOff": "음성전용 모드 끄기",
+        "lowBandwidthModeOn": "음성전용 모드 켜기",
         "lowerYourHand": "손을 내려주세요",
         "moreActions": "추가 액션",
         "moreOptions": "옵션 더보기",
@@ -1379,7 +1363,7 @@
         "silence": "조용히",
         "speakerStats": "접속자 통계",
         "startScreenSharing": "화면 공유 시작",
-        "startSubtitles": "자막 시작",
+        "startSubtitles": "자막 • {{language}}",
         "stopAudioSharing": "오디오 공유 중지",
         "stopScreenSharing": "화면 공유 중지",
         "stopSharedVideo": "YouTube 비디오 공유 중지",
@@ -1398,8 +1382,7 @@
         "ccButtonTooltip": "자막 시작/종료",
         "expandedLabel": "현재 스크립트 작성 중",
         "failed": "자막 작성 실패",
-        "labelToolTip": "회의가 기록되고 있습니다.",
-        "sourceLanguageDesc": "현재 회의 언어는 <b>{{sourceLanguage}}</b>로 설정되어 있습니다. <br/> 변경하려면 ",
+        "sourceLanguageDesc": "현재 회의 언어는 <0>{{sourceLanguage}}</0>로 설정되어 있습니다. <1/> 변경하려면 ",
         "sourceLanguageHere": "여기에서",
         "start": "자막 표시 시작",
         "stop": "자막 표시 중지",
@@ -1423,8 +1406,6 @@
     },
     "videoStatus": {
         "adjustFor": "조정 대상:",
-        "audioOnly": "오디오 전용",
-        "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "bestPerformance": "최고의 성능",
         "callQuality": "비디오 품질",
         "hd": "HD",
@@ -1432,9 +1413,11 @@
         "highDefinition": "고해상도",
         "highestQuality": "최고 품질",
         "labelTooiltipNoVideo": "비디오 없음",
-        "labelTooltipAudioOnly": "오디오 전용 모드 사용",
+        "labelTooltipLowBandwidthMode": "오디오 전용 모드 사용",
         "ld": "LD",
         "ldTooltip": "저해상도 비디오 보기",
+        "lowBandwidthMode": "오디오 전용",
+        "lowBandwidthModeExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "lowDefinition": "저해상도",
         "performanceSettings": "성능 설정",
         "recording": "녹화 진행 중",
@@ -1551,7 +1534,7 @@
         "mobileDownLoadLinkAndroid": "Android용 모바일 앱 다운로드",
         "mobileDownLoadLinkFDroid": "F-Droid용 모바일 앱 다운로드",
         "mobileDownLoadLinkIos": "iOS용 모바일 앱 다운로드",
-        "moderatedMessage": "또는 <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">회의 URL을 미리 예약</a>하여 유일한 진행자가 되십시오.",
+        "moderatedMessage": "또는 <0>회의 URL을 미리 예약</0>하여 유일한 진행자가 되십시오.",
         "privacy": "개인정보",
         "recentList": "최근",
         "recentListDelete": "삭제",

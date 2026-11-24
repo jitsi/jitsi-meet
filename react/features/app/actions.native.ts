@@ -6,26 +6,27 @@ import {
     setConfig,
     storeConfig
 } from '../base/config/actions';
+import { buildConfigURL } from '../base/config/functions.any';
 import {
     createFakeConfig,
     restoreConfig
 } from '../base/config/functions.native';
 import { connect, disconnect, setLocationURL } from '../base/connection/actions.native';
 import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
+import { stripJwtSignatures } from '../base/jwt/functions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
-import { parseURLParams } from '../base/util/parseURLParams';
 import {
-    appendURLParam,
-    getBackendSafeRoomName,
     parseURIString,
     toURLString
 } from '../base/util/uri';
 import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
-    navigateRoot
+    navigateRoot,
+    replaceRoot
 } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
@@ -49,7 +50,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
-    logger.info(`appNavigate to ${uri}`);
+    logger.info(`appNavigate to ${stripJwtSignatures(uri)}`);
 
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let location = parseURIString(uri);
@@ -87,7 +88,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
                 if (currentHostName === hostname && currentPathName === pathname) {
-                    logger.warn(`Joining same conference using URL: ${currentLocationURL}`);
+                    logger.warn(`Joining same conference using URL: ${stripJwtSignatures(currentLocationURL)}`);
 
                     return;
                 }
@@ -98,7 +99,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         dispatch(disconnect());
 
-        dispatch(configWillLoad(locationURL, room));
+        dispatch(configWillLoad(locationURL));
 
         let protocol = location.protocol.toLowerCase();
 
@@ -107,14 +108,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         protocol !== 'http:' && protocol !== 'https:' && (protocol = 'https:');
 
         const baseURL = `${protocol}//${host}${contextRoot || '/'}`;
-        let url = `${baseURL}config.js`;
-
-        // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
-
-        const { release } = parseURLParams(location, true, 'search');
-
-        release && (url = appendURLParam(url, 'release', release));
+        const url = buildConfigURL(locationURL, room);
 
         let config;
 
@@ -160,18 +154,26 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             return;
         }
 
+        const { disableInitialGUM } = getState()['features/base/config'];
+
+        // Mute before creating tracks.
+        if (disableInitialGUM) {
+            dispatch(setAudioMuted(true));
+            dispatch(setVideoMuted(true));
+        }
+
         dispatch(createDesiredLocalTracks());
         dispatch(clearNotifications());
 
         if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
             if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
-                navigateRoot(screen.unsafeRoomWarning);
+                replaceRoot(screen.unsafeRoomWarning);
             } else {
-                navigateRoot(screen.preJoin);
+                replaceRoot(screen.preJoin);
             }
         } else {
             dispatch(connect());
-            navigateRoot(screen.conference.root);
+            replaceRoot(screen.conference.root);
         }
     };
 }
@@ -206,7 +208,7 @@ export function reloadNow() {
         const newURL = addTrackStateToURL(locationURL, state);
 
         const reloadAction = () => {
-            logger.info(`Reloading the conference using URL: ${locationURL}`);
+            logger.info(`Reloading the conference using URL: ${stripJwtSignatures(locationURL)}`);
 
             dispatch(appNavigate(toURLString(newURL), {
                 hidePrejoin: true

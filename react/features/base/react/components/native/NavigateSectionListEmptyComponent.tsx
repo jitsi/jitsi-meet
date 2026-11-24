@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View, ViewStyle } from 'react-native';
 
-import { translate } from '../../../i18n/functions';
+import { translate } from '../../../i18n/functions.native';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
 

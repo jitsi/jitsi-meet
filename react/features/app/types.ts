@@ -2,10 +2,10 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IAnalyticsState } from '../analytics/reducer';
+import { IAudioTranslationState } from '../audio-translation/reducer';
 import { IAuthenticationState } from '../authentication/reducer';
 import { IAVModerationState } from '../av-moderation/reducer';
 import { IAppState } from '../base/app/reducer';
-import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
 import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
@@ -17,6 +17,7 @@ import { IKnownDomainsState } from '../base/known-domains/reducer';
 import { ILastNState } from '../base/lastn/reducer';
 import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
+import { ILowBandwidthModeState } from '../base/low-bandwidth-mode/reducer';
 import { IMediaState } from '../base/media/reducer';
 import { INetInfoState } from '../base/net-info/reducer';
 import { IParticipantsState } from '../base/participants/reducer';
@@ -33,6 +34,7 @@ import { ICalendarSyncState } from '../calendar-sync/reducer';
 import { IChatState } from '../chat/reducer';
 import { ICustomPanelState } from '../custom-panel/reducer';
 import { IDeepLinkingState } from '../deep-linking/reducer';
+import { IDevicePermissionsState } from '../device-permissions/reducer';
 import { IDropboxState } from '../dropbox/reducer';
 import { IDynamicBrandingState } from '../dynamic-branding/reducer';
 import { IE2EEState } from '../e2ee/reducer';
@@ -53,6 +55,7 @@ import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
 import { IMobileBackgroundState } from '../mobile/background/reducer';
 import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
+import { IMultiScreenState } from '../multi-screen/reducer';
 import { INoAudioSignalState } from '../no-audio-signal/reducer';
 import { INoiseDetectionState } from '../noise-detection/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
@@ -74,6 +77,7 @@ import { ISharedVideoState } from '../shared-video/reducer';
 import { ISpeakerStatsState } from '../speaker-stats/reducer';
 import { ISubtitlesState } from '../subtitles/reducer';
 import { ITalkWhileMutedState } from '../talk-while-muted/reducer';
+import { ITimeTimerState } from '../time-timer/reducer';
 import { IToolboxState } from '../toolbox/reducer';
 import { ITranscribingState } from '../transcribing/reducer';
 import { IVideoLayoutState } from '../video-layout/reducer';
@@ -81,7 +85,7 @@ import { IVideoQualityPersistedState, IVideoQualityState } from '../video-qualit
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 import { IVisitorsState } from '../visitors/reducer';
-import { IWebHid } from '../web-hid/reducer';
+import { IVoiceAgentsState } from '../voice-agents/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
@@ -91,10 +95,10 @@ export interface IStore {
 
 export interface IReduxState {
     'features/analytics': IAnalyticsState;
+    'features/audio-translation': IAudioTranslationState;
     'features/authentication': IAuthenticationState;
     'features/av-moderation': IAVModerationState;
     'features/base/app': IAppState;
-    'features/base/audio-only': IAudioOnlyState;
     'features/base/color-scheme': any;
     'features/base/conference': IConferenceState;
     'features/base/config': IConfigState;
@@ -107,6 +111,7 @@ export interface IReduxState {
     'features/base/lastn': ILastNState;
     'features/base/lib-jitsi-meet': ILibJitsiMeetState;
     'features/base/logging': ILoggingState;
+    'features/base/low-bandwidth-mode': ILowBandwidthModeState;
     'features/base/media': IMediaState;
     'features/base/net-info': INetInfoState;
     'features/base/no-src-data': INoSrcDataState;
@@ -124,6 +129,7 @@ export interface IReduxState {
     'features/chat': IChatState;
     'features/custom-panel': ICustomPanelState;
     'features/deep-linking': IDeepLinkingState;
+    'features/device-permissions': IDevicePermissionsState;
     'features/dropbox': IDropboxState;
     'features/dynamic-branding': IDynamicBrandingState;
     'features/e2ee': IE2EEState;
@@ -143,6 +149,7 @@ export interface IReduxState {
     'features/mobile/audio-mode': IMobileAudioModeState;
     'features/mobile/background': IMobileBackgroundState;
     'features/mobile/external-api': IMobileExternalApiState;
+    'features/multi-screen': IMultiScreenState;
     'features/no-audio-signal': INoAudioSignalState;
     'features/noise-detection': INoiseDetectionState;
     'features/noise-suppression': INoiseSuppressionState;
@@ -166,6 +173,7 @@ export interface IReduxState {
     'features/subtitles': ISubtitlesState;
     'features/talk-while-muted': ITalkWhileMutedState;
     'features/testing': ITestingState;
+    'features/time-timer': ITimeTimerState;
     'features/toolbox': IToolboxState;
     'features/transcribing': ITranscribingState;
     'features/video-layout': IVideoLayoutState;
@@ -174,7 +182,7 @@ export interface IReduxState {
     'features/videosipgw': IVideoSipGW;
     'features/virtual-background': IVirtualBackground;
     'features/visitors': IVisitorsState;
-    'features/web-hid': IWebHid;
+    'features/voice-agents': IVoiceAgentsState;
     'features/whiteboard': IWhiteboardState;
 }
 

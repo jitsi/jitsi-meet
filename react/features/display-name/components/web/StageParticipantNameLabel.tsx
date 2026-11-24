@@ -11,8 +11,7 @@ import {
     isToolboxVisible,
     toCSSTransitionValue
 } from '../../../toolbox/functions.web';
-import { isLayoutTileView } from '../../../video-layout/functions.any';
-import { shouldDisplayStageParticipantBadge } from '../../functions';
+import { isStageParticipantNameLabelRendered } from '../../functions';
 
 import DisplayNameBadge from './DisplayNameBadge';
 import {
@@ -92,11 +91,10 @@ const StageParticipantNameLabel = () => {
     const selectedId = largeVideoParticipant?.id;
     const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, selectedId ?? ''));
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
-    const visible = useSelector(shouldDisplayStageParticipantBadge);
-    const isTileView = useSelector(isLayoutTileView);
+    const rendered = useSelector(isStageParticipantNameLabelRendered);
     const _isScreenShareParticipant = isScreenShareParticipant(largeVideoParticipant);
 
-    if (visible || (_isScreenShareParticipant && !isTileView)) {
+    if (rendered) {
         // For stage participant visibility is true only when the toolbar is visible but we need to keep the element
         // in the DOM in order to make it disappear with an animation.
         return (

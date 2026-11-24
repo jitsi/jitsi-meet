@@ -417,12 +417,14 @@ const Prejoin = ({
                     autoComplete = { 'name' }
                     autoFocus = { true }
                     className = { classes.input }
+                    describedBy = { showErrorOnField ? 'prejoin-error-missing-name' : undefined }
                     error = { showErrorOnField }
                     id = 'premeeting-name-input'
                     onChange = { setName }
                     onKeyPress = { showUnsafeRoomWarning && !unsafeRoomConsent ? undefined : onInputKeyPress }
                     placeholder = { t('dialog.enterDisplayName') }
                     readOnly = { readOnlyName }
+                    required = { true }
                     value = { name } />
                 ) : (
                     <div className = { classes.avatarContainer }>
@@ -438,7 +440,9 @@ const Prejoin = ({
                 {showErrorOnField && <div
                     className = { classes.error }
                     data-testid = 'prejoin.errorMessage'>
-                    <p aria-live = 'polite' >
+                    <p
+                        aria-live = 'polite'
+                        id = 'prejoin-error-missing-name' >
                         {t('prejoin.errorMissingName')}
                     </p>
                 </div>}
@@ -455,23 +459,22 @@ const Prejoin = ({
                                     { ...rest } />
                             ))}
                         </div> }
+                        headingLabel = { t('prejoin.joinOptions') }
                         onPopoverClose = { onDropdownClose }
                         position = 'bottom'
                         trigger = 'click'
                         visible = { showJoinByPhoneButtons }>
                         <ActionButton
                             OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
-                            ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
+                            ariaDropDownLabel = { t('prejoin.joinOptions') }
+                            ariaExpanded = { showJoinByPhoneButtons }
                             ariaLabel = { t('prejoin.joinMeeting') }
-                            ariaPressed = { showJoinByPhoneButtons }
                             disabled = { joiningInProgress
                                 || (showUnsafeRoomWarning && !unsafeRoomConsent)
                                 || showErrorOnField }
                             hasOptions = { hasExtraJoinButtons }
                             onClick = { onJoinButtonClick }
                             onOptionsClick = { onOptionsClick }
-                            role = 'button'
-                            tabIndex = { 0 }
                             testId = 'prejoin.joinMeeting'
                             type = 'primary'>
                             {t('prejoin.joinMeeting')}

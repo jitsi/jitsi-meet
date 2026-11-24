@@ -84,8 +84,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isLivestreamingRunning = isLiveStreamingRunning(state);
     const _isVisible = isLiveStreamingLabel
         ? _isLivestreamingRunning // this is the livestreaming label
-        : isRecordingRunning(state) || isRemoteParticipantRecordingLocally(state)
-            || _isTranscribing; // this is the recording label
+        : isRecordingRunning(state) || isRemoteParticipantRecordingLocally(state); // this is the recording label
 
     return {
         _isVisible,

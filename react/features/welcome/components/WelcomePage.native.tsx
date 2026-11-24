@@ -1,9 +1,9 @@
 import React from 'react';
 import {
     Animated,
-    NativeSyntheticEvent,
+    BlurEvent,
+    FocusEvent,
     StyleProp,
-    TextInputFocusEventData,
     TextStyle,
     TouchableHighlight,
     View,
@@ -53,8 +53,8 @@ interface IProps extends AbstractProps {
  * @augments AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage<IProps> {
-    _onFieldBlur: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-    _onFieldFocus: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+    _onFieldBlur: (e: BlurEvent) => void;
+    _onFieldFocus: (e: FocusEvent) => void;
 
     /**
      * Constructor of the Component.
@@ -291,9 +291,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             // modify non-native children.
             joinButton = (
                 <TouchableHighlight
-                    accessibilityLabel =
-                        { t('welcomepage.accessibilityLabel.join') }
-                    onPress = { this._onJoin }
+                    accessibilityLabel = { t('welcomepage.accessibilityLabel.join') }
+                    accessibilityRole = 'button'
+                    accessibilityState = {{ busy: true }}
+                    disabled = { true }
                     style = { styles.button as ViewStyle }>
                     <View>
                         <LoadingIndicator

@@ -1,5 +1,40 @@
--- A global module which can be used as http endpoint to end meetings. The provided token
---- in the request is verified whether it has the right to do so.
+-- USAGE / DEPLOYMENT
+--   This is a server-to-server endpoint. It is meant to be called only by
+--   trusted backend services over a controlled network path (e.g. Prosody's
+--   HTTP port reachable only from internal hosts). It is NOT safe to make it
+--   publicly accessible: do not proxy it from the public web server (nginx)
+--   and do not expose Prosody's HTTP ports (5280/5281) to the internet.
+--
+--   The Bearer token is a system token signed with a dedicated key pair whose
+--   public keys are served from prosody_password_public_key_repo_url. That
+--   option must be set; the private key must only be available to the calling
+--   services. A valid system token authorizes the caller for every room on
+--   the deployment. It is intentionally not bound to a room: there is no
+--   room claim / room ownership check, the calling service is responsible
+--   for deciding which room it acts on.
+--
+-- Global HTTP module that exposes a POST /end-meeting endpoint for terminating
+-- MUC rooms via an authenticated API call.  Intended for internal system use
+-- (e.g. by a backend service), not for end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token).  The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   POST /end-meeting?conference=<room-jid>[&silent-reconnect=true]
+--   Authorization: Bearer <system-token>
+--
+-- Responses:
+--   200  Room destroyed.
+--   400  Missing or invalid query parameters.
+--   401  Missing, malformed, or unverifiable token.
+--   404  Room not found.
+--
+-- When silent-reconnect=true the room is destroyed with an alternate-venue JID
+-- so clients silently reconnect rather than showing a "meeting ended" screen.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
 module:set_global();
@@ -11,8 +46,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local starts_with = util.starts_with;
 
-local neturl = require "net.url";
-local parse = neturl.parseQuery;
+local parse = require "util.http".formdecode;
 
 -- will be initialized once the main virtual host module is initialized
 local token_util;
@@ -22,6 +56,10 @@ local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', '
 local muc_domain = muc_domain_prefix..'.'..muc_domain_base;
 
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
+if asapKeyServer == "" then
+    module:log("warn", "No 'prosody_password_public_key_repo_url' option set, disabling end-meeting endpoint.");
+    return;
+end
 
 local event_count = module:measure("muc_end_meeting_rate", "rate")
 local event_count_success = module:measure("muc_end_meeting_success", "rate")
@@ -103,10 +141,8 @@ function module.add_host(host_module)
 
         token_util = module:require "token/util".new(host_module);
 
-        if asapKeyServer ~= "" then
-            -- init token util with our asap keyserver
-            token_util:set_asap_key_server(asapKeyServer)
-        end
+        -- init token util with our asap keyserver
+        token_util:set_asap_key_server(asapKeyServer)
 
         module:log("info", "Adding http handler for /end-meeting on %s", host_module.host);
         host_module:depends("http");

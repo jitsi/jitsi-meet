@@ -185,7 +185,7 @@ const Notification = ({
         } else {
             return (
                 <Text
-                    numberOfLines = { 1 }
+                    numberOfLines = { 2 }
                     style = { styles.contentTextTitle as TextStyle }>
                     { titleText }
                 </Text>
@@ -224,6 +224,7 @@ const Notification = ({
                 </View>
             </View>
             <IconButton
+                accessibilityLabel = { t('dialog.dismiss') }
                 color = { BaseTheme.palette.icon04 }
                 onPress = { onDismiss }
                 src = { IconCloseLarge }

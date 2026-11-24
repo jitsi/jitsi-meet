@@ -3,7 +3,6 @@ import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
 import {
-    clearCalendarIntegration,
     setCalendarError,
     setLoadingCalendarEvents
 } from './actions.web';
@@ -87,10 +86,8 @@ export function _fetchCalendarEntries(
         }, (error: any) => {
             logger.error('Error fetching calendar.', error);
 
-            if (error.error === ERRORS.AUTH_FAILED) {
-                dispatch(clearCalendarIntegration());
-            }
-
+            // On AUTH_FAILED the selected integration is kept, so the user
+            // only has to sign in again.
             dispatch(setCalendarError(error));
         })
         .then(() => dispatch(setLoadingCalendarEvents(false)));

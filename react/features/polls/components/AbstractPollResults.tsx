@@ -10,6 +10,7 @@ import { getParticipantById, getParticipantDisplayName } from '../../base/partic
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IAnswerData, IPollData, IVoterData } from '../types';
 
 /**
@@ -33,7 +34,10 @@ export type AnswerInfo = IAnswerData & {
  */
 export type AbstractProps = {
     answers: Array<AnswerInfo>;
+    canClose: boolean;
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closePoll: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closed: boolean;
     creatorName: string;
     haveVoted: boolean;
     pollId: string;
@@ -68,14 +72,17 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
 
         // Getting every voters ID that participates to the poll
         for (const answer of poll.answers) {
-            answer.voters?.forEach(k => allVoters.add(k.id));
+            const answerVoters = Array.isArray(answer.voters) ? answer.voters : undefined;
+
+            answerVoters?.forEach(k => allVoters.add(k.id));
         }
 
         return poll.answers.map(answer => {
-            const nrOfVotersPerAnswer = answer.voters?.length || 0;
+            const answerVoters = Array.isArray(answer.voters) ? answer.voters : undefined;
+            const nrOfVotersPerAnswer = answerVoters?.length || 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
-            const voters = answer.voters?.reduce((acc, v) => {
+            const voters = answerVoters?.reduce((acc, v) => {
                 acc.push({
                     id: v.id,
                     name: getParticipantById(reduxState, v.id)
@@ -94,7 +101,9 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         });
     }, [ poll.answers, showDetails ]);
 
+    const { canClose, closePoll } = useClosePoll(pollId);
     const dispatch = useDispatch();
+
     const changeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, true));
         sendAnalytics(createPollEvent('vote.changed'));
@@ -105,7 +114,10 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
     return (
         <Component
             answers = { answers }
+            canClose = { canClose }
             changeVote = { changeVote }
+            closePoll = { closePoll }
+            closed = { Boolean(poll.closed) }
             creatorName = { creatorName }
             haveVoted = { poll.lastVote !== null }
             pollId = { pollId }

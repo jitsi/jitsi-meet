@@ -1,9 +1,6 @@
-import { debounce } from 'lodash-es';
 import { NativeModules } from 'react-native';
 
 import { IParticipant } from '../../base/participants/types';
-
-import { readyToClose } from './actions';
 
 
 /**
@@ -20,13 +17,6 @@ import { readyToClose } from './actions';
 export function sendEvent(store: Object, name: string, data: Object) {
     NativeModules.ExternalAPI.sendEvent(name, data);
 }
-
-/**
- * Debounced sending of `readyToClose`.
- */
-export const _sendReadyToClose = debounce(dispatch => {
-    dispatch(readyToClose());
-}, 2500, { leading: true });
 
 /**
  * Returns a participant info object based on the passed participant object from redux.

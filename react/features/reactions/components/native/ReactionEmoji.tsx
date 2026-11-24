@@ -44,47 +44,57 @@ function ReactionEmoji({ reaction, uid, index }: IProps) {
 
 
     useEffect(() => {
-        setTimeout(() => dispatch(removeReaction(uid)), 5000);
-    }, []);
-
-    useEffect(() => {
-        Animated.timing(
+        const animation = Animated.timing(
             animationVal,
             {
                 toValue: 1,
                 duration: 5000,
                 useNativeDriver: true
             }
-        ).start();
+        );
+
+        // Remove only after the animation finishes, so unmount does not race it.
+        animation.start(({ finished }) => finished && dispatch(removeReaction(uid)));
+
+        return () => animation.stop();
     }, [ animationVal ]);
 
+
+    // Memoized to avoid recreating interpolation nodes on every re-render.
+    const animatedStyle = useMemo(() => ({
+        transform: [
+            { translateY: animationVal.interpolate({
+                inputRange: [ 0, 0.70, 0.75, 1 ],
+                outputRange: [ 0, coordinates.topY * vh, coordinates.topY * vh, coordinates.bottomY * vh ]
+            })
+            }, {
+                translateX: animationVal.interpolate({
+                    inputRange: [ 0, 0.70, 0.75, 1 ],
+                    outputRange: [ 0, coordinates.topX, coordinates.topX,
+                        coordinates.topX < 0 ? -coordinates.bottomX : coordinates.bottomX ]
+                })
+            }, {
+                scale: animationVal.interpolate({
+                    inputRange: [ 0, 0.70, 0.75, 1 ],
+                    outputRange: [ 0.6, 1.5, 1.5, 1 ]
+                })
+            }
+        ],
+        opacity: animationVal.interpolate({
+            inputRange: [ 0, 0.7, 0.75, 1 ],
+            outputRange: [ 1, 1, 1, 0 ]
+        })
+    }), [ animationVal, coordinates, vh ]);
+
+    if (!(reaction in REACTIONS)) {
+        return null;
+    }
 
     return (
         <Animated.Text
             style = {{
                 ..._styles.emojiAnimation,
-                transform: [
-                    { translateY: animationVal.interpolate({
-                        inputRange: [ 0, 0.70, 0.75, 1 ],
-                        outputRange: [ 0, coordinates.topY * vh, coordinates.topY * vh, coordinates.bottomY * vh ]
-                    })
-                    }, {
-                        translateX: animationVal.interpolate({
-                            inputRange: [ 0, 0.70, 0.75, 1 ],
-                            outputRange: [ 0, coordinates.topX, coordinates.topX,
-                                coordinates.topX < 0 ? -coordinates.bottomX : coordinates.bottomX ]
-                        })
-                    }, {
-                        scale: animationVal.interpolate({
-                            inputRange: [ 0, 0.70, 0.75, 1 ],
-                            outputRange: [ 0.6, 1.5, 1.5, 1 ]
-                        })
-                    }
-                ],
-                opacity: animationVal.interpolate({
-                    inputRange: [ 0, 0.7, 0.75, 1 ],
-                    outputRange: [ 1, 1, 1, 0 ]
-                })
+                ...animatedStyle
             }}>
             {REACTIONS[reaction].emoji}
         </Animated.Text>

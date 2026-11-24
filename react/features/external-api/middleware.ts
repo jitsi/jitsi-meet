@@ -8,7 +8,12 @@ import {
     KICKED_OUT
 } from '../base/conference/actionTypes';
 import { SET_CONFIG } from '../base/config/actionTypes';
-import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices/actionTypes';
+import { getPageUnloadEventName } from '../base/config/functions.any';
+import {
+    DEVICE_PERMISSION_STATUS_CHANGED,
+    NOTIFY_CAMERA_ERROR,
+    NOTIFY_MIC_ERROR
+} from '../base/devices/actionTypes';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -29,6 +34,7 @@ import { getBaseUrl } from '../base/util/helpers';
 import { appendSuffix } from '../display-name/functions';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback/actionTypes';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip/actionTypes';
+import { SET_LOBBY_MODE_ENABLED } from '../lobby/actionTypes';
 import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
@@ -160,6 +166,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DEVICE_PERMISSION_STATUS_CHANGED:
+        APP.API.notifyDevicePermissionsChanged(action.permissionStatus);
+        break;
+
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {
             APP.API.notifyOnCameraError(
@@ -238,13 +248,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CONFIG: {
-        const state = store.getState();
-        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
-
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+        window.addEventListener(getPageUnloadEventName(store.getState()), () => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             APP.API.dispose();
             getJitsiMeetTransport().dispose();
@@ -255,6 +262,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);
+        break;
+
+    case SET_LOBBY_MODE_ENABLED:
+        APP.API.notifyLobbyModeChanged(action.enabled);
         break;
 
     case SUBMIT_FEEDBACK_ERROR:

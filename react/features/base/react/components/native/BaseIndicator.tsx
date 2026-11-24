@@ -10,6 +10,11 @@ import { BASE_INDICATOR } from './styles';
 interface IProps {
 
     /**
+     * Accessibility label for the indicator.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * Overwritten background color when indicator is highlighted.
      */
     backgroundColor?: string;
@@ -41,10 +46,12 @@ export default class BaseIndicator extends Component<IProps> {
      * @inheritdoc
      */
     override render() {
-        const { icon, iconStyle } = this.props;
+        const { accessibilityLabel, icon, iconStyle } = this.props;
 
         return (
             <View
+                accessibilityLabel = { accessibilityLabel }
+                accessible = { Boolean(accessibilityLabel) }
                 style = { BASE_INDICATOR as ViewStyle }>
                 <Icon
                     src = { icon }

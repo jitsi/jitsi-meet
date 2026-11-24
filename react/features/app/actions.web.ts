@@ -5,7 +5,9 @@ import {
     configWillLoad,
     setConfig
 } from '../base/config/actions';
+import { buildConfigURL } from '../base/config/functions.any';
 import { setLocationURL } from '../base/connection/actions.web';
+import { stripJwtSignatures } from '../base/jwt/functions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from '../base/util/uri';
@@ -69,11 +71,25 @@ export function appNavigate(uri?: string) {
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
 
-        dispatch(configWillLoad(locationURL, room));
-
-        const config = await loadConfig();
-
+        dispatch(configWillLoad(locationURL));
         dispatch(setLocationURL(locationURL));
+
+        let config = window.config;
+
+        if (!config) {
+            const url = buildConfigURL(locationURL, room);
+
+            try {
+                config = await loadConfig(url);
+
+                // Mirror to window.config so legacy bare `config` global
+                // references (UI.js, etc.) resolve when SSI did not inject it.
+                window.config = config;
+            } catch (err) {
+                logger.error(`Failed to load config from ${url}`, err);
+            }
+        }
+
         dispatch(setConfig(config));
         dispatch(setRoom(room));
     };
@@ -172,7 +188,16 @@ export function reloadNow() {
         const { locationURL } = state['features/base/connection'];
 
         const reloadAction = () => {
-            logger.info(`Reloading the conference using URL: ${locationURL}`);
+            logger.info(`Reloading the conference using URL: ${stripJwtSignatures(locationURL)}`);
+
+            // Fire videoConferenceLeft before navigation so it is delivered
+            // while the postis channel is still active. postMessage sent from
+            // beforeunload is unreliable in Chrome when the iframe navigates.
+            // @ts-ignore
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+
+            // @ts-ignore
+            APP.API.dispose(); // prevent double-fire from the beforeunload handler
 
             dispatch(reloadWithStoredParams());
         };

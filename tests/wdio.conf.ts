@@ -1,8 +1,9 @@
 import AllureReporter from '@wdio/allure-reporter';
-import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
 import fs from 'fs';
 import { glob } from 'glob';
+import junitReportBuilder from 'junit-report-builder';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
@@ -11,6 +12,7 @@ import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import { config as testsConfig } from './helpers/TestsConfig';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo, saveLogs } from './helpers/browserLogger';
+import { registerCustomMatchers } from './helpers/matchers';
 import { IContext } from './helpers/types';
 import { generateRoomName } from './helpers/utils';
 
@@ -21,7 +23,7 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
-const chromeArgs = [
+export const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
     '--use-fake-device-for-media-stream',
@@ -37,7 +39,11 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+
+    // Absolute (__dirname-based, not CWD-relative): this is passed to Chrome, which resolves it
+    // against wherever the launching process's CWD happens to be - the repo root when running
+    // `npm test` from there, but tests/ itself when running via tests/package.json's own scripts.
+    `--use-file-for-fake-audio-capture=${path.join(__dirname, 'resources', 'fakeAudioStream.wav')}`
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -54,7 +60,7 @@ if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);
 }
 
-const chromePreferences = {
+export const chromePreferences = {
     'intl.accept_languages': 'en-US'
 };
 
@@ -66,9 +72,10 @@ const specs = [
  * Analyzes test files at config construction time to determine browser requirements
  * and generate capabilities with appropriate exclusions.
  */
-function generateCapabilitiesFromSpecs(): Record<string, any> {
+function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; excludedSpecs: string[]; } {
     const allSpecFiles: string[] = [];
-    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
+    const allBrowsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
+    const excludedSpecs: string[] = [];
 
     for (const pattern of specs) {
         const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
@@ -82,19 +89,83 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
     // Import TestProperties to access the populated registry
     const { testProperties } = require('./helpers/TestProperties');
 
+    // Detect if specific spec files are targeted via --spec CLI argument (e.g. npm run test-single).
+    // When targeted, only create capabilities for the browsers those specs actually need.
+    const targetedSpecFiles: string[] = [];
+
+    for (let i = 0; i < process.argv.length; i++) {
+        if (process.argv[i] === '--spec') {
+            // Collect all consecutive non-flag arguments after --spec (wdio accepts space-separated specs).
+            let j = i + 1;
+
+            while (j < process.argv.length && !process.argv[j].startsWith('--')) {
+                process.argv[j].split(',').forEach(f => {
+                    const normalized = f.trim().replace(/\\/g, '/');
+                    // Try exact resolution first, then fall back to case-insensitive suffix matching
+                    // (macOS filesystem is case-insensitive but string comparison is not).
+                    const resolved = path.resolve(normalized);
+                    const resolvedLower = resolved.toLowerCase();
+                    const normalizedLower = normalized.toLowerCase();
+                    const match = allSpecFiles.find(sf => {
+                        const sfNormalized = sf.replace(/\\/g, '/');
+
+                        return sfNormalized === resolved.replace(/\\/g, '/')
+                            || sfNormalized.toLowerCase() === resolvedLower.replace(/\\/g, '/')
+                            || sfNormalized.toLowerCase().endsWith(`/${normalizedLower}`);
+                    });
+
+                    if (match) {
+                        targetedSpecFiles.push(match);
+                    } else {
+                        console.warn(`[wdio] --spec file not found in spec list: ${f}`);
+                    }
+                });
+                j++;
+            }
+            i = j - 1;
+        }
+    }
+
+    console.log(`[wdio] process.argv: ${process.argv.join(' ')}`);
+    console.log(`[wdio] targeted specs: ${targetedSpecFiles.join(', ') || '(all)'}`);
+
+    const scopedFiles = targetedSpecFiles.length > 0 ? targetedSpecFiles : allSpecFiles;
+    const requiredBrowsers = new Set<string>();
+
+    for (const file of scopedFiles) {
+        const props = testProperties[file];
+
+        if (props?.useJaas && !testsConfig.jaas.enabled) {
+            continue;
+        }
+        if (props?.usesBrowsers) {
+            props.usesBrowsers.forEach((b: string) => requiredBrowsers.add(b));
+        } else {
+            requiredBrowsers.add('p1');
+        }
+    }
+
+    // Preserve the predefined browser order; fall back to all browsers if nothing was determined.
+    const browsers = requiredBrowsers.size > 0
+        ? allBrowsers.filter(b => requiredBrowsers.has(b))
+        : allBrowsers;
+
     // Determine which browsers need which exclusions
-    const browserExclusions: Record<string, Set<string>> = {
-        p1: new Set(),
-        p2: new Set(),
-        p3: new Set(),
-        p4: new Set(),
-        p5: new Set(),
-        p6: new Set()
-    };
+    const browserExclusions: Record<string, Set<string>> = {};
+
+    browsers.forEach(b => {
+        browserExclusions[b] = new Set();
+    });
 
     for (const file of allSpecFiles) {
         const props = testProperties[file];
         const relativeFile = path.relative(__dirname, file);
+
+        // If a test requires JaaS but JaaS is not configured, exclude it at the top level so no worker is created.
+        if (props?.useJaas && !testsConfig.jaas.enabled) {
+            excludedSpecs.push(relativeFile);
+            continue;
+        }
 
         // If a test doesn't use a particular browser, add it to exclusions for that browser
         if (props?.usesBrowsers) {
@@ -106,35 +177,186 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         }
     }
 
-    return Object.fromEntries(
-        browsers.map(browser => [
-            browser,
-            {
-                capabilities: {
-                    browserName: 'chrome',
-                    ...(browser === 'p1' && process.env.BROWSER_CHROME_BETA ? { browserVersion: 'beta' } : {}),
-                    'goog:chromeOptions': {
-                        args: chromeArgs,
-                        prefs: chromePreferences
-                    },
-                    'wdio:exclude': Array.from(browserExclusions[browser] || [])
+    return {
+        capabilities: Object.fromEntries(
+            browsers.map(browser => [
+                browser,
+                {
+                    capabilities: {
+                        browserName: 'chrome',
+                        // Only pin the custom jitsi-stable/jitsi-beta aliases when routing through
+                        // Selenium Grid. Local chromedriver/geckodriver doesn't know these aliases.
+                        ...(process.env.GRID_HOST_URL ? {
+                            browserVersion: browser === 'p1' && process.env.BROWSER_CHROME_BETA
+                                ? 'jitsi-beta' : 'jitsi-stable'
+                        } : {}),
+                        'goog:chromeOptions': {
+                            args: chromeArgs,
+                            prefs: chromePreferences
+                        },
+                        'wdio:exclude': Array.from(browserExclusions[browser] || [])
+                    }
                 }
-            }
-        ])
-    );
+            ])
+        ),
+        excludedSpecs
+    };
 }
 
-const capabilities = generateCapabilitiesFromSpecs();
+const { capabilities, excludedSpecs } = generateCapabilitiesFromSpecs();
 
-const TEST_RESULTS_DIR = 'test-results';
+export const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
+
+// Titles of the tests that failed in this worker. Recorded by afterTest and handed to the launcher
+// by the `after` hook, so onWorkerEnd can tell a clean run from a failed one even when the
+// reporters never got the chance to flush their results.
+const failedTestTitles: Array<string> = [];
+
+// Tracks browser-session lifecycle events written by each worker's
+// beforeSession/afterSession hooks. The launcher's onComplete reads it to
+// compute the peak number of concurrent browser sessions during the run.
+const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
+
+/**
+ * Path of the sentinel a worker writes once its whole spec file has finished running.
+ *
+ * Written by the framework `after` hook (which @wdio/mocha-framework runs after every test and
+ * hook, and before the runner deletes the sessions) and read by the launcher's `onWorkerEnd`: a
+ * worker that exits non-zero *with* this file present got through its whole spec file, so whatever
+ * killed it happened while tearing the session(s) down.
+ *
+ * This has to be a file rather than something parsed out of the worker log. The worker's debug
+ * output goes to stdout, which the launcher forwards to the console; WDIO_LOG_PATH only ever
+ * receives launcher-level lines, so the hook traces a log-scraping check would need are absent.
+ *
+ * @param cid - The worker (capability) id.
+ */
+function completionSentinelPath(cid: string): string {
+    return path.join(TEST_RESULTS_DIR, `completed-${cid}.json`);
+}
+
+/**
+ * How many WebDriver BiDi commands and results to keep per browser instance for the failure report.
+ */
+const BIDI_TRACE_SIZE = 2000;
+
+/**
+ * How much of each traced BiDi command or result to keep. Script calls carry the whole wrapped function
+ * source, which is noise here; the method, target context and result are what matter.
+ */
+const BIDI_TRACE_LINE_LENGTH = 800;
+
+/**
+ * The last BiDi commands and results of each browser instance, attached to the report when a test fails.
+ *
+ * The classic WebDriver commands are already in the report (wdio logs them into the junit output), but the
+ * BiDi ones are not: the webdriver logger writes them to the worker log, which only ever receives
+ * launcher-level lines (see completionSentinelPath). Script calls and frame switches go over BiDi, and a
+ * failure like a frame switch landing on a browsing context that never answers cannot be understood
+ * without seeing which context ids were requested and what the browser reported.
+ */
+const bidiTraces = new Map<string, string[]>();
+
+/**
+ * Starts recording the BiDi traffic of a browser instance into its ring buffer.
+ *
+ * @param instance - The multiremote instance name.
+ * @param browser - The browser instance.
+ */
+function traceBidi(instance: string, browser: WebdriverIO.Browser) {
+    const trace: string[] = [];
+    const record = (direction: string, payload: unknown) => {
+        trace.push(`${new Date().toISOString()} ${direction} ${
+            JSON.stringify(payload).slice(0, BIDI_TRACE_LINE_LENGTH)}`);
+
+        if (trace.length > BIDI_TRACE_SIZE) {
+            trace.splice(0, trace.length - BIDI_TRACE_SIZE);
+        }
+    };
+
+    bidiTraces.set(instance, trace);
+
+    browser.on('bidiCommand', (command: unknown) => record('>>', command));
+    browser.on('bidiResult', (result: unknown) => record('<<', result));
+}
+
+/**
+ * Reads a worker's completion sentinel, if it wrote one.
+ *
+ * @param cid - The worker (capability) id.
+ * @returns The failed test titles and mocha failure count the worker recorded, or undefined when
+ * it never reached its `after` hook.
+ */
+function readWorkerCompletion(cid: string): { failed: Array<string>; failures: number; } | undefined {
+    try {
+        const parsed = JSON.parse(fs.readFileSync(completionSentinelPath(cid), 'utf8'));
+
+        return {
+            failed: Array.isArray(parsed.failed) ? parsed.failed : [],
+            failures: typeof parsed.failures === 'number' ? parsed.failures : 0
+        };
+    } catch {
+        // No sentinel, or it is unreadable — the worker did not finish its spec file.
+        return undefined;
+    }
+}
+
+/**
+ * Extracts the last error line from a worker's wdio log, so a synthesised report can say what
+ * actually went wrong instead of only that the worker exited non-zero.
+ *
+ * @param specFile - The worker's first spec file (path or URL); used to locate its wdio log.
+ * @param cid - The worker (capability) id.
+ * @returns The error line, trimmed and truncated, or undefined if the log has none.
+ */
+function readWorkerError(specFile: string | undefined, cid: string): string | undefined {
+    // @wdio/local-runner writes the worker log to `${specBaseName}-${cid}.log`, where specBaseName
+    // strips only the final extension (so `displayName.spec.ts` -> `displayName.spec`), falling back
+    // to `wdio-${cid}.log` when no spec is associated. Mirror that exactly so the log is found.
+    const candidates = [];
+
+    if (specFile) {
+        const specBaseName = path.basename(specFile, path.extname(specFile));
+
+        candidates.push(path.join(TEST_RESULTS_DIR, `${specBaseName}-${cid}.log`));
+    }
+    candidates.push(path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`));
+
+    const logPath = candidates.find(p => fs.existsSync(p));
+
+    if (!logPath) {
+        return undefined;
+    }
+
+    try {
+        // Worker logs can be tens of MB; only scan the tail where the teardown sequence lives.
+        const stats = fs.statSync(logPath);
+        const tailSize = Math.min(stats.size, 64 * 1024);
+        const fd = fs.openSync(logPath, 'r');
+        const buf = Buffer.alloc(tailSize);
+
+        fs.readSync(fd, buf, 0, tailSize, Math.max(0, stats.size - tailSize));
+        fs.closeSync(fd);
+
+        return buf.toString('utf8')
+            .split('\n')
+            .reverse()
+            .find(line => line.includes('ERROR'))
+            ?.trim()
+            .slice(0, 500);
+    } catch {
+        return undefined;
+    }
+}
 
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
 
     specs,
+    exclude: excludedSpecs,
 
     maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
@@ -146,7 +368,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
-    connectionRetryTimeout: 15_000,
+    connectionRetryTimeout: 30_000,
 
     // Default request retries count
     connectionRetryCount: 3,
@@ -202,6 +424,30 @@ export const config: WebdriverIO.MultiremoteConfig = {
     // Hooks
     // =====
     /**
+     * Gets executed once before all workers are spawned (launcher process only).
+     * Reset the concurrency log so onComplete only sees events from this run.
+     */
+    onPrepare() {
+        try {
+            if (fs.existsSync(CONCURRENCY_LOG_PATH)) {
+                fs.unlinkSync(CONCURRENCY_LOG_PATH);
+            }
+        } catch {
+            // best effort — if we can't reset, onComplete will still parse what it sees
+        }
+
+        // Drop completion sentinels left behind by an earlier run in the same workspace; a stale
+        // one would make onWorkerEnd read a genuine crash as a teardown-only crash.
+        try {
+            fs.readdirSync(TEST_RESULTS_DIR)
+                .filter(name => (/^completed-.*\.json$/).test(name))
+                .forEach(name => fs.unlinkSync(path.join(TEST_RESULTS_DIR, name)));
+        } catch {
+            // best effort — the directory may not exist yet
+        }
+    },
+
+    /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
      * We have overriden this function in beforeSession to be able to pass cid as first param.
@@ -209,17 +455,35 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     async before(cid, _, files) {
+        // Register custom matchers here (not at matchers.ts module load): @wdio/runner replaces
+        // globalThis.expect via _setGlobal AFTER mocha has already loaded the spec files, so any
+        // expect.extend at module load runs against an expect that's about to be discarded.
+        registerCustomMatchers();
+
         if (files.length !== 1) {
             console.warn('We expect to run a single suite, but got more than one');
         }
 
         const testFilePath = files[0].replace(/^file:\/\//, '');
-        const testName = path.relative('tests/specs', testFilePath)
+        // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above.
+        const testName = path.relative(path.join(__dirname, 'specs'), testFilePath)
             .replace(/.spec.ts$/, '')
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
-        console.log(`Running test: ${testName} via worker: ${cid}`);
+        console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiRemoteBrowser.instances.length}`);
+
+        // Log the browsers in use, the console logs of the participants are attached to the report only when a test
+        // fails, so this is the only place where a passing run records what it was executed against.
+        console.log(`Using browsers: ${multiRemoteBrowser.instances.map((instance: string) => {
+            const { browserName, browserVersion } = multiRemoteBrowser.getInstance(instance).capabilities;
+
+            return `${instance}:${browserName}/${browserVersion}`;
+        }).join(' ')}`);
+
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            traceBidi(instance, multiRemoteBrowser.getInstance(instance));
+        });
 
         const globalAny: any = global;
 
@@ -234,8 +498,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
-        await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
-            const bInstance = multiremotebrowser.getInstance(instance);
+        await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+            const bInstance = multiRemoteBrowser.getInstance(instance);
 
             // @ts-ignore
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
@@ -249,7 +513,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 return;
             }
 
-            const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
+            // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above -
+            // this crashed the worker outright (ENOENT) once tests started running from tests/
+            // itself instead of the repo root.
+            const rpath = await bInstance.uploadFile(path.join(__dirname, 'resources', 'iframeAPITest.html'));
 
             // @ts-ignore
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
@@ -283,14 +550,56 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
     },
 
-    after() {
+    /**
+     * Gets executed after all tests in the spec file are done, before the sessions are deleted.
+     *
+     * @param {number} result - Mocha's number of failing tests for this spec file.
+     * @returns {void}
+     */
+    after(result) {
         const { ctx }: any = global;
 
         ctx?.webhooksProxy?.disconnect();
         keepAlive.forEach(clearInterval);
+
+        // Tell the launcher this worker got through every test and hook. If it still exits
+        // non-zero, the failure was in session teardown, which onWorkerEnd reports separately.
+        const cid = process.env.WDIO_WORKER_ID;
+
+        if (cid) {
+            try {
+                fs.writeFileSync(completionSentinelPath(cid), JSON.stringify({
+                    failed: failedTestTitles,
+                    failures: typeof result === 'number' ? result : 1
+                }));
+            } catch {
+                // best effort — without it, a teardown crash is reported as a runner crash
+            }
+        }
     },
 
     async beforeSession(c, capabilities_, spec, cid) {
+        // Clear any completion sentinel left by an earlier attempt at this spec — worker ids can
+        // be reused when a spec file is retried — so onWorkerEnd never reads a stale completion.
+        try {
+            fs.rmSync(completionSentinelPath(cid), { force: true });
+        } catch {
+            // best effort — onPrepare already cleared sentinels from previous runs
+        }
+
+        // Record this worker's browser sessions opening, so the launcher's
+        // onComplete can compute peak concurrent sessions across the run.
+        try {
+            fs.appendFileSync(CONCURRENCY_LOG_PATH, `${JSON.stringify({
+                type: 'start',
+                t: Date.now(),
+                cid,
+                n: Object.keys(capabilities_ as Record<string, unknown>).length
+            })}\n`);
+        } catch {
+            // non-fatal — concurrency stats are best-effort
+        }
+
         const originalBefore = c.before;
 
         if (spec && spec.length == 1) {
@@ -322,14 +631,26 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
     },
 
+    afterSession(_c, capabilities_, _specs) {
+        try {
+            fs.appendFileSync(CONCURRENCY_LOG_PATH, `${JSON.stringify({
+                type: 'end',
+                t: Date.now(),
+                n: Object.keys(capabilities_ as Record<string, unknown>).length
+            })}\n`);
+        } catch {
+            // non-fatal — concurrency stats are best-effort
+        }
+    },
+
     /**
      * Gets executed before the suite starts (in Mocha/Jasmine only).
      *
      * @param {Object} suite - Suite details.
      */
     beforeSuite(suite) {
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance),
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance),
                 `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
@@ -361,20 +682,26 @@ export const config: WebdriverIO.MultiremoteConfig = {
             AllureReporter.addSuite(test.parent);
         }
 
-        if (ctx.skipSuiteTests) {
-            if ((typeof ctx.skipSuiteTests) === 'string') {
+        // A failure in an earlier test skips the rest of that describe block, but not other describe blocks in the
+        // same file (ctx.failedSuite is scoped to the suite that failed, while ctx.skipSuiteTests is file-wide).
+        const failedSameSuite = Boolean(ctx.failedSuite) && ctx.failedSuite === test.parent;
+        const skipReason = ctx.skipSuiteTests
+            || (failedSameSuite ? `A previous test in suite "${test.parent}" has failed.` : false);
+
+        if (skipReason) {
+            if ((typeof skipReason) === 'string') {
                 AllureReporter.addDescription((ctx.testProperties.description || '')
-                    + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
+                    + '\n\nSkipped because: ' + skipReason, 'text');
             }
-            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+            console.log(`Skipping because: ${skipReason}`);
 
             context.skip();
 
             return;
         }
 
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
     },
 
@@ -387,25 +714,43 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     async afterTest(test, context, { error }) {
-        multiremotebrowser.instances.forEach((instance: string) =>
-            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
+        multiRemoteBrowser.instances.forEach((instance: string) =>
+            logInfo(multiRemoteBrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
 
-            // skip all remaining tests in the suite
-            ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
+            // Record the failure for the `after` hook, so the launcher still knows this spec had
+            // failing tests if the worker dies before the reporters flush.
+            failedTestTitles.push(test.title);
+
+            // Skip the remaining tests in the same describe block (but not other describe blocks in the file).
+            ctx.failedSuite = test.parent;
 
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
-            await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
+            await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
                 // @ts-ignore
-                await ctx[instance]?.switchToIFrame();
+                const participant = ctx[instance];
+
+                // This hook runs inside the mocha budget of the test that just failed. When the failure was
+                // switchToIFrame() giving up on a dead iframe context (3 attempts of 30s each), trying again here
+                // would spend the same again and let the mocha timeout replace the real error and the debug info
+                // with a bare "Timeout of 180000ms exceeded". Collect whatever the current context offers instead.
+                if (!participant || participant.isIframeUnreachable) {
+                    return;
+                }
+
+                try {
+                    await participant.switchToIFrame();
+                } catch (e) {
+                    console.error(`Failed to switch ${instance} into the iframe to collect debug info`, e);
+                }
             }));
 
             const allProcessing: Promise<any>[] = [];
             const attachments: { content: string | Buffer; filename: string; type: string; }[] = [];
 
-            multiremotebrowser.instances.forEach((instance: string) => {
-                const bInstance = multiremotebrowser.getInstance(instance);
+            multiRemoteBrowser.instances.forEach((instance: string) => {
+                const bInstance = multiRemoteBrowser.getInstance(instance);
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
                     attachments.push({
@@ -441,6 +786,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
                         content: pretty(source),
                         type: 'text/plain' });
                 }));
+
+                const bidiTrace = bidiTraces.get(instance);
+
+                if (bidiTrace?.length) {
+                    attachments.push({
+                        filename: `${instance}-bidi-trace`,
+                        content: bidiTrace.join('\n'),
+                        type: 'text/plain' });
+                }
             });
 
             await Promise.allSettled(allProcessing);
@@ -452,6 +806,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     AllureReporter.addAttachment(a.filename, a.content, a.type);
                 }
             );
+
+            console.log('Hanging up after test failure');
+            // let's hangup all the calls and give time for it to push any stats and logs
+            await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+                // @ts-ignore
+                await ctx[instance]?.hangup();
+            }));
         }
     },
 
@@ -462,10 +823,144 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     afterSuite(suite) {
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance),
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance),
                 `---=== End ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
+    },
+
+    /**
+     * Gets executed after a worker process has exited.
+     * Handles three crash scenarios:
+     * 1. Session teardown crash AFTER the spec file completed (common with Firefox on Selenium
+     *    Grid): the worker wrote its completion sentinel, then the session DELETE either timed out
+     *    or the worker was killed mid-teardown, so the runner exited non-zero. The tests themselves
+     *    ran, so we report their outcome (from the sentinel) rather than a misleading "crashed",
+     *    and record the teardown anomaly in the entry. See completionSentinelPath.
+     * 2. Session DELETE timeout BEFORE tests completed: JUnit reporter never flushes,
+     *    leaving a zero-byte XML. Synthesise a failure entry.
+     * 3. Session INIT timeout: JUnit reporter writes a non-empty XML but with empty name/classname,
+     *    and the allure reporter never fires (no beforeTest hook ran). Synthesise a failure entry.
+     */
+    onWorkerEnd(cid, exitCode, workerSpecs) {
+        if (exitCode === 0) {
+            return;
+        }
+        const xmlPath = path.join(TEST_RESULTS_DIR, `results-${cid}.xml`);
+
+        const specName = workerSpecs?.[0] ? path.basename(workerSpecs[0], '.spec.ts') : 'unknown';
+        const dirMatch = workerSpecs?.[0]?.match(/\/tests\/specs\/([^/]+)\//);
+        const dir = dirMatch ? dirMatch[1] : 'unknown';
+        const message = `Worker exited with code ${exitCode} before results were written. Test result is unknown - tests may have passed.`;
+
+        // Check whether the XML has real test content. The JUnit reporter writes a non-empty XML
+        // even for session-init failures, but the testcase has empty name/classname in that case.
+        // If real test results were written, the allure reporter will have already produced its
+        // own result files, so we skip both. If the XML is missing or has no named test cases,
+        // we need to synthesise both.
+        let xmlHasNamedTests = false;
+
+        try {
+            const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+
+            xmlHasNamedTests = xmlContent.includes('name="') && !xmlContent.includes('name=""');
+        } catch {
+            // file doesn't exist — fall through and create it
+        }
+
+        if (xmlHasNamedTests) {
+            // Real test results were written; allure reporter handled this worker normally.
+            return;
+        }
+
+        // A worker that wrote its completion sentinel ran every test and hook in the spec file, so
+        // it died in session teardown. Report what the tests actually did. Pass the raw spec path
+        // so the log file name is derived the same way @wdio/local-runner derives it (only the
+        // final extension is stripped).
+        const completion = readWorkerCompletion(cid);
+
+        if (completion) {
+            const failureCount = Math.max(completion.failures, completion.failed.length);
+            const clean = failureCount === 0;
+            const workerError = readWorkerError(workerSpecs?.[0], cid);
+            const teardownDetail = `Session teardown crashed (worker exit ${exitCode}), so the `
+                + `reporters never wrote their results.${workerError ? ` Worker error: ${workerError}` : ''}`;
+            const teardownName = clean
+                ? 'Session teardown crashed after tests completed'
+                : 'Tests failed, then session teardown crashed';
+            const teardownMessage = clean
+                ? `The spec file ran to completion with no failures. ${teardownDetail}`
+                : `The spec file ran to completion with ${failureCount} failing test(s)`
+                    + `${completion.failed.length ? ` (${completion.failed.join(', ')})` : ''}. `
+                    + teardownDetail;
+            const b = junitReportBuilder.newBuilder();
+            const testCase = b.testSuite().name(specName).testCase()
+                .name(teardownName)
+                .className(specName)
+                .standardOutput(teardownMessage);
+
+            if (!clean) {
+                testCase.failure(teardownMessage);
+            }
+            b.writeTo(xmlPath);
+
+            // When the worker is killed mid-teardown the reporters never flush, so allure has no
+            // per-test results for this spec and it would otherwise vanish from the report. Write a
+            // single entry so the spec stays visible, carrying the outcome the worker recorded. If
+            // allure already captured the per-test results (e.g. a slow-DELETE timeout after a
+            // clean flush), this is just an extra informational entry alongside them.
+            const allureResult = {
+                uuid: randomUUID(),
+                name: teardownName,
+                status: clean ? 'passed' : 'failed',
+                statusDetails: { message: teardownMessage },
+                stage: 'finished',
+                steps: [],
+                attachments: [],
+                parameters: [],
+                labels: [
+                    { name: 'parentSuite', value: dir },
+                    { name: 'suite', value: specName }
+                ],
+                links: []
+            };
+            const allurePath
+                = path.join(TEST_RESULTS_DIR, 'allure-results', `${allureResult.uuid}-result.json`);
+
+            fs.writeFileSync(allurePath, JSON.stringify(allureResult));
+            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): ${teardownName} — synthesising `
+                + `${clean ? 'passing' : 'failing'} JUnit + allure entry. ${teardownMessage}`);
+
+            return;
+        }
+
+        const b = junitReportBuilder.newBuilder();
+
+        b.testSuite().name(specName).testCase()
+            .name('Test runner crashed')
+            .className(specName)
+            .error(message);
+        b.writeTo(xmlPath);
+
+        const allureResult = {
+            uuid: randomUUID(),
+            name: 'Test runner crashed',
+            status: 'broken',
+            statusDetails: { message },
+            stage: 'finished',
+            steps: [],
+            attachments: [],
+            parameters: [],
+            labels: [
+                { name: 'parentSuite', value: dir },
+                { name: 'suite', value: specName }
+            ],
+            links: []
+        };
+        const allurePath = path.join(TEST_RESULTS_DIR, 'allure-results', `${allureResult.uuid}-result.json`);
+
+        fs.writeFileSync(allurePath, JSON.stringify(allureResult));
+        console.log(`[onWorkerEnd] Wrote error XML and allure result for crashed worker ${cid} (spec: ${specName})`);
     },
 
     /**
@@ -475,6 +970,38 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     onComplete() {
+        // Replay session start/end events written by each worker to print
+        // the peak concurrent browser-session count for this run.
+        try {
+            if (fs.existsSync(CONCURRENCY_LOG_PATH)) {
+                const events = fs.readFileSync(CONCURRENCY_LOG_PATH, 'utf8')
+                    .split('\n')
+                    .filter(Boolean)
+                    .map(line => JSON.parse(line) as { n: number; t: number; type: 'start' | 'end'; });
+
+                events.sort((a, b) => a.t - b.t);
+                let active = 0;
+                let peak = 0;
+                let totalStarts = 0;
+
+                for (const ev of events) {
+                    if (ev.type === 'start') {
+                        active += ev.n;
+                        totalStarts += ev.n;
+                        if (active > peak) {
+                            peak = active;
+                        }
+                    } else {
+                        active -= ev.n;
+                    }
+                }
+                console.log(`[concurrency] Peak concurrent browser sessions: ${peak}`);
+                console.log(`[concurrency] Total browser sessions started:    ${totalStarts}`);
+            }
+        } catch (err) {
+            console.warn(`[concurrency] Could not compute peak concurrency: ${err}`);
+        }
+
         // Clean up duplicate parentSuite labels from Allure results
         const resultsDir = `${TEST_RESULTS_DIR}/allure-results`;
         const resultFiles = fs.readdirSync(resultsDir).filter(f => f.endsWith('-result.json'));
@@ -503,7 +1030,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }
         });
 
-        const reportError = new Error('Could not generate Allure report');
         const generation = allure([
             'generate', `${TEST_RESULTS_DIR}/allure-results`,
             '--clean', '--single-file',
@@ -512,15 +1038,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         return new Promise<void>((resolve, reject) => {
             const generationTimeout = setTimeout(
-                () => reject(reportError),
-                5000);
+                () => reject(new Error('Could not generate Allure report: timed out after 60s')),
+                60_000);
 
             // @ts-ignore
             generation.on('exit', eCode => {
                 clearTimeout(generationTimeout);
 
                 if (eCode !== 0) {
-                    return reject(reportError);
+                    return reject(new Error(`Could not generate Allure report: allure exited with code ${eCode}`));
                 }
 
                 console.log('Allure report successfully generated');

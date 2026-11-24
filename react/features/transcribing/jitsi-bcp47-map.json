@@ -11,12 +11,12 @@
     "el": "el-GR",
     "enGB": "en-GB",
     "es": "es-ES",
-    "esUS": "es-US",
+    "es-US": "es-US",
     "et": "et-EE",
     "eu": "eu-ES",
     "fi": "fi-FI",
     "fr": "fr-FR",
-    "frCA": "fr-CA",
+    "fr-CA": "fr-CA",
     "he": "iw-IL",
     "hi": "hi-IN",
     "mr": "mr-IN",
@@ -35,7 +35,7 @@
     "fa": "fa-IR",
     "pl": "pl-PL",
     "pt": "pt-PT",
-    "ptBR": "pt-BR",
+    "pt-BR": "pt-BR",
     "ru": "ru-RU",
     "ro": "ro-RO",
     "sk": "sk-SK",
@@ -48,6 +48,6 @@
     "tr": "tr-TR",
     "uk": "uk-UA",
     "vi": "vi-VN",
-    "zhCN": "zh",
-    "zhTW": "zh-TW"
+    "zh-CN": "zh",
+    "zh-TW": "zh-TW"
 }

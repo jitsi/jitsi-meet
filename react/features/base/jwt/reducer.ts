@@ -27,6 +27,8 @@ PersistenceRegistry.register('features/base/jwt', {
     knownAvatarUrl: true
 });
 
+export const DEFAULT_STATE: IJwtState = {};
+
 /**
  * Reduces redux actions which affect the JSON Web Token (JWT) stored in the
  * redux store.
@@ -38,7 +40,7 @@ PersistenceRegistry.register('features/base/jwt', {
  */
 ReducerRegistry.register<IJwtState>(
     'features/base/jwt',
-    (state = {}, action): IJwtState => {
+    (state = DEFAULT_STATE, action): IJwtState => {
         switch (action.type) {
         case SET_DELAYED_LOAD_OF_AVATAR_URL: {
             const nextState = {

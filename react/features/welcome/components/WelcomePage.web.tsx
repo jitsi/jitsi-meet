@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
-import { translate, translateToHTML } from '../../base/i18n/functions';
+import TranslationWithMarkup from '../../base/i18n/components/web/TranslationWithMarkup';
+import { createTranslationLink, translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
 import Watermarks from '../../base/react/components/web/Watermarks';
@@ -11,6 +12,7 @@ import CalendarList from '../../calendar-sync/components/CalendarList.web';
 import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
+import WelcomePageNotification from '../../system-wide-user-notification/components/web/WelcomePageNotification';
 
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
@@ -147,9 +149,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
-        if (this.state.generateRoomNames) {
-            this._updateRoomName();
-        }
+        this._updateRoomName();
 
         if (this._shouldShowAdditionalContent()) {
             this._additionalContentRef?.appendChild(
@@ -233,7 +233,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     <form onSubmit = { this._onFormSubmit }>
                                         <input
                                             aria-disabled = 'false'
-                                            aria-label = 'Meeting name input'
+                                            aria-label = { t('welcomepage.accessibilityLabel.roomname') }
                                             autoFocus = { true }
                                             className = 'enter-room-input'
                                             id = 'enter_room_field'
@@ -248,7 +248,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                                 <button
                                     aria-disabled = 'false'
-                                    aria-label = 'Start meeting'
+                                    aria-label = { t('welcomepage.startMeeting') }
                                     className = 'welcome-page-button'
                                     id = 'enter_room_button'
                                     onClick = { this._onFormSubmit }
@@ -272,16 +272,16 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                         {_moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
-                                {
-                                    translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                }
+                                <TranslationWithMarkup
+                                    components = { [ createTranslationLink(_moderatedRoomServiceUrl) ] }
+                                    i18nKey = 'welcomepage.moderatedMessage' />
                             </div>)}
                     </div>
                 </div>
 
                 <div className = 'welcome-cards-container'>
                     <div className = 'welcome-card-column'>
+                        <WelcomePageNotification />
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
                             {this._renderTabs()}
                         </div>

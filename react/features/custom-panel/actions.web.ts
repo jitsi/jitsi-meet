@@ -1,8 +1,12 @@
 import {
     CUSTOM_PANEL_CLOSE,
     CUSTOM_PANEL_OPEN,
-    SET_CUSTOM_PANEL_ENABLED
+    SET_CUSTOM_PANEL_IS_RESIZING,
+    SET_CUSTOM_PANEL_WIDTH,
+    SET_USER_CUSTOM_PANEL_WIDTH
 } from './actionTypes';
+
+export * from './actions.any';
 
 /**
  * Action to close the custom panel.
@@ -27,14 +31,40 @@ export function open() {
 }
 
 /**
- * Action to enable or disable the custom panel dynamically.
+ * Sets the custom panel width (used for responsive adjustments).
  *
- * @param {boolean} enabled - Whether the custom panel should be enabled.
+ * @param {number} width - The new width of the custom panel.
  * @returns {Object} The action object.
  */
-export function setCustomPanelEnabled(enabled: boolean) {
+export function setCustomPanelWidth(width: number) {
     return {
-        type: SET_CUSTOM_PANEL_ENABLED,
-        enabled
+        type: SET_CUSTOM_PANEL_WIDTH,
+        width
+    };
+}
+
+/**
+ * Sets the user-preferred custom panel width (triggered by user drag).
+ *
+ * @param {number} width - The new width of the custom panel.
+ * @returns {Object} The action object.
+ */
+export function setUserCustomPanelWidth(width: number) {
+    return {
+        type: SET_USER_CUSTOM_PANEL_WIDTH,
+        width
+    };
+}
+
+/**
+ * Sets whether the user is currently resizing the custom panel.
+ *
+ * @param {boolean} resizing - Whether the panel is being resized.
+ * @returns {Object} The action object.
+ */
+export function setCustomPanelIsResizing(resizing: boolean) {
+    return {
+        type: SET_CUSTOM_PANEL_IS_RESIZING,
+        resizing
     };
 }

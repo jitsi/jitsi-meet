@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { explainBeforePrompt } from '../../device-permissions/actions.web';
 import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { setAudioSettings } from '../../settings/actions.web';
@@ -24,7 +25,7 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksA,
-    showNoDataFromSourceVideoError,
+    showNoDataFromSourceError,
     toggleScreensharing,
     trackMuteUnmuteFailed,
     trackNoDataFromSourceNotificationInfoChanged
@@ -177,6 +178,21 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
+        if (action.muted) {
+            const localAudioTrack = getLocalTrack(store.getState()['features/base/tracks'], MEDIA_TYPE.AUDIO);
+
+            if (localAudioTrack) {
+                const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = localAudioTrack;
+
+                if (noDataFromSourceNotificationInfo.timeout) {
+                    clearTimeout(noDataFromSourceNotificationInfo.timeout);
+                    store.dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+                }
+
+                _removeNoDataFromSourceNotification(store, localAudioTrack);
+            }
+        }
+
         _setMuted(store, action);
         break;
     }
@@ -203,32 +219,23 @@ function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
         return;
     }
 
-    const { jitsiTrack } = track;
+    const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = track;
 
-    if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
-        _removeNoDataFromSourceNotification(store, action.track);
-    }
-
-    if (track.mediaType === MEDIA_TYPE.VIDEO) {
-        const { noDataFromSourceNotificationInfo = {} } = track;
-
-        if (track.isReceivingData) {
-            if (noDataFromSourceNotificationInfo.timeout) {
-                clearTimeout(noDataFromSourceNotificationInfo.timeout);
-                dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
-            }
-
-            // try to remove the notification if there is one.
-            _removeNoDataFromSourceNotification(store, action.track);
-        } else {
-            if (noDataFromSourceNotificationInfo.timeout) {
-                return;
-            }
-
-            const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(jitsiTrack)), 5000);
-
-            dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
+    if (track.isReceivingData || track.muted) {
+        if (noDataFromSourceNotificationInfo.timeout) {
+            clearTimeout(noDataFromSourceNotificationInfo.timeout);
+            dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
         }
+
+        _removeNoDataFromSourceNotification(store, action.track);
+    } else {
+        if (noDataFromSourceNotificationInfo.timeout || noDataFromSourceNotificationInfo.uid) {
+            return;
+        }
+
+        const timeout = setTimeout(() => dispatch(showNoDataFromSourceError(jitsiTrack)), 5000);
+
+        dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
     }
 }
 
@@ -277,18 +284,25 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
             });
         }
     } else if (!muted && ensureTrack) {
-        // TODO(saghul): reconcile these 2 types.
-        dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
+        dispatch(explainBeforePrompt([ 'audio' ], true)).then(devices => {
+            // Declined, or turned on meanwhile.
+            if (!devices.length || getLocalTrack(getState()['features/base/tracks'], MEDIA_TYPE.AUDIO, true)) {
+                return;
+            }
 
-        const createTrackOptions: ITrackOptions = {
-            devices: [ MEDIA_TYPE.AUDIO ],
-        };
+            // TODO(saghul): reconcile these 2 types.
+            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
 
-        dispatch(createLocalTracksA(createTrackOptions)).then(() => {
-            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
-            const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+            const createTrackOptions: ITrackOptions = {
+                devices: [ MEDIA_TYPE.AUDIO ],
+            };
 
-            dispatch(setAudioSettings(updatedSettings));
+            dispatch(createLocalTracksA(createTrackOptions)).then(() => {
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
+                const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+
+                dispatch(setAudioSettings(updatedSettings));
+            });
         });
     }
 }

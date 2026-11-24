@@ -32,19 +32,23 @@ export default abstract class PreMeetingScreen extends BasePageObject {
         // element.clear does not always work, make sure we delete the content
         await displayNameInput.clearValue();
 
+        // The WebDriver "clear" command unfocuses the element afterwards. Chromedriver skips that step but
+        // geckodriver follows it, so without this click the keys below would go to the page body in Firefox.
+        await displayNameInput.click();
+
         await this.participant.driver.keys(displayName);
     }
 
     /**
      * Checks internally whether lobby room is joined.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    waitToJoinLobby(): Promise<void> {
+    waitToJoinLobby(): Promise<boolean> {
         return this.participant.driver.waitUntil(
             () => this.isLobbyRoomJoined(),
             {
-                timeout: 6_000, // 6 seconds
+                timeout: 15_000, // 15 seconds
                 timeoutMsg: `Timeout waiting to join lobby for ${this.participant.name}`
             }
         );

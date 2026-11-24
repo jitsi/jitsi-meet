@@ -36,7 +36,7 @@ function _cryptoRandom() {
  * @param {URL} locationURL - The location URL.
  * @param {Object} options:  - Config options {
  *     audioMuted: boolean | undefined
- *     audioOnlyEnabled: boolean | undefined,
+ *     lowBandwidthModeEnabled: boolean | undefined,
  *     skipPrejoin: boolean | undefined,
  *     videoMuted: boolean | undefined
  * }.
@@ -53,7 +53,7 @@ export const getTokenAuthUrl = (
         locationURL: URL,
         options: {
             audioMuted: boolean | undefined;
-            audioOnlyEnabled: boolean | undefined;
+            lowBandwidthModeEnabled: boolean | undefined;
             skipPrejoin: boolean | undefined;
             videoMuted: boolean | undefined;
         },
@@ -64,7 +64,7 @@ export const getTokenAuthUrl = (
     // eslint-enable max-params
     const {
         audioMuted = false,
-        audioOnlyEnabled = false,
+        lowBandwidthModeEnabled = false,
         skipPrejoin = false,
         videoMuted = false
     } = options;
@@ -75,12 +75,12 @@ export const getTokenAuthUrl = (
         return Promise.resolve(undefined);
     }
 
-    if (url.indexOf('{state}')) {
+    if (url.includes('{state}')) {
         const state = _getTokenAuthState(
             locationURL,
             {
                 audioMuted,
-                audioOnlyEnabled,
+                lowBandwidthModeEnabled,
                 skipPrejoin,
                 videoMuted
             },
@@ -99,7 +99,7 @@ export const getTokenAuthUrl = (
 
     url = url.replace('{room}', roomName);
 
-    if (url.indexOf('{code_challenge}')) {
+    if (url.includes('{code_challenge}')) {
         let codeVerifier = '';
 
         // random string
@@ -130,6 +130,12 @@ export const getTokenAuthUrl = (
 
                 return url ? url.replace('{code_challenge}', codeChallenge) : undefined;
             });
+    }
+
+    try {
+        window.sessionStorage.removeItem('code_verifier');
+    } catch (error) {
+        logger.error('Unable to remove code verifier from session storage', error);
     }
 
     return Promise.resolve(url);

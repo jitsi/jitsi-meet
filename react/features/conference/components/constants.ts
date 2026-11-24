@@ -1,5 +1,5 @@
 export const CONFERENCE_INFO = {
-    alwaysVisible: [ 'raised-hands-count', 'recording' ],
+    alwaysVisible: [ 'raised-hands-count', 'recording', 'time-timer' ],
     autoHide: [
         'highlight-moment',
         'subject',

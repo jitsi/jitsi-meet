@@ -20,7 +20,10 @@ import { dialogStyles, pollsStyles, resultsStyles } from './styles';
 const PollResults = (props: AbstractProps) => {
     const {
         answers,
+        canClose,
         changeVote,
+        closePoll,
+        closed,
         creatorName,
         haveVoted,
         question,
@@ -92,6 +95,13 @@ const PollResults = (props: AbstractProps) => {
     }, [ showDetails ]);
 
 
+    const detailsLabelKey = showDetails
+        ? 'polls.results.hideDetailedResults'
+        : 'polls.results.showDetailedResults';
+    const voteLabelKey = haveVoted
+        ? 'polls.results.changeVote'
+        : 'polls.results.vote';
+
     /* eslint-disable react/jsx-no-bind */
     return (
         <View>
@@ -103,39 +113,41 @@ const PollResults = (props: AbstractProps) => {
                 style = { dialogStyles.questionOwnerText as TextStyle } >
                 { t('polls.by', { name: creatorName }) }
             </Text>
+            {
+                closed && <Text style = { dialogStyles.questionOwnerText as TextStyle }>
+                    { t('polls.results.closed') }
+                </Text>
+            }
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
                 renderItem = { answer => renderRow(answer.item) } />
             <View style = { pollsStyles.bottomLinks as ViewStyle }>
                 <Button
-                    id = {
-                        showDetails
-                            ? t('polls.results.hideDetailedResults')
-                            : t('polls.results.showDetailedResults')
-                    }
-                    labelKey = {
-                        showDetails
-                            ? 'polls.results.hideDetailedResults'
-                            : 'polls.results.showDetailedResults'
-                    }
+                    accessibilityLabel = { detailsLabelKey }
+                    id = { t(detailsLabelKey) }
+                    labelKey = { detailsLabelKey }
                     labelStyle = { pollsStyles.toggleText }
                     onClick = { toggleIsDetailed }
                     type = { BUTTON_TYPES.TERTIARY } />
-                <Button
-                    id = {
-                        haveVoted
-                            ? t('polls.results.changeVote')
-                            : t('polls.results.vote')
-                    }
-                    labelKey = {
-                        haveVoted
-                            ? 'polls.results.changeVote'
-                            : 'polls.results.vote'
-                    }
-                    labelStyle = { pollsStyles.toggleText }
-                    onClick = { changeVote }
-                    type = { BUTTON_TYPES.TERTIARY } />
+                {
+                    !closed && <Button
+                        accessibilityLabel = { voteLabelKey }
+                        id = { t(voteLabelKey) }
+                        labelKey = { voteLabelKey }
+                        labelStyle = { pollsStyles.toggleText }
+                        onClick = { changeVote }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                }
+                {
+                    canClose && <Button
+                        accessibilityLabel = 'polls.results.endPoll'
+                        id = { t('polls.results.endPoll') }
+                        labelKey = 'polls.results.endPoll'
+                        labelStyle = { pollsStyles.toggleText }
+                        onClick = { closePoll }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                }
             </View>
         </View>
     );

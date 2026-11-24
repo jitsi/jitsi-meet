@@ -13,8 +13,7 @@ setTestProperties(__filename, {
 
 /**
  * Tests the recording and live-streaming functionality of JaaS (including relevant webhooks) exercising the iFrame API
- * commands and functions.
- * TODO: also assert "this meeting is being recorded" notifications are show/played?
+ * commands and functions, and verifies that the recording-start notification is displayed.
  */
 describe('Recording and live-streaming', () => {
     const tenant = testsConfig.jaas.tenant;
@@ -43,7 +42,7 @@ describe('Recording and live-streaming', () => {
     });
 
     /**
-     * Starts recording and asserts that the expected iFrame and JaaS events are received.
+     * Starts recording and asserts that the notification, iFrame event and JaaS webhook are received.
      * @param command whether to use the "command" or the "function" iFrame API.
      */
     async function startRecording(command: boolean) {
@@ -60,24 +59,45 @@ describe('Recording and live-streaming', () => {
             });
         }
 
+        await p.switchToIFrame();
+        try {
+            await p.getNotifications().waitForRecordingStartedNotification();
+            await p.getNotifications().closeRecordingLinkGeneratedNotification();
+        } finally {
+            await p.switchToMainFrame();
+        }
+
         const jaasEvent: {
             customerId: string;
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_STARTED');
+        } = await waitForRecordingStarted();
 
         expect('RECORDING_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
 
-        webhooksProxy.clearCache();
+        const result = await p.driver.waitUntil(async () => {
+            const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
 
-        const iFrameEvent = await p.driver.waitUntil(() =>
-            p.getIframeAPI().getEventResult('recordingStatusChanged'), {
+            if (event?.error) {
+                return { error: event.error };
+            }
+
+            return event?.mode === 'file' && event?.on === true ? { event } : false;
+        }, {
             timeout: 5000,
-            timeoutMsg: 'recordingStatusChanged event not received'
+            timeoutMsg: 'recordingStatusChanged event with mode=file, on=true not received'
         });
+
+        if ('error' in result) {
+            throw new Error(`Recording failed to start: ${result.error}`);
+        }
+
+        const iFrameEvent = result.event;
 
         expect(iFrameEvent.mode).toBe('file');
         expect(iFrameEvent.on).toBe(true);
+
+        webhooksProxy.clearCache();
 
         const linkEvent = await p.driver.waitUntil(() =>
             p.getIframeAPI().getEventResult('recordingLinkAvailable'), {
@@ -85,9 +105,48 @@ describe('Recording and live-streaming', () => {
             timeoutMsg: 'recordingLinkAvailable event not received'
         });
 
-        expect(linkEvent.link.startsWith('https://')).toBe(true);
-        expect(linkEvent.link.includes(tenant)).toBe(true);
-        expect(linkEvent.ttl > 0).toBe(true);
+        expect(linkEvent.link).toStartWith('https://', 'recording link');
+        expect(linkEvent.link).toContain(tenant);
+        expect(linkEvent.ttl).toBeGreaterThan(0);
+    }
+
+    /**
+     * Waits for the RECORDING_STARTED webhook, but gives up as soon as the client reports that the start was
+     * refused: a refusal (e.g. "all Jibris are busy" on a busy deployment) reaches the client within a second as
+     * a recordingStatusChanged event carrying an error, and no webhook ever follows it, so waiting out the full
+     * webhook timeout only delays the failure (and the retry of the spec) by two minutes.
+     *
+     * @returns {Promise<any>} The RECORDING_STARTED event.
+     */
+    async function waitForRecordingStarted(): Promise<any> {
+        let started = false;
+        const webhook = webhooksProxy.waitForEvent('RECORDING_STARTED').finally(() => {
+            started = true;
+        });
+
+        // When the refusal wins the race below, this one keeps waiting for the rest of its timeout with nobody
+        // listening; keep the eventual rejection handled so it cannot take down the worker.
+        webhook.catch(() => undefined);
+
+        const refused = (async () => {
+            while (!started) {
+                const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+                if (event?.error) {
+                    throw new Error(`Recording failed to start: ${event.error}`);
+                }
+
+                await p.driver.pause(500);
+            }
+        })();
+
+        const event = await Promise.race([ webhook, refused ]);
+
+        // The poll loop notices the webhook on its next iteration; let it finish so it does not run alongside
+        // the checks that follow.
+        await refused;
+
+        return event;
     }
 
     /**
@@ -135,9 +194,10 @@ describe('Recording and live-streaming', () => {
         await p.getIframeAPI().clearEventResults('recordingStatusChanged');
     }
 
-    it('start/stop recording using the iFrame command', async () => {
+    it('start/stop recording using the iFrame command', async function() {
         if (!recordingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await startRecording(true);
@@ -147,9 +207,10 @@ describe('Recording and live-streaming', () => {
         await p.driver.pause(30000);
     });
 
-    it('start/stop recording using the iFrame function', async () => {
+    it('start/stop recording using the iFrame function', async function() {
         if (!recordingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await startRecording(false);
@@ -159,9 +220,10 @@ describe('Recording and live-streaming', () => {
         await p.driver.pause(30000);
     });
 
-    it('start/stop live-streaming using the iFrame command', async () => {
+    it('start/stop live-streaming using the iFrame command', async function() {
         if (!liveStreamingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await p.getIframeAPI().addEventListener('recordingStatusChanged');
@@ -180,7 +242,14 @@ describe('Recording and live-streaming', () => {
         expect('LIVE_STREAM_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
 
-        const iFrameEvent = (await p.getIframeAPI().getEventResult('recordingStatusChanged'));
+        const iFrameEvent = await p.driver.waitUntil(async () => {
+            const e = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+            return e && e.mode === 'stream' && e.on === true ? e : false;
+        }, {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event with mode=stream, on=true not received'
+        });
 
         expect(iFrameEvent.mode).toBe('stream');
         expect(iFrameEvent.on).toBe(true);
@@ -201,7 +270,14 @@ describe('Recording and live-streaming', () => {
         expect(jaasEndedEvent.eventType).toBe('LIVE_STREAM_ENDED');
         expect(jaasEndedEvent.customerId).toBe(customerId);
 
-        const iFrameEndedEvent = (await p.getIframeAPI().getEventResult('recordingStatusChanged'));
+        const iFrameEndedEvent = await p.driver.waitUntil(async () => {
+            const e = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+            return e && e.mode === 'stream' && e.on === false ? e : false;
+        }, {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event with mode=stream, on=false not received'
+        });
 
         expect(iFrameEndedEvent.mode).toBe('stream');
         expect(iFrameEndedEvent.on).toBe(false);

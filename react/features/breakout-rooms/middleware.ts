@@ -2,7 +2,7 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { editMessage } from '../chat/actions.any';
+import { setMessageDisplayName } from '../chat/actions.any';
 import { MESSAGE_TYPE_REMOTE } from '../chat/constants';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
@@ -23,8 +23,8 @@ StateListenerRegistry.register(
                 dispatch(moveToRoom(roomId));
             });
 
-            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }: {
-                roomCounter: number; rooms: IRooms;
+            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ joinRestricted, rooms, roomCounter }: {
+                joinRestricted?: boolean; roomCounter: number; rooms: IRooms;
             }) => {
                 logger.debug('Room list updated');
                 if (typeof APP !== 'undefined') {
@@ -32,6 +32,7 @@ StateListenerRegistry.register(
                 }
                 dispatch({
                     type: UPDATE_BREAKOUT_ROOMS,
+                    joinRestricted,
                     rooms,
                     roomCounter
                 });
@@ -129,12 +130,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                 for (const room of Object.values(rooms)) {
                     const participants = room.participants || {};
-                    const matchedJid = Object.keys(participants).find(jid => jid.endsWith(m.participantId));
+                    const matchedJid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === m.participantId);
 
                     if (matchedJid) {
-                        m.displayName = participants[matchedJid].displayName;
+                        const newDisplayName = participants[matchedJid].displayName;
 
-                        dispatch(editMessage(m));
+                        if (m.messageId && newDisplayName && m.displayName !== newDisplayName) {
+                            dispatch(setMessageDisplayName(m.messageId, newDisplayName));
+                        }
+
+                        break;
                     }
                 }
             }

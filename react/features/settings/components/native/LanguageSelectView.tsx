@@ -3,12 +3,13 @@ import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureResponderEvent, ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { Edge } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../../../base/i18n/i18next';
 import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { updateSettings } from '../../../base/settings/actions';
 import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 
@@ -19,18 +20,21 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
     isInWelcomePage?: boolean;
 }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const navigation = useNavigation();
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const { language: currentLanguage = DEFAULT_LANGUAGE } = i18next;
 
     const setLanguage = useCallback(language => () => {
         i18next.changeLanguage(language);
+        dispatch(updateSettings({ userSelectedLanguage: language }));
         conference?.setTranscriptionLanguage(language);
         goBack?.();
-    }, [ conference, i18next ]);
+    }, [ conference, dispatch, i18next ]);
 
     const headerLeft = () => (
         <HeaderNavigationButton
+            accessibilityLabel = { t('dialog.Back') }
             color = { BaseThemeNative.palette.link01 }
             onPress = { goBack }
             src = { IconArrowLeft }
@@ -53,23 +57,35 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
                 bounces = { isInWelcomePage }
                 contentContainerStyle = { styles.profileView as ViewStyle }>
                 {
-                    LANGUAGES.map(language => (
-                        <TouchableHighlight
-                            disabled = { currentLanguage === language }
-                            key = { language }
-                            onPress = { setLanguage(language) }>
-                            <View
-                                style = { styles.languageOption as ViewStyle }>
-                                <Text
-                                    style = { [
-                                        styles.text,
-                                        styles.fieldLabelText,
-                                        currentLanguage === language && styles.selectedLanguage ] }>
-                                    { t(`languages:${language}`) }
-                                </Text>
-                            </View>
-                        </TouchableHighlight>
-                    ))
+                    LANGUAGES.map(language => {
+                        const isSelected = currentLanguage === language;
+                        const label = t(`languages:${language}`);
+                        const accessibilityState = {
+                            disabled: isSelected,
+                            selected: isSelected
+                        };
+
+                        return (
+                            <TouchableHighlight
+                                accessibilityLabel = { label }
+                                accessibilityRole = 'button'
+                                accessibilityState = { accessibilityState }
+                                disabled = { isSelected }
+                                key = { language }
+                                onPress = { setLanguage(language) }>
+                                <View
+                                    style = { styles.languageOption as ViewStyle }>
+                                    <Text
+                                        style = { [
+                                            styles.text,
+                                            styles.fieldLabelText,
+                                            isSelected && styles.selectedLanguage ] }>
+                                        { label }
+                                    </Text>
+                                </View>
+                            </TouchableHighlight>
+                        );
+                    })
                 }
             </ScrollView>
         </JitsiScreen>

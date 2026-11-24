@@ -1,8 +1,9 @@
 import { sha512_256 as sha512 } from 'js-sha512';
-import { upperFirst, words } from 'lodash-es';
+import { debounce, upperFirst, words } from 'lodash-es';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
+import { readyToClose } from '../../mobile/external-api/actions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
@@ -35,6 +36,12 @@ import logger from './logger';
 import { IJitsiConference } from './reducer';
 
 /**
+ * The local participant property used to advertise to jicofo that this
+ * participant's audio should be diarized by the transcriber.
+ */
+const P_NAME_DIARIZE = 'diarize';
+
+/**
  * Returns root conference state.
  *
  * @param {IReduxState} state - Global state.
@@ -60,12 +67,8 @@ export function _addLocalTracksToConference(
         // XXX The library lib-jitsi-meet may be draconian, for example, when
         // adding one and the same video track multiple times.
         if (conferenceLocalTracks.indexOf(track) === -1) {
-            promises.push(
-                conference.addTrack(track).catch((err: Error) => {
-                    _reportError(
-                        'Failed to add local track to conference',
-                        err);
-                }));
+            // Rejections propagate so that callers can refuse to commit a track the conference rejected.
+            promises.push(conference.addTrack(track));
         }
     }
 
@@ -95,12 +98,6 @@ export function commonUserJoinedHandling(
         const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
         const userIdentity = user.getIdentity()?.user;
 
-        // Map identity from JWT context to userContext for external API
-        const userContext = userIdentity ? {
-            id: userIdentity.id,
-            name: userIdentity.name
-        } : undefined;
-
         // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
             avatarURL: userIdentity?.avatar,
@@ -113,7 +110,7 @@ export function commonUserJoinedHandling(
             isPromoted,
             isReplacing,
             sources: user.getSources(),
-            userContext
+            userContext: userIdentity
         }));
     }
 }
@@ -226,7 +223,10 @@ export function getConferenceOptions(stateful: IStateful) {
     const { defaultTranscriptionLanguage } = state['features/dynamic-branding'];
     const { tenant } = state['features/base/jwt'];
     const { email, name: nick } = getLocalParticipant(state) ?? {};
-    const options: any = { ...config };
+    const options: any = {
+        ...config,
+        analytics: config.analytics && { ...config.analytics }
+    };
 
     if (tenant) {
         options.siteID = tenant;
@@ -250,8 +250,8 @@ export function getConferenceOptions(stateful: IStateful) {
 
     // Disable analytics, if requested.
     if (options.disableThirdPartyRequests) {
-        delete config.analytics?.scriptURLs;
-        delete config.analytics?.amplitudeAPPKey;
+        delete options.analytics?.scriptURLs;
+        delete options.analytics?.amplitudeAPPKey;
     }
 
     return options;
@@ -571,6 +571,16 @@ export function sendLocalParticipant(
         conference?.setLocalParticipantProperty('features_screen-sharing', true);
     }
 
+    // Advertise to jicofo that this participant's audio should be diarized by the transcriber.
+    // Only published when explicitly enabled, to keep presence clean.
+    // NOTE: this must be published here, before conference.join(), so it is part of the initial
+    // presence. jicofo allocates the colibri2 endpoint from the join presence and reads this flag
+    // only at allocation time (the endpoint create path, in both jicofo and the bridge). A value
+    // set after join would be ignored, so do not move this to a lazy/runtime toggle.
+    if (toState(stateful)['features/base/config'].transcription?.diarize === true) {
+        conference?.setLocalParticipantProperty(P_NAME_DIARIZE, true);
+    }
+
     conference?.setDisplayName(name);
 }
 
@@ -658,4 +668,26 @@ export function processDestroyConferenceEvent(stateful: IStateful, dispatch: ISt
     }
 
     return false;
+}
+
+/**
+ * Per-store `readyToClose` senders, so one app's teardown can't drop another's.
+ */
+const _readyToCloseSenders = new WeakMap<Function, Function>();
+
+/**
+ * Sends `readyToClose` once per burst of calls, with no trailing call to avoid a close() re-trigger loop.
+ *
+ * @param {Function} dispatch - The redux dispatch of the store sending the event.
+ * @returns {void}
+ */
+export function _sendReadyToClose(dispatch: Function) {
+    let send = _readyToCloseSenders.get(dispatch);
+
+    if (!send) {
+        send = debounce(() => dispatch(readyToClose()), 2500, { leading: true, trailing: false });
+        _readyToCloseSenders.set(dispatch, send);
+    }
+
+    send();
 }

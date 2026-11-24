@@ -10,6 +10,7 @@ import BaseTheme from '../BaseTheme.native';
 
 const IconButton: React.FC<IIconButtonProps> = ({
     accessibilityLabel,
+    accessibilityRole = 'button',
     color: iconColor,
     disabled,
     id,
@@ -52,13 +53,14 @@ const IconButton: React.FC<IIconButtonProps> = ({
     return (
         <TouchableHighlight
             accessibilityLabel = { accessibilityLabel }
+            accessibilityRole = { accessibilityRole }
             disabled = { disabled }
-            id = { id }
             onPress = { onPress }
             style = { [
                 iconButtonContainerStyles,
                 style
             ] as ViewStyle[] }
+            testID = { id }
             underlayColor = { underlayColor }>
             <Icon
                 color = { color }

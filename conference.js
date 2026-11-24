@@ -6,6 +6,7 @@ import Logger from '@jitsi/logger';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
+import ExternalShareReceiver from './modules/screenshare-cast/ExternalShareReceiver';
 import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
@@ -60,6 +61,7 @@ import {
     getAvailableDevices,
     notifyCameraError,
     notifyMicError,
+    setAudioOutputDevice,
     updateDeviceList
 } from './react/features/base/devices/actions.web';
 import {
@@ -67,8 +69,7 @@ import {
     filterIgnoredDevices,
     flattenAvailableDevices,
     getDefaultDeviceId,
-    logDevices,
-    setAudioOutputDeviceId
+    logDevices
 } from './react/features/base/devices/functions.web';
 import {
     JitsiConferenceErrors,
@@ -131,6 +132,7 @@ import {
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
     getLocalVideoTrack,
+    getTrackByJitsiTrack,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
@@ -138,7 +140,7 @@ import { getLocalJitsiAudioTrackSettings } from './react/features/base/tracks/fu
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
-import { showDesktopPicker } from './react/features/desktop-picker/actions';
+import { explainBeforePrompt, ignoreTrackEnd } from './react/features/device-permissions/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
@@ -169,18 +171,6 @@ import { muteLocal } from './react/features/video-menu/actions.any';
 const logger = Logger.getLogger('app:conference-web');
 let room;
 
-/*
- * Logic to open a desktop picker put on the window global for
- * lib-jitsi-meet to detect and invoke.
- *
- * TODO: remove once the Electron SDK supporting gDM has been out for a while.
- */
-window.JitsiMeetScreenObtainer = {
-    openDesktopPicker(options, onSourceChoose) {
-        APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
-    }
-};
-
 /**
  * Known custom conference commands.
  */
@@ -203,6 +193,22 @@ function sendData(command, value) {
 
     room.removeCommand(command);
     room.sendCommand(command, { value });
+}
+
+/**
+ * Checks if the recorder must skip a remote track of a participant.
+ *
+ * @param {JitsiParticipant} participant - The participant who owns the track.
+ * @param {JitsiRemoteTrack} track - The remote track.
+ * @returns {boolean}
+ */
+function isTrackHiddenFromRecorder(participant, track) {
+    if (participant.isHiddenFromRecorder()) {
+        return true;
+    }
+
+    // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
+    return Boolean(participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack());
 }
 
 /**
@@ -383,13 +389,12 @@ export default {
      */
     isCreatingLocalTrack: false,
 
-    isSharingScreen: false,
-
     /**
      * Returns an object containing a promise which resolves with the created tracks &
      * the errors resulting from that process.
      * @param {object} options
-     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * @param {boolean} option.isBreakoutRoom - true if we are creating the initial local tracks in breakout room.
+     * @param {boolean} options.startLowBandwidthMode=false - if <tt>true</tt> then
      * only audio track will be created and the audio only mode will be turned
      * on.
      * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
@@ -403,16 +408,18 @@ export default {
      */
     createInitialLocalTracks(options = {}, recordTimeMetrics = false) {
         const errors = {};
+        const { isBreakoutRoom = false } = options;
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
-        const initialDevices = config.startSilent || config.disableInitialGUM ? [] : [ MEDIA_TYPE.AUDIO ];
-        const requestedAudio = !config.disableInitialGUM;
+        const initialDevices
+            = config.startSilent || (config.disableInitialGUM && !isBreakoutRoom) ? [] : [ MEDIA_TYPE.AUDIO ];
+        const requestedAudio = !config.disableInitialGUM || isBreakoutRoom;
         let requestedVideo = false;
 
-        if (!config.disableInitialGUM
+        if ((!config.disableInitialGUM || isBreakoutRoom)
                 && !options.startWithVideoMuted
-                && !options.startAudioOnly
+                && !options.startLowBandwidthMode
                 && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);
             requestedVideo = true;
@@ -459,10 +466,25 @@ export default {
                     return [];
                 });
         } else if (requestedAudio || requestedVideo) {
-            tryCreateLocalTracks = APP.store.dispatch(createInitialAVTracks({
-                devices: initialDevices,
-                timeout
-            }, recordTimeMetrics)).then(({ tracks, errors: pErrors }) => {
+            const explained = isPrejoinPageVisible(APP.store.getState())
+                ? APP.store.dispatch(explainBeforePrompt(initialDevices))
+                : Promise.resolve(initialDevices);
+
+            tryCreateLocalTracks = explained.then(devices => {
+                // The devices that the user goes without stay off.
+                requestedAudio && !devices.includes(MEDIA_TYPE.AUDIO) && APP.store.dispatch(setAudioMuted(true));
+                requestedVideo && !devices.includes(MEDIA_TYPE.VIDEO) && APP.store.dispatch(setVideoMuted(true));
+
+                return devices.length
+                    ? APP.store.dispatch(createInitialAVTracks({
+                        devices,
+                        timeout
+                    }, recordTimeMetrics))
+                    : {
+                        errors: {},
+                        tracks: []
+                    };
+            }).then(({ tracks, errors: pErrors }) => {
                 Object.assign(errors, pErrors);
 
                 return tracks;
@@ -532,7 +554,7 @@ export default {
     async init({ roomName, shouldDispatchConnect }) {
         const state = APP.store.getState();
         const initialOptions = {
-            startAudioOnly: config.startAudioOnly,
+            startLowBandwidthMode: config.startLowBandwidthMode,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
             startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
@@ -944,6 +966,23 @@ export default {
     },
 
     /**
+     * Sets multiple properties for the local participant in a single presence update.
+     *
+     * @param {Object} properties - Object of property names to values.
+     * @param {boolean} [useRawKeys] - Skip the "jitsi_participant_" prefix when true.
+     * @returns {void}
+     */
+    setLocalParticipantProperties(properties, useRawKeys = false) {
+        if (!room) {
+            logger.warn('Not setting participant properties, conference not initialized');
+
+            return;
+        }
+
+        room.setLocalParticipantProperties(properties, useRawKeys);
+    },
+
+    /**
      * Exposes a Command(s) API on this instance. It is necessitated by (1) the
      * desire to keep room private to this instance and (2) the need of other
      * modules to send and receive commands to and from participants.
@@ -1181,8 +1220,8 @@ export default {
      *
      * @returns {boolean}
      */
-    isAudioOnly() {
-        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
+    isLowBandwidthMode() {
+        return Boolean(APP.store.getState()['features/base/low-bandwidth-mode'].enabled);
     },
 
     /**
@@ -1217,6 +1256,7 @@ export default {
         APP.store.dispatch(stopReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(toggleScreenshotCaptureSummary(false));
         const tracks = APP.store.getState()['features/base/tracks'];
@@ -1367,10 +1407,28 @@ export default {
                 return;
             }
 
-            // The logic shared between RN and web.
-            commonUserJoinedHandling(APP.store, room, user);
+            // A participant whose video is hidden from the recorder is handled like a hidden participant: it is not
+            // added to the state, so it gets no tile. Its audio tracks are still added (see TRACK_ADDED below), and
+            // they are played and recorded. The optional call keeps this working with a lib-jitsi-meet release
+            // which does not have the method yet.
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserJoinedHandling(APP.store, room, user);
+            }
+
+            // Add the tracks which the recorder skipped because their source signaling arrived before this presence
+            // (see TRACK_ADDED below). lib-jitsi-meet does not emit TRACK_ADDED again for them.
+            if (config.iAmRecorder) {
+                const tracks = APP.store.getState()['features/base/tracks'];
+
+                user.getTracks()
+                    .filter(track => !isTrackHiddenFromRecorder(user, track) && !getTrackByJitsiTrack(tracks, track))
+                    .forEach(track => APP.store.dispatch(trackAdded(track)));
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1380,10 +1438,14 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
-            // The logic shared between RN and web.
-            commonUserLeftHandling(APP.store, room, user);
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserLeftHandling(APP.store, room, user);
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1422,7 +1484,15 @@ export default {
             if (config.iAmRecorder) {
                 const participant = room.getParticipantById(track.getParticipantId());
 
-                if (participant.isHiddenFromRecorder()) {
+                // The source signaling can arrive before the presence of the participant. Then we cannot know yet
+                // if the participant is hidden from the recorder. The track is added on USER_JOINED.
+                if (!participant) {
+                    logger.info(`Track ${track.getSourceName()} added before presence, waiting for USER_JOINED`);
+
+                    return;
+                }
+
+                if (isTrackHiddenFromRecorder(participant, track)) {
                     return;
                 }
             }
@@ -1641,12 +1711,6 @@ export default {
             JitsiE2ePingEvents.E2E_RTT_CHANGED,
             (...args) => APP.store.dispatch(e2eRttChanged(...args)));
 
-        room.addCommandListener(this.commands.defaults.ETHERPAD,
-            ({ value }) => {
-                APP.UI.initEtherpad(value);
-            }
-        );
-
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
                 conference: room,
@@ -1807,7 +1871,7 @@ export default {
         .then(([ stream ]) => {
             // if we are in audio only mode or video was muted before
             // changing device, then mute
-            if (this.isAudioOnly() || videoWasMuted) {
+            if (this.isLowBandwidthMode() || videoWasMuted) {
                 return stream.mute()
                     .then(() => stream);
             }
@@ -1829,7 +1893,7 @@ export default {
     /**
      * Handles audio only changes.
      */
-    onToggleAudioOnly() {
+    onToggleLowBandwidthMode() {
         // Immediately update the UI by having remote videos and the large video update themselves.
         const displayedUserId = APP.UI.getLargeVideoID();
 
@@ -1950,25 +2014,15 @@ export default {
         };
 
         if (typeof newDevices.audiooutput !== 'undefined') {
-            const { dispatch } = APP.store;
-            const setAudioOutputPromise
-                = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
-                    .catch(err => {
-                        logger.error(`Failed to set the audio output device to ${newDevices.audiooutput} - ${err}`);
-                    });
-
-            promises.push(setAudioOutputPromise);
+            promises.push(APP.store.dispatch(setAudioOutputDevice(newDevices.audiooutput, false)));
         }
 
-        // Handles the use case when the default device is changed (we are always stopping the streams because it's
-        // simpler):
-        // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
-        // will return a stream using the old default device.
-        if (requestedInput.audio && localAudio) {
-            localAudio.stopStream();
-        }
-
+        // The camera is stopped before the new one is opened, some machines can't open two cameras at once.
+        // The mic is not stopped: replaceLocalTrack disposes the old audio track only after the conference has switched
+        // to the new one, so the mic keeps sending if the new track can't be created or used. For a changed default mic
+        // gUM gets the real device id (see hasDefaultMicChanged below), or is skipped if it can't be resolved.
         if (requestedInput.video && localVideo) {
+            ignoreTrackEnd(localVideo);
             localVideo.stopStream();
         }
 
@@ -2052,22 +2106,43 @@ export default {
                 return Promise.reject(error);
             }
 
+            // Notifies the user and releases the device opened for a new track that failed to replace the current one.
+            // If the conference already switched to it and a later step of the replacement failed, it is the track
+            // sending now and is kept.
+            const onReplaceFailed = (track, error) => {
+                logger.error(`${track.getType()} track replacement failed on device change, ${error}`);
+                APP.store.dispatch(track.isAudioTrack() ? notifyMicError(error) : notifyCameraError(error));
+
+                const currentState = APP.store.getState();
+                const localTrack = track.isAudioTrack()
+                    ? getLocalJitsiAudioTrack(currentState) : getLocalJitsiVideoTrack(currentState);
+
+                if (!track.conference && localTrack !== track) {
+                    track.dispose()
+                        .catch(e => logger.warn(`Failed to dispose the unused ${track.getType()} track, ${e}`));
+                }
+
+                throw error;
+            };
+
             for (const track of tracks) {
                 if (track.isAudioTrack()) {
                     promises.push(
                         this.useAudioStream(track)
                             .then(() => {
                                 hasDefaultMicChanged && (track._realDeviceId = track.deviceId = 'default');
-                            }));
+                            })
+                            .catch(error => onReplaceFailed(track, error)));
                 } else {
                     promises.push(
-                        this.useVideoStream(track));
+                        this.useVideoStream(track)
+                            .catch(error => onReplaceFailed(track, error)));
                 }
             }
         }
 
         return Promise.all(promises)
-            .then(() => {
+            .finally(() => {
                 this.updateAudioIconEnabled();
                 this.updateVideoIconEnabled();
             });
@@ -2121,6 +2196,7 @@ export default {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
@@ -2314,6 +2390,78 @@ export default {
         }
 
         this._proxyConnection.processMessage(event);
+    },
+
+    /**
+     * Handle a direct-cast screenshare signalling message from a remote sharer.
+     *
+     * Direct-cast is the successor to the {@code ProxyConnectionService} path above: a
+     * remote sharer (e.g. a laptop) opens a PLAIN RTCPeerConnection straight to this
+     * Jitsi Meet instance and adds its screen — and optionally system audio — tracks.
+     * {@link ExternalShareReceiver} terminates that peer connection here and Jitsi moves
+     * the received track(s) into the conference as the local screenshare. No
+     * ProxyConnectionService, no Jingle, no XMPP/Strophe JIDs, and audio comes along for
+     * free.
+     *
+     * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
+     * @returns {void}
+     */
+    onExternalShareSignal(signal) {
+        // A fresh offer begins a new cast session. If a receiver is already around (a
+        // second/reconnecting sharer, or a stale one whose PC died), tear it down first
+        // rather than feeding the new offer into the old — possibly already-published —
+        // peer connection, where _publish's once-only guard would swallow it.
+        // Optional chaining: signal is embedder-supplied, so it may be malformed/absent.
+        if (signal?.kind === 'offer') {
+            this._stopExternalShare();
+        }
+
+        if (!this._externalShare) {
+            this._externalShare = new ExternalShareReceiver({
+
+                // Reuse the meeting's own TURN credentials — the same source the old
+                // proxy borrowed — minus the XMPP signalling.
+                pcConfig: APP.connection?.xmpp?.connection?.jingle?.p2pIceConfig,
+
+                onSignal: out => APP.API.sendExternalShareSignal(out),
+
+                onTracks: ({ desktopVideoTrack, desktopAudioTrack }) => {
+                    APP.store.dispatch(toggleScreensharingA(true, false, {
+                        desktopStream: desktopVideoTrack,
+                        desktopAudioTrack
+                    }));
+                },
+
+                onClosed: ({ spontaneous, published } = {}) => {
+                    // If the sharer's connection dropped on its own (ICE failure, laptop
+                    // closed, sharer navigated away) while a share was live, the published
+                    // screenshare is now frozen in the meeting — take it down. Explicit
+                    // teardowns (hangup / _stopExternalShare) are driven from the conference
+                    // and remove the share through their own path, so we skip it there.
+                    if (spontaneous && published) {
+                        APP.store.dispatch(toggleScreensharingA(false, false));
+                    }
+
+                    this._externalShare = null;
+                }
+            });
+        }
+
+        this._externalShare.handleSignal(signal);
+    },
+
+    /**
+     * Terminates any direct-cast screenshare connection that is active.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopExternalShare() {
+        if (this._externalShare) {
+            this._externalShare.stop();
+        }
+
+        this._externalShare = null;
     },
 
     /**

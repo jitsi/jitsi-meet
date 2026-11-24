@@ -3,10 +3,9 @@ import { Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
+import { getConferenceName } from '../../../base/conference/functions';
 import {
     AUDIO_DEVICE_BUTTON_ENABLED,
-    CONFERENCE_TIMER_ENABLED,
     TOGGLE_CAMERA_BUTTON_ENABLED
 } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
@@ -17,7 +16,6 @@ import { isParticipantsPaneEnabled } from '../../../participants-pane/functions'
 import { isRoomNameEnabled } from '../../../prejoin/functions.native';
 import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
-import ConferenceTimer from '../ConferenceTimer';
 
 import Labels from './Labels';
 import styles from './styles';
@@ -29,11 +27,6 @@ interface IProps {
      * Whether the audio device button should be displayed.
      */
     _audioDeviceButtonEnabled: boolean;
-
-    /**
-     * Whether displaying the current conference timer is enabled or not.
-     */
-    _conferenceTimerEnabled: boolean;
 
     /**
      * Creates a function to be invoked when the onPress of the touchables are
@@ -91,12 +84,6 @@ const TitleBar = (props: IProps) => {
                 pointerEvents = 'box-none'
                 style = { styles.roomNameWrapper as ViewStyle }>
                 {
-                    props._conferenceTimerEnabled
-                    && <View style = { styles.roomTimerView as ViewStyle }>
-                        <ConferenceTimer textStyle = { styles.roomTimer } />
-                    </View>
-                }
-                {
                     props._roomNameEnabled
                     && <View style = { styles.roomNameView as ViewStyle }>
                         <Text
@@ -139,13 +126,8 @@ const TitleBar = (props: IProps) => {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { hideConferenceTimer } = state['features/base/config'];
-    const startTimestamp = getConferenceTimestamp(state);
-
     return {
         _audioDeviceButtonEnabled: getFeatureFlag(state, AUDIO_DEVICE_BUTTON_ENABLED, true),
-        _conferenceTimerEnabled:
-            Boolean(getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !hideConferenceTimer && startTimestamp),
         _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
         _meetingName: getConferenceName(state),
         _roomNameEnabled: isRoomNameEnabled(state),

@@ -15,13 +15,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
-import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
+import { setLowBandwidthMode } from '../../../base/low-bandwidth-mode/actions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -34,7 +34,7 @@ import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
+import { replaceRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
@@ -82,7 +82,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     const onJoin = useCallback(() => {
         dispatch(connect());
-        navigateRoot(screen.conference.root);
+        replaceRoot(screen.conference.root);
     }, [ dispatch ]);
 
     const maybeJoin = useCallback(() => {
@@ -97,7 +97,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
 
     const onJoinLowBandwidth = useCallback(() => {
-        dispatch(setAudioOnly(true));
+        dispatch(setLowBandwidthMode(true));
         maybeJoin();
     }, [ dispatch ]);
 
@@ -108,6 +108,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch ]);
 
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
+    const displayNamePlaceholder = t('dialog.enterDisplayName');
 
     useEffect(() => {
         const hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -124,6 +125,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         if (Platform.OS === 'ios') {
             return (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('dialog.close') }
                     label = { t('dialog.close') }
                     onPress = { goBack } />
             );
@@ -131,6 +133,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
         return (
             <HeaderNavigationButton
+                accessibilityLabel = { t('dialog.close') }
                 onPress = { goBack }
                 src = { IconCloseLarge } />
         );
@@ -184,11 +187,12 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
                 {
                     showDisplayNameInput && <Input
+                        accessibilityLabel = { displayNamePlaceholder }
                         customStyles = {{ input: styles.customInput }}
                         disabled = { isDisplayNameReadonly }
                         error = { showDisplayNameError }
                         onChange = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
+                        placeholder = { displayNamePlaceholder }
                         value = { displayName } />
                 }
                 {

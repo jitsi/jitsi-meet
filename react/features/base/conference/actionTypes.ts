@@ -33,6 +33,17 @@ export const CONFERENCE_FAILED = 'CONFERENCE_FAILED';
 export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 
 /**
+ * The type of (redux) action which signals that the conference's ICE connection
+ * was established (media is flowing).
+ *
+ * {
+ *     type: CONFERENCE_CONNECTION_ESTABLISHED,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_CONNECTION_ESTABLISHED = 'CONFERENCE_CONNECTION_ESTABLISHED';
+
+/**
  * The type of (redux) action which signals that a specific conference joining is in progress.
  * A CONFERENCE_JOINED is guaranteed to follow.
  *

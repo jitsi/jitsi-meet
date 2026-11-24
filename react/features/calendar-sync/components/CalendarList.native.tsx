@@ -103,8 +103,10 @@ class CalendarList extends AbstractPage<IProps> {
         // the default empty component of the NavigateSectionList will be
         // rendered, which (atm) is a simple "Pull to refresh" message.
         if (_authorization !== 'denied') {
-            return <></>;
+            return null;
         }
+
+        const buttonLabel = t('calendarSync.permissionButton');
 
         return (
             <View style = { styles.noPermissionMessageView as ViewStyle }>
@@ -112,10 +114,12 @@ class CalendarList extends AbstractPage<IProps> {
                     { t('calendarSync.permissionMessage') }
                 </Text>
                 <TouchableOpacity
+                    accessibilityLabel = { buttonLabel }
+                    accessibilityRole = 'button'
                     onPress = { openSettings }
                     style = { styles.noPermissionMessageButton as ViewStyle } >
                     <Text style = { styles.noPermissionMessageButtonText as ViewStyle }>
-                        { t('calendarSync.permissionButton') }
+                        { buttonLabel }
                     </Text>
                 </TouchableOpacity>
             </View>

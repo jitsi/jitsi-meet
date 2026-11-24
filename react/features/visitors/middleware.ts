@@ -11,6 +11,7 @@ import {
 } from '../base/conference/actionTypes';
 import { IConferenceMetadata } from '../base/conference/reducer';
 import { SET_CONFIG } from '../base/config/actionTypes';
+import { getPageUnloadEventName } from '../base/config/functions.any';
 import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
@@ -64,7 +65,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (getState()['features/visitors'].iAmVisitor) {
 
             const { demoteActorDisplayName } = getState()['features/visitors'];
-            const { showJoinMeetingDialog = true } = getState()['features/base/config'].visitors || {};
+            const { iAmSipGateway, visitors } = getState()['features/base/config'];
+            const { showJoinMeetingDialog = true } = visitors || {};
 
             if (demoteActorDisplayName) {
                 const notificationParams: INotificationProps = {
@@ -79,7 +81,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(showNotification(notificationParams, NOTIFICATION_TIMEOUT_TYPE.STICKY));
                     dispatch(setVisitorDemoteActor(undefined));
                 });
-            } else if (showJoinMeetingDialog) {
+            } else if (showJoinMeetingDialog && !iAmSipGateway) {
                 dispatch(openDialog('JoinMeetingDialog', JoinMeetingDialog));
             }
 
@@ -178,7 +180,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // let's subscribe for visitor waiting queue
         const { room } = getState()['features/base/conference'];
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+        const pageUnloadEventName = getPageUnloadEventName(getState());
         const conferenceJid = `${room}@${hosts?.muc}`;
         const beforeUnloadHandler = () => {
             WebsocketClient.getInstance().disconnect();
@@ -194,9 +196,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                         WebsocketClient.getInstance().disconnect()
                             .then(() => {
-                                window.removeEventListener(
-                                    disableBeforeUnloadHandlers ? 'unload' : 'beforeunload',
-                                    beforeUnloadHandler);
+                                window.removeEventListener(pageUnloadEventName, beforeUnloadHandler);
                                 let delay = 0;
 
                                 // now let's connect to meeting
@@ -226,7 +226,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         /**
          * Disconnecting the WebSocket client when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.addEventListener(pageUnloadEventName, beforeUnloadHandler);
 
 
         break;

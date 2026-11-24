@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
@@ -19,7 +20,8 @@ import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, PARTICIPANT_UPDATED } from '../ba
 import {
     getLocalParticipant,
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isLocalParticipantModerator
 } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -34,7 +36,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetUnreadPollsCount } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
-import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
+import { ENDPOINT_REACTION_NAME, REACTIONS } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { isCCTabEnabled } from '../subtitles/functions.any';
 import { showToolbox } from '../toolbox/actions';
@@ -45,6 +47,9 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
+    SEND_MESSAGE_MODERATION,
+    SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
@@ -53,30 +58,41 @@ import {
     addMessageReaction,
     clearChatState,
     closeChat,
+    editMessage,
+    moderateMessage,
     notifyPrivateRecipientsChanged,
     openChat,
+    retractMessage,
+    setMessageModerationSupported,
     setPrivateMessageRecipient
 } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
+    CHAR_LIMIT,
     ChatTabs,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE,
-    MESSAGE_TYPE_SYSTEM
+    MESSAGE_TYPE_SYSTEM,
+    MODERATE_CHAT_MESSAGE
 } from './constants';
 import {
+    canModerateMessage,
     getDisplayNameSuffix,
     getFocusedTab,
     getUnreadCount,
     isChatDisabled,
+    isGroupChatRestricted,
     isSendGroupChatDisabled,
+    isSendPrivateChatDisabled,
     isVisitorChatParticipant
 } from './functions';
+import logger from './logger';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
+import { IMessage } from './types';
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.
@@ -128,32 +144,66 @@ MiddlewareRegistry.register(store => next => action => {
     case CLOSE_CHAT: {
         const { focusedTab } = getState()['features/chat'];
 
-        if (focusedTab === ChatTabs.CHAT) {
-            unreadCount = 0;
+        // The reducer marks all the messages as read on close, whatever tab was focused.
+        unreadCount = 0;
 
-            if (typeof APP !== 'undefined') {
-                APP.API.notifyChatUpdated(unreadCount, false);
-            }
-        } else if (focusedTab === ChatTabs.POLLS) {
+        if (focusedTab === ChatTabs.POLLS) {
             dispatch(resetUnreadPollsCount());
+        }
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, false);
         }
         break;
     }
 
     case ENDPOINT_MESSAGE_RECEIVED: {
         const state = store.getState();
+        const { participant, data } = action;
+
+        if (data?.type === MODERATE_CHAT_MESSAGE) {
+            // Moderating a message is a moderator-only operation, and the authoritative
+            // source for it is the MESSAGE_MODERATED event from the server (XEP-0425).
+            // This endpoint message path only exists so participants can bring late joiners
+            // up to date, so honour it just for senders that hold the moderator role, and
+            // cap the reason.
+            if (participant?.isModerator?.()) {
+                _onMessageModerated(
+                    store,
+                    data.messageId,
+                    typeof data.reason === 'string' ? data.reason.slice(0, CHAR_LIMIT) : undefined);
+            }
+
+            break;
+        }
 
         if (!isReactionsEnabled(state)) {
             return next(action);
         }
 
-        const { participant, data } = action;
-
         if (data?.name === ENDPOINT_REACTION_NAME) {
-            // Skip duplicates, keep just 3.
-            const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
+            // Only accept known reaction keys, skip duplicates and keep just 3.
+            const reactions = Array.from(new Set(Array.isArray(data.reactions) ? data.reactions : []))
+                .filter((reaction): reaction is string => typeof reaction === 'string' && reaction in REACTIONS)
+                .slice(0, 3);
+
+            if (!reactions.length) {
+                break;
+            }
 
             store.dispatch(pushReactions(reactions));
+
+            // A bridge channel message does not go through the MUC, thus the
+            // server does not apply the chat restrictions of the room to it.
+            // Apply the group chat restriction here, otherwise a reaction shows
+            // in the chat of every participant while chat is restricted. The
+            // permissions of a remote participant are not known locally, thus
+            // this uses the moderator role, which is what the server gives the
+            // permissions to. The reaction itself still plays: on-screen
+            // reactions have their own moderation.
+            if (isGroupChatRestricted(state) && !participant?.isModerator?.()) {
+                break;
+            }
 
             _handleReceivedMessage(store, {
                 participantId: participant.getId(),
@@ -170,6 +220,10 @@ MiddlewareRegistry.register(store => next => action => {
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
         const { participantId, json: data } = action;
 
+        // MODERATE_CHAT_MESSAGE is deliberately not handled here: a non participant sender
+        // is only identified by a MUC resource, so there is no role to check it against.
+        // Moderation arrives from the server (MESSAGE_MODERATED), or from a moderator
+        // participant in ENDPOINT_MESSAGE_RECEIVED.
         if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
             _handleReceivedMessage(store, {
                 displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
@@ -204,6 +258,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             if (
                 isSendGroupChatDisabled(state)
+                && !isSendPrivateChatDisabled(state)
                 && privateMessageRecipient
                 && !action.participant
             ) {
@@ -234,10 +289,63 @@ MiddlewareRegistry.register(store => next => action => {
             return next(action);
         }
 
+        // Polls, Files and CC open the same panel, so the embedder needs to know too. The chat tab case is handled
+        // above. The chat messages are still unread here, so send the real count.
+        if (action.type === OPEN_CHAT && focusedTab !== ChatTabs.CHAT && typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(getUnreadCount(state), true);
+        }
+
         break;
     }
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: {
+        const result = next(action);
+
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const local = getLocalParticipant(state);
+
+        if (conference && action.participant?.id && local?.id) {
+            const moderatedMessages = state['features/chat'].messages.filter(
+                (m: IMessage) =>
+                    m.isModerated
+            );
+
+            // Only a moderator's replay is accepted by the receiving side, so don't have
+            // every participant emit messages that will be dropped anyway.
+            if (moderatedMessages.length > 0 && isLocalParticipantModerator(state)) {
+                const sendWithRetry = (retries: number) => {
+                    try {
+                        moderatedMessages.forEach(message => {
+                            conference.sendPrivateTextMessage(
+                                action.participant.id,
+                                JSON.stringify({
+                                    type: MODERATE_CHAT_MESSAGE,
+                                    messageId: message.messageId,
+                                    reason: message.moderationReason
+                                }),
+                                'json-message'
+                            );
+                        });
+                    } catch (e) {
+                        if (retries > 0) {
+                            setTimeout(() => sendWithRetry(retries - 1), 1000);
+                        }
+                    }
+                };
+
+                setTimeout(() => sendWithRetry(3), 3000);
+            }
+
+        }
+
+        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
+            dispatch(notifyPrivateRecipientsChanged());
+        }
+
+        return result;
+    }
+
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         if (action.type === PARTICIPANT_LEFT) {
@@ -292,17 +400,103 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             if (isLobbyChatActive && lobbyMessageRecipient) {
+                const messageId = uuidv4();
+
                 conference.sendLobbyMessage({
                     type: LOBBY_CHAT_MESSAGE,
-                    message: action.message
+                    message: action.message,
+                    messageId
                 }, lobbyMessageRecipient.id);
-                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
+                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true, messageId);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                const messageId = uuidv4();
+
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
+                _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
             } else {
-                conference.sendTextMessage(action.message);
+                const messageId = uuidv4();
+
+                conference.sendTextMessage(action.message, undefined, undefined, messageId);
             }
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_RETRACTION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!localParticipant || action.message.participantId !== localParticipant.id) {
+            logger.warn('Ignoring retraction request for a message that does not belong to the local participant.');
+            break;
+        }
+        if (conference) {
+            logger.info(`Sending retraction for message ${action.message.messageId}`);
+            if (action.message.lobbyChat) {
+                conference.sendLobbyMessageRetraction(action.message.messageId, action.message.recipientId);
+            } else {
+                conference.sendMessageRetraction(
+                    action.message.messageId,
+                    action.message.privateMessage
+                        ? action.message.recipientId
+                        : undefined,
+                    action.message.sentToVisitor
+                );
+            }
+
+            // For group chat this comes back via the MUC echo, but private
+            // messages don't echo back to the sender via the normal path.
+            if ((action.message.privateMessage || action.message.lobbyChat)) {
+                dispatch(retractMessage(action.message.messageId, localParticipant.id));
+            }
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_EDIT: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const editedAt = Date.now();
+        const messageToEdit = state['features/chat'].messages.find(
+            message => message.messageId === action.messageId
+        );
+
+        if (
+            conference
+            && localParticipant?.id
+            && messageToEdit
+            && messageToEdit.participantId === localParticipant.id
+            && messageToEdit.messageType === MESSAGE_TYPE_LOCAL
+            && !messageToEdit.isFromVisitor
+        ) {
+            const trimmedMessage = String(action.message).trim();
+
+            // An unchanged text is not an edit: send nothing and do not mark the message as edited.
+            if (trimmedMessage === messageToEdit.message) {
+                logger.info(`Skipping edit for message ${action.messageId}: the text did not change`);
+                break;
+            }
+
+            if (messageToEdit.privateMessage && messageToEdit.recipientId) {
+                conference.sendMessageCorrection(
+                    action.messageId,
+                    trimmedMessage,
+                    messageToEdit.recipientId,
+                    messageToEdit.sentToVisitor
+                );
+            } else {
+                conference.sendMessageCorrection(action.messageId, trimmedMessage);
+            }
+
+            store.dispatch(editMessage({
+                messageId: action.messageId,
+                message: trimmedMessage,
+                editedAt,
+                participantId: localParticipant.id
+            }));
+        } else {
+            logger.warn(`Dropping edit for message ${action.messageId}: no conference, `
+                + 'message not found, or not an own message.');
         }
         break;
     }
@@ -314,8 +508,31 @@ MiddlewareRegistry.register(store => next => action => {
         if (conference) {
             const { reaction, messageId, receiverId } = action;
 
+            logger.info(`Sending reaction ${reaction} to message ${messageId}`);
             conference.sendReaction(reaction, messageId, receiverId);
         }
+        break;
+    }
+
+    case SEND_MESSAGE_MODERATION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        // Same guard as the UI, re-checked because the role can change after the UI checked it.
+        // action.message is the snapshot the UI passed.
+        if (!canModerateMessage(state, action.message)) {
+            logger.warn(`Ignoring moderation request for message ${action.message.messageId}: not allowed.`);
+            break;
+        }
+
+        if (conference) {
+            logger.info(`Sending moderation for message ${action.message.messageId}, reason: ${Boolean(action.reason)}`);
+            conference.moderateMessage(
+                action.message.messageId,
+                action.reason
+            );
+        }
+
         break;
     }
 
@@ -406,7 +623,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         /* eslint-disable max-params */
         (participantId: string, message: string, timestamp: number,
-                displayName: string, isFromVisitor: boolean, messageId: string, source: string) => {
+                displayName: string, isFromVisitor: boolean, messageId: string, source: string, replyToId?: string) => {
         /* eslint-enable max-params */
             _onConferenceMessageReceived(store, {
                 // in case of messages coming from visitors we can have unknown id
@@ -416,11 +633,17 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 displayName,
                 isFromVisitor,
                 messageId,
+                replyToMessageId: replyToId,
                 source,
                 privateMessage: false
             });
 
-            if (isSendGroupChatDisabled(store.getState()) && participantId) {
+            // Group chat is restricted for this participant, so steer the reply
+            // into a private message. Not when private messages are restricted
+            // too: that would move them into a chat they cannot send in either.
+            if (isSendGroupChatDisabled(store.getState())
+                && !isSendPrivateChatDisabled(store.getState())
+                && participantId) {
                 const participant = getParticipantById(store, participantId);
 
                 store.dispatch(setPrivateMessageRecipient(participant));
@@ -441,7 +664,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
-        (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string, isFromVisitor?: boolean) => {
+        (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string,
+                isFromVisitor?: boolean, replyToId?: string) => {
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
@@ -449,10 +673,40 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 displayName,
                 messageId,
                 privateMessage: true,
-                isFromVisitor
+                isFromVisitor,
+                replyToMessageId: replyToId
             });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_CORRECTED,
+        (participantId: string, messageId: string, message: string, timestamp?: string) => {
+            store.dispatch(editMessage({
+                messageId,
+                message: String(message),
+                editedAt: timestamp ? new Date(timestamp).getTime() : Date.now(),
+                participantId
+            }));
+        });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_MODERATED,
+        (messageId: string, reason?: string) => {
+            _onMessageModerated(store, messageId, reason);
+        });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_MODERATION_SUPPORTED_CHANGED,
+        (supported: boolean) => {
+            store.dispatch(setMessageModerationSupported(supported));
+        });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_RETRACTED,
+        (participantId: string, messageId: string) => {
+            _onMessageRetracted(store, participantId, messageId);
+        });
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {
@@ -468,9 +722,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @returns {void}
  */
 function _onConferenceMessageReceived(store: IStore,
-        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, timestamp, source }: {
+        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, replyToMessageId, timestamp, source }: {
             displayName?: string; isFromVisitor?: boolean; message: string; messageId?: string;
-            participantId: string; privateMessage: boolean; source?: string; timestamp: number; }
+            participantId: string; privateMessage: boolean; replyToMessageId?: string; source?: string; timestamp: number; }
 ) {
 
     const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
@@ -490,6 +744,7 @@ function _onConferenceMessageReceived(store: IStore,
         lobbyChat: false,
         timestamp,
         messageId,
+        replyToMessageId,
         source
     }, true, isGif);
 }
@@ -513,6 +768,48 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+/**
+ * Handles a moderated message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} messageId - The id of the message which is being deleted.
+ * @param {string} reason - The reason for which message is deleted.
+ * @returns {void}
+ */
+function _onMessageModerated(store: IStore, messageId: string, reason?: string) {
+    if (typeof messageId !== 'string' || !messageId) {
+        return;
+    }
+
+    // The message may not have arrived yet, in which case the reducer keeps the moderation
+    // and applies it once the message arrives.
+    store.dispatch(moderateMessage(messageId, reason));
+}
+
+/*
+ * Handles a retracted message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @param {string} messageId - The id of the message that is retracted.
+ * @returns {void}
+ */
+function _onMessageRetracted(store: IStore, participantId: string, messageId: string) {
+    const { messages } = store.getState()['features/chat'];
+
+    const originalMessage = messages.find(message => message.messageId === messageId);
+
+    if (!originalMessage) {
+        return;
+    }
+
+    if (originalMessage.participantId !== participantId) {
+        return;
+    }
+
+    store.dispatch(retractMessage(messageId, participantId));
 }
 
 /**
@@ -551,19 +848,45 @@ function _handleChatError({ dispatch }: IStore, error: Error) {
  *
  * @param {string} message - The message received.
  * @param {string} participantId - The participant id.
+ * @param {string} messageId - The optional message id.
  * @returns {Function}
  */
-export function handleLobbyMessageReceived(message: string, participantId: string) {
+export function handleLobbyMessageReceived(message: string, participantId: string, messageId?: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         _handleReceivedMessage({ dispatch,
             getState }, { participantId,
             message,
             privateMessage: false,
             lobbyChat: true,
+            messageId,
             timestamp: Date.now() });
     };
 }
 
+/**
+ * Handles a retracted message received from the lobby room.
+ *
+ * @param {string} messageId - The id of the message that is retracted.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @returns {Function}
+ */
+export function handleLobbyMessageRetracted(messageId: string, participantId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { messages } = getState()['features/chat'];
+
+        const originalMessage = messages.find(message => message.messageId === messageId);
+
+        if (!originalMessage) {
+            return;
+        }
+
+        if (originalMessage.participantId !== participantId) {
+            return;
+        }
+
+        dispatch(retractMessage(messageId, participantId));
+    };
+}
 
 /**
  * Function to get lobby chat user display name.
@@ -599,9 +922,10 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, source, timestamp }: {
+        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, replyToMessageId, source, timestamp }: {
             displayName?: string; isFromVisitor?: boolean; lobbyChat: boolean; message: string;
-            messageId?: string; participantId: string; privateMessage: boolean; source?: string; timestamp: number; },
+            messageId?: string; participantId: string; privateMessage: boolean; replyToMessageId?: string;
+            source?: string; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
 ) {
@@ -626,12 +950,14 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     if (lobbyChat) {
         _displayName = getLobbyChatDisplayName(state, participantId);
-    } else if (isFromVisitor) {
-        _displayName = getDisplayName(state, displayName);
-    } else if (!participant) {
-        _displayName = getDisplayName(state, displayName);
-    } else {
+    } else if (participant) {
+        // A resolvable, tracked participant always takes priority over the per-message isFromVisitor flag: a real
+        // visitor is never tracked as a participant (no MUC presence), so this doesn't affect genuine visitor
+        // messages, but it makes sure the sender's own known display name is always used once they're a tracked
+        // participant, regardless of what the message itself claims.
         _displayName = getParticipantDisplayName(state, participantId);
+    } else {
+        _displayName = getDisplayName(state, displayName);
     }
 
     const hasRead = participant?.local || isChatOpen;
@@ -652,12 +978,18 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         recipient: getParticipantDisplayName(state, localParticipant?.id ?? ''),
         timestamp: millisecondsTimestamp,
         messageId,
+        replyToMessageId,
         isReaction,
         isFromVisitor,
         isFromGuest: source === 'guest'
     };
 
     dispatch(addMessage(newMessage));
+
+    // A message moderated before it arrived is added as removed (see the reducer), so its text must
+    // not reach the notification or the external API either.
+    const { pendingModerations } = state['features/chat'];
+    const isModerated = Boolean(messageId && Object.prototype.hasOwnProperty.call(pendingModerations, messageId));
 
     let notificationDisplayName = _displayName;
 
@@ -670,7 +1002,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         notificationDisplayName = `${_displayName} ${getDisplayNameSuffix(newMessage)}`;
     }
 
-    if (shouldShowNotification) {
+    if (shouldShowNotification && !isModerated) {
         dispatch(showMessageNotification({
             title: notificationDisplayName,
             description: message,
@@ -683,11 +1015,13 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         // Logic for web only:
 
         APP.API.notifyReceivedChatMessage({
-            body: message,
+            body: isModerated ? i18next.t('chat.moderatedMessage') : message,
             from: participantId,
             nick: notificationDisplayName,
             privateMessage,
-            ts: timestamp
+            ts: timestamp,
+            messageId: newMessage.messageId,
+            replyToMessageId: newMessage.replyToMessageId
         });
     }
 }
@@ -712,10 +1046,11 @@ interface IRecipient {
  * @param {IRecipient} recipient - The recipient the private message was sent to.
  * @param {string} message - The sent message.
  * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
+ * @param {string} messageId - The id of sent message.
  * @returns {void}
  */
 function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
-        message: string, isLobbyPrivateMessage = false) {
+        message: string, isLobbyPrivateMessage = false, messageId?: string) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
 
@@ -738,9 +1073,11 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         participantId: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
+        messageId,
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,
+        recipientId: recipient.id,
         sentToVisitor: recipient.isVisitor,
         timestamp: Date.now()
     }));

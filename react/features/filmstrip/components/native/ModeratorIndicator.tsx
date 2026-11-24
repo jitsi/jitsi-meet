@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { IconModerator } from '../../../base/icons/svg';
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
@@ -8,6 +9,15 @@ import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
  *
  * @returns {JSX.Element}
  */
-const ModeratorIndicator = (): JSX.Element => <BaseIndicator icon = { IconModerator } />;
+const ModeratorIndicator = (): JSX.Element => {
+    const { t } = useTranslation();
+    const label = t('videothumbnail.moderator');
+
+    return (
+        <BaseIndicator
+            accessibilityLabel = { label }
+            icon = { IconModerator } />
+    );
+};
 
 export default ModeratorIndicator;

@@ -1,4 +1,4 @@
-import { IconPhoneRinging, IconWhiteboard } from '../icons/svg';
+import { IconAI, IconPhoneRinging, IconWhiteboard } from '../icons/svg';
 
 /**
  * The relative path to the default/stock avatar (image) file used on both
@@ -80,6 +80,11 @@ export const LOWER_HAND_AUDIO_LEVEL = 0.2;
  * Icon URL for the whiteboard participant.
  */
 export const WHITEBOARD_PARTICIPANT_ICON = IconWhiteboard;
+
+/**
+ * The icon shown for a voice agent (fake participant) as its avatar.
+ */
+export const VOICE_AGENT_PARTICIPANT_ICON = IconAI;
 
 /**
  * The ID used for non-participant (system) messages coming from a transcriber.

@@ -10,6 +10,7 @@ import {
     IconImage,
     IconModerator,
     IconShortcuts,
+    IconSliders,
     IconUser,
     IconVideo,
     IconVolumeUp
@@ -26,6 +27,7 @@ import {
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from '../../../virtual-background/functions';
 import { iAmVisitor } from '../../../visitors/functions';
 import {
+    submitExperimentalTab,
     submitModeratorTab,
     submitMoreTab,
     submitNotificationsTab,
@@ -35,6 +37,7 @@ import {
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
+    getExperimentalTabProps,
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsMap,
@@ -43,8 +46,10 @@ import {
     getShortcutsTabProps,
     getVirtualBackgroundTabProps
 } from '../../functions';
+import { IExperimentalTabState } from '../../types';
 
 import CalendarTab from './CalendarTab';
+import ExperimentalTab from './ExperimentalTab';
 import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
 import NotificationsTab from './NotificationsTab';
@@ -137,11 +142,16 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showShortcutsSettings = configuredTabs.includes('shortcuts');
     const showSoundsSettings = configuredTabs.includes('sounds');
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
     const virtualBackgroundSupported = checkBlurSupport();
     const enableVirtualBackground = checkVirtualBackgroundEnabled(state);
+    const experimentalTabProps = getExperimentalTabProps(state);
+
+    // The tab only lists config options the user may change here; without any (e.g. in Electron) it has no purpose.
+    const showExperimentalSettings = experimentalTabProps.options.length > 0;
     const tabs: IDialogTab<any>[] = [];
     const _iAmVisitor = iAmVisitor(state);
 
@@ -253,7 +263,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioTranslationEnabled: tabState?.audioTranslationEnabled,
+                    breakoutRoomJoinWithPermissionsEnabled: tabState?.breakoutRoomJoinWithPermissionsEnabled,
                     chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
+                    privateChatWithPermissionsEnabled: tabState?.privateChatWithPermissionsEnabled,
+                    sharedVideoWithPermissionsEnabled: tabState?.sharedVideoWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
@@ -293,22 +307,25 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    !_iAmVisitor && tabs.push({
-        name: SETTINGS_TABS.SHORTCUTS,
-        component: ShortcutsTab,
-        labelKey: 'settings.shortcuts',
-        props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
-        propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
-            // Updates tab props, keeping users selection
+    if (showShortcutsSettings && !_iAmVisitor) {
+        tabs.push({
+            name: SETTINGS_TABS.SHORTCUTS,
+            component: ShortcutsTab,
+            labelKey: 'settings.shortcuts',
+            props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
+                // Updates tab props, keeping users selection
 
-            return {
-                ...newProps,
-                keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
-            };
-        },
-        submit: submitShortcutsTab,
-        icon: IconShortcuts
-    });
+                return {
+                    ...newProps,
+                    ctrlAltReactionShortcutsEnabled: tabState?.ctrlAltReactionShortcutsEnabled,
+                    keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
+                };
+            },
+            submit: submitShortcutsTab,
+            icon: IconShortcuts
+        });
+    }
 
     if (showMoreTab && !_iAmVisitor) {
         tabs.push({
@@ -329,6 +346,25 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             submit: submitMoreTab,
             icon: IconGear
+        });
+    }
+
+    if (showExperimentalSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.EXPERIMENTAL,
+            component: ExperimentalTab,
+            labelKey: 'settings.experimental',
+            props: experimentalTabProps,
+            propsUpdateFunction: (tabState: IExperimentalTabState, newProps: typeof experimentalTabProps) => {
+                // Updates tab props, keeping users selection
+
+                return {
+                    ...newProps,
+                    values: tabState?.values ?? newProps.values
+                };
+            },
+            submit: submitExperimentalTab,
+            icon: IconSliders
         });
     }
 

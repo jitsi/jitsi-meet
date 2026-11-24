@@ -58,9 +58,7 @@ export default class Filmstrip extends BasePageObject {
      * @param endpointId
      */
     async getRemoteVideoId(endpointId: string) {
-        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}"]`);
-
-        await remoteDisplayName.moveTo();
+        await this.participant.driver.$(`span[id="participant_${endpointId}"]`).waitForExist();
 
         return await this.participant.execute(eId =>
             document.evaluate(`//span[@id="participant_${eId}"]//video`,
@@ -225,6 +223,27 @@ export default class Filmstrip extends BasePageObject {
         await toggleButton.moveTo();
         await toggleButton.waitForDisplayed();
         await toggleButton.click();
+    }
+
+    /**
+     * Asserts that the filmstrip itself (the whole container, including the self view) is visible or not
+     * (it is hidden for example when collapsed via the toggle button).
+     *
+     * @param visible Whether the filmstrip is expected to be visible.
+     */
+    assertVisible(visible = true) {
+        return this.participant.driver.waitUntil(
+            () => this.participant.execute(
+                expected => {
+                    const filmstrip = document.querySelector('.filmstrip');
+
+                    return Boolean(filmstrip) && filmstrip.classList.contains('hidden') !== expected;
+                }, visible),
+            {
+                timeout: 5_000,
+                timeoutMsg: `The filmstrip is${visible ? ' not' : ''} visible for ${this.participant.name}`
+            }
+        );
     }
 
     /**

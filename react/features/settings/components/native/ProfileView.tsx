@@ -41,6 +41,7 @@ const ProfileView = ({ isInWelcomePage }: {
     );
     const participant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const { locationURL } = useSelector((state: IReduxState) => state['features/base/connection']);
+    const showAuthButton = !isInWelcomePage && !locationURL?.hostname?.includes('8x8.vc');
 
     const [ displayName, setDisplayName ] = useState(reduxDisplayName);
     const [ email, setEmail ] = useState(reduxEmail);
@@ -75,6 +76,7 @@ const ProfileView = ({ isInWelcomePage }: {
 
     const headerLeft = () => (
         <HeaderNavigationButton
+            accessibilityLabel = { t('dialog.Back') }
             color = { BaseThemeNative.palette.link01 }
             onPress = { goBack }
             src = { IconArrowLeft }
@@ -86,6 +88,7 @@ const ProfileView = ({ isInWelcomePage }: {
         if (isAutenticated) {
             return (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('toolbar.logout') }
                     label = { t('toolbar.logout') }
                     onPress = { onLogout }
                     style = { styles.logBtn }
@@ -95,6 +98,7 @@ const ProfileView = ({ isInWelcomePage }: {
 
         return (
             <HeaderNavigationButton
+                accessibilityLabel = { t('toolbar.login') }
                 label = { t('toolbar.login') }
                 onPress = { onLogin }
                 style = { styles.logBtn }
@@ -105,11 +109,16 @@ const ProfileView = ({ isInWelcomePage }: {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft,
-            headerRight: !isInWelcomePage
-                && !locationURL?.hostname?.includes('8x8.vc')
-                && headerRight
+            headerRight: showAuthButton ? headerRight : undefined
         });
     }, [ navigation ]);
+
+    const displayNameLabel = t('settingsView.displayName');
+    const displayNamePlaceholder = t('settingsView.displayNamePlaceholderText');
+    const emailLabel = t('settingsView.email');
+    const emailPlaceholder = t('settingsView.emailPlaceholderText');
+    const gavatarMessage = t('settingsView.gavatarMessage');
+    const applyProfileSettingsButtonLabel = 'settingsView.apply';
 
     return (
         <JitsiScreen
@@ -128,29 +137,31 @@ const ProfileView = ({ isInWelcomePage }: {
                     </View>
                     <FormSection>
                         <Input
+                            accessibilityLabel = { displayNameLabel }
                             customStyles = {{ container: styles.customContainer }}
-                            label = { t('settingsView.displayName') }
+                            label = { displayNameLabel }
                             onChange = { onDisplayNameChanged }
-                            placeholder = { t('settingsView.displayNamePlaceholderText') }
+                            placeholder = { displayNamePlaceholder }
                             textContentType = { 'name' } // iOS only
                             value = { displayName ?? '' } />
                         <Input
+                            accessibilityLabel = { emailLabel }
                             autoCapitalize = 'none'
                             customStyles = {{ container: styles.customContainer }}
                             keyboardType = { 'email-address' }
-                            label = { t('settingsView.email') }
+                            label = { emailLabel }
                             onChange = { onEmailChanged }
-                            placeholder = { t('settingsView.emailPlaceholderText') }
+                            placeholder = { emailPlaceholder }
                             textContentType = { 'emailAddress' } // iOS only
                             value = { email ?? '' } />
                         <Text style = { styles.gavatarMessageContainer }>
-                            { t('settingsView.gavatarMessage') }
+                            { gavatarMessage }
                         </Text>
                     </FormSection>
                 </View>
                 <Button
-                    accessibilityLabel = { t('settingsView.apply') }
-                    labelKey = { 'settingsView.apply' }
+                    accessibilityLabel = { applyProfileSettingsButtonLabel }
+                    labelKey = { applyProfileSettingsButtonLabel }
                     onClick = { onApplySettings }
                     style = { styles.applyProfileSettingsButton }
                     type = { BUTTON_TYPES.PRIMARY } />

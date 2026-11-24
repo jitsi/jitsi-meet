@@ -10,7 +10,6 @@ import { LAYOUTS } from '../video-layout/constants';
 import { getCurrentLayout, shouldDisplayTileView } from '../video-layout/functions.web';
 
 import { clearStageParticipants,
-    setFilmstripVisible,
     setHorizontalViewDimensions,
     setScreenshareFilmstripParticipant,
     setScreensharingTileDimensions,
@@ -18,10 +17,7 @@ import { clearStageParticipants,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions.web';
-import {
-    ASPECT_RATIO_BREAKPOINT,
-    DISPLAY_DRAWER_THRESHOLD
-} from './constants';
+import { DISPLAY_DRAWER_THRESHOLD } from './constants';
 import {
     isFilmstripResizable,
     isTopPanelEnabled
@@ -129,20 +125,6 @@ StateListenerRegistry.register(
     /* listener */ (widthBelowThreshold, store) => {
         store.dispatch(setOverflowDrawer(widthBelowThreshold));
         store.dispatch(setNarrowLayout(widthBelowThreshold));
-    });
-
-/**
- * Gracefully hide/show the filmstrip when going past threshold.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/base/responsive-ui'].videoSpaceWidth < ASPECT_RATIO_BREAKPOINT,
-    /* listener */ (widthBelowThreshold, store) => {
-        const state = store.getState();
-        const { disableFilmstripAutohiding } = state['features/base/config'];
-
-        if (!disableFilmstripAutohiding) {
-            store.dispatch(setFilmstripVisible(!widthBelowThreshold));
-        }
     });
 
 /**

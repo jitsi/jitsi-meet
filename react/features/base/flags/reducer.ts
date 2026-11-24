@@ -7,10 +7,10 @@ import { UPDATE_FLAGS } from './actionTypes';
 /**
  * Default state value for the feature flags.
  */
-const DEFAULT_STATE = {};
+export const DEFAULT_STATE = {};
 
 export interface IFlagsState {
-    flags?: Object;
+    [flag: string]: boolean | string | undefined;
 }
 
 /**

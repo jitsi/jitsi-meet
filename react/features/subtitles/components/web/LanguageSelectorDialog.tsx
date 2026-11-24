@@ -2,8 +2,11 @@ import i18next from 'i18next';
 import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { translate, translateToHTML } from '../../../base/i18n/functions';
+import { openDialog } from '../../../base/dialog/actions';
+import TranslationWithMarkup from '../../../base/i18n/components/web/TranslationWithMarkup';
+import { createTranslationLineBreak, translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
+import { RecordingTranscriptionDialog } from '../../../recording/components/Recording';
 import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { toggleLanguageSelectorDialog } from '../../actions.web';
@@ -35,14 +38,20 @@ const useStyles = makeStyles()(theme => {
 
 
 const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => {
-    const { dispatch, language, listItems, onLanguageSelected, subtitles, t } = props;
+    const { dispatch, language, listItems, onLanguageSelected, startWithRecordingDialog, subtitles, t } = props;
 
     const { classes: styles } = useStyles();
 
     const onSelected = useCallback((e: string) => {
-        onLanguageSelected(e);
+        if (startWithRecordingDialog) {
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
+                recordAudioAndVideo: false
+            }));
+        } else {
+            onLanguageSelected(e);
+        }
         dispatch(toggleLanguageSelectorDialog());
-    }, [ language ]);
+    }, [ startWithRecordingDialog, language ]);
 
     const onSourceLanguageClick = useCallback(() => {
         dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
@@ -54,11 +63,10 @@ const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => 
             ok = {{ hidden: true }}
             titleKey = 'transcribing.subtitles'>
             <p className = { styles.paragraphWrapper } >
-                {
-                    translateToHTML(t, 'transcribing.sourceLanguageDesc', {
-                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
-                    })
-                }<span
+                <TranslationWithMarkup
+                    components = { [ <b key = 'source-language' />, createTranslationLineBreak() ] }
+                    i18nKey = 'transcribing.sourceLanguageDesc'
+                    values = {{ sourceLanguage: t(`languages:${i18next.language}`).toLowerCase() }} /><span
                     className = { styles.spanWrapper }
                     onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
             </p>

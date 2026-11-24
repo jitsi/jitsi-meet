@@ -1,15 +1,17 @@
 import React, { PureComponent } from 'react';
+import { GestureResponderEvent } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
-import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import ParticipantView from '../../base/participants/components/ParticipantView.native';
 import { getParticipantById, isLocalScreenshareParticipant } from '../../base/participants/functions';
-import { trackStreamingStatusChanged } from '../../base/tracks/actions.native';
+import Container from '../../base/react/components/native/Container';
+import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant, isLocalVideoTrackDesktop } from '../../base/tracks/functions.native';
+import { useTrackStreamingStatus } from '../../base/tracks/hooks.any';
 import { ITrack } from '../../base/tracks/types';
 
-import { AVATAR_SIZE } from './styles';
+import styles, { AVATAR_SIZE } from './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
@@ -25,6 +27,11 @@ interface IProps {
      * Application's viewport height.
      */
     _height: number;
+
+    /**
+     * Whether the local participant is on stage while self view is hidden.
+     */
+    _hideSelfView: boolean;
 
     /**
      * The ID of the participant (to be) depicted by LargeVideo.
@@ -51,7 +58,7 @@ interface IProps {
     /**
      * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
      */
-    onClick?: Function;
+    onClick?: (e?: GestureResponderEvent) => void;
 }
 
 /**
@@ -90,12 +97,6 @@ class LargeVideo extends PureComponent<IProps, IState> {
      * @param {IProps} props - The props of the component.
      * @returns {LargeVideo}
      */
-    constructor(props: IProps) {
-        super(props);
-
-        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
-    }
-
     state = {
         ...DEFAULT_STATE
     };
@@ -115,92 +116,13 @@ class LargeVideo extends PureComponent<IProps, IState> {
 
         if (size < AVATAR_SIZE * 1.5) {
             return {
-                avatarSize: size - 15, // Leave some margin.
+                avatarSize: Math.max(size - 15, 0), // Leave some margin.
                 useConnectivityInfoLabel: false
             };
         }
 
         return DEFAULT_STATE;
 
-    }
-
-    /**
-     * Starts listening for track streaming status updates after the initial render.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidMount() {
-        // Listen to track streaming status changed event to keep it updated.
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
-    }
-
-    /**
-     * Stops listening for track streaming status updates on the old track and starts listening instead on the new
-     * track.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidUpdate(prevProps: IProps) {
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
-            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
-                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
-                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-            if (_videoTrack && !_videoTrack.local) {
-                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-        }
-    }
-
-    /**
-     * Remove listeners for track streaming status update.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
-    }
-
-    /**
-     * Handle track streaming status change event by by dispatching an action to update track streaming status for the
-     * given track in app state.
-     *
-     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
-     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
-     * @returns {void}
-     */
-    handleTrackStreamingStatusChanged(jitsiTrack: any, streamingStatus: string) {
-        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     }
 
     /**
@@ -216,9 +138,19 @@ class LargeVideo extends PureComponent<IProps, IState> {
         } = this.state;
         const {
             _disableVideo,
+            _hideSelfView,
             _participantId,
             onClick
         } = this.props;
+
+        if (_hideSelfView) {
+            return (
+                <Container
+                    onClick = { onClick }
+                    style = { styles.emptyStage }
+                    touchFeedback = { false } />
+            );
+        }
 
         return (
             <ParticipantView
@@ -257,10 +189,15 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _disableVideo: disableVideo,
         _height: height,
+        _hideSelfView: Boolean(participant?.local) && getHideSelfView(state),
         _participantId: participantId ?? '',
         _videoTrack: videoTrack,
         _width: width
     };
 }
 
-export default connect(_mapStateToProps)(LargeVideo);
+export default connect(_mapStateToProps)((props: IProps) => {
+    useTrackStreamingStatus(props._videoTrack);
+
+    return <LargeVideo { ...props } />;
+});

@@ -39,9 +39,6 @@
         "phone": "Celular",
         "speaker": "Alto-falantes"
     },
-    "audioOnly": {
-        "audioOnly": "Largura de banda baixa"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "Ex. 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores mais altos podem causar erros de rede.",
@@ -208,7 +205,7 @@
     "deepLinking": {
         "appNotInstalled": "Você precisa do aplicativo móvel {{app}} para participar da reunião no seu telefone.",
         "description": "Nada acontece? Estamos tentando iniciar sua reunião no aplicativo desktop {{app}}. Tente novamente ou inicie ele na aplicação web {{app}}.",
-        "descriptionNew": "Nada aconteceu? Tentamos iniciar sua reunião no aplicativo de desktop {{app}}. <br /><br /> Você pode tentar novamente ou abrir pela web.",
+        "descriptionNew": "Nada aconteceu? Tentamos iniciar sua reunião no aplicativo de desktop {{app}}. <0/><0/> Você pode tentar novamente ou abrir pela web.",
         "descriptionWithoutWeb": "Nada aconteceu? Tentamos iniciar sua reunião no aplicativo de desktop {{app}}.",
         "downloadApp": "Baixe o Aplicativo",
         "downloadMobileApp": "Baixar o app",
@@ -220,7 +217,7 @@
         "launchMeetingLabel": "Como deseja entrar nesta reunião?",
         "launchWebButton": "Iniciar na web",
         "noMobileApp": "Não tem o app?",
-        "termsAndConditions": "Ao continuar você estará aceitando nossos <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>termos e condições.</a>",
+        "termsAndConditions": "Ao continuar você estará aceitando nossos <0>termos e condições.</0>",
         "title": "Iniciando sua reunião no {{app}}…",
         "titleNew": "Iniciando sua reunião…",
         "tryAgainButton": "Tente novamente no desktop",
@@ -235,12 +232,6 @@
         "microphonePermission": "Erro ao obter permissão para o microfone"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Controle de chamada",
-            "connectedDevices": "Dispositivos conectados:",
-            "deleteDevice": "Remover dispositivo",
-            "pairDevice": "Emparelhar dispositivo"
-        },
         "noPermission": "Permissão não concedida",
         "previewUnavailable": "Visualização indisponível",
         "selectADevice": "Selecione um dispositivo",
@@ -260,7 +251,6 @@
         "Remove": "Remover",
         "Share": "Compartilhar",
         "Submit": "Enviar",
-        "WaitForHostMsg": "A conferência ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHostButton": "Aguardar por anfitrião",
         "WaitingForHostTitle": "Esperando o anfitrião…",
         "Yes": "Sim",
@@ -315,7 +305,7 @@
         "enterDisplayName": "Digite seu nome aqui",
         "error": "Erro",
         "gracefulShutdown": "Nosso serviço está em manutenção. Tente novamente mais tarde.",
-        "grantModeratorDialog": "Tem certeza que quer participar como moderador da reunião?",
+        "grantModeratorDialog": "Tem certeza de que deseja conceder direitos de moderador a {{participantName}}?",
         "grantModeratorTitle": "Permitir moderador",
         "hide": "Ocultar",
         "hideShareAudioHelper": "Não mostre este diálogo novamente",
@@ -714,21 +704,22 @@
         "button": "Convidar outros",
         "youAreAlone": "Você é o único na reunião"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Largura de banda baixa"
+    },
     "me": "eu",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
-        "allowAction": "Permitir",
         "allowedUnmute": "Você pode religar seu microfone, ativar sua câmera ou compartilhar sua tela.",
         "audioUnmuteBlockedDescription": "A liberação do microfone foi temporariamente bloqueada devido a limites do sistema.",
         "audioUnmuteBlockedTitle": "Microfone bloqueado!",
         "chatMessages": "Mensagens do chat",
         "connectedOneMember": "{{name}} entrou na reunião",
-        "connectedThreePlusMembers": "{{name}} e outros {{count}} entraram na reunião",
+        "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
         "dataChannelClosed": "Qualidade do vídeo prejudicada",
         "dataChannelClosedDescription": "O canal da ponte foi desconectado, assim a qualidade do vídeo foi limitada a sua configuração mais baixa.",
         "disabledIframe": "Incorporação destina-se apenas a fins de demonstração, assim esta chamada será desconectada em {{timeout}} minutos.",
-        "disabledIframeSecondary": "Incorporação de {{domain}} é apenas destinado para fins de demonstração, então esta chamada será desconectada em {{timeout}} minutos. Por favor use o <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Exibir notificações para",
         "dontRemindMe": "Não me lembrar",
@@ -784,7 +775,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definido por outro participante",
         "raiseHandAction": "Levantar a mão",
-        "raisedHand": "{{name}} gostaria de falar.",
+        "raisedHand": "Gostaria de participar.",
         "raisedHands": "{{participantName}} e {{raisedHands}} outras pessoas",
         "reactionSounds": "Desabilitar sons",
         "reactionSoundsForAll": "Desabilitar sons para todos",
@@ -796,7 +787,7 @@
         "somebody": "Alguém",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
         "startSilentTitle": "Você entrou sem saída de áudio!",
-        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
+        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <0>navegadores completamente suportados</0>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
         "unmute": "Ativar som",
         "videoMutedRemotelyDescription": "Você pode ativar sua câmera a qualquer momento.",
@@ -859,8 +850,7 @@
             "pollOption": "Opção {{index}}",
             "pollQuestion": "Pergunta",
             "questionPlaceholder": "Faça uma pergunta",
-            "removeOption": "Remover opção",
-            "send": "Enviar"
+            "removeOption": "Remover opção"
         },
         "errors": {
             "notUniqueOption": "As opções devem ser exclusivas"
@@ -879,9 +869,7 @@
     },
     "poweredby": "distribuído por",
     "prejoin": {
-        "audioAndVideoError": "Erro de áudio e vídeo error:",
         "audioDeviceProblem": "Tem um problema com seu dispositivo de áudio",
-        "audioOnlyError": "Erro de áudio:",
         "audioTrackError": "Não é possível criar a faixa de áudio.",
         "callMe": "Me ligue",
         "callMeAtNumber": "Me ligue nesse número:",
@@ -935,7 +923,6 @@
         "screenSharingError": "Erro de compartilhamento de tela:",
         "startWithPhone": "Iniciar com o áudio da ligação",
         "unsafeRoomConsent": "Eu entendo os riscos, desejo ingressar na reunião",
-        "videoOnlyError": "Erro de vídeo:",
         "videoTrackError": "Não é possível criar faixa de vídeo.",
         "viewAllNumbers": "veja todos os números"
     },
@@ -995,7 +982,6 @@
         "highlightMomentSucessDescription": "Seu momento destacado será adicionado ao sumário da reunião.",
         "inProgress": "Gravação ou live streaming em andamento",
         "linkGenerated": "Geramos um link para sua gravação.",
-        "live": "AO VIVO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Você precisará avisá-los que a reunião está sendo gravada.",
         "localRecordingNoVideo": "O vídeo não está sendo gravado",
         "localRecordingStartWarning": "Por favor, certifique-se de ter parado a gravação antes de sair da reunião para garantir que será salva.",
@@ -1012,9 +998,7 @@
         "onBy": "{{name}} iniciou a gravação",
         "onlyRecordSelf": "Gravar apenas o meu fluxo de áudio e vídeo",
         "pending": "Preparando para gravar a reunião…",
-        "rec": "REC",
         "saveLocalRecording": "Salvar o arquivo de gravação localmente (Beta)",
-        "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "Reuniões gravadas são removidas automaticamente 24h após a hora da gravação.",
         "serviceName": "Serviço de gravação",
@@ -1024,8 +1008,7 @@
         "surfaceError": "Por favor selecione a aba atual.",
         "title": "Gravando",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
-        "unavailableTitle": "Gravação indisponível",
-        "uploadToCloud": "Enviar para a nuvem"
+        "unavailableTitle": "Gravação indisponível"
     },
     "screenshareDisplayName": "Tela: {{name}}",
     "sectionList": {
@@ -1035,7 +1018,7 @@
         "about": "Você pode adicionar $t(lockRoomPassword) a sua reunião. Participantes terão que fornecer $t(lockRoomPassword) antes de entrar na reunião.",
         "aboutReadOnly": "Moderadores podem adicionar $t(lockRoomPassword) à reunião. Participantes terão que fornecer $t(lockRoomPassword) antes de entrar na reunião.",
         "insecureRoomNameWarningNative": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião ",
-        "insecureRoomNameWarningWeb": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aqui</a>.",
+        "insecureRoomNameWarningWeb": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião <0>aqui</0>.",
         "title": "Opções de segurança",
         "unsafeRoomActions": {
             "meeting": "Considere usar o botão de segurança para proteger sua reunião.",
@@ -1163,7 +1146,6 @@
         "Settings": "Configurações",
         "accessibilityLabel": {
             "Settings": "Alternar configurações",
-            "audioOnly": "Alternar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
             "breakoutRooms": "Entrar/sair da sala de apoio",
@@ -1204,6 +1186,7 @@
             "lobbyButton": "Habilitar/desabilitar sala de espera",
             "localRecording": "Alternar controles de gravação local",
             "lockRoom": "Ativar/desativar senha de reunião",
+            "lowBandwidthMode": "Alternar para apenas áudio",
             "lowerHand": "Abaixar a mão",
             "moreActions": "Alternar mais menu de ações",
             "moreActionsMenu": "Menu de mais ações",
@@ -1216,7 +1199,7 @@
             "muteGUMPending": "Conectando seu microfone",
             "noiseSuppression": "Supressão de ruído",
             "openChat": "Abrir chat",
-            "participants": "Participantes",
+            "participants": "Abrir painel de participantes. {{participantsCount}} participantes",
             "pip": "Alternar modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
             "profile": "Editar seu perfil",
@@ -1251,8 +1234,6 @@
             "videounmute": "Ativar câmera"
         },
         "addPeople": "Adicionar pessoas à sua chamada",
-        "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
-        "audioOnlyOn": "Habilitar modo de largura de banda baixa",
         "audioRoute": "Selecionar o dispositivo de som",
         "audioSettings": "Configurações de áudio",
         "authenticate": "Autenticar",
@@ -1292,6 +1273,8 @@
         "lobbyButtonEnable": "Habilitar sala de espera",
         "login": "Iniciar sessão",
         "logout": "Encerrar sessão",
+        "lowBandwidthModeOff": "Desabilitar modo de largura de banda baixa",
+        "lowBandwidthModeOn": "Habilitar modo de largura de banda baixa",
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
         "moreOptions": "Mais opções",
@@ -1332,7 +1315,7 @@
         "silence": "Silêncio",
         "speakerStats": "Estatísticas do Apresentador",
         "startScreenSharing": "Iniciar compart. de tela",
-        "startSubtitles": "Iniciar legendas",
+        "startSubtitles": "Legendas • {{language}}",
         "stopAudioSharing": "Parar compart. de áudio",
         "stopScreenSharing": "Parar compart. de tela",
         "stopSharedVideo": "Parar vídeo",
@@ -1349,13 +1332,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
-        "error": "Transcrição falhou. Tente novamente.",
         "expandedLabel": "Transcrição ativada",
-        "failedToStart": "Transcrição falhou ao iniciar",
-        "labelToolTip": "A reunião esta sendo transcrita",
         "off": "Transcrição parada",
-        "pending": "Preparando a transcrição da reunião…",
-        "sourceLanguageDesc": "No momento o idioma da reunião está definido para <b>{{sourceLanguage}}</b>. <br/> Você pode alterar-lo ",
+        "sourceLanguageDesc": "No momento o idioma da reunião está definido para <0>{{sourceLanguage}}</0>. <1/> Você pode alterar-lo ",
         "sourceLanguageHere": "aqui",
         "start": "Exibir legendas",
         "stop": "Não exibir legendas",
@@ -1379,8 +1358,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "bestPerformance": "Melhor performance",
         "callQuality": "Qualidade de vídeo",
         "hd": "HD",
@@ -1388,9 +1365,11 @@
         "highDefinition": "Alta definição (HD)",
         "highestQuality": "Alta qualidade",
         "labelTooiltipNoVideo": "Sem vídeo",
-        "labelTooltipAudioOnly": "Modo de largura de banda baixa habilitada",
+        "labelTooltipLowBandwidthMode": "Modo de largura de banda baixa habilitada",
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "lowDefinition": "Baixa definição (LD)",
         "performanceSettings": "Configurações de performance",
         "recording": "Gravação em andamento",
@@ -1455,7 +1434,6 @@
         "chatIndicator": "(visitante)",
         "labelTooltip": "Número de visitantes: {{count}}",
         "notification": {
-            "description": "Para participar levante a mão",
             "title": "Você é um visitante na reunião"
         }
     },
@@ -1495,7 +1473,7 @@
         "mobileDownLoadLinkAndroid": "Baixar aplicativo móvel para Android",
         "mobileDownLoadLinkFDroid": "Baixar aplicativo móvel para F-Droid",
         "mobileDownLoadLinkIos": "Baixar aplicativo móvel para iOS",
-        "moderatedMessage": "Ou <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">agende uma URL de reunião</a> antes, onde você é o único moderador.",
+        "moderatedMessage": "Ou <0>agende uma URL de reunião</0> antes, onde você é o único moderador.",
         "privacy": "Política de Privacidade",
         "recentList": "Recente",
         "recentListDelete": "Remover",

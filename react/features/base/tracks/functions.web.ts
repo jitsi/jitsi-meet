@@ -118,7 +118,7 @@ export function createPrejoinTracks() {
     const initialDevices = [ MEDIA_TYPE.AUDIO ];
     const requestedAudio = true;
     let requestedVideo = false;
-    const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const { startLowBandwidthMode, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
     const startWithAudioMuted = getStartWithAudioMuted(APP.store.getState());
 
     // On Electron there is no permission prompt for granting permissions. That's why we don't need to
@@ -134,7 +134,7 @@ export function createPrejoinTracks() {
         APP.store.dispatch(setAudioMuted(true));
     }
 
-    if (!startWithVideoMuted && !startAudioOnly) {
+    if (!startWithVideoMuted && !startLowBandwidthMode) {
         initialDevices.push(MEDIA_TYPE.VIDEO);
         requestedVideo = true;
     }
@@ -157,24 +157,11 @@ export function createPrejoinTracks() {
             }
 
             // Retry with separate gUM calls.
-            const gUMPromises: any = [];
             const tracks: any = [];
-
-            if (requestedAudio) {
-                gUMPromises.push(createLocalTracksF({
-                    devices: [ MEDIA_TYPE.AUDIO ],
-                    timeout
-                }));
-            }
-
-            if (requestedVideo) {
-                gUMPromises.push(createLocalTracksF({
-                    devices: [ MEDIA_TYPE.VIDEO ],
-                    timeout
-                }));
-            }
-
-            const results = await Promise.allSettled(gUMPromises);
+            const results = await Promise.allSettled(initialDevices.map(device => createLocalTracksF({
+                devices: [ device ],
+                timeout
+            })));
             let errorMsg;
 
             results.forEach((result, idx) => {
@@ -182,7 +169,7 @@ export function createPrejoinTracks() {
                     tracks.push(result.value[0]);
                 } else {
                     errorMsg = result.reason;
-                    const isAudio = idx === 0;
+                    const isAudio = initialDevices[idx] === MEDIA_TYPE.AUDIO;
 
                     logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
                     if (isAudio) {

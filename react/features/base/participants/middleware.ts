@@ -90,6 +90,7 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator,
     isScreenShareParticipant,
+    isVoiceAgentParticipant,
     isWhiteboardParticipant
 } from './functions';
 import logger from './logger';
@@ -304,18 +305,21 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare.
+        // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare, nor for
+        // agent tiles, which voice-agents announces itself.
         (!isScreenShareParticipant(action.participant)
             && !isWhiteboardParticipant(action.participant)
+            && !isVoiceAgentParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT: {
-        // Do not play sounds when a tile for screenshare or whiteboard is removed.
+        // Do not play sounds when a tile for screenshare, whiteboard or an agent is removed.
         (!isScreenShareParticipant(action.participant)
             && !isWhiteboardParticipant(action.participant)
+            && !isVoiceAgentParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         break;
@@ -619,17 +623,12 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
     const settings = state['features/base/settings'];
     const jwtUser = state['features/base/jwt']?.user;
 
-    const userContext = jwtUser ? {
-        id: jwtUser.id,
-        name: jwtUser.name
-    } : undefined;
-
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName,
         id: '',
-        userContext
+        userContext: jwtUser
     }));
 
     return result;
@@ -794,8 +793,9 @@ function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJit
         participantId: string, newValue: boolean) {
     const state = getState();
     const participant = getParticipantById(state, participantId);
+    const currentValue = participant?.localRecording ?? false;
 
-    if (participant?.localRecording === newValue) {
+    if (currentValue === newValue) {
         return;
     }
 

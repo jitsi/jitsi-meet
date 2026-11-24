@@ -39,9 +39,6 @@
         "phone": "Puhelin",
         "speaker": "Puhuja"
     },
-    "audioOnly": {
-        "audioOnly": "Vain ääni"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "esim. 10000000 tarkoittaa 10 Mbps",
         "assumedBandwidthBpsWarning": "Korkeammat arvot voivat aiheuttaa verkko-ongelmia.",
@@ -111,7 +108,7 @@
     "chat": {
         "disabled": "Chatti on poistettu käytöstä.",
         "enter": "Liity huoneeseen",
-        "error": "Virhe: viestiä \"{{originalText}}\" ei lähetetty. Syy: {{error}}",
+        "error": "Virhe: viestiäsi ei lähetetty. Syy: {{error}}",
         "everyone": "Kaikki",
         "fieldPlaceHolder": "Aa",
         "fileAccessibleTitle": "{{user}} latasi tiedoston",
@@ -238,7 +235,7 @@
     "deepLinking": {
         "appNotInstalled": "Tarvitset mobiilisovelluksen {{app}}, jotta voit liittyä tähän kokoukseen puhelimellasi.",
         "description": "Eikö mitään tapahtunut? Yritimme käynnistää kokouksen työpöytäsovelluksessa {{app}}. Yritä uudelleen tai käynnistä se verkkosovelluksessa {{app}}.",
-        "descriptionNew": "Eikö mitään tapahtunut? Yritimme käynnistää kokouksesi {{app}}-työpöytäsovelluksessa. <br /><br /> Voit yrittää uudelleen tai käynnistää kokouksen verkossa.",
+        "descriptionNew": "Eikö mitään tapahtunut? Yritimme käynnistää kokouksesi {{app}}-työpöytäsovelluksessa. <0/><0/> Voit yrittää uudelleen tai käynnistää kokouksen verkossa.",
         "descriptionWithoutWeb": "Eikö mitään tapahtunut? Yritimme käynnistää kokouksesi {{app}}-työpöytäsovelluksessa.",
         "downloadApp": "Lataa sovellus",
         "downloadMobileApp": "Lataa App Storesta",
@@ -252,7 +249,7 @@
         "noDesktopApp": "Eikö sinulla ole sovellusta?",
         "noMobileApp": "Eikö sinulla ole sovellusta?",
         "or": "TAI",
-        "termsAndConditions": "Jatkamalla hyväksyt <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>käyttöehtomme.</a>",
+        "termsAndConditions": "Jatkamalla hyväksyt <0>käyttöehtomme.</0>",
         "title": "Käynnistetään kokousta sovelluksessa {{app}}…",
         "titleNew": "Käynnistetään kokousta…",
         "tryAgainButton": "Yritä uudelleen työpöytäsovelluksella",
@@ -267,12 +264,6 @@
         "microphonePermission": "Virhe mikrofonin käyttöoikeuksien hankkimisessa"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Puhelun hallinta",
-            "connectedDevices": "Yhdistetyt laitteet:",
-            "deleteDevice": "Poista laite",
-            "pairDevice": "Yhdistä laite"
-        },
         "noPermission": "Käyttöoikeuksia ei myönnetty",
         "previewUnavailable": "Esikatselu ei käytettävissä",
         "selectADevice": "Valitse laite",
@@ -802,6 +793,9 @@
         "button": "Kutsu muita",
         "youAreAlone": "Olet ainoa kokouksessa"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Vain ääni"
+    },
     "me": "minä",
     "notify": {
         "OldElectronAPPTitle": "Tietoturvahaavoittuvuus!",
@@ -814,7 +808,7 @@
         "audioUnmuteBlockedTitle": "Mikrofonin mykistyksen poisto estetty!",
         "chatMessages": "Chattiviestit",
         "connectedOneMember": "{{name}} liittyi kokoukseen",
-        "connectedThreePlusMembers": "{{name}} ja {{count}} muuta liittyivät kokoukseen",
+        "connectedThreePlusMembers": "{{name}} ja monet muut liittyivät kokoukseen",
         "connectedTwoMembers": "{{first}} ja {{second}} liittyivät kokoukseen",
         "connectionFailed": "Yhteys epäonnistui. Yritä uudelleen myöhemmin!",
         "dataChannelClosed": "Videon laatu saattaa heikentyä",
@@ -824,7 +818,7 @@
         "desktopMutedRemotelyTitle": "Näytönjako on pysäytetty käyttäjän {{participantDisplayName}} toimesta",
         "disabledIframe": "Upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua.",
         "disabledIframeSecondaryNative": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua.",
-        "disabledIframeSecondaryWeb": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua. Käytä <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> -palvelua tuotantokäyttöön!",
+        "disabledIframeSecondaryWeb": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua. Käytä <0>Jitsi as a Service</0> -palvelua tuotantokäyttöön!",
         "disconnected": "ei yhteyttä",
         "displayNotifications": "Näytä ilmoitukset",
         "dontRemindMe": "Älä muistuta minua",
@@ -885,7 +879,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) poisti toinen osallistuja",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) asetti toinen osallistuja",
         "raiseHandAction": "Nosta käsi",
-        "raisedHand": "{{name}} pyytää puheenvuoroa.",
+        "raisedHand": "Haluaa osallistua.",
         "raisedHands": "{{participantName}} ja {{raisedHands}} muuta henkilöä",
         "reactionSounds": "Poista äänet käytöstä",
         "reactionSoundsForAll": "Poista äänet käytöstä kaikilta",
@@ -897,7 +891,7 @@
         "somebody": "Joku",
         "startSilentDescription": "Liity uudelleen kokoukseen ottaaksesi äänen käyttöön",
         "startSilentTitle": "Liityit ilman äänilähtöä!",
-        "suboptimalBrowserWarning": "Valitettavasti kokouskokemuksesi ei tule olemaan kovin hyvä täällä. Etsimme tapoja parantaa tätä, mutta siihen asti yritä käyttää jotakin <a href='{{recommendedBrowserPageLink}}' target='_blank'>täysin tuetuista selaimista</a>.",
+        "suboptimalBrowserWarning": "Valitettavasti kokouskokemuksesi ei tule olemaan kovin hyvä täällä. Etsimme tapoja parantaa tätä, mutta siihen asti yritä käyttää jotakin <0>täysin tuetuista selaimista</0>.",
         "suboptimalExperienceTitle": "Selainvaroitus",
         "suggestRecordingAction": "Aloita",
         "suggestRecordingDescription": "Haluatko aloittaa nauhoituksen?",
@@ -1008,9 +1002,7 @@
     },
     "poweredby": "tukija:",
     "prejoin": {
-        "audioAndVideoError": "Ääni- ja videovirhe:",
         "audioDeviceProblem": "Äänilaitteessasi on ongelma",
-        "audioOnlyError": "Äänivirhe:",
         "audioTrackError": "Ääniraidan luominen epäonnistui.",
         "callMe": "Soita minulle",
         "callMeAtNumber": "Soita minulle tähän numeroon:",
@@ -1068,7 +1060,6 @@
         "screenSharingError": "Näytön jakovirhe:",
         "startWithPhone": "Aloita puhelinäänellä",
         "unsafeRoomConsent": "Ymmärrän riskit ja haluan liittyä kokoukseen",
-        "videoOnlyError": "Videovirhe:",
         "videoTrackError": "Videoraitaa ei voitu luoda.",
         "viewAllNumbers": "katso kaikki numerot"
     },
@@ -1148,19 +1139,16 @@
         "recordAudioAndVideo": "Nauhoita ääni ja video",
         "recordTranscription": "Nauhoita transkriptio",
         "saveLocalRecording": "Tallenna nauhoitustiedosto paikallisesti (Beta)",
-        "serviceDescription": "Nauhoituspalvelu tallentaa nauhoituksen",
         "serviceDescriptionCloud": "Pilvitallenne",
         "serviceDescriptionCloudInfo": "Nauhoitetut kokoukset poistetaan automaattisesti 24 tunnin kuluttua nauhoitusajasta.",
         "serviceName": "Nauhoituspalvelu",
         "sessionAlreadyActive": "Tätä istuntoa nauhoitetaan tai suoratoistoon jo.",
-        "showAdvancedOptions": "Lisäasetukset",
         "signIn": "Kirjaudu sisään",
         "signOut": "Kirjaudu ulos",
         "surfaceError": "Valitse nykyinen välilehti.",
         "title": "Nauhoitetaan",
         "unavailable": "Hups! {{serviceName}} ei ole käytettävissä. Yritämme ratkaista ongelman. Yritä myöhemmin uudelleen.",
-        "unavailableTitle": "Nauhoitus ei käytettävissä",
-        "uploadToCloud": "Lataa pilveen"
+        "unavailableTitle": "Nauhoitus ei käytettävissä"
     },
     "screenshareDisplayName": "Käyttäjän {{name}} näyttö",
     "sectionList": {
@@ -1170,7 +1158,7 @@
         "about": "Voit lisätä $t(lockRoomPassword) kokaukseesi. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "aboutReadOnly": "Moderaattoriosallistujat voivat lisätä $t(lockRoomPassword) kokoukseen. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "insecureRoomNameWarningNative": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta ",
-        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">täältä</a>.",
+        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <0>täältä</0>.",
         "title": "Turvallisuusasetukset",
         "unsafeRoomActions": {
             "meeting": "Harkitse kokouksesi turvaamista käyttämällä turvallisuuspainiketta.",
@@ -1303,7 +1291,6 @@
         "Settings": "Asetukset",
         "accessibilityLabel": {
             "Settings": "Säädä asetuksia",
-            "audioOnly": "Säädä Vain ääni -tilaa",
             "audioRoute": "Valitse äänilaite",
             "boo": "Buu",
             "breakoutRooms": "Pienryhmähuoneet",
@@ -1347,6 +1334,7 @@
             "localRecording": "Säädä paikallisia nauhoitusohjaimia",
             "lockRoom": "Säädä kokouksen salasanaa",
             "love": "Sydän",
+            "lowBandwidthMode": "Säädä Vain ääni -tilaa",
             "lowerHand": "Laske kätesi",
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
@@ -1408,8 +1396,7 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Poista Vain ääni -tila käytöstä",
-        "audioOnlyOn": "Ota Vain ääni -tila käyttöön",
+        "aiAssist": "Tekoälyavustaja",
         "audioRoute": "Valitse äänilaite",
         "audioSettings": "Ääniasetukset",
         "authenticate": "Todenna",
@@ -1422,7 +1409,6 @@
         "closeParticipantsPane": "Sulje osallistujapaneeli",
         "closeReactionsMenu": "Sulje reaktiot-valikko",
         "closedCaptions": "Tekstitys",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Poista ylimääräinen kohinanpoisto käytöstä",
         "disableReactionSounds": "Voit poistaa reaktioäänet käytöstä tässä kokouksessa",
         "documentClose": "Sulje jaettu asiakirja",
@@ -1454,6 +1440,8 @@
         "login": "Kirjaudu sisään",
         "logout": "Kirjaudu ulos",
         "love": "Sydän",
+        "lowBandwidthModeOff": "Poista Vain ääni -tila käytöstä",
+        "lowBandwidthModeOn": "Ota Vain ääni -tila käyttöön",
         "lowerYourHand": "Laske käsi",
         "moreActions": "Lisää toimintoja",
         "moreOptions": "Lisää vaihtoehtoja",
@@ -1497,7 +1485,7 @@
         "silence": "Hiljaisuus",
         "speakerStats": "Puhujatilastot",
         "startScreenSharing": "Aloita näytön jako",
-        "startSubtitles": "Käynnistä tekstitys",
+        "startSubtitles": "Tekstitys • {{language}}",
         "stopAudioSharing": "Lopeta äänen jakaminen",
         "stopScreenSharing": "Lopeta näytön jako",
         "stopSharedVideo": "Pysäytä video",
@@ -1516,11 +1504,10 @@
         "ccButtonTooltip": "Tekstitys päälle/pois",
         "expandedLabel": "Puhtaaksikirjoitus on käytössä",
         "failed": "Litterointi epäonnistui",
-        "labelToolTip": "Kokousta kirjoitetaan puhtaaksi",
         "labelTooltipExtra": "Lisäksi litterointi on saatavilla myöhemmin.",
         "openClosedCaptions": "Avaa tekstitykset",
         "original": "Alkuperäinen",
-        "sourceLanguageDesc": "Tällä hetkellä kokouksen kieleksi on asetettu <b>{{sourceLanguage}}</b>. <br/> Voit muuttaa sen ",
+        "sourceLanguageDesc": "Tällä hetkellä kokouksen kieleksi on asetettu <0>{{sourceLanguage}}</0>. <1/> Voit muuttaa sen ",
         "sourceLanguageHere": "täältä",
         "start": "Aloita tekstitys",
         "stop": "Lopeta tekstitys",
@@ -1545,8 +1532,6 @@
     },
     "videoStatus": {
         "adjustFor": "Muokkaa:",
-        "audioOnly": "ÄÄNI",
-        "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "bestPerformance": "Paras suorituskyky",
         "callQuality": "Videon laatu",
         "hd": "HD",
@@ -1554,9 +1539,11 @@
         "highDefinition": "Teräväpiirto",
         "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
-        "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
+        "labelTooltipLowBandwidthMode": "Vain ääni -tila käytössä",
         "ld": "LD",
         "ldTooltip": "Katselee matalatarkkuuksista videota",
+        "lowBandwidthMode": "ÄÄNI",
+        "lowBandwidthModeExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "lowDefinition": "Alhainen kuvanlaatu",
         "performanceSettings": "Suorituskykyasetukset",
         "recording": "Tätä kokousta nauhoitetaan.",
@@ -1677,7 +1664,7 @@
         "mobileDownLoadLinkAndroid": "Lataa mobiilisovellus Androidille",
         "mobileDownLoadLinkFDroid": "Lataa mobiilisovellus F-Droidille",
         "mobileDownLoadLinkIos": "Lataa mobiilisovellus iOS:lle",
-        "moderatedMessage": "Tai <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">varaa kokous-URL</a> etukäteen, jossa olet ainoa moderaattori.",
+        "moderatedMessage": "Tai <0>varaa kokous-URL</0> etukäteen, jossa olet ainoa moderaattori.",
         "privacy": "Tietosuoja",
         "recentList": "Viimeisimmät",
         "recentListDelete": "Poista",

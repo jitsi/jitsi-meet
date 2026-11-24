@@ -26,7 +26,9 @@ export default function VisitorsQueue() {
 
     return (
         <View style = { styles.visitorsQueue as ViewStyle }>
-            <Text style = { styles.visitorsQueueTitle }>
+            <Text
+                accessibilityRole = 'header'
+                style = { styles.visitorsQueueTitle }>
                 { t('visitors.waitingMessage') }
             </Text>
             <LoadingIndicator

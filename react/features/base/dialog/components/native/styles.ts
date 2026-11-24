@@ -9,13 +9,11 @@ import { PREFERRED_DIALOG_SIZE } from '../../constants';
 const BORDER_RADIUS = 5;
 
 /**
- * NOTE: These Material guidelines based values are currently only used in
- * dialogs (and related) but later on it would be nice to export it into a base
- * Material feature.
+ * Row size and inset shared by native dialogs and bottom sheets.
  */
 export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
-export const MD_ITEM_MARGIN_PADDING = BaseTheme.spacing[3];
+export const MD_ITEM_MARGIN_PADDING = BaseTheme.spacing[4];
 
 /**
  * Reusable (colored) style for text in any branded dialogs.
@@ -66,6 +64,14 @@ export const bottomSheetStyles = {
 
     scrollView: {
         paddingHorizontal: 0
+    },
+
+    /**
+     * Space above and below the sheet rows, for sheets with addScrollViewPadding.
+     */
+    scrollViewContent: {
+        paddingBottom: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     /**
@@ -182,7 +188,7 @@ export const brandedDialog = {
     },
 
     overlayTouchable: {
-        ...StyleSheet.absoluteFillObject
+        ...StyleSheet.absoluteFill
     }
 };
 

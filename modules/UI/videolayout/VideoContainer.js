@@ -4,7 +4,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
@@ -219,6 +219,13 @@ export class VideoContainer extends LargeContainer {
          * @type {string|null}
          */
         this._backgroundOrientation = null;
+
+        /**
+         * The React root for the large video background component.
+         * @private
+         * @type {import('react-dom/client').Root|null}
+         */
+        this._backgroundRoot = null;
 
         /**
          * Flag indicates whether or not the background should be rendered.
@@ -659,7 +666,28 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        ReactDOM.render(
+        const container = document.getElementById('largeVideoBackgroundContainer');
+
+        // LargeVideo's React subtree may not be mounted (e.g. between fade-out and
+        // fade-in, or during reduced-UI transitions). createRoot(null) would throw
+        // React error #200; bail out instead.
+        if (!container) {
+            return;
+        }
+
+        // If the LargeVideo subtree remounted, the cached root is bound to a now-detached
+        // node — subsequent renders would be invisible and leak. Drop the stale root so
+        // we re-create one against the live container.
+        if (this._backgroundRoot && this._backgroundContainer !== container) {
+            this._backgroundRoot.unmount();
+            this._backgroundRoot = null;
+        }
+
+        if (!this._backgroundRoot) {
+            this._backgroundRoot = createRoot(container);
+            this._backgroundContainer = container;
+        }
+        this._backgroundRoot.render(
             <LargeVideoBackground
                 hidden = { this._hideBackground || this._isHidden }
                 mirror = {
@@ -669,8 +697,7 @@ export class VideoContainer extends LargeContainer {
                 }
                 orientationFit = { this._backgroundOrientation }
                 videoElement = { this.video }
-                videoTrack = { this.stream } />,
-            document.getElementById('largeVideoBackgroundContainer')
+                videoTrack = { this.stream } />
         );
     }
 }

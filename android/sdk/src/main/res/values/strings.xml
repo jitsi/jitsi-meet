@@ -9,4 +9,8 @@
     <string name="ongoing_notification_action_mute">Mute</string>
     <string name="ongoing_notification_action_unmute">Unmute</string>
     <string name="ongoing_notification_channel_name">Ongoing Conference Notifications</string>
+    <string name="attribution_camera">Camera for video calls</string>
+    <string name="attribution_microphone">Microphone for audio calls</string>
+    <string name="attribution_screen_share">Screen sharing</string>
+    <string name="attribution_bluetooth">Bluetooth audio routing</string>
 </resources>

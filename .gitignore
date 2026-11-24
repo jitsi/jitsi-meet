@@ -47,10 +47,13 @@ build/
 .gradle
 local.properties
 *.iml
+.cxx/
 
 # node.js
 #
-node_modules/
+# No trailing slash: the pattern must also match a node_modules symlink, which
+# a git worktree gets when it points at the node_modules of the main checkout.
+node_modules
 npm-debug.log
 yarn-error.log
 
@@ -100,13 +103,16 @@ tsconfig.json
 # React Native SDK
 #
 react-native-sdk/*.tgz
-react-native-sdk/android/src
+react-native-sdk/android/src/**
+!react-native-sdk/android/src/**/
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetReactNativePackage.java
-!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetOngoingConferenceService.java
+!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceService.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceModule.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/RNOngoingNotification.java
 react-native-sdk/images
-react-native-sdk/ios
+react-native-sdk/ios/**
+!react-native-sdk/ios/**/
+!react-native-sdk/ios/RNScreenShareEventEmitter.m
 react-native-sdk/lang
 react-native-sdk/modules
 react-native-sdk/node_modules

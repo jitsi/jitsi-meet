@@ -31,16 +31,6 @@ export function getReplaceParticipant(state: IReduxState): string | undefined {
 }
 
 /**
- * Returns the configuration value of web-hid feature.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean} True if web-hid feature should be enabled, otherwise false.
- */
-export function getWebHIDFeatureConfig(state: IReduxState): boolean {
-    return state['features/base/config'].enableWebHIDFeature || false;
-}
-
-/**
  * Returns whether audio level measurement is enabled or not.
  *
  * @param {Object} state - The state of the app.

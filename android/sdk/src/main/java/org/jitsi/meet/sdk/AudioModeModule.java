@@ -46,13 +46,9 @@ import java.util.concurrent.Executors;
  * Module implementing a simple API to select the appropriate audio device for a
  * conference call.
  *
- * Audio calls should use {@code AudioModeModule.AUDIO_CALL}, which uses the
- * builtin earpiece, wired headset or bluetooth headset. The builtin earpiece is
+ * Calls should use {@code AudioModeModule.IN_CALL}, which uses the builtin
+ * speaker, earpiece, wired headset or bluetooth headset. The builtin speaker is
  * the default audio device.
- *
- * Video calls should should use {@code AudioModeModule.VIDEO_CALL}, which uses
- * the builtin speaker, earpiece, wired headset or bluetooth headset. The
- * builtin speaker is the default audio device.
  *
  * Before a call has started and after it has ended the
  * {@code AudioModeModule.DEFAULT} mode should be used.
@@ -65,14 +61,11 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * Constants representing the audio mode.
      * - DEFAULT: Used before and after every call. It represents the default
      *   audio routing scheme.
-     * - AUDIO_CALL: Used for audio only calls. It will use the earpiece by
-     *   default, unless a wired or Bluetooth headset is connected.
-     * - VIDEO_CALL: Used for video calls. It will use the speaker by default,
+     * - IN_CALL: Used while in a call. It will use the speaker by default,
      *   unless a wired or Bluetooth headset is connected.
      */
-    static final int DEFAULT    = 0;
-    static final int AUDIO_CALL = 1;
-    static final int VIDEO_CALL = 2;
+    static final int DEFAULT = 0;
+    static final int IN_CALL = 1;
 
     /**
      * The {@code Log} tag {@code AudioModeModule} is to log messages with.
@@ -175,9 +168,8 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         Map<String, Object> constants = new HashMap<>();
 
         constants.put("DEVICE_CHANGE_EVENT", DEVICE_CHANGE_EVENT);
-        constants.put("AUDIO_CALL", AUDIO_CALL);
         constants.put("DEFAULT", DEFAULT);
-        constants.put("VIDEO_CALL", VIDEO_CALL);
+        constants.put("IN_CALL", IN_CALL);
 
         return constants;
     }
@@ -324,7 +316,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        if (mode < DEFAULT || mode > VIDEO_CALL) {
+        if (mode < DEFAULT || mode > IN_CALL) {
             promise.reject("setMode", "Invalid audio mode " + mode);
             return;
         }

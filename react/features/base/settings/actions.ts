@@ -17,7 +17,7 @@ import { ISettingsState } from './reducer';
  *         micDeviceId: string,
  *         serverURL: string,
  *         soundsReactions: boolean,
- *         startAudioOnly: boolean,
+ *         startLowBandwidthMode: boolean,
  *         startWithAudioMuted: boolean,
  *         startWithVideoMuted: boolean,
  *         startWithReactionsMuted: boolean

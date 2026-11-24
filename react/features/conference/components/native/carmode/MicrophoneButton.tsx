@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,9 +15,9 @@ import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconMic, IconMicSlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
-import { isLocalTrackMuted } from '../../../../base/tracks/functions';
+import { isLocalTrackMuted } from '../../../../base/tracks/functions.native';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
-import { muteLocal } from '../../../../video-menu/actions';
+import { muteLocal } from '../../../../video-menu/actions.native';
 
 import styles from './styles';
 
@@ -28,6 +29,7 @@ const LONG_PRESS = 'long.press';
  * @returns {JSX.Element} - The audio mute round button.
  */
 const MicrophoneButton = (): JSX.Element | null => {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));
@@ -35,9 +37,12 @@ const MicrophoneButton = (): JSX.Element | null => {
     const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
 
-    if (!enabledFlag) {
-        return null;
-    }
+    const accessibilityLabelKey = audioMuted ? 'toolbar.accessibilityLabel.unmute' : 'toolbar.accessibilityLabel.mute';
+    const accessibilityLabel = t(accessibilityLabelKey);
+    const accessibilityState = {
+        disabled,
+        selected: !audioMuted
+    };
 
     const onPressIn = useCallback(() => {
         !disabled && dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO));
@@ -67,8 +72,16 @@ const MicrophoneButton = (): JSX.Element | null => {
         }
     }, [ longPress, setLongPress ]);
 
+    if (!enabledFlag) {
+        return null;
+    }
+
     return (
         <TouchableOpacity
+            accessibilityLabel = { accessibilityLabel }
+            accessibilityRole = 'button'
+            accessibilityState = { accessibilityState }
+            disabled = { disabled }
             onLongPress = { onLongPress }
             onPressIn = { onPressIn }
             onPressOut = { onPressOut } >

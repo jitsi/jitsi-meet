@@ -6,7 +6,7 @@ import { openDialog } from '../../base/dialog/actions';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import { IMessageGroup, groupMessagesBySender } from '../../base/util/messageGrouping';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
-import { StartRecordingDialog } from '../../recording/components/Recording';
+import { RecordingTranscriptionDialog } from '../../recording/components/Recording';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { canStartSubtitles } from '../../subtitles/functions.any';
 import { ISubtitle } from '../../subtitles/types';
@@ -70,7 +70,7 @@ const AbstractClosedCaptions = (Component: ComponentType<AbstractProps>) => () =
         }
 
         if (isAsyncTranscriptionEnabled) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
                 recordAudioAndVideo: false
             }));
         } else {

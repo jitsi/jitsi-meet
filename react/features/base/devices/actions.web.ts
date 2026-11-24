@@ -1,12 +1,18 @@
+import { createAudioOutputChangeEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
+import { showWarningNotification } from '../../notifications/actions';
+import { AUDIO_OUTPUT_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
 import { getUserSelectedOutputDeviceId } from '../settings/functions.web';
+import { setNewAudioOutputDevice } from '../sounds/functions.web';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     DEVICE_PERMISSIONS_CHANGED,
+    DEVICE_PERMISSION_STATUS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
@@ -22,10 +28,12 @@ import {
     getDeviceIdByLabel,
     getDeviceLabelById,
     getDevicesFromURL,
+    isAudioOutputManagerEnabled,
     logDevices,
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
+import { IDevicesState } from './types';
 
 /**
  * Maps the WebRTC string for device type to the keys used to store configure,
@@ -130,12 +138,10 @@ export function configureInitialDevices() {
             .then(() => {
                 const userSelectedAudioOutputDeviceId = getUserSelectedOutputDeviceId(getState());
 
-                logger.debug(`(TIME) configureInitialDevices -> setAudioOutputDeviceId: performance.now=${
+                logger.debug(`(TIME) configureInitialDevices -> setAudioOutputDevice: performance.now=${
                     window.performance.now()}`);
 
-                return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
-                    .catch(ex => logger.warn(`Failed to set audio output device.
-                        Default audio output device will be used instead ${ex}`));
+                return dispatch(setAudioOutputDevice(userSelectedAudioOutputDeviceId, false));
             });
     };
 }
@@ -254,17 +260,112 @@ export function setAudioInputDeviceAndUpdateSettings(deviceId: string) {
     };
 }
 
-/**
- * Updates the output device id.
- *
- * @param {string} deviceId - The id of the new output device.
- * @returns {Function}
- */
-export function setAudioOutputDevice(deviceId: string) {
-    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
-        const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioOutput');
+// Only the latest change of the audio output device is applied, an earlier one that settles later is ignored.
+let audioOutputChange = 0;
 
-        return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel);
+// The change the user asked for that is running, if any. A change the app makes meanwhile, e.g. after a device list
+// change, would undo it.
+let userAudioOutputChange: number | undefined;
+
+/**
+ * Switches the audio output device. Without lib-jitsi-meet's audio output manager this is the previous
+ * implementation, {@link setAudioOutputDeviceId}. With it, nothing is saved when the switch fails, so the UI keeps
+ * showing the previous device, and the user is told when a switch they asked for failed or did not reach every
+ * participant's audio. The outcome is sent to analytics either way.
+ *
+ * @param {string} deviceId - The id of the new output device, 'default' for the default device.
+ * @param {boolean} userSelection - Whether the user picked the device, as opposed to the app.
+ * @param {string} label - The label of the device, looked up when not given.
+ * @returns {Function} - Resolves with whether the output device was changed.
+ */
+export function setAudioOutputDevice(deviceId = 'default', userSelection = true, label?: string) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<boolean> => {
+        if (!JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
+            logger.warn('Adjusting audio output is not supported');
+
+            return false;
+        }
+
+        const manager = isAudioOutputManagerEnabled();
+        const deviceLabel = label ?? getDeviceLabelById(getState(), deviceId, 'audioOutput');
+        const start = window.performance.now();
+        const report = (result: string, failed = 0, error?: Error) => sendAnalytics(createAudioOutputChangeEvent({
+            duration: Math.round(window.performance.now() - start),
+            error: error?.name,
+            failed,
+            manager,
+            result,
+            userSelection
+        }));
+
+        if (!manager) {
+            try {
+                await setAudioOutputDeviceId(deviceId, dispatch, userSelection, deviceLabel);
+            } catch (error: any) {
+                logger.warn(`Failed to change the audio output device to ${deviceLabel}[${deviceId}]`, error);
+                report('failed', 0, error);
+
+                return false;
+            }
+            report('changed');
+
+            return true;
+        }
+
+        if (!userSelection && userAudioOutputChange !== undefined) {
+            logger.info(`Ignoring the audio output change to ${deviceLabel}[${deviceId}] while the user's is running`);
+
+            return false;
+        }
+
+        const change = ++audioOutputChange;
+        const notify = (titleKey: string, descriptionKey: string) => userSelection
+            && dispatch(showWarningNotification({
+                descriptionKey,
+                titleKey,
+                uid: AUDIO_OUTPUT_NOTIFICATION_ID
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        let failed;
+
+        logger.info(`Setting the audio output device to ${deviceLabel}[${deviceId}]`);
+        userSelection && (userAudioOutputChange = change);
+
+        try {
+            failed = await JitsiMeetJS.mediaDevices.setAudioOutputDevice(deviceId) ?? [];
+        } catch (error: any) {
+            if (change === audioOutputChange) {
+                logger.warn(`Failed to change the audio output device to ${deviceLabel}[${deviceId}]`, error);
+                report('failed', 0, error);
+                notify('notify.audioOutputChangeFailedTitle', 'notify.audioOutputChangeFailedDescription');
+            }
+
+            return false;
+        } finally {
+            if (userAudioOutputChange === change) {
+                userAudioOutputChange = undefined;
+            }
+        }
+
+        if (change !== audioOutputChange) {
+            return false;
+        }
+
+        dispatch(setNewAudioOutputDevice(deviceId));
+        dispatch(updateSettings({
+            audioOutputDeviceId: deviceId,
+            ...userSelection && {
+                userSelectedAudioOutputDeviceId: deviceId,
+                userSelectedAudioOutputDeviceLabel: deviceLabel
+            }
+        }));
+
+        report(failed.length ? 'partly' : 'changed', failed.length);
+        if (failed.length) {
+            logger.warn(`${failed.length} track(s) may still play out of the previous audio output device`);
+            notify('notify.audioOutputPartlyChangedTitle', 'notify.audioOutputPartlyChangedDescription');
+        }
+
+        return true;
     };
 }
 
@@ -352,5 +453,21 @@ export function devicePermissionsChanged(permissions: Object) {
     return {
         type: DEVICE_PERMISSIONS_CHANGED,
         permissions
+    };
+}
+
+/**
+ * Signals that the permission status of the camera or the microphone changed.
+ *
+ * @param {Object} permissionStatus - The status by media type, audio and video.
+ * @returns {{
+ *      type: DEVICE_PERMISSION_STATUS_CHANGED,
+ *      permissionStatus: Object
+ * }}
+ */
+export function devicePermissionStatusChanged(permissionStatus: IDevicesState['permissionStatus']) {
+    return {
+        type: DEVICE_PERMISSION_STATUS_CHANGED,
+        permissionStatus
     };
 }

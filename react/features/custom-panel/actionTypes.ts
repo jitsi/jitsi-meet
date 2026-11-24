@@ -9,6 +9,21 @@ export const CUSTOM_PANEL_CLOSE = 'CUSTOM_PANEL_CLOSE';
 export const CUSTOM_PANEL_OPEN = 'CUSTOM_PANEL_OPEN';
 
 /**
- * Action type to enable or disable the custom panel dynamically.
+ * Action type to set the custom panel width (responsive adjustments).
  */
-export const SET_CUSTOM_PANEL_ENABLED = 'SET_CUSTOM_PANEL_ENABLED';
+export const SET_CUSTOM_PANEL_WIDTH = 'SET_CUSTOM_PANEL_WIDTH';
+
+/**
+ * Action type to set the user-preferred custom panel width (user drag).
+ */
+export const SET_USER_CUSTOM_PANEL_WIDTH = 'SET_USER_CUSTOM_PANEL_WIDTH';
+
+/**
+ * Action type to indicate whether the custom panel is being resized.
+ */
+export const SET_CUSTOM_PANEL_IS_RESIZING = 'SET_CUSTOM_PANEL_IS_RESIZING';
+
+/**
+ * Action type to set whether an advisor is deployed for the current meeting.
+ */
+export const SET_CUSTOM_PANEL_ADVISOR_AVAILABLE = 'SET_CUSTOM_PANEL_ADVISOR_AVAILABLE';

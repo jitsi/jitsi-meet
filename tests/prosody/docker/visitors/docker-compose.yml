@@ -1,0 +1,25 @@
+# A main prosody and one visitor prosody (v0), connected over s2s the way a
+# shard with visitors is (s2sout_override, s2s_whitelist, s2s_bidi). Started
+# by visitors_s2s_spec.js only, not by the global setup.js.
+services:
+  main:
+    build:
+      context: ../../../..
+      dockerfile: tests/prosody/docker/Dockerfile
+    volumes:
+      - ./main.cfg.lua:/etc/prosody/prosody.cfg.lua:ro
+    environment:
+      # The focus account, registered by the entrypoint of the image.
+      LOCAL: focus
+      DOMAIN: auth.main.test
+      PASSWORD: focussecret
+    ports:
+      - "5280"
+  visitor:
+    build:
+      context: ../../../..
+      dockerfile: tests/prosody/docker/Dockerfile
+    volumes:
+      - ./visitor.cfg.lua:/etc/prosody/prosody.cfg.lua:ro
+    ports:
+      - "5280"

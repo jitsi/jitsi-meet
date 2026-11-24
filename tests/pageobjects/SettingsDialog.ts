@@ -1,14 +1,18 @@
 import BaseDialog from './BaseDialog';
 
 const EMAIL_FIELD = '#setEmail';
+const CTRL_ALT_REACTION_SHORTCUTS_CHECKBOX = '//input[@name="enable-ctrl-alt-reaction-shortcuts"]';
 const FOLLOW_ME_CHECKBOX = '//input[@name="follow-me"]';
 const HIDE_SELF_VIEW_CHECKBOX = '//input[@name="hide-self-view"]';
+const PIP_SWITCH = '#config-option-browserPiP';
 const SETTINGS_DIALOG_CONTENT = '.settings-pane';
 const START_AUDIO_MUTED_CHECKBOX = '//input[@name="start-audio-muted"]';
 const START_VIDEO_MUTED_CHECKBOX = '//input[@name="start-video-muted"]';
+const X_PATH_EXPERIMENTAL_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Experimental"]';
 const X_PATH_MODERATOR_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Moderator"]';
 const X_PATH_MORE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="General"]';
 const X_PATH_PROFILE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Profile"]';
+const X_PATH_SHORTCUTS_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Shortcuts"]';
 
 /**
  * The settings dialog.
@@ -52,6 +56,87 @@ export default class SettingsDialog extends BaseDialog {
      */
     openModeratorTab() {
         return this.openTab(X_PATH_MODERATOR_TAB);
+    }
+
+    /**
+     * Selects the Shortcuts tab to be displayed.
+     */
+    openShortcutsTab() {
+        return this.openTab(X_PATH_SHORTCUTS_TAB);
+    }
+
+    /**
+     * Returns whether the Experimental tab is offered. It is hidden when no config option can be changed by the user in
+     * the current browser and deployment.
+     */
+    hasExperimentalTab() {
+        return this.participant.driver.$(X_PATH_EXPERIMENTAL_TAB).isExisting();
+    }
+
+    /**
+     * Selects the Experimental tab to be displayed.
+     */
+    openExperimentalTab() {
+        return this.openTab(X_PATH_EXPERIMENTAL_TAB);
+    }
+
+    /**
+     * Returns whether browser Picture-in-Picture is switched on in the Experimental tab.
+     */
+    async isPictureInPictureEnabled() {
+        await this.openExperimentalTab();
+
+        return this.participant.driver.$(PIP_SWITCH).isSelected();
+    }
+
+    /**
+     * Switches browser Picture-in-Picture on or off in the Experimental tab.
+     *
+     * @param enable - Whether Picture-in-Picture should be on.
+     */
+    async setPictureInPictureEnabled(enable: boolean) {
+        await this.openExperimentalTab();
+
+        const pipSwitch = this.participant.driver.$(PIP_SWITCH);
+
+        await pipSwitch.waitForExist();
+
+        if (enable !== await pipSwitch.isSelected()) {
+            await pipSwitch.moveTo();
+            await pipSwitch.click();
+        }
+    }
+
+    /**
+     * Returns whether the Firefox-only Ctrl+Alt reaction shortcut setting exists.
+     */
+    hasCtrlAltReactionShortcutsSetting() {
+        return this.participant.driver.$(CTRL_ALT_REACTION_SHORTCUTS_CHECKBOX).isExisting();
+    }
+
+    /**
+     * Returns whether Ctrl+Alt reaction shortcut aliases are enabled.
+     */
+    isCtrlAltReactionShortcutsEnabled() {
+        return this.participant.driver.$(CTRL_ALT_REACTION_SHORTCUTS_CHECKBOX).isSelected();
+    }
+
+    /**
+     * Enables or disables Ctrl+Alt reaction shortcut aliases.
+     *
+     * @param enable - Whether the aliases should be enabled.
+     */
+    setCtrlAltReactionShortcutsEnabled(enable: boolean) {
+        return this.setCheckbox(CTRL_ALT_REACTION_SHORTCUTS_CHECKBOX, enable);
+    }
+
+    /**
+     * Returns the shortcut key labels currently displayed on the Shortcuts tab.
+     */
+    async getShortcutKeyLabels() {
+        const elements = await this.participant.driver.$$('//ul/li/span[last()]/span');
+
+        return elements.map(element => element.getText());
     }
 
     /**

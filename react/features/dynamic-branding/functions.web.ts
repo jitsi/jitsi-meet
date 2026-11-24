@@ -14,7 +14,9 @@ const DEFAULT_FONT_SIZE = 16;
  * @returns {string} The sanitized SVG string.
  */
 export function cleanSvg(svg: string): string {
-    return DOMPurify.sanitize(svg);
+    // DOMPurify lets data-* attributes through by default. An icon does not need them, and scripts which read their
+    // instructions from data attributes would run on markup that is supposed to be inert.
+    return DOMPurify.sanitize(svg, { ALLOW_DATA_ATTR: false });
 }
 
 /**
@@ -53,8 +55,13 @@ export function createMuiBrandingTheme(customTheme: Theme) {
         spacing: customSpacing
     } = customTheme;
 
-    const newPalette = createColorTokens(colorMap);
+    // Pass customPalette to createColorTokens so that custom colors are merged
+    // BEFORE token resolution. This ensures that semantic tokens (like prejoinActionButtonPrimary)
+    // that reference base tokens (like action01) will resolve to the custom color values.
+    const newPalette = createColorTokens(colorMap, customPalette);
 
+    // Also apply overwriteRecurrsive for any direct palette key overrides that may not be
+    // handled through token resolution (e.g., if customer provides semantic token names directly).
     if (customPalette) {
         overwriteRecurrsive(newPalette, customPalette);
     }

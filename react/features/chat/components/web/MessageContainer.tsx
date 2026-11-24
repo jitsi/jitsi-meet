@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import { DebouncedFunc, throttle } from 'lodash-es';
 import React, { Component, RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
@@ -11,10 +11,27 @@ import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
 interface IProps {
+
+    editingMessage?: IMessage;
+    /**
+     * Whether the message container is currently visible to the user.
+     * Defaults to true when not provided.
+     */
+    isVisible?: boolean;
     messages: IMessage[];
+    onCancelEdit?: () => void;
+    /**
+     * Callback invoked when the user wants to edit a message.
+     */
+    onEditMessage?: (message: IMessage) => void;
 }
 
 interface IState {
+
+    /**
+     * Id of the first message that arrived while scrolled up; the new-messages pill targets it.
+     */
+    firstUnreadMessageId: string | null;
 
     /**
      * Whether or not message container has received new messages.
@@ -25,11 +42,6 @@ interface IState {
      * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
-
-    /**
-     * The id of the last read message.
-     */
-    lastReadMessageId: string | null;
 }
 
 /**
@@ -43,9 +55,9 @@ export default class MessageContainer extends Component<IProps, IState> {
      * and where to scroll when click on hasNewMessages button.
      */
     override state: IState = {
+        firstUnreadMessageId: null,
         hasNewMessages: false,
-        isScrolledToBottom: true,
-        lastReadMessageId: ''
+        isScrolledToBottom: true
     };
 
     /**
@@ -65,7 +77,19 @@ export default class MessageContainer extends Component<IProps, IState> {
      */
     _bottomListObserver: IntersectionObserver;
 
+    /**
+     * Whether the component has performed its initial scroll to the bottom.
+     * Used to ensure we scroll on first visibility but preserve scroll position on subsequent tab switches.
+     */
+    _hasInitiallyScrolled: boolean;
+
+    /**
+     * Throttled scroll handler; typed as {@code DebouncedFunc} so unmount can cancel a pending trailing call.
+     */
+    _onChatScroll: DebouncedFunc<() => void>;
+
     static defaultProps = {
+        isVisible: true,
         messages: [] as IMessage[]
     };
 
@@ -80,12 +104,12 @@ export default class MessageContainer extends Component<IProps, IState> {
 
         this._messageListRef = React.createRef<HTMLDivElement>();
         this._messagesListEndRef = React.createRef<HTMLDivElement>();
+        this._hasInitiallyScrolled = false;
 
         // Bind event handlers so they are only bound once for every instance.
         this._handleIntersectBottomList = this._handleIntersectBottomList.bind(this);
         this._findFirstUnreadMessage = this._findFirstUnreadMessage.bind(this);
-        this._isMessageVisible = this._isMessageVisible.bind(this);
-        this._onChatScroll = throttle(this._onChatScroll.bind(this), 300, { leading: true });
+        this._onChatScroll = throttle(this._handleChatScroll.bind(this), 300, { leading: true });
         this._onGoToFirstUnreadMessage = this._onGoToFirstUnreadMessage.bind(this);
     }
 
@@ -103,8 +127,11 @@ export default class MessageContainer extends Component<IProps, IState> {
             return (
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
+                    editingMessage = { this.props.editingMessage }
                     key = { index }
-                    messages = { messages } />
+                    messages = { messages }
+                    onCancelEdit = { this.props.onCancelEdit }
+                    onEditMessage = { this.props.onEditMessage } />
             );
         });
 
@@ -139,7 +166,16 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @inheritdoc
      */
     override componentDidMount() {
-        this.scrollToElement(false, null);
+        // Only scroll on mount if the component is visible, since scrollIntoView
+        // silently does nothing on hidden (display: none) elements. If hidden,
+        // componentDidUpdate will handle scrolling when the component first becomes visible.
+        if (this.props.isVisible) {
+            this._hasInitiallyScrolled = true;
+            requestAnimationFrame(() => {
+                this.scrollToElement(false, null);
+            });
+        }
+
         this._createBottomListObserver();
     }
 
@@ -153,16 +189,30 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidUpdate(prevProps: IProps) {
-        const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
-        const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
+        // Diff by id: edits, reactions and moderation replace the message object without adding a message.
+        const prevIds = new Set(prevProps.messages.map(message => message.messageId));
+        const newMessages = this.props.messages.filter(message => !prevIds.has(message.messageId));
+        const hasLocalMessage = newMessages.some(message => message.messageType === MESSAGE_TYPE_LOCAL);
 
         if (newMessages.length > 0) {
             if (this.state.isScrolledToBottom || hasLocalMessage) {
                 this.scrollToElement(false, null);
             } else {
                 // eslint-disable-next-line react/no-did-update-set-state
-                this.setState({ hasNewMessages: true });
+                this.setState(prev => ({
+                    firstUnreadMessageId: prev.hasNewMessages ? prev.firstUnreadMessageId : newMessages[0].messageId,
+                    hasNewMessages: true
+                }));
             }
+        }
+
+        // If the component was mounted while hidden, scrollIntoView was skipped.
+        // Scroll to the bottom the first time it becomes visible to show the latest messages.
+        if (this.props.isVisible && !prevProps.isVisible && !this._hasInitiallyScrolled) {
+            this._hasInitiallyScrolled = true;
+            requestAnimationFrame(() => {
+                this.scrollToElement(false, null);
+            });
         }
     }
 
@@ -176,6 +226,9 @@ export default class MessageContainer extends Component<IProps, IState> {
         const target = document.querySelector('#messagesListEnd');
 
         this._bottomListObserver.unobserve(target as Element);
+
+        // Drop any trailing throttled call so it does not setState or query the DOM post-unmount.
+        this._onChatScroll.cancel();
     }
 
     /**
@@ -198,32 +251,40 @@ export default class MessageContainer extends Component<IProps, IState> {
 
 
     /**
-     * Callback invoked to listen to current scroll position and update next unread message.
-     * The callback is invoked inside a throttle with 300 ms to decrease the number of function calls.
+     * Dismisses the new-messages pill once the first unread message has scrolled into view.
      *
      * @private
      * @returns {void}
      */
-    _onChatScroll() {
+    _handleChatScroll() {
+        const container = this._messageListRef.current;
+
+        if (!this.state.hasNewMessages || !container) {
+            return;
+        }
+
         const firstUnreadMessage = this._findFirstUnreadMessage();
 
-        if (firstUnreadMessage && firstUnreadMessage.id !== this.state.lastReadMessageId) {
-            this.setState({ lastReadMessageId: firstUnreadMessage?.id });
+        // Keep the pill until the first unread message is rendered and its top edge is inside the viewport.
+        if (!firstUnreadMessage
+                || firstUnreadMessage.getBoundingClientRect().top >= container.getBoundingClientRect().bottom) {
+            return;
         }
+
+        this.setState({
+            firstUnreadMessageId: null,
+            hasNewMessages: false
+        });
     }
 
     /**
-     * Find the first unread message.
-     * Update component state and scroll to element.
+     * Scrolls to the first unread message.
      *
      * @private
      * @returns {void}
      */
     _onGoToFirstUnreadMessage() {
-        const firstUnreadMessage = this._findFirstUnreadMessage();
-
-        this.setState({ lastReadMessageId: firstUnreadMessage?.id || null });
-        this.scrollToElement(true, firstUnreadMessage as Element);
+        this.scrollToElement(true, this._findFirstUnreadMessage());
     }
 
     /**
@@ -247,82 +308,39 @@ export default class MessageContainer extends Component<IProps, IState> {
         }
     }
 
-    /** .
-    * _HandleIntersectBottomList.
-    * When entry is intersecting with bottom of container set last message as last read message.
-    * When entry is not intersecting update only isScrolledToBottom with false value.
-    *
-    * @param {Array} entries - List of entries.
-    * @private
-    * @returns {void}
-    */
+    /**
+     * Tracks whether the bottom of the list is in view; reaching it dismisses the new-messages pill.
+     *
+     * @param {Array} entries - List of entries.
+     * @private
+     * @returns {void}
+     */
     _handleIntersectBottomList(entries: IntersectionObserverEntry[]) {
         entries.forEach((entry: IntersectionObserverEntry) => {
-            if (entry.isIntersecting && this.props.messages.length) {
-                const lastMessageIndex = this.props.messages.length - 1;
-                const lastMessage = this.props.messages[lastMessageIndex];
-                const lastReadMessageId = lastMessage.messageId;
-
-                this.setState(
-                    {
-                        isScrolledToBottom: true,
-                        hasNewMessages: false,
-                        lastReadMessageId
-                    });
-            }
-
-            if (!entry.isIntersecting) {
-                this.setState(
-                    {
-                        isScrolledToBottom: false
-                    });
+            if (entry.isIntersecting) {
+                this.setState({
+                    firstUnreadMessageId: null,
+                    hasNewMessages: false,
+                    isScrolledToBottom: true
+                });
+            } else {
+                this.setState({ isScrolledToBottom: false });
             }
         });
     }
 
     /**
-    * Find first unread message.
-    * MessageIsAfterLastSeenMessage filter elements which are not visible but are before the last read message.
-    *
-    * @private
-    * @returns {Element}
-    */
-    _findFirstUnreadMessage() {
-        const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
-
-        // @ts-ignore
-        const messagesToArray = [ ...messagesNodeList ];
-
-        const previousIndex = messagesToArray.findIndex((message: Element) =>
-            message.id === this.state.lastReadMessageId);
-
-        if (previousIndex !== -1) {
-            for (let i = previousIndex; i < messagesToArray.length; i++) {
-                if (!this._isMessageVisible(messagesToArray[i])) {
-                    return messagesToArray[i];
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if a message is visible in view.
+     * Returns the rendered element of the first unread message, or null if there is none.
      *
-     * @param {Element} message - The message.
-     *
-     * @returns {boolean}
+     * @private
+     * @returns {Element|null}
      */
-    _isMessageVisible(message: Element): boolean {
-        const { bottom, height, top } = message.getBoundingClientRect();
+    _findFirstUnreadMessage(): Element | null {
+        const { firstUnreadMessageId } = this.state;
 
-        if (this._messageListRef.current) {
-            const containerRect = this._messageListRef.current.getBoundingClientRect();
-
-            return top <= containerRect.top
-                ? containerRect.top - top <= height : bottom - containerRect.bottom <= height;
-        }
-
-        return false;
+        return firstUnreadMessageId
+            ? this._messageListRef.current?.querySelector(`#${CSS.escape(firstUnreadMessageId)}`) ?? null
+            : null;
     }
 
     /**

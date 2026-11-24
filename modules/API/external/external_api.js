@@ -2,6 +2,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
 import { urlObjectToString } from '../../../react/features/base/util/uri';
+import DocumentPiPController from '../../../react/features/external-api/DocumentPiPController.web';
 import { isPiPEnabled } from '../../../react/features/pip/external-api.shared';
 import {
     PostMessageTransportBackend,
@@ -40,6 +41,7 @@ const commands = {
     email: 'email',
     grantModerator: 'grant-moderator',
     grantRecordingConsent: 'grant-recording-consent',
+    grantVoiceAgentConsent: 'grant-voice-agent-consent',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
@@ -61,14 +63,17 @@ const commands = {
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
-    setAudioOnly: 'set-audio-only',
+    setLowBandwidthMode: 'set-low-bandwidth-mode',
     setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
     setBlurredBackground: 'set-blurred-background',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
+    setMeetingTimer: 'set-meeting-timer',
     setNoiseSuppressionEnabled: 'set-noise-suppression-enabled',
+    setParticipantProperties: 'set-participant-properties',
     setParticipantVolume: 'set-participant-volume',
+    setSecondScreen: 'set-second-screen',
     setSubtitles: 'set-subtitles',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
@@ -91,6 +96,7 @@ const commands = {
     toggleNoiseSuppression: 'toggle-noise-suppression',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
@@ -106,13 +112,17 @@ const commands = {
  * events expected by jitsi-meet.
  */
 const events = {
+    '_document-pip-signal': '_documentPiPSignal',
     '_pip-requested': '_pipRequested',
     'pip-entered': 'pipEntered',
     'pip-left': 'pipLeft',
+    'second-screen-source-changed': 'secondScreenSourceChanged',
+    'second-screen-closed': 'secondScreenClosed',
+    'second-screen-error': 'secondScreenError',
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
-    'audio-only-changed': 'audioOnlyChanged',
+    'low-bandwidth-mode-changed': 'lowBandwidthModeChanged',
     'audio-or-video-sharing-toggled': 'audioOrVideoSharingToggled',
     'breakout-rooms-updated': 'breakoutRoomsUpdated',
     'browser-support': 'browserSupport',
@@ -125,11 +135,13 @@ const events = {
     'data-channel-closed': 'dataChannelClosed',
     'data-channel-opened': 'dataChannelOpened',
     'device-list-changed': 'deviceListChanged',
+    'device-permissions-changed': 'devicePermissionsChanged',
     'display-name-change': 'displayNameChange',
     'dominant-speaker-changed': 'dominantSpeakerChanged',
     'email-change': 'emailChange',
     'error-occurred': 'errorOccurred',
     'endpoint-text-message-received': 'endpointTextMessageReceived',
+    'external-share-signal': 'externalShareSignal',
     'face-landmark-detected': 'faceLandmarkDetected',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
@@ -138,6 +150,7 @@ const events = {
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'knocking-participant': 'knockingParticipant',
+    'lobby-mode-changed': 'lobbyModeChanged',
     'log': 'log',
     'mic-error': 'micError',
     'moderation-participant-approved': 'moderationParticipantApproved',
@@ -146,6 +159,7 @@ const events = {
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
+    'noise-suppression-changed': 'noiseSuppressionChanged',
     'non-participant-message-received': 'nonParticipantMessageReceived',
     'notification-triggered': 'notificationTriggered',
     'outgoing-message': 'outgoingMessage',
@@ -163,6 +177,7 @@ const events = {
     'raise-hand-updated': 'raiseHandUpdated',
     'ready': 'ready',
     'recording-consent-dialog-open': 'recordingConsentDialogOpen',
+    'voice-agent-consent-dialog-open': 'voiceAgentConsentDialogOpen',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
@@ -333,14 +348,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
         this._onload = onload;
         this._tmpE2EEKey = e2eeKey;
-        this._isLargeVideoVisible = false;
-        this._isPrejoinVideoVisible = false;
+        this._largeVideoVisible = false;
+        this._prejoinVideoVisible = false;
         this._numberOfParticipants = 0;
         this._participants = {};
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
         this._pipConfig = configOverwrite?.pip;
+        this._documentPiPController = undefined;
         this._setupListeners();
         id++;
     }
@@ -361,17 +377,31 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = [
+
+        const allow = [
             'autoplay',
             'camera',
             'clipboard-write',
             'compute-pressure',
             'display-capture',
+            'fullscreen',
             'hid',
             'microphone',
             'screen-wake-lock',
             'speaker-selection'
-        ].join('; ');
+        ];
+
+        // Needed by the multi-screen feature (`setSecondScreen`) to enumerate displays and place
+        // a window on a second screen. Only delegates the capability; the actual permission is
+        // still user/policy-gated (granted on managed/kiosk devices). Gated to engines that expose
+        // the Window Management API (Chromium): elsewhere the directive is unrecognized and logs a
+        // console warning. Checking for the API directly avoids pulling a browser-detection library
+        // into this (size-limited) embedder bundle.
+        if ('getScreenDetails' in window) {
+            allow.push('window-management');
+        }
+
+        this._frame.allow = allow.join('; ');
         this._frame.name = frameName;
         this._frame.id = frameName;
         this._setSize(height, width);
@@ -433,6 +463,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._onStageParticipant;
     }
 
+    /**
+     * Returns whether the meeting's large video is currently visible.
+     *
+     * @returns {boolean}
+     */
+    _isLargeVideoVisible() {
+        return this._largeVideoVisible;
+    }
+
+    /**
+     * Returns whether the meeting's prejoin video is currently visible.
+     *
+     * @returns {boolean}
+     */
+    _isPrejoinVideoVisible() {
+        return this._prejoinVideoVisible;
+    }
+
 
     /**
      * Getter for the large video element in Jitsi Meet.
@@ -442,7 +490,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _getLargeVideo() {
         const iframe = this.getIFrame();
 
-        if (!this._isLargeVideoVisible
+        if (!this._largeVideoVisible
                 || !iframe
                 || !iframe.contentWindow
                 || !iframe.contentWindow.document) {
@@ -460,7 +508,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _getPrejoinVideo() {
         const iframe = this.getIFrame();
 
-        if (!this._isPrejoinVideoVisible
+        if (!this._prejoinVideoVisible
                 || !iframe
                 || !iframe.contentWindow
                 || !iframe.contentWindow.document) {
@@ -534,6 +582,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 // Fake the iframe onload event because it's not reliable.
                 this._onload?.();
 
+                // A reloaded meeting must not keep a stale PiP window alive.
+                this._documentPiPController?.close();
                 break;
             }
             case 'video-conference-joined': {
@@ -556,6 +606,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                     this._tmpE2EEKey = undefined;
                 }
+
+                // The prejoin screen registers the local participant under the 'local' id. Now that the real id is
+                // known, drop that entry, otherwise getParticipantsInfo() lists the local user twice.
+                delete this._participants.local;
 
                 this._myUserID = userID;
                 this._participants[userID] = {
@@ -608,7 +662,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this.emit('largeVideoChanged');
                 break;
             case 'large-video-visibility-changed':
-                this._isLargeVideoVisible = data.isVisible;
+                this._largeVideoVisible = data.isVisible;
                 this.emit('largeVideoChanged');
                 break;
             case 'prejoin-screen-loaded':
@@ -618,7 +672,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 };
                 break;
             case 'on-prejoin-video-changed':
-                this._isPrejoinVideoVisible = data.isVisible;
+                this._prejoinVideoVisible = data.isVisible;
                 this.emit('prejoinVideoChanged');
                 break;
             case 'video-conference-left':
@@ -628,6 +682,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'video-quality-changed':
                 this._videoQuality = data.videoQuality;
                 break;
+            case '_document-pip-requested':
+                this._getDocumentPiPController().open()
+                    .catch(error => console.error('Document PiP open failed:', error));
+
+                return true;
+            case '_document-pip-close':
+                this._documentPiPController?.close();
+
+                return true;
             case 'breakout-rooms-updated':
                 this.updateNumberOfParticipants(data.rooms);
                 break;
@@ -713,6 +776,35 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns this API instance's lazily created Document PiP controller.
+     *
+     * @returns {DocumentPiPController}
+     */
+    _getDocumentPiPController() {
+        if (!this._documentPiPController) {
+            this._documentPiPController = new DocumentPiPController({
+                api: this,
+                frame: this._frame,
+                transport: this._transport,
+                windowOptions: this._pipConfig?.documentPiP?.windowOptions,
+                meetingUrl: this._url
+            });
+        }
+
+        return this._documentPiPController;
+    }
+
+    /**
+     * Sends a media-cast signal from the Document PiP renderer to the meeting iframe.
+     *
+     * @param {Object} signal - Answer, candidate, restart, or stop signal.
+     * @returns {void}
+     */
+    _sendDocumentPiPSignal(signal) {
+        this._getDocumentPiPController().sendSignal(signal);
+    }
+
+    /**
      * Update number of participants based on all rooms.
      *
      * @param {Object} rooms - Rooms available rooms in the conference.
@@ -737,22 +829,37 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the rooms info in the conference.
      *
-     * @returns {Object} Rooms info.
+     * @param {boolean} includeHidden - Whether to include hidden participants
+     * (e.g. Jibri, transcriber) in the result. Defaults to false.
+     * @returns {Promise<Object>} Rooms info.
      */
-    getRoomsInfo() {
+    getRoomsInfo(includeHidden = false) {
         return this._transport.sendRequest({
-            name: 'rooms-info'
+            name: 'rooms-info',
+            includeHidden
         });
     }
 
     /**
      * Returns the Shared Document Url of the conference.
      *
-     * @returns {Object} Rooms info.
+     * @returns {Promise<string>} Shared Document URL.
      */
     getSharedDocumentUrl() {
         return this._transport.sendRequest({
             name: 'get-shared-document-url'
+        });
+    }
+
+    /**
+     * Returns the connection stats of the conference.
+     *
+     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc). Rejects if there is no
+     * conference at the moment (before joining or after leaving).
+     */
+    getConnectionStats() {
+        return this._transport.sendRequest({
+            name: 'connection-stats'
         });
     }
 
@@ -806,7 +913,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      *  'from': from,//JID of the user that sent the message
      *  'nick': nick,//the nickname of the user that sent the message
-     *  'message': txt//the text of the message
+     *  'message': txt,//the text of the message
+     *  'privateMessage': privateMessage,//whether the message is private
+     *  'stamp': stamp,//optional timestamp when available
+     *  'messageId': messageId,//optional XMPP message id when available
+     *  'replyToMessageId': replyToMessageId//optional XEP-0461 reply target message id when available
      * }}
      * {@code outgoingMessage} - receives event notifications about outgoing
      * messages. The listener will receive object with the following structure:
@@ -873,8 +984,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Captures the screenshot of the large video.
      *
-     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot
-     * if large video is detected, an error otherwise.
+     * @returns {Promise<{dataURL: string}>} - Resolves with an object that contains the base64 encoded image
+     * data of the screenshot in dataURL. Rejects with an error (it has a message) if no large video is detected.
      */
     captureLargeVideoScreenshot() {
         return this._transport.sendRequest({
@@ -886,9 +997,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Captures a picture through OS camera.
      *
      * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
-     * @param {string} descriptionText - The OS camera facing mode (environment/user).
-     * @param {string} titleText - The OS camera facing mode (environment/user).
-     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
+     * @param {string} descriptionText - The description shown in the camera capture dialog.
+     * @param {string} titleText - The title shown in the camera capture dialog.
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the picture. Rejects when the
+     * browser is not a mobile one, because the feature is only supported there.
      */
     captureCameraPicture(
             cameraFacingMode,
@@ -910,6 +1022,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     dispose() {
         this.emit('_willDispose');
+        this._documentPiPController?.close();
         this._transport.dispose();
         this.removeAllListeners();
         this._teardownIntersectionObserver();
@@ -929,6 +1042,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     * {@code password} - When the conference asks for a password (the {@code passwordRequired} event), joins with
+     * the password passed in the arguments array. Otherwise sets it as the password of the conference, which is only
+     * possible once joined: send it after the {@code videoConferenceJoined} event, before that it is ignored.
      *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
@@ -1137,7 +1253,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Invite people to the call.
      *
      * @param {Array<Object>} invitees - The invitees.
-     * @returns {Promise} - Resolves on success and rejects on failure.
+     * @returns {Promise<{result: boolean}>} - Resolves with { result: true } on success and rejects with an
+     * error (it has a message) on failure, for example when one or more of the invites failed.
      */
     invite(invitees) {
         if (!Array.isArray(invitees) || invitees.length === 0) {
@@ -1185,6 +1302,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-moderation-on',
             mediaType
+        });
+    }
+
+    /**
+     * Returns the lobby mode status.
+     *
+     * @returns {Promise<boolean>} - Resolves with the lobby mode status and rejects on
+     * failure.
+     */
+    isLobbyEnabled() {
+        return this._transport.sendRequest({
+            name: 'is-lobby-enabled'
         });
     }
 
@@ -1262,7 +1391,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Gets the deployment info.
      *
-     * @returns {Promise} - Resolves with the deployment info object.
+     * @returns {Promise} - Resolves with the deployment info object. The object is empty until the
+     * information is received from the server.
      */
     getDeploymentInfo() {
         return this._transport.sendRequest({
@@ -1440,7 +1570,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     resizeLargeVideo(width, height) {
-        if (width <= this._width && height <= this._height) {
+        // Numeric size options are what the embedder asked for, so keep comparing with them (they also work while
+        // the iframe is still hidden). Other values, such as the default '100%', can't be compared with a number, so
+        // use the layout size of the iframe. clientWidth/clientHeight are not affected by CSS transforms.
+        const optionWidth = Number(this._width);
+        const optionHeight = Number(this._height);
+        const maxWidth = Number.isFinite(optionWidth) ? optionWidth : this._frame.clientWidth;
+        const maxHeight = Number.isFinite(optionHeight) ? optionHeight : this._frame.clientHeight;
+
+        if (width <= maxWidth && height <= maxHeight) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
     }
@@ -1461,6 +1599,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._transport.sendEvent({
             data: [ event ],
             name: 'proxy-connection-event'
+        });
+    }
+
+    /**
+     * Sends a direct-cast screenshare signalling message (offer / ICE candidate / stop)
+     * from the sharer INTO this meeting's Jitsi Meet. The successor to
+     * {@link sendProxyConnectionEvent} — plain SDP/ICE over a vanilla RTCPeerConnection,
+     * no Jingle, no XMPP. The meeting answers via the {@code externalShareSignal} event.
+     *
+     * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
+     * @returns {void}
+     */
+    sendExternalShareSignal(signal) {
+        this._transport.sendEvent({
+            data: [ signal ],
+            name: 'external-share-signal'
         });
     }
 
@@ -1565,7 +1719,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Sets the key and keyIndex for e2ee.
      *
      * @param {Object} keyInfo - Json containing key information.
-     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {CryptoKey} [keyInfo.key] - The encryption key. If it is not provided, the key is cleared.
      * @param {number} [keyInfo.index] - The index of the encryption key.
      * @returns {void}
      */
@@ -1611,6 +1765,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     hidePiP() {
+        this._documentPiPController?.close();
         this.executeCommand('hidePiP');
     }
 

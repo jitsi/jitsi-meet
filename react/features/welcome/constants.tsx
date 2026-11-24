@@ -15,7 +15,8 @@ export const tabBarOptions = {
         fontSize: 12,
     },
     tabBarStyle: {
-        backgroundColor: BaseTheme.palette.welcomeCard
+        backgroundColor: BaseTheme.palette.welcomeCard,
+        borderTopWidth: 0
     }
 };
 

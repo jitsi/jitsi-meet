@@ -7,5 +7,5 @@ import { merge } from 'lodash-es';
 import { config as defaultConfig } from './wdio.conf.ts';
 
 export const config = merge(defaultConfig, {
-    baseUrl: 'https://127.0.0.1:8080/torture'
+    baseUrl: 'https://localhost:8080/torture'
 }, { clone: false });

@@ -20,8 +20,9 @@ local process_host_module = util.process_host_module;
 local respond_iq_result = util.respond_iq_result;
 local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
+local uuid_generate = require 'util.uuid'.generate;
 local json = require 'cjson.safe';
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 -- Debug flag
 local DEBUG = false;
@@ -58,6 +59,11 @@ local http_headers = {
 -- automatically allowed or allowed by a moderator
 local visitors_promotion_map = {};
 
+-- A map with key room jid. The content is a map with key the username sent to a promoted visitor
+-- and the value is the jid node allowed to join for it. The visitor uses the username as customusername
+-- when connecting to the main prosody, and its session is bound to that node.
+local visitors_promotion_usernames = {};
+
 -- A map with key room jid. The content is a map with key jid from which the request is received
 -- and the value is a table that has the json message that needs to be sent to any future moderator that joins
 -- and the vnode from which the request is received and where the response will be sent
@@ -77,6 +83,27 @@ local function get_visitors_room_metadata(room)
     return room.jitsiMetadata.visitors;
 end
 
+-- Allows a promoted visitor to join the main room
+-- @param room the main room
+-- @param from_vnode the vnode the visitor is connected to
+-- @param from_jid the jid of the visitor on the vnode
+-- @returns the username to send to the visitor
+local function allow_promoted_visitor(room, from_vnode, from_jid)
+    -- the jid node is seen by the occupants in presence, so it is different from the username
+    local username, node = uuid_generate(), uuid_generate();
+
+    visitors_promotion_map[room.jid][node] = {
+        from = from_vnode;
+        jid = from_jid;
+    };
+    -- kept until the room is destroyed or the last vnode disconnects, as the client keeps customusername
+    -- in its connection url and sends it again on each reconnect, including stream resumption,
+    -- which needs the same node. The username is sent only to the promoted visitor.
+    visitors_promotion_usernames[room.jid][username] = node;
+
+    return username;
+end
+
 -- Sends a json-message to the destination jid
 -- @param to_jid the destination jid
 -- @param json_message the message content to send
@@ -94,7 +121,9 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
 
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
-        local force_promote = auto_allow_promotion or get_visitors_room_metadata(room).autoPromote;
+        local metadata = get_visitors_room_metadata(room);
+        -- auto-allow applies only when room is live, a missing live flag means the room is live
+        local force_promote = (auto_allow_promotion or metadata.autoPromote) and metadata.live ~= false;
         if not force_promote and force_promote_requested == 'true' then
             -- Let's do the force_promote checks if requested
             -- if it is vpaas meeting we trust the moderator computation from visitor node (value of force_promote_requested)
@@ -116,14 +145,8 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
         if time and time > 0 and force_promote then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
-            local username = new_id():lower();
-            visitors_promotion_map[room.jid][username] = {
-                from = from_vnode;
-                jid = from_jid;
-            };
+            local username = allow_promoted_visitor(room, from_vnode, from_jid);
 
-            local req_from = visitors_promotion_map[room.jid][username].from;
-            local req_jid = visitors_promotion_map[room.jid][username].jid;
             local focus_occupant = get_focus_occupant(room);
             local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
 
@@ -133,14 +156,14 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             local node = jid.node(room.jid);
 
             module:send(st.iq({
-                    type='set', to = req_from, from = module.host, id = iq_id })
+                    type='set', to = from_vnode, from = module.host, id = iq_id })
                 :tag('visitors', {
                     xmlns='jitsi:visitors',
-                    room = jid.join(node, muc_domain_prefix..'.'..req_from),
+                    room = jid.join(node, muc_domain_prefix..'.'..from_vnode),
                     focusjid = focus_jid })
                  :tag('promotion-response', {
                     xmlns='jitsi:visitors',
-                    jid = req_jid,
+                    jid = from_jid,
                     username = username ,
                     allow = 'true' }):up());
             return true;
@@ -199,6 +222,7 @@ local function connect_vnode_received(room, vnode)
     if not visitors_promotion_map[room.jid] then
         -- visitors is enabled
         visitors_promotion_map[room.jid] = {};
+        visitors_promotion_usernames[room.jid] = {};
         visitors_promotion_requests[room.jid] = {};
         room._connected_vnodes = cache.new(16); -- we up to 16 vnodes for this prosody
     end
@@ -216,6 +240,7 @@ local function disconnect_vnode_received(room, vnode)
 
     if room._connected_vnodes:count() == 0 then
         visitors_promotion_map[room.jid] = nil;
+        visitors_promotion_usernames[room.jid] = nil;
         visitors_promotion_requests[room.jid] = nil;
         room._connected_vnodes = nil;
     end
@@ -301,7 +326,7 @@ local function stanza_handler(event)
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
         if not from_vnode then
-            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -337,7 +362,7 @@ local function stanza_handler(event)
     if transcription_languages
         and (transcription_languages.attr.langs or transcription_languages.attr.count) then
         if not from_vnode then
-            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -365,6 +390,33 @@ local function stanza_handler(event)
         end
     end
 
+    -- A visitor (allowed via the transcription JWT feature, see mod_filter_iq_rayo's
+    -- 'jitsi-metadata-allow-moderation' hook) set 'recording' metadata (isTranscribingEnabled) on their
+    -- vnode's local mirrored room. Apply it to the real room here so jicofo (which only watches the main
+    -- room's metadata) sees it and starts async transcription.
+    local recording_metadata_el = visitors_iq:get_child('recording-metadata');
+    if recording_metadata_el then
+        if not from_vnode then
+            module:log('warn', 'Received forged recording_metadata message: %s %s',
+                stanza, serialize(room._connected_vnodes));
+            return true; -- stop processing
+        end
+
+        local data, decode_error = json.decode(recording_metadata_el:get_text());
+        if data then
+            if not room.jitsiMetadata then
+                room.jitsiMetadata = {};
+            end
+            room.jitsiMetadata.recording = data;
+            processed = true;
+
+            module:context(muc_domain_prefix..'.'..muc_domain_base)
+                :fire_event('room-metadata-changed', { room = room; });
+        else
+            module:log('error', 'Failed to decode recording metadata for room:%s error:%s', room.jid, decode_error);
+        end
+    end
+
     if not processed then
         module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
     end
@@ -385,14 +437,10 @@ local function process_promotion_response(room, id, approved)
     end
 
     -- lets reply to participant that requested promotion
-    local username = new_id():lower();
-    visitors_promotion_map[room.jid][username] = {
-        from = visitors_promotion_requests[room.jid][id].from;
-        jid = id;
-    };
+    local req_from = visitors_promotion_requests[room.jid][id].from;
+    local req_jid = id;
+    local username = allow_promoted_visitor(room, req_from, req_jid);
 
-    local req_from = visitors_promotion_map[room.jid][username].from;
-    local req_jid = visitors_promotion_map[room.jid][username].jid;
     local focus_occupant = get_focus_occupant(room);
     local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
 
@@ -510,10 +558,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         local is_live = get_visitors_room_metadata(room).live;
 
         -- we skip any checks when auto-allow is enabled and room is live
-        if (auto_allow_promotion or get_visitors_room_metadata(room).autoPromote and (is_live or is_live == nil))
+        if ((auto_allow_promotion or get_visitors_room_metadata(room).autoPromote) and (is_live or is_live == nil))
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
-            or is_sip_jigasi(stanza)
-            or is_sip_jibri_join(stanza)
             or table_find(room._data.moderators, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id)
             or table_find(room._data.participants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             if DEBUG then
@@ -575,6 +621,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
     host_module:hook('muc-room-destroyed', function (event)
         visitors_promotion_map[event.room.jid] = nil;
+        visitors_promotion_usernames[event.room.jid] = nil;
         visitors_promotion_requests[event.room.jid] = nil;
     end, 1); -- prosody handles it at 0
 
@@ -603,7 +650,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         -- as we will handle it in occupant_joined
         local actor, affiliation, jid, room = event.actor, event.affiliation, event.jid, event.room;
 
-        if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not affiliation == 'owner' -- luacheck: ignore
+        if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or affiliation ~= 'owner'
             or not visitors_promotion_requests[event.room.jid] then
             return;
         end
@@ -736,10 +783,10 @@ prosody.events.add_handler('pre-jitsi-authentication', function(session)
         return nil;
     end
 
-    if visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][session.customusername] then
-        -- user was previously allowed to join, let him use the requested jid
-        return session.customusername;
-    end
+    -- user was previously promoted, bind the jid node that was allowed to join for it
+    -- the occupants coming back from breakout rooms are not in this map, they keep their connection
+    local usernames = visitors_promotion_usernames[room.jid];
+    return usernames and usernames[session.customusername];
 end);
 
 -- when occupant is leaving breakout to join the main room and visitors are enabled

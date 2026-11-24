@@ -12,6 +12,12 @@ echo "Releasing Jitsi Meet SDK Lite ${SDK_VERSION}"
 
 pushd ${RELEASE_REPO}
 
+# Update the releases repo if upstream has new commits
+git fetch
+if [[ -n $(git rev-list HEAD..@{u}) ]]; then
+    git pull --ff-only
+fi
+
 # Generate podspec file
 cat JitsiMeetSDKLite.podspec.tpl | sed -e s/VERSION/${SDK_VERSION}-lite/g > JitsiMeetSDKLite.podspec
 
@@ -54,7 +60,7 @@ pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
 cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework lite/Frameworks/
-cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework lite/Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermesvm.xcframework lite/Frameworks/
 
 # Add all files to git
 git add -A .

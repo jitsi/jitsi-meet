@@ -27,6 +27,20 @@ export default class SecurityDialog extends BaseDialog {
     }
 
     /**
+     * Returns whether the end-to-end encryption switch can be used.
+     */
+    isE2EESwitchEnabled() {
+        return this.participant.driver.$('#e2ee-section-switch').isEnabled();
+    }
+
+    /**
+     * Returns the end-to-end encryption section's description.
+     */
+    getE2EEDescription() {
+        return this.participant.driver.$('#e2ee-section-description').getText();
+    }
+
+    /**
      * Returns is the lobby enabled.
      */
     isLobbyEnabled() {

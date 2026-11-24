@@ -36,9 +36,9 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
         // For actions without data bundle (like hangup), we create an empty map
         // instead of attempting to convert a null bundle to avoid crashes.
         if (data != null) {
-            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.fromBundle(data));
+            ReactHostHolder.emitEvent(actionName, Arguments.fromBundle(data));
         } else {
-            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.createMap());
+            ReactHostHolder.emitEvent(actionName, Arguments.createMap());
         }
     }
 }

@@ -40,7 +40,7 @@ interface IProps {
     /**
      * Function to override the rendered default empty list component.
      */
-    renderListEmptyComponent: React.ReactElement<any>;
+    renderListEmptyComponent: React.ReactElement<any> | null;
 
     /**
      * An array of sections.
@@ -209,7 +209,7 @@ class NavigateSectionList extends Component<IProps> {
         // execution of incorrect source code, it is undesirable to break the
         // whole app because of an undefined string.
         if (typeof item.title === 'undefined') {
-            return <></>;
+            return null;
         }
 
         return (
@@ -230,7 +230,7 @@ class NavigateSectionList extends Component<IProps> {
      * @private
      * @returns {React$Node}
      */
-    _renderListEmptyComponent(): React.ReactElement<any> {
+    _renderListEmptyComponent(): React.ReactElement<any> | null {
         const { onRefresh } = this.props;
 
         if (typeof onRefresh === 'function') {
@@ -239,7 +239,7 @@ class NavigateSectionList extends Component<IProps> {
             );
         }
 
-        return <></>;
+        return null;
     }
 
     /**

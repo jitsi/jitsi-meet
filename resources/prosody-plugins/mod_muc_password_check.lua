@@ -1,4 +1,57 @@
-local inspect = require "inspect";
+-- USAGE / DEPLOYMENT
+--   This is a server-to-server endpoint used by the Jigasi dial-in IVR
+--   (dialplan) to check whether a room is passcode protected and to validate
+--   the passcode entered by the caller. The dialplan runs outside the shard,
+--   so the endpoint is reachable through the web server (/_api/room-info in
+--   the example nginx config), which routes the request to the shard hosting
+--   the room.
+--
+--   The module must be enabled on a dedicated VirtualHost with its own token
+--   configuration, not on the main virtual host, see jaas.cfg.lua
+--   (VirtualHost "jigasi.meet.jitsi"): tokens are verified with that host's
+--   asap_key_server / asap_accepted_issuers / asap_accepted_audiences, so
+--   login tokens of the main virtual host are not accepted. Only the dial-in
+--   service holds the private key for those tokens. A valid token authorizes
+--   the caller for every room on the deployment. It is intentionally not
+--   bound to a room: there is no room claim check.
+--
+--   Enabling the module on the main virtual host, or disabling
+--   enable_password_token_verification, makes the endpoint accept any
+--   login token (or no token), so it must not then be publicly accessible.
+--
+-- HTTP module that exposes GET and PUT endpoints at /room-info for querying
+-- and validating MUC room password information.
+--
+-- Endpoints:
+--   GET  /room-info?room=<name>[&prefix=<subdomain>]
+--     Returns a JSON object: { conference, passcodeProtected, lobbyEnabled }
+--     where conference is the full room JID, passcodeProtected is true when the
+--     room has a password set, and lobbyEnabled is true when a lobby room is
+--     attached.
+--
+--   PUT  /room-info?room=<name>[&prefix=<subdomain>]
+--     Body: application/json  { passcode: "<value>" }
+--     Returns: { valid: true|false } indicating whether the submitted passcode
+--     matches the room password.
+--
+-- Authentication:
+--   Both endpoints require a valid ASAP Bearer token (RS256) in the
+--   Authorization header.  Token verification is controlled by the
+--   enable_password_token_verification option (default: true).
+--
+-- Error responses:
+--   400  Missing or invalid parameters (no room param, wrong Content-Type,
+--        empty body, missing passcode key).
+--   403  Missing or invalid Bearer token.
+--   404  Room not found.
+--
+-- The HTTP routes are registered on the MUC base domain (muc_mapper_domain_base,
+-- default "localhost") because the HTTP server runs on port 5280 on that host.
+-- The room query parameter is decoded using the muc_mapper_domain_prefix option
+-- (default "conference") to build the full internal MUC JID.
+--
+-- Copyright (C) 2023-present 8x8, Inc.
+
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
@@ -136,8 +189,6 @@ function handle_validate_room_password (event)
         body = json_msg_str;
     };
 
-    -- module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
-
     return PUT_response;
 end
 
@@ -168,7 +219,6 @@ function handle_get_room_password (event)
         };
         body = json_msg_str;
     };
-    -- module:log("debug","Sending response for room password: %s", inspect(GET_response));
 
     return GET_response;
 end

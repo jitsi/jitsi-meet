@@ -28,7 +28,9 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
                 onSubmit = { this._onSubmit }
                 title = { this.props.title }>
                 <div className = 'mute-dialog'>
-                    {this.state.content}
+                    <p>
+                        {this.state.content}
+                    </p>
                     {
                         this.props.isModerationSupported
                         && this.props.exclude.length === 0

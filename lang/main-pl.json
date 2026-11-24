@@ -36,9 +36,6 @@
         "phone": "Telefon",
         "speaker": "Głośnik"
     },
-    "audioOnly": {
-        "audioOnly": "Niska przepustowość"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Dodaj pokój podgrupy",
@@ -186,7 +183,7 @@
     "deepLinking": {
         "appNotInstalled": "Potrzebujesz aplikacji mobilnej {{app}}, aby móc dołączyć do tego spotkania przez telefon.",
         "description": "Nic się nie wydarzyło? Spróbowaliśmy uruchomić Twoje spotkanie w aplikacji stacjonarnej {{app}}. Spróbuj ponownie lub uruchom spotkanie w aplikacji webowej {{app}}.",
-        "descriptionNew": "Nic się nie stało? Próbowaliśmy uruchomić Twoje spotkanie w aplikacji stacjonarnej {{app}}. <br /><br /> Spróbuj ponownie lub uruchom spotkanie w aplikacji webowej.",
+        "descriptionNew": "Nic się nie stało? Próbowaliśmy uruchomić Twoje spotkanie w aplikacji stacjonarnej {{app}}. <0/><0/> Spróbuj ponownie lub uruchom spotkanie w aplikacji webowej.",
         "descriptionWithoutWeb": "Nic się nie wydarzyło? Spróbowaliśmy uruchomić Twoje spotkanie w aplikacji stacjonarnej {{app}}.",
         "downloadApp": "Pobierz aplikację",
         "downloadMobileApp": "Pobierz ze sklepu App Store",
@@ -198,7 +195,7 @@
         "launchMeetingLabel": "Jak chcesz dołączyć do tego spotkania?",
         "launchWebButton": "Uruchom przez przeglądarkę",
         "noMobileApp": "Nie masz aplikacji?",
-        "termsAndConditions": "Kontynuując zgadzasz się na nasze <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>Zasady i Warunki.</a>",
+        "termsAndConditions": "Kontynuując zgadzasz się na nasze <0>Zasady i Warunki.</0>",
         "title": "Trwa uruchamianie Twojego spotkania w {{app}}…",
         "titleNew": "Rozpoczynam spotkanie…",
         "tryAgainButton": "Spróbuj ponownie w aplikacji stacjonarnej",
@@ -213,12 +210,6 @@
         "microphonePermission": "Błąd podczas otrzymywania uprawnień do mikrofonu"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Kontrola połączeń",
-            "connectedDevices": "Połączone urządzenia:",
-            "deleteDevice": "Usuń urządzenie",
-            "pairDevice": "Sparuj urządzenie"
-        },
         "noPermission": "Nie przyznano uprawnienia",
         "previewUnavailable": "Podgląd niedostępny",
         "selectADevice": "Wybierz urządzenie",
@@ -238,7 +229,6 @@
         "Remove": "Usuń",
         "Share": "Udostępnij",
         "Submit": "Wyślij",
-        "WaitForHostMsg": "Spotkanie jeszcze się nie rozpoczęło. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
         "WaitingForHostTitle": "Oczekiwanie na gospodarza…",
         "Yes": "Tak",
         "accessibilityLabel": {
@@ -288,7 +278,7 @@
         "enterDisplayName": "Wpisz tutaj swoje imię",
         "error": "Błąd",
         "gracefulShutdown": "Usługa aktualnie jest niedostępna. Prosze spróbować później.",
-        "grantModeratorDialog": "Czy na pewno chcesz przyznać temu uczestnikowi prawa moderatora?",
+        "grantModeratorDialog": "Czy na pewno chcesz nadać uprawnienia moderatora użytkownikowi {{participantName}}?",
         "grantModeratorTitle": "Przyznaj prawa moderatora",
         "hide": "Ukryj",
         "hideShareAudioHelper": "Nie pokazuj więcej",
@@ -353,8 +343,6 @@
         "permissionCameraRequiredError": "Dostęp do kamery jest wymagany do udziału w konferencjach z obrazem. Udziel dostępu do kamery w ustawieniach",
         "permissionErrorTitle": "Wymagana autoryzacja",
         "permissionMicRequiredError": "Dostęp do mikrofonu jest wymagany do udziału w konferencjach z dźwiękiem. Udziel dostępu do mikrofonu w ustawieniach",
-        "popupError": "Twoja przeglądarka blokuje wyskakujące okienka pochodzące z tej witryny. Włącz wyświetlanie wyskakujących okienek w ustawieniach bezpieczeństwa Twojej przeglądarki i spróbuj ponownie.",
-        "popupErrorTitle": "Wyskakujące okienko zostało zablokowane",
         "readMore": "więcej",
         "recentlyUsedObjects": "Twoje ostatnio używane przedmioty",
         "recording": "Nagrywanie",
@@ -615,7 +603,6 @@
         "notificationLobbyDisabled": "Lobby zostało wyłączone przez {{originParticipantName}}",
         "notificationLobbyEnabled": "Lobby zostało włączone przez {{originParticipantName}}",
         "notificationTitle": "Lobby",
-        "passwordField": "Wprowadź hasło",
         "passwordJoinButton": "Dołącz",
         "title": "Lobby",
         "toggleLabel": "Włącz / Wyłącz lobby"
@@ -656,16 +643,18 @@
         "button": "Zaproś innych uczestników",
         "youAreAlone": "Tylko ty uczestniczysz w tym spotkaniu"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Niska przepustowość"
+    },
     "me": "to ja",
     "notify": {
         "OldElectronAPPTitle": "Luka bezpieczeństwa!",
-        "allowAction": "Zezwól",
         "allowedUnmute": "Możesz wyłączyć wyciszenie mikrofonu, uruchomić aparat lub udostępnić ekran.",
         "audioUnmuteBlockedDescription": "Operacja wyłączania wyciszenia mikrofonu została tymczasowo zablokowana z powodu ograniczeń systemu.",
         "audioUnmuteBlockedTitle": "Zablokowano wyciszenie mikrofonu!",
         "chatMessages": "Wiadomości czatu",
         "connectedOneMember": "{{name}} dołączył do spotkania",
-        "connectedThreePlusMembers": "{{name}} i {{count}} innych osób dołączyło do spotkania",
+        "connectedThreePlusMembers": "{{name}} i wiele innych osób dołączyło do spotkania",
         "connectedTwoMembers": "{{first}} i {{second}} dołączyli do spotkania",
         "dataChannelClosed": "Pogorszona jakość wideo",
         "dataChannelClosedDescription": "Kanał bridge został odłączony, przez co jakość wideo jest ograniczona do najniższego ustawienia.",
@@ -716,7 +705,6 @@
         "newDeviceCameraTitle": "Wykryto nową kamerę",
         "noiseSuppressionDesktopAudioDescription": "Nie można włączyć tłumienia szumów podczas udostępniania dźwięku pulpitu, wyłącz tę funkcję i spróbuj ponownie.",
         "noiseSuppressionFailedTitle": "Nie udało się uruchomić tłumienia szumów",
-        "noiseSuppressionNoTrackDescription": "Najpierw wyłącz wyciszenie mikrofonu.",
         "noiseSuppressionStereoDescription": "Tłumienie szumów dźwięku stereo nie jest obecnie obsługiwane.",
         "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
@@ -726,7 +714,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) usunięte przez innego uczestnika",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) ustawiony przez innego uczestnika",
         "raiseHandAction": "Podnieś rękę",
-        "raisedHand": "{{name}} chce mówić.",
+        "raisedHand": "Chce zabrać głos.",
         "raisedHands": "{{participantName}} i {{raisedHands}} więcej osób",
         "reactionSounds": "Wyłącz dźwięki",
         "reactionSoundsForAll": "Wyłącz dźwięki dla wszystkich",
@@ -738,7 +726,7 @@
         "somebody": "Ktoś",
         "startSilentDescription": "Ponownie dołącz do spotkania, aby włączyć dźwięk",
         "startSilentTitle": "Dołączyłeś bez wyjścia dźwiękowego!",
-        "suboptimalBrowserWarning": "Obawiamy się, że Twoje wrażenia ze spotkania nie będą zbyt dobre. Staramy się poprawić tą sytuację, a póki co użyj do spotkania jednej z <a href='{{recommendedBrowserPageLink}}' target='_blank'>przeglądarek w pełni obsługiwanych</a>.",
+        "suboptimalBrowserWarning": "Obawiamy się, że Twoje wrażenia ze spotkania nie będą zbyt dobre. Staramy się poprawić tą sytuację, a póki co użyj do spotkania jednej z <0>przeglądarek w pełni obsługiwanych</0>.",
         "suboptimalExperienceTitle": "Ostrzeżenie przeglądarki",
         "unmute": "Wyłącz wyciszenie",
         "videoMutedRemotelyDescription": "Możesz ją włączyć ponownie w dowolnym momencie.",
@@ -798,8 +786,7 @@
             "pollOption": "Opcja {{index}}",
             "pollQuestion": "Pytanie",
             "questionPlaceholder": "Zadaj pytanie",
-            "removeOption": "Usuń opcję",
-            "send": "Wyślij"
+            "removeOption": "Usuń opcję"
         },
         "errors": {
             "notUniqueOption": "Opcje muszą być wyjątkowe"
@@ -818,9 +805,7 @@
     },
     "poweredby": "napędzane dzięki",
     "prejoin": {
-        "audioAndVideoError": "Błąd audio i wideo:",
         "audioDeviceProblem": "Wystąpił problem z urządzeniem audio.",
-        "audioOnlyError": "Błąd audio:",
         "audioTrackError": "Nie można utworzyć ścieżki audio.",
         "callMe": "Zadzwoń do mnie",
         "callMeAtNumber": "Zadzwoń do mnie pod ten numer:",
@@ -871,10 +856,10 @@
         "or": "lub",
         "premeeting": "Przed spotkaniem",
         "proceedAnyway": "Kontynuuj mimo to",
+        "recordingWarning": "Inni uczestnicy mogą nagrywać tę rozmowę",
         "screenSharingError": "Błąd udostępniania ekranu:",
         "startWithPhone": "Uruchom przez telefon",
         "unsafeRoomConsent": "Rozumiem ryzyko, chcę dołączyć do spotkania",
-        "videoOnlyError": "Błąd wideo:",
         "videoTrackError": "Nie można utworzyć ścieżki wideo.",
         "viewAllNumbers": "zobacz numery"
     },
@@ -934,7 +919,6 @@
         "highlightMomentSucessDescription": "Zaznaczony moment zostanie dodany do podsumowania spotkania.",
         "inProgress": "Trwa nagrywanie lub transmisja na żywo",
         "linkGenerated": "Wygenerowano link do nagrania.",
-        "live": "NA ŻYWO",
         "localRecordingNoNotificationWarning": "Nagranie nie zostanie ogłoszone innym uczestnikom. Musisz poinformować ich, że spotkanie jest nagrywane.",
         "localRecordingNoVideo": "Film nie jest nagrywany",
         "localRecordingStartWarning": "Upewnij się, że zatrzymałeś nagrywanie przed opuszczeniem spotkania, aby je zapisać.",
@@ -951,9 +935,7 @@
         "onBy": "{{name}} rozpoczął nagrywanie",
         "onlyRecordSelf": "Nagrywaj tylko moje strumienie audio i wideo",
         "pending": "Przygotowanie do nagrania spotkania…",
-        "rec": "NAGRYWANIE",
         "saveLocalRecording": "Zapisz plik nagrania lokalnie (Beta)",
-        "serviceDescription": "Twoje nagranie zostanie zapisane przez usługę nagrywania",
         "serviceDescriptionCloud": "Nagrywanie w chmurze",
         "serviceDescriptionCloudInfo": "Nagrane spotkania są automatycznie usuwane 24 godziny po ich nagraniu.",
         "serviceName": "Usługa nagrywania",
@@ -963,8 +945,7 @@
         "surfaceError": "Proszę wybrać aktualną zakładkę.",
         "title": "Nagrywanie",
         "unavailable": "Ups! {{serviceName}} w tej chwili niedostępny. Próbujemy rozwiązać ten problem. Spróbuj ponownie później.",
-        "unavailableTitle": "Nagrywanie niedostępne",
-        "uploadToCloud": "Prześlij do chmury"
+        "unavailableTitle": "Nagrywanie niedostępne"
     },
     "screenshareDisplayName": "Ekran użytkownika {{name}}",
     "sectionList": {
@@ -974,7 +955,7 @@
         "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
         "insecureRoomNameWarningNative": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania ",
-        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tutaj</a>.",
+        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <0>tutaj</0>.",
         "title": "Opcje zabezpieczeń",
         "unsafeRoomActions": {
             "meeting": "Rozważ zabezpieczenie spotkania za pomocą przycisku bezpieczeństwa.",
@@ -1099,10 +1080,8 @@
         "Settings": "Ustawienia",
         "accessibilityLabel": {
             "Settings": "Ustawienia przełączania",
-            "audioOnly": "Przełączanie tylko audio",
             "audioRoute": "Wybierz urządzenie dźwiękowe",
             "boo": "Buczenie",
-            "breakoutRoom": "Dołącz/opuść pokój podgrupy",
             "callQuality": "Zarządzanie jakością obrazu",
             "carmode": "Tryb samochodowy",
             "cc": "Przełączanie napisów",
@@ -1140,6 +1119,7 @@
             "lobbyButton": "Włącz/wyłącz tryb lobby",
             "localRecording": "Przełączanie lokalnych urządzeń sterujących zapisem danych",
             "lockRoom": "Przełączenie hasła spotkania",
+            "lowBandwidthMode": "Przełączanie tylko audio",
             "lowerHand": "Opuść rękę",
             "moreActions": "Przełączanie menu więcej działań",
             "moreActionsMenu": "Więcej działań w menu",
@@ -1152,7 +1132,7 @@
             "muteGUMPending": "Podłączanie mikrofonu",
             "noiseSuppression": "Tłumienie szumów",
             "openChat": "Otwórz czat",
-            "participants": "Uczestnicy",
+            "participants": "Otwórz panel uczestników. Liczba uczestników: {{participantsCount}}",
             "pip": "Tryb przełączania obrazu-w-obrazie",
             "privateMessage": "Wyślij wiadomość prywatną",
             "profile": "Edytuj swój profil",
@@ -1187,8 +1167,6 @@
             "videounmute": "Uruchom kamerę"
         },
         "addPeople": "Dodaj ludzi do swojej rozmowy",
-        "audioOnlyOff": "Wyłącz tryb słabego łącza",
-        "audioOnlyOn": "Włącz tryb słabego łącza",
         "audioRoute": "Wybierz urządzenie dźwiękowe",
         "audioSettings": "Ustawienia audio",
         "authenticate": "Uwierzytelnianie",
@@ -1228,6 +1206,8 @@
         "lobbyButtonEnable": "Włącz tryb lobby",
         "login": "Zaloguj",
         "logout": "Wyloguj",
+        "lowBandwidthModeOff": "Wyłącz tryb słabego łącza",
+        "lowBandwidthModeOn": "Włącz tryb słabego łącza",
         "lowerYourHand": "Opuść rękę",
         "moreActions": "Więcej działań",
         "moreOptions": "Więcej opcji",
@@ -1268,7 +1248,7 @@
         "silence": "Cisza",
         "speakerStats": "Statystyki mówców",
         "startScreenSharing": "Zacznij współdzielenie ekranu",
-        "startSubtitles": "Uruchom napisy",
+        "startSubtitles": "Napisy • {{language}}",
         "stopAudioSharing": "Zakończ udostępnianie audio",
         "stopScreenSharing": "Zakończ współdzielenie ekranu",
         "stopSharedVideo": "Zatrzymaj wideo",
@@ -1285,13 +1265,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Uruchom / Zatrzymaj napisy",
-        "error": "Przepisywanie nie powiodło się. Proszę spróbować ponownie.",
         "expandedLabel": "Transkrypcja jest obecnie włączona",
-        "failedToStart": "Błąd uruchomienia transkrypcji",
-        "labelToolTip": "Spotkanie jest transkrybowane",
         "off": "Transkrypcja została zatrzymana",
-        "pending": "Przygotowanie do transkrypcji spotkania…",
-        "sourceLanguageDesc": "Obecnie język spotkania jest ustawiony na <b>{{sourceLanguage}}</b>. <br/> Możesz to zmienić ",
+        "sourceLanguageDesc": "Obecnie język spotkania jest ustawiony na <0>{{sourceLanguage}}</0>. <1/> Możesz to zmienić ",
         "sourceLanguageHere": "tutaj",
         "start": "Rozpocznij wyświetlanie napisów",
         "stop": "Zatrzymaj wyświetlanie napisów",
@@ -1315,8 +1291,6 @@
     },
     "videoStatus": {
         "adjustFor": "Dostosuj do:",
-        "audioOnly": "DŹW",
-        "audioOnlyExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "bestPerformance": "Najlepsza wydajność",
         "callQuality": "Jakość obrazu",
         "hd": "HD",
@@ -1324,9 +1298,11 @@
         "highDefinition": "Wysoka rozdzielczość",
         "highestQuality": "Najwyższa jakość",
         "labelTooiltipNoVideo": "Brak obrazu",
-        "labelTooltipAudioOnly": "Włączono tryb słabego łącza",
+        "labelTooltipLowBandwidthMode": "Włączono tryb słabego łącza",
         "ld": "LD",
         "ldTooltip": "Podgląd obrazu w niskiej rozdzielczości",
+        "lowBandwidthMode": "DŹW",
+        "lowBandwidthModeExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "lowDefinition": "Niska rozdzielczość",
         "performanceSettings": "Ustawienia wydajności",
         "recording": "Trwa nagrywanie",
@@ -1387,7 +1363,6 @@
         "chatIndicator": "(visitor)",
         "labelTooltip": "Liczba odwiedzających: {{count}}",
         "notification": {
-            "description": "Aby wziąć udział, podnieś rękę",
             "title": "Jesteś gościem na spotkaniu"
         }
     },
@@ -1427,7 +1402,7 @@
         "mobileDownLoadLinkAndroid": "Pobierz appkę dla systemu Android",
         "mobileDownLoadLinkFDroid": "Pobierz appkę dla systemu F-Droid",
         "mobileDownLoadLinkIos": "Pobierz appkę dla systemu iOS",
-        "moderatedMessage": "lub <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">zarezerwuj adres spotkania</a> jeśli jesteś jedynym moderatorem.",
+        "moderatedMessage": "lub <0>zarezerwuj adres spotkania</0> jeśli jesteś jedynym moderatorem.",
         "privacy": "Polityka prywatności",
         "recentList": "Niedawno",
         "recentListDelete": "Usuń",

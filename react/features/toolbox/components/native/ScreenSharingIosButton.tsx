@@ -4,9 +4,12 @@ import { ScreenCapturePickerView } from 'react-native-webrtc';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { showModeratedNotification } from '../../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../../av-moderation/constants';
+import { shouldShowModeratedNotification } from '../../../av-moderation/functions';
 import { IOS_SCREENSHARING_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import { IconScreenshare } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions.native';
@@ -22,6 +25,11 @@ interface IProps extends AbstractButtonProps {
     _disabled: boolean;
 
     /**
+     * Whether screen-share moderation blocks starting a screen share.
+     */
+    _moderated: boolean;
+
+    /**
      * Whether video is currently muted or not.
      */
     _screensharing: boolean;
@@ -29,7 +37,9 @@ interface IProps extends AbstractButtonProps {
 
 const styles = {
     screenCapturePickerView: {
-        display: 'none'
+        position: 'absolute',
+        width: 0,
+        height: 0
     }
 };
 
@@ -95,6 +105,15 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
    * @returns {void}
    */
     override _handleClick() {
+        const { _moderated, dispatch } = this.props;
+
+        // The broadcast picker starts the share outside of redux, so check A/V Moderation before it opens.
+        if (_moderated) {
+            dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
+
+            return;
+        }
+
         const handle = findNodeHandle(this._nativeComponent);
 
         NativeModules.ScreenCapturePickerViewManager.show(handle);
@@ -134,9 +153,11 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     const enabled = getFeatureFlag(state, IOS_SCREENSHARING_ENABLED, false);
+    const _screensharing = isLocalVideoTrackDesktop(state);
 
     return {
-        _screensharing: isLocalVideoTrackDesktop(state),
+        _moderated: !_screensharing && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, state),
+        _screensharing,
 
         // TODO: this should work on iOS 12 too, but our trick to show the picker doesn't work.
         visible: enabled

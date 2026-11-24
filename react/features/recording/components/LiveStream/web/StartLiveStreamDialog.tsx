@@ -1,8 +1,9 @@
 import React from 'react';
+import { Trans } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
-import { translate } from '../../../../base/i18n/functions';
+import { translate } from '../../../../base/i18n/functions.web';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import Spinner from '../../../../base/ui/components/web/Spinner';
 import {
@@ -14,7 +15,11 @@ import {
     updateProfile
 } from '../../../../google-api/actions';
 import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.web';
-import { GOOGLE_API_STATES } from '../../../../google-api/constants';
+import {
+    GOOGLE_API_STATES,
+    GOOGLE_POPUP_CLOSED,
+    GOOGLE_POPUP_FAILED_TO_OPEN
+} from '../../../../google-api/constants';
 import AbstractStartLiveStreamDialog, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -22,6 +27,11 @@ import AbstractStartLiveStreamDialog, {
 
 import StreamKeyForm from './StreamKeyForm';
 import StreamKeyPicker from './StreamKeyPicker';
+
+/**
+ * The error type used when the Google API libraries could not be loaded.
+ */
+const GOOGLE_API_LOAD_FAILED = 'googleApiLoadFailed';
 
 interface IProps extends AbstractProps {
 
@@ -55,6 +65,7 @@ class StartLiveStreamDialog
         this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
         this._onGoogleSignIn = this._onGoogleSignIn.bind(this);
         this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
+        this._onRetryGoogleApi = this._onRetryGoogleApi.bind(this);
         this._onYouTubeBroadcastIDSelected
             = this._onYouTubeBroadcastIDSelected.bind(this);
     }
@@ -90,10 +101,14 @@ class StartLiveStreamDialog
                 titleKey = 'liveStreaming.start'>
                 <div className = 'live-stream-dialog'>
                     { _googleApiApplicationClientID
-                        ? this._renderYouTubePanel() : null }
-                    <div className = 'youtube-go-live-warning'>
-                        { t('liveStreaming.youTubeGoLiveWarning') }
-                    </div>
+                        ? (
+                            <>
+                                { this._renderYouTubePanel() }
+                                <div className = 'youtube-go-live-warning'>
+                                    { t('liveStreaming.youTubeGoLiveWarning') }
+                                </div>
+                            </>
+                        ) : null }
                     <StreamKeyForm
                         onChange = { this._onStreamKeyChange }
                         value = {
@@ -109,12 +124,28 @@ class StartLiveStreamDialog
      * If the user is already logged in, then a request for available YouTube
      * broadcasts is also made.
      *
+     * @param {boolean} retryFailedLoads - Whether to try a failed library load
+     * again right away.
      * @private
      * @returns {void}
      */
-    _onInitializeGoogleApi() {
-        this.props.dispatch(loadGoogleAPI())
-        .catch((response: any) => this._parseErrorFromResponse(response));
+    _onInitializeGoogleApi(retryFailedLoads = false) {
+        // Back to the spinner while retrying after a failed load.
+        this._setStateIfMounted({ errorType: undefined });
+
+        // The Google API stays unusable after this fails, whatever the reason.
+        this.props.dispatch(loadGoogleAPI(retryFailedLoads))
+        .catch(() => this._setStateIfMounted({ errorType: GOOGLE_API_LOAD_FAILED }));
+    }
+
+    /**
+     * Tries again to load the Google web client application after it failed.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onRetryGoogleApi() {
+        this._onInitializeGoogleApi(true);
     }
 
     /**
@@ -140,7 +171,7 @@ class StartLiveStreamDialog
      */
     override _onGetYouTubeBroadcasts() {
         this.props.dispatch(updateProfile())
-            .catch((response: any) => this._parseErrorFromResponse(response));
+            .catch((response: any) => this._onGoogleSignInError(response));
 
         this.props.dispatch(requestAvailableYouTubeBroadcasts())
             .then((broadcasts: { boundStreamID: string; }[]) => {
@@ -166,7 +197,7 @@ class StartLiveStreamDialog
      */
     _onGoogleSignIn() {
         this.props.dispatch(signIn())
-            .catch((response: any) => this._parseErrorFromResponse(response));
+            .catch((response: any) => this._onGoogleSignInError(response));
     }
 
     /**
@@ -185,7 +216,32 @@ class StartLiveStreamDialog
                     broadcasts: undefined,
                     errorType: undefined
                 }))
-            .then(() => this._onGetYouTubeBroadcasts());
+            .then(() => this._onGetYouTubeBroadcasts())
+            .catch((response: any) => this._onGoogleSignInError(response));
+    }
+
+    /**
+     * Handles a failed Google sign in. Closing the popup is the user canceling
+     * so it is ignored, but a popup that could not be opened needs a message.
+     *
+     * @param {Object} response - The error from the sign in request.
+     * @private
+     * @returns {void}
+     */
+    _onGoogleSignInError(response: any) {
+        if (response?.type === GOOGLE_POPUP_CLOSED) {
+            return;
+        }
+
+        if (response?.type === GOOGLE_POPUP_FAILED_TO_OPEN) {
+            this._setStateIfMounted({
+                errorType: GOOGLE_POPUP_FAILED_TO_OPEN
+            });
+
+            return;
+        }
+
+        this._parseErrorFromResponse(response);
     }
 
     /**
@@ -275,19 +331,14 @@ class StartLiveStreamDialog
                 ;
             }
 
-            /**
-             * FIXME: Ideally this help text would be one translation string
-             * that also accepts the anchor. This can be done using the Trans
-             * component of react-i18next but I couldn't get it working...
-             */
             helpText = (
-                <div>
-                    { `${t('liveStreaming.chooseCTA',
-                        { email: _googleProfileEmail })} ` }
-                    <a onClick = { this._onRequestGoogleSignIn }>
-                        { t('liveStreaming.changeSignIn') }
-                    </a>
-                </div>
+                <Trans
+                    components = { [ <a
+                        key = 'change-sign-in'
+                        onClick = { this._onRequestGoogleSignIn } /> ] }
+                    i18nKey = 'liveStreaming.chooseCTAWithChangeSignIn'
+                    t = { t }
+                    values = {{ email: _googleProfileEmail }} />
             );
 
             break;
@@ -304,7 +355,8 @@ class StartLiveStreamDialog
         if (this.state.errorType !== undefined) {
             googleContent = (
                 <GoogleSignInButton
-                    onClick = { this._onRequestGoogleSignIn } />
+                    onClick = { this.state.errorType === GOOGLE_API_LOAD_FAILED
+                        ? this._onRetryGoogleApi : this._onRequestGoogleSignIn } />
             );
             helpText = this._getGoogleErrorMessageToDisplay();
         }
@@ -331,10 +383,16 @@ class StartLiveStreamDialog
         let text;
 
         switch (this.state.errorType) {
+        case GOOGLE_API_LOAD_FAILED:
+            text = this.props.t('liveStreaming.errorGoogleApiLoad');
+            break;
         case 'liveStreamingNotEnabled':
             text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
                 { email: this.props._googleProfileEmail });
+            break;
+        case GOOGLE_POPUP_FAILED_TO_OPEN:
+            text = this.props.t('liveStreaming.errorPopupBlocked');
             break;
         default:
             text = this.props.t('liveStreaming.errorAPI');

@@ -18,6 +18,16 @@ export default class PreJoinScreen extends PreMeetingScreen {
     }
 
     /**
+     * Clicks the join button from inside the page, with element.click(), rather than through the driver's input
+     * pipeline. React dispatches the resulting click like a user click.
+     */
+    clickJoinButtonFromPage(): Promise<void> {
+        return this.participant.execute(
+            testId => document.querySelector<HTMLElement>(`[data-testid="${testId}"]`)?.click(),
+            JOIN_BUTTON_TEST_ID);
+    }
+
+    /**
      * Returns the display name input element.
      */
     getDisplayNameInput(): ChainablePromiseElement {

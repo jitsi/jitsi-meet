@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 
-// We need to reference these files directly to avoid loading things that are not available
-// in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import StatelessAvatar from '../base/avatar/components/web/StatelessAvatar';
-import { getAvatarColor, getInitials } from '../base/avatar/functions';
-import { DEFAULT_ICON } from '../base/icons/svg/constants';
-
-import Toolbar from './Toolbar';
+import AlwaysOnTopView from './AlwaysOnTopView';
 
 const { api } = window.alwaysOnTop;
 
@@ -163,43 +157,6 @@ export default class AlwaysOnTop extends Component<any, IState> {
     }
 
     /**
-     * Renders display name and avatar for the on stage participant.
-     *
-     * @returns {ReactElement}
-     */
-    _renderVideoNotAvailableScreen() {
-        const {
-            avatarURL,
-            customAvatarBackgrounds,
-            displayName,
-            formattedDisplayName,
-            isVideoDisplayed
-        } = this.state;
-
-        if (isVideoDisplayed) {
-            return null;
-        }
-
-        return (
-            <div id = 'videoNotAvailableScreen'>
-                <div id = 'avatarContainer'>
-                    <StatelessAvatar
-                        color = { getAvatarColor(displayName, customAvatarBackgrounds) }
-                        iconUser = { DEFAULT_ICON.IconUser }
-                        id = 'avatar'
-                        initials = { getInitials(displayName) }
-                        url = { avatarURL } />)
-                </div>
-                <div
-                    className = 'displayname'
-                    id = 'displayname'>
-                    { formattedDisplayName }
-                </div>
-            </div>
-        );
-    }
-
-    /**
      * Sets mouse move listener and initial toolbar timeout.
      *
      * @inheritdoc
@@ -268,14 +225,25 @@ export default class AlwaysOnTop extends Component<any, IState> {
      * @returns {ReactElement}
      */
     override render() {
+        const {
+            avatarURL,
+            customAvatarBackgrounds,
+            displayName,
+            formattedDisplayName,
+            isVideoDisplayed,
+            visible
+        } = this.state;
+
         return (
-            <div id = 'alwaysOnTop'>
-                <Toolbar
-                    className = { this.state.visible ? 'fadeIn' : 'fadeOut' }
-                    onMouseOut = { this._onMouseOut }
-                    onMouseOver = { this._onMouseOver } />
-                { this._renderVideoNotAvailableScreen() }
-            </div>
+            <AlwaysOnTopView
+                avatarURL = { avatarURL }
+                customAvatarBackgrounds = { customAvatarBackgrounds }
+                displayName = { displayName }
+                formattedDisplayName = { formattedDisplayName }
+                isVideoDisplayed = { isVideoDisplayed }
+                onMouseOut = { this._onMouseOut }
+                onMouseOver = { this._onMouseOver }
+                toolbarVisible = { visible } />
         );
     }
 }

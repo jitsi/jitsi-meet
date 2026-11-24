@@ -2,12 +2,14 @@
     "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.native.d.ts"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
+        "module": "es2020",
         "target": "es2020",
         "jsx": "react-native",
         "lib": [ "ES2020", "ES2024.Promise" ],
         "types": [ "react-native" ],
         "skipLibCheck": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
+        "isolatedModules": true,
         "strict": true,
         "noImplicitAny": true,
         "strictPropertyInitialization": false,
@@ -25,6 +27,7 @@
         "react/features/embed-meeting",
         "react/features/face-landmarks",
         "react/features/keyboard-shortcuts",
+        "react/features/load-test",
         "react/features/no-audio-signal",
         "react/features/pip",
         "react/features/noise-suppression",
@@ -34,10 +37,11 @@
         "react/features/screenshot-capture",
         "react/features/stream-effects",
         "react/features/virtual-background",
-        "react/features/web-hid",
         "react/features/whiteboard",
         "**/web/*",
         "**/*.web.ts",
-        "**/*.web.tsx"
+        "**/*.web.tsx",
+        "**/*.web.test.ts",
+        "**/*.web.test.tsx"
     ]
 }

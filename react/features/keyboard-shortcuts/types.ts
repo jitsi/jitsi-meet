@@ -6,6 +6,9 @@ export interface IKeyboardShortcut {
     // the character to be pressed that triggers the action
     character: string;
 
+    // whether or not the ctrl key must be pressed
+    ctrl?: boolean;
+
     // the function to be executed when the shortcut is pressed
     handler: Function;
 
@@ -17,7 +20,7 @@ export interface IKeyboardShortcut {
 }
 
 export interface IKeyboardShortcutsState {
+    ctrlAltReactionShortcutsEnabled: boolean;
     enabled: boolean;
     shortcuts: Map<string, IKeyboardShortcut>;
-    shortcutsHelp: Map<string, string>;
 }

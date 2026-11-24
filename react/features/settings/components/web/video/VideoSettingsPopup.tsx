@@ -12,6 +12,10 @@ import {
 import Popover from '../../../../base/popover/components/Popover.web';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
 import { getCurrentCameraDeviceId } from '../../../../base/settings/functions.web';
+import { hideVideoPermissionPrompt } from '../../../../device-permissions/actions.web';
+import PermissionPromptPopover from '../../../../device-permissions/components/web/PermissionPromptPopover';
+import { PERMISSION_PROMPT_TITLE_ID } from '../../../../device-permissions/constants';
+import { IDevicePermissionsState } from '../../../../device-permissions/reducer';
 import { toggleVideoSettings } from '../../../actions';
 import { getVideoSettingsVisibility } from '../../../functions.web';
 
@@ -41,6 +45,11 @@ interface IProps {
     onClose: Function;
 
     /**
+     * Hides the explanation of the camera request.
+     */
+    onHidePermissionPrompt: Function;
+
+    /**
      * The popup placement enum value.
      */
     popupPlacement: string;
@@ -54,6 +63,11 @@ interface IProps {
      * All the camera device ids currently connected.
      */
     videoDeviceIds: string[];
+
+    /**
+     * The explanation shown instead of the cameras, before the camera is requested.
+     */
+    videoPrompt?: IDevicePermissionsState['videoPrompt'];
 }
 
 const useStyles = makeStyles()(() => {
@@ -75,9 +89,11 @@ function VideoSettingsPopup({
     children,
     isOpen,
     onClose,
+    onHidePermissionPrompt,
     popupPlacement,
     setVideoInputDevice,
-    videoDeviceIds
+    videoDeviceIds,
+    videoPrompt
 }: IProps) {
     const { classes, cx } = useStyles();
 
@@ -85,15 +101,19 @@ function VideoSettingsPopup({
         <div className = { cx('video-preview', classes.container) }>
             <Popover
                 allowClick = { true }
-                content = { <VideoSettingsContent
+                content = { videoPrompt ? <PermissionPromptPopover
+
+                    // A new explanation starts over instead of keeping the answers of the one it replaces.
+                    key = { videoPrompt.id }
+                    { ...videoPrompt } /> : <VideoSettingsContent
                     currentCameraDeviceId = { currentCameraDeviceId }
                     setVideoInputDevice = { setVideoInputDevice }
                     toggleVideoSettings = { onClose }
                     videoDeviceIds = { videoDeviceIds } /> }
-                headingId = 'video-settings-button'
-                onPopoverClose = { onClose }
+                headingId = { videoPrompt ? PERMISSION_PROMPT_TITLE_ID : 'video-settings-button' }
+                onPopoverClose = { videoPrompt ? onHidePermissionPrompt : onClose }
                 position = { popupPlacement }
-                role = 'menu'
+                role = { videoPrompt ? 'dialog' : 'menu' }
                 trigger = 'click'
                 visible = { isOpen }>
                 { children }
@@ -116,12 +136,14 @@ function mapStateToProps(state: IReduxState) {
         currentCameraDeviceId: getCurrentCameraDeviceId(state),
         isOpen: Boolean(getVideoSettingsVisibility(state)),
         popupPlacement: videoSpaceWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
-        videoDeviceIds: getVideoDeviceIds(state) ?? []
+        videoDeviceIds: getVideoDeviceIds(state) ?? [],
+        videoPrompt: state['features/device-permissions'].videoPrompt
     };
 }
 
 const mapDispatchToProps = {
     onClose: toggleVideoSettings,
+    onHidePermissionPrompt: hideVideoPermissionPrompt,
     setVideoInputDevice: setVideoInputDeviceAndUpdateSettings
 };
 

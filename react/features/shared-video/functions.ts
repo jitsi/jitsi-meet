@@ -1,6 +1,8 @@
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
-import { getFakeParticipants } from '../base/participants/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { getFakeParticipants, getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import {
@@ -13,24 +15,7 @@ import {
     YOUTUBE_URL_DOMAIN
 } from './constants';
 
-/**
- * Validates the entered video url.
- *
- * It returns a boolean to reflect whether the url matches the youtube regex.
- *
- * @param {string} url - The entered video link.
- * @returns {string} The youtube video id if matched.
- */
-function getYoutubeId(url: string) {
-    if (!url) {
-        return null;
-    }
-
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-    const result = url.match(p);
-
-    return result ? result[1] : null;
-}
+export * from './youtube';
 
 /**
  * Checks if the status is one that is actually sharing the video - playing, pause or start.
@@ -64,40 +49,6 @@ export function isVideoPlaying(stateful: IStateful): boolean {
 }
 
 /**
- * Extracts a Youtube id or URL from the user input.
- *
- * @param {string} input - The user input.
- * @returns {string|undefined}
- */
-export function extractYoutubeIdOrURL(input: string) {
-    if (!input) {
-        return;
-    }
-
-    const trimmedLink = input.trim();
-
-    if (!trimmedLink) {
-        return;
-    }
-
-    const youtubeId = getYoutubeId(trimmedLink);
-
-    if (youtubeId) {
-        return youtubeId;
-    }
-
-    // Check if the URL is valid, native may crash otherwise.
-    try {
-        // eslint-disable-next-line no-new
-        new URL(trimmedLink);
-    } catch (_) {
-        return;
-    }
-
-    return trimmedLink;
-}
-
-/**
  * Returns true if shared video functionality is enabled and false otherwise.
  *
  * @param {IStateful} stateful - - The redux store or {@code getState} function.
@@ -109,6 +60,58 @@ export function isSharedVideoEnabled(stateful: IStateful) {
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
     return !disableThirdPartyRequests;
+}
+
+/**
+ * Returns true if the room restricts video sharing and the local participant
+ * does not have the permission for it.
+ *
+ * The restriction is read from the room metadata, which a moderator toggles at
+ * runtime. The server applies the same check in mod_filter_messages: a
+ * participant without the share-video permission is blocked, the same as for
+ * the chat restrictions. The server pushes the default permissions of a
+ * participant that it promotes to moderator, so this selector follows a promotion.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isShareVideoDisabled(stateful: IStateful) {
+    const state = toState(stateful);
+
+    if (!state['features/shared-video'].sharedVideoRestricted) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SHARE_VIDEO, false);
+}
+
+/**
+ * Returns true if the local participant may share a video: video sharing is
+ * enabled and the room does not restrict it for the local participant.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function canShareVideo(stateful: IStateful) {
+    const state = toState(stateful);
+
+    return isSharedVideoEnabled(state) && !isShareVideoDisabled(state);
+}
+
+/**
+ * Returns true if the shared video button should be shown. The owner of a
+ * video stops it with the same button, thus it stays visible while the local
+ * participant shares a video, also when the room restricts video sharing for them.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isSharedVideoButtonVisible(stateful: IStateful) {
+    const state = toState(stateful);
+    const { ownerId, status } = state['features/shared-video'];
+    const isLocalOwner = Boolean(ownerId) && ownerId === getLocalParticipant(state)?.id;
+
+    return canShareVideo(state) || (isSharedVideoEnabled(state) && isLocalOwner && isSharingStatus(status ?? ''));
 }
 
 /**

@@ -33,6 +33,18 @@ export function parseJWTFromURLParams(url: URL | typeof window.location = window
 }
 
 /**
+ * Removes the signature from every JSON Web Token (JWT) in a value, for example
+ * a URL with a jwt param, so that the value can be logged. A JWT with a valid
+ * signature is a bearer credential. The header and the payload alone are not.
+ *
+ * @param {URL|string} value - The value which may contain JWTs.
+ * @returns {string} The value as a string, with the JWT signatures removed.
+ */
+export function stripJwtSignatures(value?: URL | string) {
+    return String(value).replace(/(eyJ[\w-]*\.[\w-]*)\.[\w-]+/g, '$1');
+}
+
+/**
  * Returns the user name after decoding the jwt.
  *
  * @param {IReduxState} state - The app state.

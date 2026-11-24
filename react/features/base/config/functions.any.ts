@@ -1,7 +1,4 @@
-// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
 import { isEmpty, mergeWith, pick } from 'lodash-es';
 
@@ -29,6 +26,10 @@ import logger from './logger';
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
 
+// buildConfigURL lives in its own module so the preload bundle, which runs before the app bundle,
+// can compute the exact same config.js URL without pulling in the rest of this feature.
+export { buildConfigURL } from './buildConfigURL';
+
 /**
  * Create a "fake" configuration object for the given base URL. This is used in case the config
  * couldn't be loaded in the welcome page, so at least we have something to try with.
@@ -49,6 +50,21 @@ export function createFakeConfig(baseURL: string) {
             enabled: true
         }
     };
+}
+
+/**
+ * Returns the name of the window event on which the cleanup for a page that goes away has to run. By default that is
+ * {@code beforeunload}. With {@code disableBeforeUnloadHandlers} it is {@code pagehide}, which is fired only when the
+ * page really goes away. It is not {@code unload}: browsers are removing that event and Chrome no longer fires it by
+ * default, so a cleanup registered there would never run.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string} The name of the event.
+ */
+export function getPageUnloadEventName(state: IReduxState): 'beforeunload' | 'pagehide' {
+    const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+
+    return disableBeforeUnloadHandlers ? 'pagehide' : 'beforeunload';
 }
 
 /**
@@ -265,7 +281,7 @@ export function isDisplayNameVisible(state: IReduxState): boolean {
  */
 export function isAdvancedAudioSettingsEnabled(state: IReduxState): boolean {
 
-    return !browser.isWebKitBased() && Boolean(state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings);
+    return !browser.isWebKitBased() && state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings !== false;
 }
 
 /**
@@ -385,10 +401,12 @@ export function setConfigFromURLParams(
             + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
     }
 
-    // When not in an iframe, start without media if the pre-join page is not enabled.
+    // When not in an iframe, start without media if the pre-join page is not enabled. The value comes from parsed JSON,
+    // so it can be any type. Use the same test as isPrejoinEnabledInConfig: undefined and null fall back to enabled,
+    // any other value counts as truthy or falsy.
     if (!isEmbedded()
-            && ('config.prejoinConfig' in params || 'config.prejoinConfig.enabled' in params)
-            && config.prejoinConfig?.enabled === false) {
+            && json.config?.prejoinConfig?.enabled !== undefined
+            && !(config.prejoinConfig?.enabled ?? true)) {
         logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
         config.disableInitialGUM = true;
     }

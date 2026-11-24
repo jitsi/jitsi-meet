@@ -9,11 +9,10 @@ end
 
 local json = require "cjson.safe";
 local http = require "net.http";
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 local util = module:require 'util';
-local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
-local is_vpaas = util.is_vpaas;
+local starts_with = util.starts_with;
 
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
@@ -40,33 +39,36 @@ local cache_timer = module:add_timer(CACHE_DURATION, function()
     -- skipping return value stops the timer
 end);
 
+-- whether the tenant is a jaas one, case-insensitive as the room address is built from the lowercased sub
+local function is_jaas_tenant(tenant)
+    return type(tenant) == 'string' and starts_with(tenant:lower(), 'vpaas-magic-cookie-');
+end
+
 local function shouldAllow(session)
     local token = session.auth_token;
 
-    if token ~= nil and session.jitsi_web_query_room and session.jitsi_web_query_prefix then
+    if token ~= nil then
         -- cached tokens are banned
         if cache:get(token) then
             return false;
         end
 
-        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
-        if not room then
-            return nil;
-        end
-        if not is_vpaas(room) then
+        -- jaas sessions are detected by the tenant from the verified token (sub claim) or by the tenant
+        -- from the url, so a session is checked when either of them is a jaas one
+        if not is_jaas_tenant(session.jitsi_meet_domain) and not is_jaas_tenant(session.jitsi_web_query_prefix) then
             return true;
         end
 
         -- TODO: do this only for enabled customers
         ban_check_count();
-        local function cb(content, code, response, request)
+        local function cb(content, code)
             if code == 200 then
 
                 local r = json.decode(content)
-                if r['access'] ~= nil and r['access'] == false then
-                    module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
+                if r ~= nil and r['access'] == false then
+                    module:log("info", "User is banned room:%s tenant:%s sub:%s user_id:%s group:%s",
                         session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                        inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
+                        tostring(session.jitsi_meet_domain), serialize(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
 
                     ban_check_users_banned_count();
 
@@ -81,9 +83,9 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s response:%s request:%s",
-                    code, ACCESS_MANAGER_URL, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                    inspect(response), inspect(request), content);
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s sub:%s token:%s",
+                    code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
+                    tostring(session.jitsi_meet_domain), tostring(util.strip_jwt_signature(token)));
             end
         end
 

@@ -7,7 +7,7 @@ import { TINTED_VIEW_DEFAULT } from './styles';
  * Base style for the {@code TintedView} component.
  */
 const BASE_STYLE = {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center'
 };

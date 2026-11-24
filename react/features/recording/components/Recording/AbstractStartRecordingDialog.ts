@@ -5,16 +5,56 @@ import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
+import { DEFAULT_LANGUAGE } from '../../../base/i18n/i18next';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { updateDropboxToken } from '../../../dropbox/actions';
-import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
+import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions';
+import { getDropboxData } from '../../../dropbox/functions.any';
+import { isE2EEOnInMeeting } from '../../../e2ee/functions';
+import { isFollowMeActive, isFollowMeRecorderActive } from '../../../follow-me/functions';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
+import {
+    canAddTranscriber,
+    isRecorderTranscriptionsRunning,
+    isSubtitlesOnlyTranscriberRunning
+} from '../../../transcribing/functions';
+import {
+    setSelectedRecordingService,
+    setStartRecordingIntent,
+    setStopRecordingIntent,
+    startLocalVideoRecording,
+    stopLocalVideoRecording
+} from '../../actions.any';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
-import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
+import {
+    IRecordingDialogFacts,
+    IRecordingDialogModel,
+    getActiveSession,
+    getRecordingDialogModel,
+    hasRecordingOrTranscriptionFeature,
+    isLiveStreamingRunning,
+    isRecordingRunning,
+    isRecordingSharingEnabled,
+    shouldAutoTranscribeOnRecord,
+    supportsLocalRecording
+} from '../../functions';
+import { ISessionData } from '../../reducer';
+
+/**
+ * The set of start/stop operations to apply on the running services. Each
+ * operation is applied only when its flag is true.
+ */
+interface IRecordingChanges {
+    startRecording?: boolean;
+    startTranscription?: boolean;
+    stopRecording?: boolean;
+    stopTranscription?: boolean;
+}
 
 export interface IProps extends WithTranslation {
 
@@ -24,9 +64,14 @@ export interface IProps extends WithTranslation {
     _appKey: string;
 
     /**
-     * Requests transcribing when recording is turned on.
+     * Whether a recording started now should start the transcription along with it.
      */
     _autoTranscribeOnRecord: boolean;
+
+    /**
+     * Whether the local participant can start/stop transcription.
+     */
+    _canTranscribe: boolean;
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -37,6 +82,16 @@ export interface IProps extends WithTranslation {
      * Whether subtitles should be displayed or not.
      */
     _displaySubtitles?: boolean;
+
+    /**
+     * Whether anyone in the meeting has end-to-end encryption on, which rules out starting transcription.
+     */
+    _e2eeOn: boolean;
+
+    /**
+     * Active FILE recording session, needed to stop recording.
+     */
+    _fileRecordingSession?: ISessionData;
 
     /**
      * Whether to show file recordings service, even if integrations
@@ -51,19 +106,64 @@ export interface IProps extends WithTranslation {
     _fileRecordingsServiceSharingEnabled: boolean;
 
     /**
+     * Whether any moderator has the regular Follow Me feature active.
+     */
+    _followMeActive: boolean;
+
+    /**
+     * Whether any moderator has the recorder Follow Me feature active.
+     */
+    _followMeRecorderActive: boolean;
+
+    /**
+     * Whether the local participant has the recorder Follow Me setting enabled.
+     */
+    _followMeRecorderEnabled: boolean;
+
+    /**
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean;
 
     /**
-     * Whether or not local recording is enabled.
+     * Whether a live stream session is currently active.
      */
-    _localRecordingEnabled: boolean;
+    _isLiveStreamRunning: boolean;
+
+    /**
+     * Whether the local participant is a moderator.
+     */
+    _isModerator: boolean;
+
+    /**
+     * Whether the meeting is a vpaas one.
+     */
+    _isVpaas: boolean;
+
+    /**
+     * Whether a local recording is currently active.
+     */
+    _localRecording?: boolean;
+
+    /**
+     * Whether local recording is enabled and supported here.
+     */
+    _localRecordingAvailable: boolean;
 
     /**
      * The dropbox refresh token.
      */
     _rToken: string;
+
+    /**
+     * Whether the recording JWT feature is enabled.
+     */
+    _recordingFeatureEnabled: boolean;
+
+    /**
+     * Whether file recording is currently running.
+     */
+    _recordingRunning?: boolean;
 
     /**
      * Whether or not the local participant is screensharing.
@@ -81,6 +181,12 @@ export interface IProps extends WithTranslation {
     _subtitlesLanguage: string | null;
 
     /**
+     * Whether a transcriber is in the meeting only for the subtitles, in which case a recorder
+     * transcription cannot be started.
+     */
+    _subtitlesOnlyTranscriberRunning: boolean;
+
+    /**
      * The dropbox access token.
      */
     _token: string;
@@ -91,6 +197,11 @@ export interface IProps extends WithTranslation {
     _tokenExpireDate?: number;
 
     /**
+     * Whether transcription is currently running.
+     */
+    _transcriptionRunning?: boolean;
+
+    /**
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
@@ -98,9 +209,10 @@ export interface IProps extends WithTranslation {
     navigation: any;
 
     /**
-     * Whether the record audio / video option is enabled by default.
+     * When false, the recording section is collapsed on open, putting the
+     * focus on the transcription section (e.g. subtitles/nudge flows).
      */
-    recordAudioAndVideo: boolean;
+    recordAudioAndVideo?: boolean;
 }
 
 interface IState {
@@ -121,6 +233,12 @@ interface IState {
     localRecordingOnlySelf: boolean;
 
     /**
+     * The language ("translation-languages:" prefixed) the transcription will
+     * be saved in.
+     */
+    selectedLanguage: string | null;
+
+    /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
     selectedRecordingService: string;
@@ -129,16 +247,6 @@ interface IState {
      * True if the user requested the service to share the recording with others.
      */
     sharingEnabled: boolean;
-
-    /**
-     * True if the user requested the service to record audio and video.
-     */
-    shouldRecordAudioAndVideo: boolean;
-
-    /**
-     * True if the user requested the service to record transcription.
-     */
-    shouldRecordTranscription: boolean;
 
     /**
      * Number of MiB of available space in user's Dropbox account.
@@ -152,7 +260,9 @@ interface IState {
 }
 
 /**
- * Component for the recording start dialog.
+ * Component for the recording & transcription dialog. Exposes independent
+ * start/stop handlers for each service plus combined "both" handlers; each
+ * handler applies its changes immediately.
  */
 class AbstractStartRecordingDialog extends Component<IProps, IState> {
     /**
@@ -164,44 +274,84 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._onSubmit = this._onSubmit.bind(this);
         this._onSelectedRecordingServiceChanged
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
         this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
-        this._onTranscriptionChange = this._onTranscriptionChange.bind(this);
-        this._onRecordAudioAndVideoChange = this._onRecordAudioAndVideoChange.bind(this);
-
-        let selectedRecordingService = '';
-
-        // Select the default recording service based on what's actually available.
-        if (this.props._fileRecordingsServiceEnabled) {
-            selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
-        } else if (this._areIntegrationsEnabled()) {
-            if (props._localRecordingEnabled && supportsLocalRecording()) {
-                selectedRecordingService = RECORDING_TYPES.LOCAL;
-            } else {
-                selectedRecordingService = RECORDING_TYPES.DROPBOX;
-            }
-        } else if (props._localRecordingEnabled && supportsLocalRecording()) {
-            selectedRecordingService = RECORDING_TYPES.LOCAL;
-        }
-        // If no service is available, selectedRecordingService stays '' and
-        // the Start Recording button will be disabled.
-
+        this._onSubtitlesLanguageChanged = this._onSubtitlesLanguageChanged.bind(this);
+        this._onStartRecording = this._onStartRecording.bind(this);
+        this._onStopRecording = this._onStopRecording.bind(this);
+        this._onStartTranscription = this._onStartTranscription.bind(this);
+        this._onStopTranscription = this._onStopTranscription.bind(this);
+        this._onStartBoth = this._onStartBoth.bind(this);
+        this._onStopBoth = this._onStopBoth.bind(this);
+        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
+        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
+        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
+        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
+        this._onStartBothPress = this._onStartBothPress.bind(this);
+        this._onStopBothPress = this._onStopBothPress.bind(this);
 
         this.state = {
             isTokenValid: false,
             isValidating: false,
             userName: undefined,
             sharingEnabled: true,
-            shouldRecordAudioAndVideo: this.props.recordAudioAndVideo,
-            shouldRecordTranscription: this.props._autoTranscribeOnRecord,
+            selectedLanguage: props._subtitlesLanguage
+                ?? `translation-languages:${DEFAULT_LANGUAGE}`,
             spaceLeft: undefined,
-            selectedRecordingService,
+            selectedRecordingService: getRecordingDialogModel(this._getFacts(props), {
+                isTokenValid: false,
+                isValidating: false,
+                selectedRecordingService: ''
+            }).recording.defaultService,
             localRecordingOnlySelf: false
         };
+    }
+
+    /**
+     * Gathers what the dialog knows from the redux state, as the input of the dialog model.
+     *
+     * @param {IProps} props - The props to read; defaults to this.props.
+     * @returns {IRecordingDialogFacts}
+     */
+    _getFacts(props: IProps = this.props): IRecordingDialogFacts {
+        return {
+            autoTranscribeOnRecord: props._autoTranscribeOnRecord,
+            canTranscribe: props._canTranscribe,
+            dropboxEnabled: props._isDropboxEnabled,
+            e2eeOn: props._e2eeOn,
+            fileRecordingsServiceEnabled: props._fileRecordingsServiceEnabled,
+            fileRecordingsServiceSharingEnabled: props._fileRecordingsServiceSharingEnabled,
+            followMeActive: props._followMeActive,
+            followMeRecorderActive: props._followMeRecorderActive,
+            followMeRecorderEnabled: props._followMeRecorderEnabled,
+            liveStreamRunning: props._isLiveStreamRunning,
+            localRecordingAvailable: props._localRecordingAvailable,
+            moderator: props._isModerator,
+            recordingFeatureEnabled: props._recordingFeatureEnabled,
+            recordingRunning: Boolean(props._recordingRunning),
+            transcriberBusy: props._subtitlesOnlyTranscriberRunning,
+            transcriptionRunning: Boolean(props._transcriptionRunning),
+            vpaas: props._isVpaas
+        };
+    }
+
+    /**
+     * Computes the dialog model: every decision about what is shown and what can be started, from
+     * the current props and state. Rendered by the dialog content and applied by the handlers here.
+     *
+     * @returns {IRecordingDialogModel}
+     */
+    _getModel(): IRecordingDialogModel {
+        const { isTokenValid, isValidating, selectedRecordingService } = this.state;
+
+        return getRecordingDialogModel(this._getFacts(), {
+            isTokenValid,
+            isValidating,
+            selectedRecordingService
+        });
     }
 
     /**
@@ -211,9 +361,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidMount() {
-        if (typeof this.props._token !== 'undefined') {
-            this._onTokenUpdated();
-        }
+        this._onTokenUpdated();
     }
 
     /**
@@ -226,17 +374,17 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
-    }
 
-    /**
-     * Returns true if the integrations with third party services are enabled
-     * and false otherwise.
-     *
-     * @returns {boolean} - True if the integrations with third party services
-     * are enabled and false otherwise.
-     */
-    _areIntegrationsEnabled() {
-        return this.props._isDropboxEnabled;
+        // selectedRecordingService is otherwise only ever set from props in the constructor, or by
+        // an explicit choice via _onSelectedRecordingServiceChanged. The services offered can
+        // change while the dialog is open (base/config loaded late, a live stream started or
+        // stopped), and the model then picks another service: follow it, so the selection used to
+        // start the recording is the one the storage selector shows.
+        const { selectedService } = this._getModel().recording;
+
+        if (selectedService !== this.state.selectedRecordingService) {
+            this.setState({ selectedRecordingService: selectedService });
+        }
     }
 
     /**
@@ -275,27 +423,14 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Handles transcription switch change.
+     * Handles transcription language changes.
      *
-     * @param {boolean} value - The new value.
+     * @param {string} selectedLanguage - The new ("translation-languages:"
+     * prefixed) language.
      * @returns {void}
      */
-    _onTranscriptionChange(value: boolean) {
-        this.setState({
-            shouldRecordTranscription: value
-        });
-    }
-
-    /**
-     * Handles audio and video switch change.
-     *
-     * @param {boolean} value - The new value.
-     * @returns {void}
-     */
-    _onRecordAudioAndVideoChange(value: boolean) {
-        this.setState({
-            shouldRecordAudioAndVideo: value
-        });
+    _onSubtitlesLanguageChanged(selectedLanguage: string) {
+        this.setState({ selectedLanguage });
     }
 
     /**
@@ -310,7 +445,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             return;
         }
 
-        if (typeof _token === 'undefined') {
+        // No token (mapStateToProps maps a missing one to '') means not signed in to Dropbox:
+        // there is nothing to validate.
+        if (!_token) {
             this.setState({
                 isTokenValid: false,
                 isValidating: false
@@ -346,29 +483,176 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Starts a file recording session.
+     * Starts the audio & video recording. When the deployment is configured
+     * with {@code transcription.autoTranscribeOnRecord} the transcription is
+     * started along with it.
      *
-     * @private
-     * @returns {boolean} - True (to note that the modal should be closed).
+     * @returns {boolean} - True when the action was applied.
      */
-    _onSubmit() {
+    _onStartRecording() {
+        return this._applyChanges({
+            startRecording: true,
+            startTranscription: this._getModel().transcription.startsWithRecording
+        });
+    }
+
+    /**
+     * Stops the audio & video recording, leaving a running transcription
+     * untouched.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopRecording() {
+        return this._applyChanges({ stopRecording: true });
+    }
+
+    /**
+     * Starts the transcription, leaving the recording state untouched. Does nothing while the
+     * model blocks it (the start button is disabled then).
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStartTranscription() {
+        return this._applyChanges({ startTranscription: !this._getModel().transcription.startBlocker });
+    }
+
+    /**
+     * Stops the transcription, leaving a running recording untouched.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopTranscription() {
+        return this._applyChanges({ stopTranscription: true });
+    }
+
+    /**
+     * Starts every service which is not running yet.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStartBoth() {
+        const { recording, transcription } = this._getModel();
+
+        return this._applyChanges({
+            startRecording: !recording.running,
+            startTranscription: !transcription.running && !transcription.startBlocker
+        });
+    }
+
+    /**
+     * Stops every running service.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopBoth() {
+        const { _recordingRunning, _transcriptionRunning } = this.props;
+
+        return this._applyChanges({
+            stopRecording: _recordingRunning,
+            stopTranscription: _transcriptionRunning
+        });
+    }
+
+    /**
+     * Applies the requested recording/transcription changes by starting or
+     * stopping each service accordingly.
+     *
+     * @param {IRecordingChanges} changes - Which services to start/stop.
+     * @returns {boolean} - True when the changes were applied, false when the
+     * action could not be performed (e.g. validation failure).
+     */
+    _applyChanges({
+        startRecording = false,
+        startTranscription = false,
+        stopRecording = false,
+        stopTranscription = false
+    }: IRecordingChanges) {
         const {
             _appKey,
             _conference,
             _displaySubtitles,
+            _fileRecordingSession,
             _isDropboxEnabled,
+            _localRecording,
+            _recordingRunning = false,
             _rToken,
             _subtitlesLanguage,
             _token,
+            _transcriptionRunning = false,
             dispatch
         } = this.props;
-        let appData;
-        const attributes: {
-            type?: string;
-        } = {};
 
-        if (this.state.shouldRecordAudioAndVideo) {
-            switch (this.state.selectedRecordingService) {
+        const {
+            localRecordingOnlySelf,
+            selectedLanguage,
+            selectedRecordingService,
+            sharingEnabled
+        } = this.state;
+
+        // A local recording is not a file recording session: it is not announced through the room
+        // metadata, and the start/stop coordinator never waits for it.
+        const fileRecordingStarting = startRecording && selectedRecordingService !== RECORDING_TYPES.LOCAL;
+
+        // Pre-seed intents synchronously — must happen before any async operations
+        // so the sound/notification coordinator knows what to wait for.
+        if (fileRecordingStarting || startTranscription) {
+            dispatch(setStartRecordingIntent({
+                recording: fileRecordingStarting,
+                transcription: startTranscription
+            }));
+        }
+        if ((stopRecording || stopTranscription) && !_localRecording) {
+            dispatch(setStopRecordingIntent({
+                recording: stopRecording && Boolean(_fileRecordingSession),
+                transcription: stopTranscription
+            }));
+        }
+
+        // === Stop recording ===
+        if (stopRecording) {
+            sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
+            if (_localRecording) {
+                dispatch(stopLocalVideoRecording());
+            } else if (_fileRecordingSession) {
+                _conference?.stopRecording(_fileRecordingSession.id);
+                this._toggleScreenshotCapture();
+                // Keep isTranscribingEnabled in the metadata if transcription is still running,
+                // so the metadata listener does not see a false transition on that field.
+                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: false,
+                    ...(_transcriptionRunning && !stopTranscription && { isTranscribingEnabled: true })
+                });
+            }
+        }
+
+        // === Stop transcription ===
+        if (stopTranscription) {
+            const recordingStillRunning = _recordingRunning && !stopRecording;
+
+            // When recording is still running, skip the subtitles-internal metadata write and do
+            // a single write ourselves. This prevents two consecutive metadata transitions
+            // (false→false on isRecordingRequested, then false→true) from firing spurious
+            // "recording stopped" and "recording started" sounds and notifications.
+            // Spread existing recording metadata so we only change isTranscribingEnabled —
+            // hardcoding isRecordingRequested: true would cause a spurious recordingStarting
+            // transition if that field was not previously set in the server metadata.
+            dispatch(setRequestingSubtitles(false, _displaySubtitles, _subtitlesLanguage, true, false, recordingStillRunning));
+            if (recordingStillRunning) {
+                const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
+                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    ...existingRecMeta,
+                    isTranscribingEnabled: false
+                });
+            }
+        }
+
+        // === Start recording ===
+        if (startRecording) {
+            let appData;
+            const attributes: { type?: string; } = {};
+
+            switch (selectedRecordingService) {
             case RECORDING_TYPES.DROPBOX: {
                 if (_isDropboxEnabled && _token) {
                     appData = JSON.stringify({
@@ -383,50 +667,62 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                     });
                     attributes.type = RECORDING_TYPES.DROPBOX;
                 } else {
-                    dispatch(showErrorNotification({
-                        titleKey: 'dialog.noDropboxToken'
-                    }));
+                    dispatch(showErrorNotification({ titleKey: 'dialog.noDropboxToken' }));
 
-                    return;
+                    return false;
                 }
                 break;
             }
             case RECORDING_TYPES.JITSI_REC_SERVICE: {
                 appData = JSON.stringify({
                     'file_recording_metadata': {
-                        'share': this.state.sharingEnabled
+                        'share': sharingEnabled
                     }
                 });
                 attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
                 break;
             }
             case RECORDING_TYPES.LOCAL: {
-                dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
-                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: this.state.shouldRecordTranscription
+                // The local recording middleware notifies about it on its own.
+                dispatch(startLocalVideoRecording(localRecordingOnlySelf));
+                break;
+            }
+            }
+
+            if (fileRecordingStarting) {
+                sendAnalytics(createRecordingDialogEvent('start', 'confirm.button', attributes));
+                this._toggleScreenshotCapture();
+                _conference?.startRecording({
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData
                 });
-
-                return true;
             }
-            }
-
-            sendAnalytics(
-                createRecordingDialogEvent('start', 'confirm.button', attributes)
-            );
-
-            this._toggleScreenshotCapture();
-            _conference?.startRecording({
-                mode: JitsiRecordingConstants.mode.FILE,
-                appData
-            });
         }
 
-        if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-                && this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage, true));
-        } else {
+        // === Handle transcription start ===
+        // Requesting the subtitles is what invites the transcriber, whatever recording starts along
+        // with it (the storage service only matters for the recording). It also writes
+        // isTranscribingEnabled to the room metadata, along with isRecordingRequested for a file
+        // recording started now or already running. A local recording is never announced through
+        // isRecordingRequested: remote participants seeing it would wait for a file recording
+        // session that never comes before notifying about the transcription.
+        if (startTranscription) {
+            dispatch(setRequestingSubtitles(
+                true,
+                _displaySubtitles,
+                selectedLanguage,
+                true,
+                fileRecordingStarting || Boolean(_fileRecordingSession)));
+        } else if (fileRecordingStarting) {
+            // Recording started without a transcription change: announce it in room metadata so the
+            // other participants get the recording start notification/sound (this is what the
+            // metadata listener turns into the remote notification). Preserve any existing
+            // isTranscribingEnabled so a running transcription is not signalled as stopped.
+            const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
             _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: this.state.shouldRecordTranscription
+                ...existingRecMeta,
+                isRecordingRequested: true
             });
         }
 
@@ -440,6 +736,69 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _toggleScreenshotCapture() {
         // To be implemented by subclass.
+    }
+
+    /**
+     * Dismisses the dialog/screen once an action from the list below has been applied.
+     *
+     * @returns {void}
+     */
+    _dismiss() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Starts the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartRecordingPress() {
+        this._onStartRecording() && this._dismiss();
+    }
+
+    /**
+     * Stops the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopRecordingPress() {
+        this._onStopRecording() && this._dismiss();
+    }
+
+    /**
+     * Starts the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartTranscriptionPress() {
+        this._onStartTranscription() && this._dismiss();
+    }
+
+    /**
+     * Stops the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopTranscriptionPress() {
+        this._onStopTranscription() && this._dismiss();
+    }
+
+    /**
+     * Starts every service which is not running yet and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartBothPress() {
+        this._onStartBoth() && this._dismiss();
+    }
+
+    /**
+     * Stops every running service and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopBothPress() {
+        this._onStopBoth() && this._dismiss();
     }
 
     /**
@@ -472,20 +831,44 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _language: _subtitlesLanguage
     } = state['features/subtitles'];
 
+    // Only treat cloud recordings as "running" for users who can actually control them.
+    // Non-mods without the recording/transcription JWT feature cannot stop cloud sessions,
+    // so from their perspective only their own local recording counts as "running".
+    const canManageRecordingOrTranscription = isLocalParticipantModerator(state)
+        || hasRecordingOrTranscriptionFeature(state);
+
     return {
         _appKey: dropbox.appKey ?? '',
         _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
+        _e2eeOn: isE2EEOnInMeeting(state),
+        _canTranscribe: canAddTranscriber(state),
         _conference: state['features/base/conference'].conference,
         _displaySubtitles,
+        _fileRecordingSession: getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
+        _followMeActive: isFollowMeActive(state),
+        _followMeRecorderActive: isFollowMeRecorderActive(state),
+        _followMeRecorderEnabled: Boolean(state['features/follow-me'].followMeRecorderEnabled),
+        _isModerator: isLocalParticipantModerator(state),
         _isDropboxEnabled: isDropboxEnabled(state),
-        _localRecordingEnabled: !localRecording?.disable,
+        _isLiveStreamRunning: isLiveStreamingRunning(state),
+        _isVpaas: isVpaasMeeting(state),
+        _localRecording: Boolean(state['features/recording'].localRecordingRunning),
+        _localRecordingAvailable: !localRecording?.disable && supportsLocalRecording(),
+        _recordingRunning: canManageRecordingOrTranscription
+            ? isRecordingRunning(state)
+            : Boolean(state['features/recording'].localRecordingRunning),
+        _recordingFeatureEnabled: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
         _rToken: state['features/dropbox'].rToken ?? '',
+        _transcriptionRunning: canManageRecordingOrTranscription
+            ? isRecorderTranscriptionsRunning(state)
+            : false,
         recordAudioAndVideo:
             isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
                 ? _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true : false,
         _subtitlesLanguage,
+        _subtitlesOnlyTranscriberRunning: isSubtitlesOnlyTranscriberRunning(state),
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token ?? ''
     };

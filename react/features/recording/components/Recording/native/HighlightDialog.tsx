@@ -22,9 +22,11 @@ const HighlightDialog = () => {
     }, [ dispatch ]);
 
     return (
-        <BottomSheet>
+        <BottomSheet addScrollViewPadding = { false }>
             <View style = { styles.highlightDialog as StyleProp<ViewStyle> }>
-                <Text style = { styles.highlightDialogHeading as StyleProp<TextStyle> }>
+                <Text
+                    accessibilityRole = 'header'
+                    style = { styles.highlightDialogHeading as StyleProp<TextStyle> }>
                     { `${t('recording.highlightMoment')}?` }
                 </Text>
                 <Text style = { styles.highlightDialogText as StyleProp<TextStyle> }>

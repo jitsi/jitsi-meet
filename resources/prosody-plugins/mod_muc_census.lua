@@ -1,3 +1,11 @@
+-- USAGE / DEPLOYMENT
+--   This endpoint has no authentication. It is meant to be used only by
+--   server admins and trusted internal services (e.g. monitoring) over a
+--   controlled network path. It is NOT safe to make it publicly accessible:
+--   do not proxy it from the public web server (nginx) and do not expose
+--   Prosody's HTTP ports (5280/5281) to the internet. Restrict access at the
+--   web server or with network filters.
+--
 -- provides an http endpoint at /room-census that reports list of rooms with the
 -- number of members and created date in this JSON format:
 --
@@ -83,9 +91,9 @@ function handle_get_room_census(event)
         end
     end
 
-    census_resp = json.encode({
-        room_census = room_data;
-    });
+    -- cjson encodes an empty Lua table as {} (object); force array literal.
+    local rc_json = #room_data == 0 and "[]" or json.encode(room_data);
+    census_resp = '{"room_census":' .. rc_json .. '}';
     return { status_code = 200; body = census_resp }
 end
 

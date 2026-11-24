@@ -10,7 +10,10 @@ setTestProperties(__filename, {
 
 describe('Participants presence', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
+        // The prejoin screen registers the local participant in the iframe API as 'local', so make sure it is shown.
+        await ensureTwoParticipants(
+            { configOverwrite: { prejoinConfig: { enabled: true } } },
+            { name: 'p1', iFrameApi: true });
 
         const { p1, p2 } = ctx;
 
@@ -31,7 +34,7 @@ describe('Participants presence', () => {
 
     it('participants info',
         async () => {
-            const { p1, roomName } = ctx;
+            const { p1, p2, roomName } = ctx;
             const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
 
             expect(roomsInfo).toBeDefined();
@@ -50,6 +53,15 @@ describe('Participants presence', () => {
 
             expect(roomsInfo.participants.length).toBe(2);
             expect(await p1.getIframeAPI().getNumberOfParticipants()).toBe(2);
+
+            const participants = await p1.getIframeAPI().getParticipantsInfo();
+            const ids = participants.map(participant => participant.participantId);
+
+            // The prejoin screen registers the local participant as 'local'. That entry must be gone after joining.
+            expect(ids).not.toContain('local');
+            expect(ids).toContain(p1EpId);
+            expect(ids).toContain(await p2.getEndpointId());
+            expect(participants.length).toBe(2);
         }
     );
 
@@ -69,8 +81,49 @@ describe('Participants presence', () => {
         expect((await p1.getIframeAPI().getEventResult('participantsPaneToggled'))?.open).toBe(false);
     });
 
+    it('displayName', async () => {
+        const { p1, p2 } = ctx;
+        const newName = 'AliceInWonderland';
+        const p1EndpointId = await p1.getEndpointId();
+
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
+        await p1.getIframeAPI().addEventListener('displayNameChange');
+        await p2.getIframeAPI().addEventListener('displayNameChange');
+        await p1.getIframeAPI().clearEventResults('displayNameChange');
+        await p2.getIframeAPI().clearEventResults('displayNameChange');
+
+        await p1.getIframeAPI().executeCommand('displayName', newName);
+
+        const p1Event: { displayname: string; formattedDisplayName: string; id: string; }
+            = await p1.getIframeAPI().waitForEventResult(
+                'displayNameChange',
+                'displayNameChange event was not received on p1'
+            );
+
+        expect(p1Event.id).toBe(p1EndpointId);
+        expect(p1Event.displayname).toBe(newName);
+
+        const p2Event: { displayname: string; formattedDisplayName: string; id: string; }
+            = await p2.getIframeAPI().waitForEventResult(
+                'displayNameChange',
+                'displayNameChange event was not received on p2'
+            );
+
+        expect(p2Event.id).toBe(p1EndpointId);
+        expect(p2Event.displayname).toBe(newName);
+
+        await p1.switchToIFrame();
+        expect(await p1.getLocalDisplayName()).toBe(newName);
+
+        await p2.switchToIFrame();
+        expect(await p2.getFilmstrip().getRemoteDisplayName(p1EndpointId)).toBe(newName);
+    });
+
     it('overwrite names', async () => {
         const { p1, p2 } = ctx;
+
+        await p1.switchToMainFrame();
 
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
@@ -93,6 +146,65 @@ describe('Participants presence', () => {
 
         expect(await p1.getFilmstrip().getRemoteDisplayName(p2EpId)).toBe(newP2Name);
 
+    });
+
+    it('email', async () => {
+        const { p1 } = ctx;
+        const testEmail = 'alice@example.com';
+        const p1EndpointId = await p1.getEndpointId();
+
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().addEventListener('emailChange');
+        await p1.getIframeAPI().clearEventResults('emailChange');
+        await p1.getIframeAPI().executeCommand('email', testEmail);
+
+        const emailEvent: { email: string; id: string; }
+            = await p1.getIframeAPI().waitForEventResult(
+                'emailChange',
+                'emailChange event was not received on p1'
+            );
+
+        expect(emailEvent.id).toBe(p1EndpointId);
+        expect(emailEvent.email).toBe(testEmail);
+
+        await p1.switchToIFrame();
+        await p1.getToolbar().clickProfileButton();
+
+        const settingsDialog = p1.getSettingsDialog();
+
+        await settingsDialog.waitForDisplay();
+        const emailValue = await settingsDialog.getEmail();
+
+        await settingsDialog.clickCloseButton();
+
+        expect(emailValue).toBe(testEmail);
+    });
+
+    it('accepts the toggleShareAudio command', async () => {
+        const { p1 } = ctx;
+
+        await p1.switchToMainFrame();
+
+        // executeCommand() logs this error synchronously when a command is missing from its commands map.
+        const errors: string[] = await p1.execute(() => {
+            const logged: string[] = [];
+            const originalError = console.error;
+
+            console.error = (...args: any[]) => {
+                logged.push(args.join(' '));
+                originalError(...args);
+            };
+
+            try {
+                (window as any).jitsiAPI.executeCommand('toggleShareAudio');
+            } finally {
+                console.error = originalError;
+            }
+
+            return logged;
+        });
+
+        expect(errors).not.toContain('Not supported command name.');
     });
 
     it('hangup', async () => {

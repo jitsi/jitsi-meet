@@ -5,7 +5,6 @@ import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { isCloudRecordingRunning, isLiveStreamingButtonVisible, isLiveStreamingRunning } from '../../functions';
 
 import { getLiveStreaming } from './functions';
@@ -137,8 +136,8 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         });
     }
 
-    // disable the button if the recording is running.
-    if (visible && (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state))) {
+    // disable the button if cloud recording is running.
+    if (visible && isCloudRecordingRunning(state)) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }

@@ -11,13 +11,33 @@ import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { RECEIVE_POLL } from './actionTypes';
-import { clearPolls, receiveAnswer, receivePoll } from './actions';
-import { IIncomingAnswerData } from './types';
+import { clearPolls, receiveAnswer, receivePoll, receivePollClosed } from './actions';
+import { IAnswerData, IIncomingAnswerData } from './types';
 
 /**
  * The maximum number of answers a poll can have.
  */
 const MAX_ANSWERS = 32;
+
+/**
+ * Normalizes the answers received for a poll, keeping only the expected fields
+ * and shapes. Answers arrive from remote participants and cannot be trusted to
+ * match the expected structure, so we coerce the name to a string and only keep
+ * voters when it is an array.
+ *
+ * @param {any} answers - The raw answers array carried by the polls message.
+ * @returns {Array<IAnswerData>}
+ */
+function _sanitizeAnswers(answers: any): Array<IAnswerData> {
+    if (!Array.isArray(answers)) {
+        return [];
+    }
+
+    return answers.slice(0, MAX_ANSWERS).map((answer: any) => ({
+        name: String(answer?.name ?? ''),
+        voters: Array.isArray(answer?.voters) ? answer.voters : undefined
+    }));
+}
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
@@ -38,6 +58,14 @@ StateListenerRegistry.register(
                 conference.on(JitsiConferenceEvents.POLL_ANSWER_RECEIVED, (data: any) => {
                     _handleReceivedPollsAnswer(data, dispatch, getState);
                 });
+
+                // A lib-jitsi-meet without the event does not support closing polls.
+                if (JitsiConferenceEvents.POLL_CLOSED) {
+                    conference.on(JitsiConferenceEvents.POLL_CLOSED, ({ answers, pollId }: any) => {
+                        typeof pollId === 'string' && dispatch(receivePollClosed(pollId,
+                            Array.isArray(answers) ? _sanitizeAnswers(answers) : undefined));
+                    });
+                }
             }
         }
     });
@@ -82,14 +110,16 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
         return;
     }
 
-    const { pollId, answers, senderId, question, history } = data;
+    const { pollId, answers, senderId, question, history, closed, singleAnswer } = data;
     const poll = {
         changingVote: false,
+        closed: closed === true,
         senderId,
         showResults: false,
         lastVote: null,
         question,
-        answers: answers.slice(0, MAX_ANSWERS),
+        answers: _sanitizeAnswers(answers),
+        singleAnswer: singleAnswer === true,
         saved: false,
         editing: false,
         pollId
@@ -123,7 +153,7 @@ function _handleReceivedPollsAnswer(data: any, dispatch: IStore['dispatch'], get
     const { pollId, answers, senderId, senderName } = data;
 
     const receivedAnswer: IIncomingAnswerData = {
-        answers: answers.slice(0, MAX_ANSWERS).map(Boolean),
+        answers: Array.isArray(answers) ? answers.slice(0, MAX_ANSWERS).map(Boolean) : [],
         pollId,
         senderId,
         voterName: getParticipantById(getState(), senderId)

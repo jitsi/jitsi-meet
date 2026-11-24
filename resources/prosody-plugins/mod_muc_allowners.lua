@@ -155,18 +155,20 @@ function filter_admin_set_query(event)
     local room_jid = jid_bare(stanza.attr.to);
     local room = get_room_from_jid(room_jid);
 
-    local item = stanza.tags[1].tags[1];
-    local _aff = item.attr.affiliation;
-
     -- if it is a moderated room we skip it
     if room and is_moderated(room.jid) then
         return nil;
     end
 
-    -- any revoking is disabled, everyone should be owners
-    if _aff == 'none' or _aff == 'outcast' or _aff == 'member' then
-        origin.send(st.error_reply(stanza, "auth", "forbidden"));
-        return true;
+    for i=1,#stanza.tags[1] do
+        local item = stanza.tags[1].tags[i];
+        local _aff = item.attr.affiliation;
+
+        -- any revoking is disabled, everyone should be owners
+        if _aff == 'none' or _aff == 'outcast' or _aff == 'member' then
+            origin.send(st.error_reply(stanza, "auth", "forbidden"));
+            return true;
+        end
     end
 end
 

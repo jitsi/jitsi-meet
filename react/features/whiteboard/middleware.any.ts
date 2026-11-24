@@ -41,13 +41,25 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
 
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
+        const newCollabDetails = metadata?.[WHITEBOARD_ID]?.collabDetails;
 
-        if (metadata?.[WHITEBOARD_ID]) {
+        // Only react when a *new* whiteboard collaboration session is announced. Otherwise unrelated
+        // metadata updates (e.g. toggling the lobby) would re-open a whiteboard the user had closed.
+        const previousCollabDetails = state['features/base/conference'].metadata?.[WHITEBOARD_ID]?.collabDetails;
+
+        if (newCollabDetails
+            && (newCollabDetails.roomId !== previousCollabDetails?.roomId
+                || newCollabDetails.roomKey !== previousCollabDetails?.roomKey)) {
             store.dispatch(setupWhiteboard({
-                collabDetails: metadata[WHITEBOARD_ID].collabDetails,
+                collabDetails: newCollabDetails,
                 collabServerUrl: generateCollabServerUrl(store.getState())
             }));
-            store.dispatch(setWhiteboardOpen(true));
+
+            // Prevents a second navigate() call on mobile
+            // that would reload the WebView and disconnect the active collab session.
+            if (!isWhiteboardOpen(store.getState())) {
+                store.dispatch(setWhiteboardOpen(true));
+            }
         }
 
         break;

@@ -67,6 +67,7 @@ function Preview(props: IProps) {
                 )
                 : (
                     <Avatar
+                        accessibilityAnnounceName = { true }
                         className = 'premeeting-screen-avatar'
                         displayName = { name }
                         participantId = { _participantId }

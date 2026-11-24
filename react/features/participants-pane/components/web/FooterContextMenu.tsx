@@ -152,6 +152,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
 
     return (
         <ContextMenu
+            accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
             activateFocusTrap = { true }
             className = { classes.contextMenu }
             hidden = { !isOpen }

@@ -1,11 +1,11 @@
-import { NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainerRef, StackActions } from '@react-navigation/native';
 import React from 'react';
 
 import { IStore } from '../../app/types';
 import { IStateful } from '../../base/app/types';
+import { _sendReadyToClose } from '../../base/conference/functions';
 import { toState } from '../../base/redux/functions';
 import { isWelcomePageEnabled } from '../../welcome/functions';
-import { _sendReadyToClose } from '../external-api/functions';
 
 import { screen } from './routes';
 
@@ -21,6 +21,28 @@ export const rootNavigationRef = React.createRef<NavigationContainerRef<any>>();
  */
 export function navigateRoot(name: string, params?: Object) {
     return rootNavigationRef.current?.navigate(name, params);
+}
+
+/**
+ * Replaces the currently focused screen in the root navigation stack.
+ *
+ * @param {string} name - Destination route name.
+ * @param {Object} params - Params to pass to the destination route.
+ * @returns {void}
+ */
+export function replaceRoot(name: string, params?: Object) {
+    return rootNavigationRef.current?.dispatch(StackActions.replace(name, params));
+}
+
+/**
+ * Pops the root navigation stack back to an existing screen.
+ *
+ * @param {string} name - Destination route name.
+ * @param {Object} params - Params to pass to the destination route.
+ * @returns {void}
+ */
+export function popToRoot(name: string, params?: Object) {
+    return rootNavigationRef.current?.dispatch(StackActions.popTo(name, params));
 }
 
 /**
@@ -43,7 +65,8 @@ export function goBackToRoot(stateful: IStateful, dispatch: IStore['dispatch']) 
     const state = toState(stateful);
 
     if (isWelcomePageEnabled(state)) {
-        navigateRoot(screen.welcome.main);
+        // popTo, because navigate no longer pops back to an existing screen.
+        popToRoot(screen.welcome.main);
     } else {
         // For JitsiSDK, WelcomePage is not available
         _sendReadyToClose(dispatch);

@@ -74,3 +74,19 @@ export const GOOGLE_SCOPE_USERINFO = 'https://www.googleapis.com/auth/userinfo.e
  */
 export const GOOGLE_SCOPE_YOUTUBE
     = 'https://www.googleapis.com/auth/youtube.readonly';
+
+/**
+ * The error type reported by Google Identity Services when the user closes the
+ * sign in popup.
+ *
+ * @type {string}
+ */
+export const GOOGLE_POPUP_CLOSED = 'popup_closed';
+
+/**
+ * The error type reported by Google Identity Services when the sign in popup
+ * could not be opened, for example because it was blocked.
+ *
+ * @type {string}
+ */
+export const GOOGLE_POPUP_FAILED_TO_OPEN = 'popup_failed_to_open';

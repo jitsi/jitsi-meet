@@ -146,9 +146,16 @@ async function _toggleScreenSharing(
     if (enable) {
         let tracks;
 
-        // Spot proxy stream.
+        // Spot proxy stream / direct-cast screenshare.
         if (shareOptions.desktopStream) {
             tracks = [ shareOptions.desktopStream ];
+
+            // A direct-cast share can carry system audio as a second track. Include it
+            // so it rides the native screenshare-audio path below (AudioMixer effect +
+            // setScreenshareAudioTrack), exactly like a locally-captured share.
+            if (shareOptions.desktopAudioTrack) {
+                tracks.push(shareOptions.desktopAudioTrack);
+            }
         } else {
             const { _desktopSharingSourceDevice } = state['features/base/config'];
 
@@ -213,7 +220,7 @@ async function _toggleScreenSharing(
 
         // Show notification about more bandwidth usage in audio-only mode if the user starts screensharing. This
         // doesn't apply to audio-only screensharing.
-        const { enabled: bestPerformanceMode } = state['features/base/audio-only'];
+        const { enabled: bestPerformanceMode } = state['features/base/low-bandwidth-mode'];
 
         if (bestPerformanceMode && !audioOnly) {
             dispatch(showNotification({
@@ -399,24 +406,12 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions, reco
             }
 
             // Retry with separate gUM calls.
-            const gUMPromises = [];
+            const retryDevices = [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ].filter(device => devices.includes(device));
             const tracks: any[] | PromiseLike<any[]> = [];
-
-            if (devices.includes(MEDIA_TYPE.AUDIO)) {
-                gUMPromises.push(createLocalTracksF({
-                    devices: [ MEDIA_TYPE.AUDIO ],
-                    timeout
-                }));
-            }
-
-            if (devices.includes(MEDIA_TYPE.VIDEO)) {
-                gUMPromises.push(createLocalTracksF({
-                    devices: [ MEDIA_TYPE.VIDEO ],
-                    timeout
-                }));
-            }
-
-            const results = await Promise.allSettled(gUMPromises);
+            const results = await Promise.allSettled(retryDevices.map(device => createLocalTracksF({
+                devices: [ device ],
+                timeout
+            })));
             let errorMsg;
 
             results.forEach((result, idx) => {
@@ -424,7 +419,7 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions, reco
                     tracks.push(result.value[0]);
                 } else {
                     errorMsg = result.reason;
-                    const isAudio = idx === 0;
+                    const isAudio = retryDevices[idx] === MEDIA_TYPE.AUDIO;
 
                     logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
                     if (isAudio) {

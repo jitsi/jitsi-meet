@@ -1,6 +1,9 @@
+import { IRooms } from '../../react/features/breakout-rooms/types';
 import { LOG_PREFIX } from '../helpers/browserLogger';
 
 import BasePageObject from './BasePageObject';
+
+type RequestOutcome = { state: 'pending' | 'rejected' | 'resolved'; value?: any; };
 
 /**
  * The Iframe API and helpers from iframeAPITest.html
@@ -21,6 +24,22 @@ export default class IframeAPI extends BasePageObject {
 
                 return result;
             }, event);
+    }
+
+    /**
+     * Waits for an event result from the iframeAPI helper.
+     * @param event The event name.
+     * @param timeoutMsg Optional timeout message.
+     * @param timeout Optional timeout in milliseconds.
+     */
+    waitForEventResult<T = any>(event: string, timeoutMsg?: string, timeout = 5000): Promise<T> {
+        return this.participant.driver.waitUntil(
+            () => this.getEventResult(event),
+            {
+                timeout,
+                timeoutMsg: timeoutMsg || `${event} event was not received`
+            }
+        );
     }
 
     /**
@@ -62,6 +81,13 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns the information about the participants known to the iframeAPI.
+     */
+    getParticipantsInfo(): Promise<Array<{ displayName?: string; participantId: string; }>> {
+        return this.participant.execute(() => window.jitsiAPI.getParticipantsInfo());
+    }
+
+    /**
      * Returns the number of participants in the conference.
      */
     getNumberOfParticipants() {
@@ -85,6 +111,49 @@ export default class IframeAPI extends BasePageObject {
      */
     isParticipantsPaneOpen() {
         return this.participant.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
+    }
+
+    /**
+     * Returns whether lobby mode is enabled for the current conference.
+     */
+    isLobbyEnabled() {
+        return this.participant.execute(() => window.jitsiAPI.isLobbyEnabled());
+    }
+
+    /**
+     * Returns whether A/V moderation is enabled for the given media type.
+     * @param mediaType The media type, 'audio' (default) or 'video'.
+     */
+    isModerationOn(mediaType?: 'audio' | 'video') {
+        return this.participant.execute(type => window.jitsiAPI.isModerationOn(type), mediaType);
+    }
+
+    /**
+     * Returns whether the local participant's audio is muted.
+     */
+    isAudioMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isAudioMuted());
+    }
+
+    /**
+     * Returns whether the local participant's video is muted.
+     */
+    isVideoMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isVideoMuted());
+    }
+
+    /**
+     * Returns the list of breakout rooms.
+     */
+    listBreakoutRooms(): Promise<IRooms> {
+        return this.participant.execute(() => window.jitsiAPI.listBreakoutRooms());
+    }
+
+    /**
+     * Returns the current preferred video quality.
+     */
+    getVideoQuality(): Promise<number> {
+        return this.participant.execute(() => window.jitsiAPI.getVideoQuality());
     }
 
     /**
@@ -128,6 +197,40 @@ export default class IframeAPI extends BasePageObject {
      */
     stopRecording(mode: string) {
         return this.participant.execute(m => window.jitsiAPI.stopRecording(m), mode);
+    }
+
+    /**
+     * Calls a promise-returning method of the iframeAPI and reports how the promise ended. A promise that is still
+     * pending after the timeout is reported as 'pending', so that a request that never settles fails the test
+     * quickly instead of hanging it.
+     * @param method The name of the iframeAPI method.
+     * @param timeout How long to wait for the promise to settle, in milliseconds.
+     * @param args The arguments for the method.
+     */
+    async requestOutcome(method: string, timeout = 3000, ...args: any[]): Promise<RequestOutcome> {
+        return await this.participant.execute(
+            (name, ms, methodArgs) => new Promise(resolve => {
+                const timer = setTimeout(() => resolve({ state: 'pending' }), ms);
+
+                window.jitsiAPI[name](...methodArgs).then(
+                    (value: any) => {
+                        clearTimeout(timer);
+                        resolve({ state: 'resolved',
+                            value });
+                    },
+                    (error: any) => {
+                        clearTimeout(timer);
+                        resolve({ state: 'rejected',
+                            value: error?.message });
+                    });
+            }), method, timeout, args) as RequestOutcome;
+    }
+
+    /**
+     * Returns whether the local participant is sharing their screen.
+     */
+    isSharingScreen(): Promise<boolean> {
+        return this.participant.execute(() => window.jitsiAPI.isSharingScreen());
     }
 
     /**

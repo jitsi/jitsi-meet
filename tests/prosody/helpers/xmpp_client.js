@@ -1,0 +1,1494 @@
+import { client, xml } from '@xmpp/client';
+
+let _counter = 0;
+
+/**
+ * Connects as the Jibri recorder, joins roomJid with nick 'recorder', and
+ * returns the client. Authenticates as recorder@recorder.localhost (internal_hashed).
+ * The bare JID starts with 'recorder@recorder.' so is_jibri() returns true,
+ * matching the default recorder_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJibri(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'recorder',
+        password: 'recordersecret'
+    });
+
+    await c.joinRoom(roomJid, 'recorder');
+
+    return c;
+}
+
+/**
+ * Connects as the transcriber, joins roomJid with an 8 hex digit nick (as
+ * Jigasi does; 'transcriber' is a reserved resource), and returns the client.
+ * Authenticates as transcriber@recorder.localhost.
+ * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
+ * true, matching the default transcriber_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @param {object} [opts]
+ * @param {Array}  [opts.extensions]  presence children, forwarded to joinRoom
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithTranscriber(roomJid, { extensions } = {}) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'transcriber',
+        password: 'transcribersecret'
+    });
+
+    await c.joinRoom(roomJid, 'a1b2c3d4', { extensions });
+
+    return c;
+}
+
+/**
+ * Creates an anonymous XMPP client and joins a Jigasi brewery MUC with a
+ * colibri stats presence extension, simulating a Jigasi SIP gateway instance.
+ * The presence advertises supports_sip and stress_level so that
+ * mod_muc_jigasi_invite can select this instance for dial-out.
+ *
+ * @param {string} breweryJid  Full brewery room JID, e.g.
+ *                             'jigasibrewery@internal.auth.localhost'
+ * @param {string} [nick]      MUC nick (must not be 'focus'). Defaults to a
+ *                             unique generated nick.
+ * @param {object} [opts]
+ * @param {boolean} [opts.supportsSip=true]   Advertise SIP support.
+ * @param {number}  [opts.stressLevel=0.1]    Stress level (lower = preferred).
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJigasi(breweryJid, nick, { supportsSip = true, stressLevel = 0.1 } = {}) {
+    const statsEl = xml('stats', { xmlns: 'http://jitsi.org/protocol/colibri' },
+        xml('stat', { name: 'supports_sip',
+            value: supportsSip ? 'true' : 'false' }),
+        xml('stat', { name: 'stress_level',
+            value: String(stressLevel) })
+    );
+
+    const c = await createXmppClient();
+
+    await c.joinRoom(breweryJid, nick, { extensions: [ statsEl ] });
+
+    return c;
+}
+
+/**
+ * Connects as the focus (jicofo) admin participant, joins roomJid with nick
+ * 'focus', and returns the client. This unlocks the mod_muc_meeting_id jicofo
+ * lock so that regular clients can subsequently join the same room.
+ *
+ * The focus client authenticates as focus@auth.localhost (a Prosody admin), so
+ * it is exempt from token_verification checks, is never counted against occupant
+ * limits (auth.localhost is in muc_access_whitelist), and can act as room owner.
+ *
+ * The caller is responsible for disconnecting the returned client (typically
+ * by pushing it into the test's `clients` array for afterEach cleanup).
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithFocus(roomJid) {
+    const c = await createXmppClient({
+        domain: 'auth.localhost',
+        username: 'focus',
+        password: 'focussecret'
+    });
+
+    await c.joinRoom(roomJid, 'focus');
+
+    return c;
+}
+
+/**
+ * Creates a connected anonymous XMPP client.
+ * Prosody must be configured with `authentication = "anonymous"` and no TLS.
+ *
+ * @param {object} opts
+ * @param {string} [opts.host='localhost']    TCP host to connect to.
+ * @param {number} [opts.port=5280]           HTTP port of the WebSocket endpoint.
+ * @param {string} [opts.domain]              XMPP domain (stream header). Defaults to host.
+ *                                            Set to a different VirtualHost name (e.g.
+ *                                            'whitelist.localhost') to get a JID on that
+ *                                            domain without changing the TCP target.
+ * @param {object} [opts.params]              Optional query parameters appended to the
+ *                                            WebSocket URL (e.g. { previd: 'token' }).
+ * @param {string} [opts.username]            SASL username for PLAIN auth. When omitted,
+ *                                            ANONYMOUS auth is used.
+ * @param {string} [opts.password]            SASL password for PLAIN auth.
+ * @param {string} [opts.resource]            Resource to request at bind. When omitted,
+ *                                            the server assigns one.
+ * @param {number} [opts.restartDelay]       Milliseconds to hold the stream restart that
+ *                                            follows SASL success, so a server-side close
+ *                                            can be made to land before resource binding.
+ * @returns {Promise<XmppTestClient>} If start() fails after the server closed the
+ *                                    stream, the rejection has `streamClosed: true`.
+ */
+export async function createXmppClient({ host = 'localhost', port = 5280, domain, params, username, password,
+    resource, restartDelay } = {}) {
+    const url = new URL(`ws://${host}:${port}/xmpp-websocket`);
+
+    if (params) {
+        for (const [ k, v ] of Object.entries(params)) {
+            url.searchParams.set(k, v);
+        }
+    }
+
+    const xmpp = client({
+        service: url.toString(),
+        domain: domain ?? host,
+        resource,
+        ...username === undefined ? {} : { username,
+            password }
+    });
+
+    // Suppress unhandled 'error' events (e.g. WebSocket close after auth failure).
+    // Errors surface through the xmpp.start() promise rejection instead.
+    // eslint-disable-next-line no-empty-function
+    xmpp.on('error', () => {});
+
+    if (restartDelay) {
+        const restart = xmpp.restart.bind(xmpp);
+
+        xmpp.restart = async () => {
+            await new Promise(resolve => setTimeout(resolve, restartDelay));
+
+            return restart();
+        };
+    }
+
+    // 'close' is the server ending the XML stream. Recorded so a start() that
+    // fails because of it can be told apart from one that never got that far.
+    let streamClosed = false;
+
+    xmpp.on('close', () => {
+        streamClosed = true;
+    });
+
+    // id -> { resolve, reject, timer }
+    const pendingIqs = new Map();
+    const stanzaQueue = [];
+
+    xmpp.on('stanza', stanza => {
+        const id = stanza.attrs.id;
+
+        if (stanza.name === 'iq' && id && pendingIqs.has(id)) {
+            const { resolve, timer } = pendingIqs.get(id);
+
+            clearTimeout(timer);
+            pendingIqs.delete(id);
+            resolve(stanza);
+
+            return;
+        }
+        stanzaQueue.push(stanza);
+    });
+
+    // If start() fails (e.g. SASL error) stop the client before re-throwing so
+    // that @xmpp/client's auto-reconnect does not keep retrying in the background.
+    // Leaked reconnect loops can flood Prosody and cause unrelated tests to fail.
+    try {
+        await xmpp.start();
+    } catch (err) {
+        xmpp.stop().catch(Function.prototype);
+        if (streamClosed && err && typeof err === 'object') {
+            err.streamClosed = true;
+        }
+        throw err;
+    }
+
+    return {
+        jid: xmpp.jid?.toString(),
+
+        /**
+         * The default MUC nick for this client: first 8 characters of the
+         * server-assigned JID local part. Matches the UUID prefix required by
+         * Prosody's anonymous_strict mode. Null when the JID is not yet set.
+         *
+         * @returns {string|null}
+         */
+        get nick() {
+            const local = xmpp.jid?.toString().split('@')[0] ?? '';
+
+            return local ? local.slice(0, 8) : null;
+        },
+
+        /**
+         * Returns the XEP-0198 stream management resumption token assigned by
+         * the server. Only available after the session is online and stream
+         * management has been negotiated. Must be read before disconnecting
+         * (the token is cleared on offline).
+         *
+         * @returns {string}
+         */
+        get smId() {
+            return xmpp.streamManagement.id;
+        },
+
+        /**
+         * Joins a MUC room. Resolves with the self-presence stanza (may have type='error').
+         * Rejects with a timeout error if no presence is received within the timeout.
+         * @param {string} roomJid       e.g. 'room@conference.localhost'
+         * @param {string} [nick]        defaults to a unique generated nick
+         * @param {object} [opts]
+         * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
+         * @param {string} [opts.password]       room password to include in the join stanza
+         * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
+         */
+        async joinRoom(roomJid, nick, { timeout = 5000,
+            password: roomPassword,
+            extensions = [],
+            mucContent = [],
+            displayName } = {}) {
+            // Default to the first 8 characters of the local part of the
+            // server-assigned JID. Prosody's anonymous_strict mode requires MUC
+            // resources to match this prefix, so callers that do not pass an
+            // explicit nick automatically satisfy the constraint.
+            const selfLocal = xmpp.jid?.toString().split('@')[0] ?? '';
+            const n = nick ?? (selfLocal ? selfLocal.slice(0, 8) : `user${++_counter}`);
+            const mucX = xml('x', { xmlns: 'http://jabber.org/protocol/muc' });
+
+            if (roomPassword !== undefined) {
+                mucX.c('password').t(roomPassword);
+            }
+
+            // Children placed INSIDE the muc <x> (e.g. a <billingid> element),
+            // as opposed to `extensions`, which are siblings of <x>.
+            for (const child of mucContent) {
+                mucX.cnode(child).up();
+            }
+
+            const nickEl = displayName
+                ? xml('nick', { xmlns: 'http://jabber.org/protocol/nick' }, displayName)
+                : undefined;
+
+            await xmpp.send(
+                xml('presence', { to: `${roomJid}/${n}` }, mucX, ...extensions,
+                    ...nickEl ? [ nickEl ] : [])
+            );
+
+            const presence = await waitForPresence(stanzaQueue, roomJid, timeout);
+
+            // Prosody 13 locks newly created rooms (XEP-0045 §10.1.3) until the
+            // owner submits a configuration form. Status 201 means the room was
+            // just created — submit an empty form to accept defaults and unlock.
+            const x = presence.getChild('x', 'http://jabber.org/protocol/muc#user');
+            const isNewRoom = x?.getChildren('status').some(st => st.attrs.code === '201');
+
+            if (isNewRoom) {
+                await sendIq(xmpp, pendingIqs,
+                    xml('iq', { type: 'set',
+                        to: roomJid },
+                        xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
+                            xml('x', { xmlns: 'jabber:x:data',
+                                type: 'submit' })
+                        )
+                    )
+                );
+            }
+
+            return presence;
+        },
+
+        /**
+         * Sets (or clears) the password on a MUC room. The client must be the room owner.
+         * Resolves when the server acknowledges the configuration change.
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} password  pass empty string to remove the password
+         */
+        setRoomPassword(roomJid, roomPassword) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `cfg-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
+                        xml('x', { xmlns: 'jabber:x:data',
+                            type: 'submit' },
+                            xml('field', { var: 'FORM_TYPE' },
+                                xml('value', {}, 'http://jabber.org/protocol/muc#roomconfig')
+                            ),
+                            xml('field', { var: 'muc#roomconfig_roomsecret' },
+                                xml('value', {}, roomPassword)
+                            )
+                        )
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) to the focus
+         * occupant of the given room. Fire-and-forget — does NOT wait for a
+         * response, because mod_filter_iq_jibri may block it before it reaches
+         * any handler that would reply, and the test asserts via the
+         * /jibri-iqs HTTP endpoint instead.
+         *
+         * @param {string} roomJid         e.g. 'room@conference.localhost'
+         * @param {string} action          'start' | 'stop' | 'status' etc.
+         * @param {string} recordingMode   'file' (recording) | 'stream' (livestreaming)
+         * @param {object} [opts]
+         * @param {string} [opts.appData]  Raw app_data attribute value, sent as is.
+         */
+        sendJibriIq(roomJid, action, recordingMode, { appData } = {}) {
+            // `pre-iq/full` (mod_filter_iq_jibri, mod_jibri_session) fires on this
+            // client's own VirtualHost. Directed to focus's occupant full JID so
+            // the MUC records it and forwards it to the focus.
+            return this.sendJibriIqTo(`${roomJid}/focus`, {
+                action,
+                // eslint-disable-next-line camelcase
+                recording_mode: recordingMode,
+                // eslint-disable-next-line camelcase
+                ...appData === undefined ? {} : { app_data: appData }
+            });
+        },
+
+        /**
+         * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) with the given
+         * <jibri/> attributes to any full JID, e.g. the start iq jicofo sends
+         * to a jibri, which names the room in its `room` attribute.
+         * Fire-and-forget; assert on the recipient's stanza queue (waitForIq).
+         * The /jibri-iqs HTTP endpoint only records iqs addressed to an
+         * occupant on conference.localhost, so it never sees an iq sent to a
+         * jibri's own JID.
+         *
+         * @param {string} to           Destination full JID.
+         * @param {object} jibriAttrs   Attributes of the <jibri/> element.
+         */
+        sendJibriIqTo(to, jibriAttrs) {
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to,
+                    id: `jibri-${++_counter}` },
+                    xml('jibri', {
+                        xmlns: 'http://jitsi.org/protocol/jibri',
+                        ...jibriAttrs
+                    })
+                )
+            );
+        },
+
+        /**
+         * Sends a Rayo dial IQ (urn:xmpp:rayo:1) to the focus occupant of the
+         * given room. Fire-and-forget — does NOT wait for a response, because
+         * mod_filter_iq_rayo may block it, and the test asserts via the
+         * /dial-iqs HTTP endpoint instead.
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo='sip:test@example.com']  dial `to` attribute.
+         * @param {string|null} [opts.roomNameHeader]  JvbRoomName value; defaults to roomJid.
+         *   Pass null to omit, any other string for a mismatch test.
+         * @param {string|null} [opts.roomPassHeader]  JvbRoomPassword value; omitted by default.
+         * @param {object} [opts.extraHeaders]  extra name→value header pairs (spoof/strip tests).
+         */
+        sendRayoIq(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
+            const headers = [];
+
+            if (roomNameHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomName',
+                    value: roomNameHeader
+                }));
+            }
+
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
+                }));
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `rayo-${++_counter}` },
+                    xml('dial', {
+                        xmlns: 'urn:xmpp:rayo:1',
+                        to: dialTo,
+                        from: 'fromdomain'
+                    }, ...headers)
+                )
+            );
+        },
+
+        /**
+         * Like sendRayoIq but waits for Prosody's IQ response and returns it.
+         * Use this when the test needs to inspect the reply stanza (e.g. to
+         * assert that Prosody sent back an error rather than routing the IQ).
+         *
+         * Accepts the same options as sendRayoIq.
+         *
+         * @param {string} roomJid
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo]
+         * @param {string|null} [opts.roomNameHeader]
+         * @param {string|null} [opts.roomPassHeader]
+         * @param {object} [opts.extraHeaders]
+         * @returns {Promise<object>}  the response IQ stanza
+         */
+        sendRayoIqAndWait(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
+            const headers = [];
+
+            if (roomNameHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomName',
+                    value: roomNameHeader
+                }));
+            }
+
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
+                }));
+            }
+
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `rayo-${++_counter}` },
+                    xml('dial', {
+                        xmlns: 'urn:xmpp:rayo:1',
+                        to: dialTo,
+                        from: 'fromdomain'
+                    }, ...headers)
+                )
+            );
+        },
+
+        /**
+         * Sends a colibri2 conference-modify IQ to the given full JID, optionally
+         * carrying a <traceparent> extension (as jicofo/JVB do when tracing is
+         * enabled). Fire-and-forget — mod_trace does not reply; assert on the
+         * recipient's own stanza queue (waitForIq) and/or the OTLP mock receiver.
+         *
+         * @param {string} to  Destination full JID.
+         * @param {object} [opts]
+         * @param {string} [opts.traceId]   32-hex-char trace id. Omit to send no <traceparent>.
+         * @param {string} [opts.parentId]  16-hex-char parent span id. Required when traceId is set.
+         */
+        sendConferenceModifyIq(to, { traceId, parentId } = {}) {
+            const children = traceId === undefined
+                ? []
+                : [ xml('traceparent', {
+                    // eslint-disable-next-line camelcase
+                    trace_id: traceId,
+                    // eslint-disable-next-line camelcase
+                    parent_id: parentId
+                }) ];
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to,
+                    id: `cm-${++_counter}` },
+                    xml('conference-modify', { xmlns: 'jitsi:colibri2' }, ...children)
+                )
+            );
+        },
+
+        /**
+         * Sends a disco#info IQ and resolves with the response stanza.
+         * @param {string} targetJid
+         */
+        sendDiscoInfo(targetJid) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'get',
+                    to: targetJid,
+                    id: `disco-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/disco#info' })
+                )
+            );
+        },
+
+        /**
+         * Sends a XEP-0215 extdisco services IQ and resolves with the response stanza.
+         * @param {string} targetJid  e.g. 'localhost'
+         */
+        sendExtdiscoIq(targetJid) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'get',
+                    to: targetJid,
+                    id: `extdisco-${++_counter}` },
+                    xml('services', { xmlns: 'urn:xmpp:extdisco:1' })
+                )
+            );
+        },
+
+        /**
+         * Sends an <end_conference/> message to the given component JID.
+         * mod_end_conference uses the sender's jitsi_web_query_room session field
+         * (populated by mod_jitsi_session from the ?room= WebSocket URL param) to
+         * locate and destroy the target room. Fire-and-forget — the module returns
+         * no reply stanza; verify the side-effect via getRoomState.
+         *
+         * @param {string} componentJid  e.g. 'endconference.localhost'
+         */
+        sendEndConference(componentJid) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `ec-${++_counter}` },
+                    xml('end_conference')
+                )
+            );
+        },
+
+        /**
+         * Sends a raw room_metadata message to a metadata component.
+         * Use this to test malformed payloads; prefer sendMetadataUpdate for
+         * well-formed updates.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to process it.
+         *
+         * @param {string} componentJid  e.g. 'metadata.localhost'
+         * @param {string} roomJid       full room JID, e.g. 'room@conference.localhost'
+         * @param {string} rawPayload    raw text for the <room_metadata> body
+         */
+        sendMetadataMessage(componentJid, roomJid, rawPayload) {
+            const attrs = { xmlns: 'http://jitsi.org/jitmeet' };
+
+            if (roomJid !== null && roomJid !== undefined) {
+                attrs.room = roomJid;
+            }
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `meta-${++_counter}` },
+                    xml('room_metadata', attrs, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Sends a well-formed metadata update to a metadata component.
+         *
+         * @param {string} componentJid  e.g. 'metadata.localhost'
+         * @param {string} roomJid       full room JID, e.g. 'room@conference.localhost'
+         * @param {string} key           metadata key
+         * @param {*}      data          metadata value (JSON-serialisable)
+         */
+        sendMetadataUpdate(componentJid, roomJid, key, data) {
+            return this.sendMetadataMessage(componentJid, roomJid, JSON.stringify({ key,
+                data }));
+        },
+
+        /**
+         * Sends a raw <audio-translation> message to an audio-translation component.
+         * Use this to test malformed payloads; prefer sendAudioTranslation for
+         * well-formed deltas.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) — the component resolves the room from
+         * the session, not from a stanza attribute.
+         *
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
+         * @param {string} rawPayload    raw text for the <audio-translation> body
+         */
+        sendAudioTranslationRaw(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `at-${++_counter}` },
+                    xml('audio-translation', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Sends a well-formed audio-translation subscription delta.
+         *
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
+         * @param {object} delta          { senderId: language, ... }; "" removes
+         */
+        sendAudioTranslation(componentJid, delta) {
+            return this.sendAudioTranslationRaw(componentJid, JSON.stringify(delta));
+        },
+
+        /**
+         * Sends a plain <message> stanza to the given JID with no special children.
+         * Useful for testing that the end_conference component ignores messages
+         * that lack the <end_conference/> child element.
+         *
+         * @param {string} to  Destination JID.
+         */
+        sendPlainMessage(to) {
+            return xmpp.send(
+                xml('message', { to,
+                    id: `msg-${++_counter}` })
+            );
+        },
+
+        /**
+         * Sends a stanza built by the caller as is. Fire-and-forget: a reply,
+         * if any, lands in the stanza queue.
+         *
+         * @param {Element} stanza  Built with xml() from @xmpp/client.
+         */
+        sendRaw(stanza) {
+            return xmpp.send(stanza);
+        },
+
+        /**
+         * Sends a one-to-one <message type='chat'> with a body to an arbitrary
+         * JID. Fire-and-forget: resolves with the stanza id once the stanza is
+         * written.
+         *
+         * Use it for what a Jitsi client never sends, most usefully a message
+         * addressed to the real JID of another client instead of to a MUC.
+         *
+         * @param {string} to     Destination JID.
+         * @param {string} [body] Message body text.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendDirectChat(to, body) {
+            const id = `dm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
+         * Sends a MUC private message to an occupant of the room. Fire-and-forget:
+         * resolves with the stanza id once the stanza is written. The MUC does not
+         * reflect a private message back to the sender, so wait for the message on
+         * the recipient, or for an error reply on the sender.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} nick     MUC nick of the recipient.
+         * @param {string} [body]   message body text; omit to send body-less.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendPrivateChat(roomJid, nick, body) {
+            const id = `pm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: `${roomJid}/${nick}`,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
+         * Sends a MUC groupchat message to the room. Resolves with the first
+         * <message> stanza received bearing the same id — either the MUC
+         * reflection (type=groupchat) or an error reply (type=error).
+         *
+         * @param {string}  roomJid      e.g. 'room@conference.localhost'
+         * @param {string}  [body]       message body text; omit to send body-less
+         * @param {Array}   [extensions] extra XML children appended to the stanza
+         */
+        async sendGroupchat(roomJid, body, extensions = []) {
+            const id = `gc-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id },
+                ...children, ...extensions)
+            );
+
+            return this.waitForMessage(s => s.attrs.id === id);
+        },
+
+        /**
+         * Sets the room subject by sending a groupchat message carrying only a
+         * <subject> element (XEP-0045 §8.1). Fire-and-forget — does NOT wait for
+         * the room's subject broadcast.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} subject  the new subject text
+         */
+        sendRoomSubject(roomJid, subject) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `subj-${++_counter}` },
+                    xml('subject', {}, subject)
+                )
+            );
+        },
+
+        /**
+         * Sends a groupchat message with a <json-message> child to the room.
+         * Fire-and-forget — does NOT wait for the MUC reflection stanza.
+         * Use when testing hooks that may crash or block the message before it
+         * is reflected (waiting for reflection would time out).
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         */
+        sendJsonGroupchat(roomJid, payload) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `jm-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
+         * Sends a message carrying a <json-message> child to an arbitrary JID,
+         * with full control over the outer <message> attributes. Fire-and-forget.
+         *
+         * Use it to send what a well-behaved client never would — most usefully
+         * a stanza claiming a `from` that is not the sender's own JID, to prove
+         * the server refuses to deliver it under that identity.
+         *
+         * @param {string} to        Destination JID.
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         * @param {object} [attrs]   Extra/override attributes for the <message>.
+         */
+        sendJsonMessageRaw(to, payload, attrs = {}) {
+            return xmpp.send(
+                xml('message', { to,
+                    id: `jm-${++_counter}`,
+                    ...attrs },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
+         * Grants moderator role to the occupant identified by nick.
+         * The caller must be the room owner (e.g. the focus client).
+         * Resolves with the server's IQ response.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} nick     MUC nick of the occupant to promote.
+         */
+        grantModerator(roomJid, nick) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `mod-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        xml('item', { nick,
+                            role: 'moderator' })
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a muc#admin set IQ carrying a single <item> with the given
+         * attributes and resolves with the server's IQ response. Use to attempt
+         * a kick (role='none'), ban (affiliation='outcast'), or any other
+         * role/affiliation change on an occupant.
+         *
+         * Normally the caller must be a room moderator/owner, but hooks that run
+         * before Prosody's permission check (e.g. the set admin filtering in
+         * mod_muc_meeting_id) may reject the request regardless of privilege.
+         *
+         * @param {string} roomJid    e.g. 'room@conference.localhost'
+         * @param {object} itemAttrs  attributes for the <item>, e.g.
+         *                            { nick: 'focus', role: 'none' } or
+         *                            { jid: 'focus@auth.localhost', affiliation: 'outcast' }
+         */
+        sendMucAdmin(roomJid, itemAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        xml('item', itemAttrs)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a Jingle IQ (XEP-0166/XEP-0339) to an occupant's full JID in a
+         * MUC room. Fire-and-forget — does NOT wait for a response.
+         *
+         * The pre-iq/full hook fires on the MUC component before routing, so any
+         * module that hooks that event will see the stanza synchronously.
+         *
+         * For session-accept, a <content name="video"> child is included when
+         * videoType is non-null. For source-add, a content/description/source
+         * chain with a videoType attribute is included.
+         *
+         * @param {string} toFullJid  Occupant full JID, e.g. 'room@conference.localhost/focus'
+         * @param {string} action     'session-accept' | 'source-add'
+         * @param {string|null} videoType  'camera' | 'desktop' | null (audio-only: no video content)
+         */
+        sendJingleIq(toFullJid, action, videoType = null) {
+            let contentEl;
+
+            if (videoType === null) {
+                // Audio-only: a content element with name='audio' and no description.
+                // session-accept: no content with name='video' → no flags set.
+                // source-add: no description/source path → no flags set.
+                contentEl = xml('content', { name: 'audio' });
+            } else {
+                const sourceEl = xml('source', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0',
+                    videoType
+                });
+                const descEl = xml('description', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: 'video'
+                }, sourceEl);
+
+                contentEl = xml('content', { name: 'video' }, descEl);
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: toFullJid,
+                    id: `jingle-${++_counter}` },
+                    xml('jingle', {
+                        xmlns: 'urn:xmpp:jingle:1',
+                        action
+                    }, contentEl)
+                )
+            );
+        },
+
+        /**
+         * Sends a muc#admin set IQ carrying multiple <item> children and
+         * resolves with the server's IQ response. XEP-0045 allows batching
+         * several affiliation/role changes in one stanza; use this to verify
+         * that filtering hooks inspect every item and not just the first one.
+         *
+         * @param {string} roomJid            e.g. 'room@conference.localhost'
+         * @param {Array<object>} itemsAttrs  attribute objects, one per <item>
+         */
+        sendMucAdminItems(roomJid, itemsAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        ...itemsAttrs.map(attrs => xml('item', attrs))
+                    )
+                )
+            );
+        },
+
+        /**
+         * Destroys a MUC room. The client must be the room owner.
+         * Resolves when the server acknowledges the destroy IQ.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         */
+        destroyRoom(roomJid) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `destroy-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
+                        xml('destroy')
+                    )
+                )
+            );
+        },
+
+        /**
+         * Waits for an incoming <presence> stanza that satisfies an optional
+         * filter predicate and resolves with it. Non-matching presences are left
+         * in the queue. Rejects with a timeout error if no matching presence
+         * arrives within the timeout.
+         * @param {Function} [filter]    Predicate; defaults to accepting any presence.
+         * @param {number}   [timeout=5000]
+         */
+        waitForPresence(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'presence' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for presence stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
+        },
+
+        /**
+         * Convenience wrapper around waitForPresence that matches by full from-JID
+         * and optional presence type.
+         *
+         * @param {string} from     full JID, e.g. 'room@conference.localhost/nick'
+         * @param {object} [opts]
+         * @param {string} [opts.type]     presence type to match (e.g. 'unavailable')
+         * @param {number} [opts.timeout=5000]
+         */
+        waitForPresenceFrom(from, { type, timeout = 5000 } = {}) {
+            return this.waitForPresence(
+                s => s.attrs.from === from && (type === undefined || s.attrs.type === type),
+                timeout
+            );
+        },
+
+        /**
+         * Waits for an incoming <iq> stanza that satisfies an optional filter
+         * predicate and resolves with it. Only unsolicited IQs land here;
+         * responses to IQs sent with sendIq are handled via pendingIqs.
+         * @param {Function} [filter]    Predicate; defaults to accepting any IQ.
+         * @param {number}   [timeout=5000]
+         */
+        waitForIq(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'iq' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for IQ stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
+        },
+
+        /**
+         * Waits for an incoming <message> stanza that satisfies an optional
+         * filter predicate and resolves with it. Non-matching messages are left
+         * in the queue. Rejects with a timeout error if no matching message
+         * arrives within the timeout.
+         * @param {Function} [filter]    Predicate; defaults to accepting any message.
+         * @param {number}   [timeout=5000]
+         */
+        waitForMessage(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'message' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for message stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
+        },
+
+        /**
+         * Resolves when the underlying XMPP connection goes offline (e.g.
+         * because Prosody closed the session). Useful for verifying that
+         * mod_muc_auth_ban's async ban — which calls session:close() from
+         * the HTTP callback — actually terminates the connection.
+         *
+         * A server-side close shows up as 'close' (stream ended) or
+         * 'disconnect' (socket dropped); 'offline' only follows a local stop(),
+         * and @xmpp/client's reconnect never gets there on its own.
+         * The stream restart after SASL fires neither: 'close' needs the
+         * server's stream-close element and 'disconnect' a socket close, so
+         * a live session never resolves this.
+         *
+         * Rejects with a timeout error if the connection does not drop within
+         * the given timeout.
+         *
+         * @param {number} [timeout=5000]
+         */
+        waitForDisconnect(timeout = 5000) {
+            const events = [ 'close', 'disconnect', 'offline' ];
+
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
+                    reject(new Error('Timeout waiting for disconnect'));
+                }, timeout);
+
+                /**
+                 * Settles on the first of the drop events.
+                 *
+                 * @returns {void}
+                 */
+                function onDrop() {
+                    clearTimeout(timer);
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
+                    resolve();
+                }
+
+                events.forEach(e => xmpp.once(e, onDrop));
+            });
+        },
+
+        /**
+         * Sends a file-sharing add message to a component JID.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to locate the room.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} fileObj       file descriptor; must include fileId
+         */
+        sendFileSharingAdd(componentJid, fileObj) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'add' },
+                        JSON.stringify(fileObj)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a file-sharing remove message to a component JID.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {string} fileId        ID of the file to remove
+         */
+        sendFileSharingRemove(componentJid, fileId) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'remove',
+                        fileId })
+                )
+            );
+        },
+
+        /**
+         * Sends a raw polls json-message to a polls component. The body is sent
+         * verbatim, so use this to exercise malformed payloads (invalid JSON,
+         * unexpected answer shapes, oversized bodies). Prefer createPoll /
+         * answerPoll for well-formed messages.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be an occupant of
+         * the room for the component to process the message.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} rawPayload    raw text for the <json-message> body
+         */
+        sendPollsMessage(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `poll-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Creates a poll by sending a well-formed new-poll json-message to the
+         * polls component. Fire-and-forget — assert via the broadcast the
+         * component sends back to occupants (waitForMessage on a poll broadcast).
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         unique poll id
+         * @param {string} question       poll question
+         * @param {Array}  answers        answer objects, e.g. [ { name: 'A' } ]
+         */
+        createPoll(componentJid, pollId, question, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'new-poll',
+                pollId,
+                question,
+                type: 'polls'
+            }));
+        },
+
+        /**
+         * Answers a poll by sending a well-formed answer-poll json-message to the
+         * polls component. Fire-and-forget.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         id of the poll being answered
+         * @param {Array<boolean>} answers  one boolean per poll option
+         */
+        answerPoll(componentJid, pollId, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'answer-poll',
+                pollId,
+                type: 'polls'
+            }));
+        },
+
+        /**
+         * Sends an A/V moderation command to the av_moderation component, the
+         * same stanza lib-jitsi-meet AVModeration sends. Fire-and-forget —
+         * assert via the json-messages the component sends back.
+         *
+         * @param {string} componentJid  e.g. 'avmoderation.localhost'
+         * @param {object} attrs         <av_moderation> attributes, e.g.
+         *                               { enable: 'true', mediaType: 'audio' } or
+         *                               { jidToWhitelist: 'room@conference.localhost/nick', mediaType: 'audio' }
+         */
+        sendAvModeration(componentJid, attrs) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `avm-${++_counter}` },
+                    xml('av_moderation', attrs)
+                )
+            );
+        },
+
+        /**
+         * Leaves a MUC room (XEP-0045 §7.14) and resolves with the self
+         * unavailable presence echoed back by the room.
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {string} [nick]    defaults to the nick used by joinRoom
+         * @param {object} [opts]
+         * @param {number} [opts.timeout=5000]
+         */
+        async leaveRoom(roomJid, nick, { timeout = 5000 } = {}) {
+            const n = nick ?? this.nick;
+
+            await xmpp.send(xml('presence', { to: `${roomJid}/${n}`,
+                type: 'unavailable' }));
+
+            return this.waitForPresenceFrom(`${roomJid}/${n}`, { type: 'unavailable',
+                timeout });
+        },
+
+        /**
+         * Sends a <breakout_rooms> control message to the breakout rooms component.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be a moderator
+         * occupant of the main room for the module to process the message.
+         *
+         * @param {string} componentJid  e.g. 'breakout.conference.localhost'
+         * @param {string} type          operation type, e.g. 'features/breakout-rooms/add'
+         * @param {object} [extraAttrs]  extra attributes on the <breakout_rooms> element,
+         *                              e.g. { subject: 'Group A' } or { breakoutRoomJid: '...' }
+         */
+        sendBreakoutRoomsMessage(componentJid, type, extraAttrs = {}) {
+            return xmpp.send(
+                xml('message', {
+                    to: componentJid,
+                    id: `br-${++_counter}`
+                },
+                    xml('breakout_rooms', {
+                        type,
+                        ...extraAttrs
+                    })
+                )
+            );
+        },
+
+        /**
+         * Sends a raw file-sharing message. Use this to test malformed payloads
+         * or non-standard message types (e.g. type='error').
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} messageAttrs  extra attributes on the outer <message>
+         * @param {object} fsAttrs       attributes on <file-sharing>
+         * @param {string} [body]        text body for <file-sharing>
+         */
+        sendFileSharingRaw(componentJid, messageAttrs, fsAttrs, body) {
+            const fsEl = body === undefined
+                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs })
+                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs }, body);
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}`,
+                    ...messageAttrs },
+                    fsEl
+                )
+            );
+        },
+
+        async disconnect() {
+            try {
+                await xmpp.stop();
+            } catch { /* ignore on teardown */ }
+        },
+
+        /**
+         * Sends a bare presence stanza to the given JID (no <x muc> element).
+         * Useful for presence updates after the initial MUC join, which
+         * triggers mod_presence_identity hooks on the sender's VirtualHost.
+         *
+         * @param {string} to          Destination full JID, e.g. 'room@conference.localhost/nick'
+         * @param {Array}  [extensions] Additional XML children to include.
+         */
+        sendPresence(to, extensions = []) {
+            return xmpp.send(xml('presence', { to }, ...extensions));
+        },
+
+        /**
+         * Abruptly terminates the underlying WebSocket without a close
+         * handshake.  Prosody sees an unclean disconnect and hibernates the
+         * SMACKS session.  On reconnect the library sends <resume>, which
+         * triggers Prosody's c2s-session-updated hook (where the
+         * breakout-rooms bug manifested).
+         *
+         * Jitsi's SMACKS resume flow (mod_auth_token.lua + mod_smacks.lua):
+         *   1. Client reconnects with ?previd=<smacks-id> in the WebSocket URL.
+         *   2. mod_jitsi_session.lua sets session.previd from the URL param.
+         *   3. SASL runs; mod_auth_token.lua's get_username_from_token finds
+         *      the hibernating session whose resumption_token == session.previd
+         *      and copies its username, preserving the original UUID.
+         *   4. Post-auth features include <sm>; @xmpp/stream-management sends
+         *      <resume previd='...'>.  mod_smacks looks up the session with
+         *      registry key "uuid@host/smacks_id" — which now matches because
+         *      step 3 preserved the UUID — and resumes successfully.
+         *   5. sessionmanager.update_session fires c2s-session-updated.
+         *
+         * Without ?previd in the URL, step 3 assigns a fresh UUID, the key
+         * doesn't match, mod_smacks falls back to a new session, and the
+         * regression is never exercised.
+         *
+         * IMPORTANT: must use ws.terminate() (TCP RST, no close frame), NOT
+         * ws.close() / Socket.end().  A clean WebSocket close (code 1000)
+         * causes Prosody to destroy the SMACKS session rather than hibernate it.
+         *
+         * xmpp.socket           – @xmpp/websocket Socket wrapper
+         * xmpp.socket.socket    – underlying ws.WebSocket instance with terminate()
+         *
+         * @param {object} [urlParams]  Query parameters to set on the reconnect
+         *                              URL (e.g. { token: '<rotated jwt>' }).
+         */
+        dropConnection(urlParams = {}) {
+            // Patch the reconnect URL to carry ?previd=<smacks-id> so that
+            // mod_jitsi_session.lua sets session.previd and mod_auth_token.lua
+            // can preserve session.username across the SASL exchange, allowing
+            // mod_smacks.lua's registry lookup to succeed.
+            //
+            // `urlParams` overrides query parameters on the reconnect URL only —
+            // the hibernating session keeps whatever it was given on the first
+            // connection. Use it to resume while presenting a different ?token=,
+            // which is how a client rotates its JWT across a reconnect.
+            const smId = xmpp.streamManagement?.id;
+
+            try {
+                const serviceUrl = new URL(xmpp.options.service);
+
+                if (smId) {
+                    serviceUrl.searchParams.set('previd', smId);
+                }
+                for (const [ k, v ] of Object.entries(urlParams)) {
+                    serviceUrl.searchParams.set(k, v);
+                }
+                xmpp.options.service = serviceUrl.toString();
+            } catch { /* ignore */ }
+            try {
+                const ws = xmpp.socket?.socket;
+
+                if (ws?.terminate) {
+                    ws.terminate();
+                } else {
+                    xmpp.socket?.end();
+                }
+            } catch { /* ignore */ }
+        },
+
+        /**
+         * Resolves when the SMACKS (XEP-0198) session resume is fully complete
+         * after a dropConnection().  Set up this listener BEFORE calling
+         * dropConnection() to avoid a race with a very fast reconnect.
+         *
+         * The @xmpp/reconnect 'reconnected' event fires after entity.open()
+         * resolves, which happens on the stream-open header — BEFORE stream
+         * features are processed and therefore BEFORE SMACKS sends <resume>
+         * and receives <resumed>.  The SMACKS handler then sets entity.status
+         * = 'online' directly (no event emitted).  We poll that field after
+         * 'reconnected' to detect the moment the resume is complete, so that
+         * any stanza sent afterwards is processed on the fully-resumed session.
+         *
+         * @param {number} [timeout=10000]
+         */
+        waitForReconnect(timeout = 10000) {
+            return new Promise((resolve, reject) => {
+                let done = false;
+                const timer = setTimeout(() => {
+                    if (!done) {
+                        done = true;
+                        reject(new Error('Timeout waiting for session to reconnect'));
+                    }
+                }, timeout);
+
+                xmpp.reconnect.once('reconnected', () => {
+                    const checkOnline = () => {
+                        if (done) {
+                            return;
+                        }
+                        if (xmpp.status === 'online') {
+                            done = true;
+                            clearTimeout(timer);
+                            resolve();
+                        } else {
+                            setTimeout(checkOnline, 50);
+                        }
+                    };
+
+                    checkOnline();
+                });
+            });
+        }
+    };
+}
+
+/**
+ * Sends an IQ stanza and resolves with the response, matched by id.
+ * Attaches a generated id to the stanza if one is not already present.
+ */
+async function sendIq(xmpp, pendingIqs, stanza, timeout = 5000) {
+    if (!stanza.attrs.id) {
+        stanza.attrs.id = `iq-${++_counter}`;
+    }
+    const id = stanza.attrs.id;
+
+    await xmpp.send(stanza);
+
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            pendingIqs.delete(id);
+            reject(new Error(`Timeout waiting for IQ response (id=${id})`));
+        }, timeout);
+
+        pendingIqs.set(id, { resolve,
+            reject,
+            timer });
+    });
+}
+
+/**
+ * Waits for either:
+ *   - a self-presence from the room (status code 110), indicating successful join
+ *   - an error presence from the room, indicating the join was rejected
+ */
+function waitForPresence(queue, roomJid, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const deadline = Date.now() + timeout;
+
+        const check = () => {
+            for (let i = 0; i < queue.length; i++) {
+                const s = queue[i];
+
+                if (s.name !== 'presence') {
+                    continue;
+                }
+                const from = s.attrs.from ?? '';
+
+                if (!from.startsWith(`${roomJid}/`)) {
+                    continue;
+                }
+
+                // Rejected join — error presence sent directly back to client.
+                if (s.attrs.type === 'error') {
+                    queue.splice(i, 1);
+                    resolve(s);
+
+                    return;
+                }
+
+                // Self-presence: Prosody adds status code 110 to confirm this is our own join.
+                const x = s.getChild('x', 'http://jabber.org/protocol/muc#user');
+
+                if (x?.getChildren('status').some(st => st.attrs.code === '110')) {
+                    queue.splice(i, 1);
+                    resolve(s);
+
+                    return;
+                }
+            }
+
+            if (Date.now() >= deadline) {
+                reject(new Error(`Timeout waiting for presence from ${roomJid}`));
+
+                return;
+            }
+
+            setTimeout(check, 50);
+        };
+
+        check();
+    });
+}

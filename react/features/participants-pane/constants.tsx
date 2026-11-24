@@ -1,6 +1,3 @@
-import React from 'react';
-
-import Icon from '../base/icons/components/Icon';
 import {
     IconMic,
     IconMicSlash,
@@ -60,60 +57,59 @@ export const QUICK_ACTION_BUTTON: {
     STOP_VIDEO: 'StopVideo'
 };
 
+export interface IStateIconData {
+    className?: string;
+    color?: string;
+    id?: string;
+    labelKey?: string;
+    src: Function;
+}
+
 /**
- * Icon mapping for possible participant audio states.
+ * Data mapping for possible participant audio states.
  */
-export const AudioStateIcons = {
-    [MEDIA_STATE.DOMINANT_SPEAKER]: (
-        <Icon
-            className = 'jitsi-icon-dominant-speaker'
-            size = { 16 }
-            src = { IconMic } />
-    ),
-    [MEDIA_STATE.FORCE_MUTED]: (
-        <Icon
-            color = '#E04757'
-            id = 'audioMuted'
-            size = { 16 }
-            src = { IconMicSlash } />
-    ),
-    [MEDIA_STATE.MUTED]: (
-        <Icon
-            id = 'audioMuted'
-            size = { 16 }
-            src = { IconMicSlash } />
-    ),
-    [MEDIA_STATE.UNMUTED]: (
-        <Icon
-            size = { 16 }
-            src = { IconMic } />
-    ),
+export const AudioStateIcons: { [key: string]: IStateIconData | null; } = {
+    [MEDIA_STATE.DOMINANT_SPEAKER]: {
+        className: 'jitsi-icon-dominant-speaker',
+        labelKey: 'participantsPane.indicators.audioDominantSpeaker',
+        src: IconMic
+    },
+    [MEDIA_STATE.FORCE_MUTED]: {
+        color: '#E04757',
+        id: 'audioMuted',
+        labelKey: 'participantsPane.indicators.audioForceMuted',
+        src: IconMicSlash
+    },
+    [MEDIA_STATE.MUTED]: {
+        id: 'audioMuted',
+        labelKey: 'participantsPane.indicators.audioMuted',
+        src: IconMicSlash
+    },
+    [MEDIA_STATE.UNMUTED]: {
+        src: IconMic
+    },
     [MEDIA_STATE.NONE]: null
 };
 
 /**
- * Icon mapping for possible participant video states.
+ * Data mapping for possible participant video states.
  */
-export const VideoStateIcons = {
+export const VideoStateIcons: { [key: string]: IStateIconData | null; } = {
     [MEDIA_STATE.DOMINANT_SPEAKER]: null,
-    [MEDIA_STATE.FORCE_MUTED]: (
-        <Icon
-            color = '#E04757'
-            id = 'videoMuted'
-            size = { 16 }
-            src = { IconVideoOff } />
-    ),
-    [MEDIA_STATE.MUTED]: (
-        <Icon
-            id = 'videoMuted'
-            size = { 16 }
-            src = { IconVideoOff } />
-    ),
-    [MEDIA_STATE.UNMUTED]: (
-        <Icon
-            size = { 16 }
-            src = { IconVideo } />
-    ),
+    [MEDIA_STATE.FORCE_MUTED]: {
+        color: '#E04757',
+        id: 'videoMuted',
+        labelKey: 'participantsPane.indicators.videoForceMuted',
+        src: IconVideoOff
+    },
+    [MEDIA_STATE.MUTED]: {
+        id: 'videoMuted',
+        labelKey: 'participantsPane.indicators.videoMuted',
+        src: IconVideoOff
+    },
+    [MEDIA_STATE.UNMUTED]: {
+        src: IconVideo
+    },
     [MEDIA_STATE.NONE]: null
 };
 

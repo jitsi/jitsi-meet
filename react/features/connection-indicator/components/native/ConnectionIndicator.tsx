@@ -1,8 +1,10 @@
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import { IconConnection } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -31,7 +33,7 @@ import {
     iconStyle
 } from './styles';
 
-type IProps = AbstractProps & {
+type IProps = AbstractProps & WithTranslation & {
 
     /**
      * Whether connection indicators are disabled or not.
@@ -154,6 +156,9 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
             indicatorColor = displayConfig.color;
         }
 
+        const { t } = this.props;
+        const connectionLabel = t('videothumbnail.connectionInfo');
+
         return (
             <View
                 style = { [
@@ -161,6 +166,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
                     { backgroundColor: indicatorColor }
                 ] }>
                 <BaseIndicator
+                    accessibilityLabel = { connectionLabel }
                     icon = { IconConnection }
                     iconStyle = { this.props.iconStyle || iconStyle } />
             </View>
@@ -203,4 +209,4 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default connect(_mapStateToProps)(ConnectionIndicator);
+export default translate(connect(_mapStateToProps)(ConnectionIndicator));

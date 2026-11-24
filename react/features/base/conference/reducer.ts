@@ -12,6 +12,7 @@ import { assign, equals, set } from '../redux/functions';
 
 import {
     AUTH_STATUS_CHANGED,
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
@@ -41,6 +42,7 @@ const DEFAULT_STATE = {
     conference: undefined,
     dataChannelOpen: undefined,
     e2eeSupported: undefined,
+    iceConnected: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
@@ -52,6 +54,44 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+
+    /**
+     * The voice agents (bot participants) provisioned for the room, keyed by agent id. Written by the
+     * voice-agent prosody module; read-only for clients. An agent becomes audible only after the local
+     * participant subscribes to its source (consent-gated, see features/voice-agents).
+     */
+    agents?: {
+        [agentId: string]: {
+            displayName?: string;
+            kind?: string;
+            sourceName?: string;
+            state?: string;
+        };
+    };
+
+    /**
+     * Server-controlled flag: the deployment transcribes on the backend, started through
+     * {@code recording.isTranscribingEnabled}, instead of dialing a transcriber.
+     */
+    asyncTranscription?: boolean;
+    audioTranslation?: {
+        enabled?: boolean;
+    };
+
+    /**
+     * Server-controlled flag letting a deployment hide the audio-translation feature for a room (e.g. when
+     * the translation backend is not provisioned for it). Absent, or any value other than an explicit false,
+     * means available.
+     */
+    audioTranslationAvailable?: boolean;
+
+    /**
+     * Per-speaker, per-language count of participants subscribed to that speaker's translated audio, published
+     * by the audio-translation component. Combined with the bridge's synthetic-source sending state to show how
+     * many participants are still hearing a speaker.
+     */
+    audioTranslationListenerCounts?: { [senderId: string]: { [language: string]: number; }; };
+    dialinEnabled?: boolean;
     files: {
         [fileId: string]: {
             authorParticipantJid: string;
@@ -65,9 +105,27 @@ export interface IConferenceMetadata {
             timestamp: number;
         };
     };
+
+    /**
+     * The restrictions of the room. A moderator sets them, or the server sets them from the
+     * settings of the meeting when it creates the room.
+     */
+    permissions?: {
+        groupChatRestricted?: boolean;
+        pollCreationRestricted?: boolean;
+        privateChatRestricted?: boolean;
+    };
     recording?: {
+        isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
     };
+
+    /**
+     * Set by the settings service (via prosody) when it fell back to hardcoded defaults because
+     * one of its own upstream calls failed or timed out - meaning the settings applied to this
+     * room (e.g. lobby) may not reflect what was actually configured.
+     */
+    settingsIncomplete?: boolean;
     visitors?: {
         live: boolean;
     };
@@ -82,11 +140,13 @@ export interface IConferenceMetadata {
 export interface IJitsiConference {
     addCommandListener: Function;
     addLobbyMessageListener: Function;
+    addLobbyMessageRetractionListener: Function;
     addTrack: Function;
     authenticateAndUpgradeRole: Function;
     avModerationApprove: Function;
     avModerationReject: Function;
     callUUID?: string;
+    clearTranslation: () => void;
     createVideoSIPGWSession: Function;
     dial: Function;
     disableAVModeration: Function;
@@ -106,6 +166,7 @@ export interface IJitsiConference {
     getParticipantCount: Function;
     getParticipants: Function;
     getPolls: Function;
+    getReceiverTranslationLanguage: () => string | null;
     getRole: Function;
     getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
@@ -113,9 +174,11 @@ export interface IJitsiConference {
     getTranscriptionStatus: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
+    isAudioTranslationSupported?: () => boolean;
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
+    isIceRestartSupported: Function;
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
@@ -127,6 +190,7 @@ export interface IJitsiConference {
     lobbyDenyAccess: Function;
     lock: Function;
     markParticipantVerified: Function;
+    moderateMessage: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
@@ -135,6 +199,8 @@ export interface IJitsiConference {
     options: any;
     removeTrack: Function;
     replaceTrack: Function;
+    // Keep in sync with lib-jitsi-meet's IceRestartReason (service/RTC/IceRestartReason.ts).
+    restartJvbIce: (reason?: 'api' | 'ice-failed' | 'network-change') => Promise<void>;
     room: IJitsiConferenceRoom;
     sendApplicationLog: Function;
     sendCommand: Function;
@@ -143,19 +209,25 @@ export interface IJitsiConference {
     sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
+    sendLobbyMessageRetraction: Function;
     sendMessage: Function;
+    sendMessageCorrection: Function;
+    sendMessageRetraction: Function;
     sendPrivateTextMessage: Function;
     sendReaction: Function;
     sendTextMessage: Function;
     sendTones: Function;
     sessionId: string;
+    setAgentAudioSubscription?: (sourceNames: string[]) => void;
     setAssumedBandwidthBps: (value: number) => void;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setIsSilent: Function;
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
+    setParticipantTranslationLanguage: (participantId: string, language: string | null) => void;
     setReceiverConstraints: Function;
+    setReceiverTranslationLanguage: (language: string | null) => void;
     setSenderVideoConstraint: Function;
     setStartMutedPolicy: Function;
     setSubject: Function;
@@ -176,6 +248,7 @@ export interface IConferenceState {
     dataChannelOpen?: boolean;
     e2eeSupported?: boolean;
     error?: Error;
+    iceConnected?: boolean;
     joining?: IJitsiConference;
     leaving?: IJitsiConference;
     lobbyError?: boolean;
@@ -228,6 +301,9 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
         case CONFERENCE_JOINED:
             return _conferenceJoined(state, action);
+
+        case CONFERENCE_CONNECTION_ESTABLISHED:
+            return set(state, 'iceConnected', true);
 
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);
@@ -412,6 +488,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
         conference: undefined,
         e2eeSupported: undefined,
         error,
+        iceConnected: undefined,
         joining: undefined,
         leaving: undefined,
         lobbyError,
@@ -519,6 +596,7 @@ function _conferenceLeftOrWillLeave(state: IConferenceState, { conference, type 
                 // been LOCKED_LOCALLY or LOCKED_REMOTELY.
                 delete nextState.locked;
                 delete nextState.password;
+                nextState.iceConnected = undefined;
                 break;
             }
         }

@@ -1,5 +1,9 @@
--- Measure the number of messages used in a meeting. Sends amplitude event.
--- Needs to be activated under the muc component where the limit needs to be applied (main muc and breakout muc)
+-- Counts messages and polls per conference and reports the totals to Amplitude
+-- when the main room is destroyed. Loaded on both the main MUC and breakout MUC
+-- components; in both cases messages are accumulated on the main room object
+-- (session.jitsi_web_query_room always refers to the main conference), so
+-- breakout messages are included in the main room's totals. The Amplitude event
+-- is only sent when the main room is destroyed (skipped for breakout rooms).
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local jid = require 'util.jid';
@@ -20,6 +24,7 @@ local isBreakoutRoom = module.host == 'breakout.' .. muc_domain_base;
 local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
 local extract_subdomain = util.extract_subdomain;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 
 module:log('info', 'Loading measure message count');
 
@@ -31,7 +36,7 @@ local http_headers = {
     ['Content-Type'] = 'application/json'
 };
 
-local inspect = require "inspect"
+local serialize = require "util.serialization".new("debug")
 
 function table.clone(t)
   return {table.unpack(t)}
@@ -40,10 +45,10 @@ end
 local function event_cb(content_, code_, response_, request_)
     if code_ == 200 or code_ == 204 then
         module:log('debug', 'URL Callback: Code %s, Content %s, Request (host %s, path %s, body %s), Response: %s',
-                code_, content_, request_.host, request_.path, inspect(request_.body), inspect(response_));
+                code_, content_, request_.host, request_.path, serialize(request_.body), serialize(response_));
     else
         module:log('warn', 'URL Callback non successful: Code %s, Content %s, Request (%s), Response: %s',
-                code_, content_, inspect(request_), inspect(response_));
+                code_, content_, serialize(request_), serialize(response_));
     end
 end
 

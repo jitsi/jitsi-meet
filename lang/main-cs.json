@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Reproduktor"
     },
-    "audioOnly": {
-        "audioOnly": "Nízká přenosová rychlost"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "např. 10000000 pro 10 Mbps",
         "assumedBandwidthBpsWarning": "Vyšší hodnoty mohou způsobit problémy se sítí.",
@@ -209,7 +206,7 @@
     "deepLinking": {
         "appNotInstalled": "Abyste se mohl/a připojit k setkání, potřebujete mít na telefonu aplikaci {{app}}.",
         "description": "Nic se nestalo? Zkusili jsme spustit setkání v desktopové aplikaci {{app}}. Zkuste to znovu nebo spusťte webovou aplikaci {{app}}.",
-        "descriptionNew": "Nic se nestalo? Pokusili jsme se spustit vaši schůzku v aplikaci {{app}} pro počítače. <br /><br /> Můžete to zkusit znovu nebo to spustit na webu.",
+        "descriptionNew": "Nic se nestalo? Pokusili jsme se spustit vaši schůzku v aplikaci {{app}} pro počítače. <0/><0/> Můžete to zkusit znovu nebo to spustit na webu.",
         "descriptionWithoutWeb": "Nic se nestalo? Zkusili jsme spustit setkání v desktopové aplikaci {{app}}.",
         "downloadApp": "Stáhněte si aplikaci",
         "downloadMobileApp": "Stáhnout z App Store",
@@ -223,7 +220,7 @@
         "noDesktopApp": "Nemáte aplikaci?",
         "noMobileApp": "Nemáte aplikaci?",
         "or": "NEBO",
-        "termsAndConditions": "Pokračováním vyjadřujete souhlas s našimi <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>smluvními podmínkami</a>.",
+        "termsAndConditions": "Pokračováním vyjadřujete souhlas s našimi <0>smluvními podmínkami</0>.",
         "title": "Setkání se spouští v {{app}}…",
         "titleNew": "Zahajování schůzky…",
         "tryAgainButton": "Zkusit znovu na desktopu",
@@ -238,12 +235,6 @@
         "microphonePermission": "Aplikace nemá oprávnění přistupovat k mikrofonu"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Ovládání hovorů",
-            "connectedDevices": "Připojená zařízení:",
-            "deleteDevice": "Smazat zařízení",
-            "pairDevice": "Spárovat zařízení"
-        },
         "noPermission": "Oprávnění není uděleno",
         "previewUnavailable": "Náhled není dostupný",
         "selectADevice": "Zvolte zařízení",
@@ -263,7 +254,6 @@
         "Remove": "Odstranit",
         "Share": "Sdílet",
         "Submit": "Potvrdit",
-        "WaitForHostMsg": "Konference ještě nezačala. Pokud jste hostitel, přihlaste se. Jinak prosím počkejte, až hostitel dorazí.",
         "WaitForHostNoAuthMsg": "Konference ještě nezačala, protože ještě nedorazili žádní moderátoři. Čekejte prosím.",
         "WaitingForHostButton": "Počkejte na moderátora",
         "WaitingForHostTitle": "Čeká se na hostitele…",
@@ -322,7 +312,7 @@
         "error": "Chyba",
         "errorRoomCreationRestriction": "Pokusili jste se připojit příliš rychle, vraťte se prosím za chvíli.",
         "gracefulShutdown": "Naše služba je nyní mimo provoz kvůli údržbě. Zkuste to prosím znovu později.",
-        "grantModeratorDialog": "Určitě chcete tohoto účastníka učinit moderátorem?",
+        "grantModeratorDialog": "Opravdu chcete udělit práva moderátora účastníkovi {{participantName}}?",
         "grantModeratorTitle": "Pověřit moderátora",
         "hide": "Skrýt",
         "hideShareAudioHelper": "Tento dialog již nezobrazovat",
@@ -559,7 +549,7 @@
         "inviteTextiOSInviteUrl": "Chcete-li se připojit, klikněte na následující odkaz: {{inviteUrl}}.",
         "inviteTextiOSJoinSilent": "Pokud se připojujete přes pokojový telefon, použijte tento odkaz pro připojení bez připojení ke zvuku: {{silentUrl}}.",
         "inviteTextiOSPersonal": "{{name}} vás zve na schůzku.",
-        "inviteTextiOSPhone": "Chcete-li se připojit telefonicky, použijte toto číslo: {{number}},,{{conferenceID}#. Pokud hledáte jiné číslo, toto je úplný seznam: {{didUrl}}.",
+        "inviteTextiOSPhone": "Pro připojení telefonem použijte toto číslo: {{number}},,{{conferenceID}}#. Pokud hledáte jiné číslo, zde je úplný seznam: {{didUrl}}.",
         "inviteURLFirstPartGeneral": "Dostali jste pozvánku připojit se k setkání.",
         "inviteURLFirstPartPersonal": "{{name}} vás zve do setkání.",
         "inviteURLSecondPart": "\nPřidejte se k setkání:\n{{url}}\n",
@@ -594,7 +584,7 @@
         "searchPlaceholder": "Účastník nebo telefonní číslo",
         "send": "Odeslat"
     },
-    "jitsiHome": "{{logo} Logo, vede na  Homepage",
+    "jitsiHome": "Logo {{logo}}, odkaz na domovskou stránku",
     "keyboardShortcuts": {
         "focusLocal": "Vybrat váš obraz",
         "focusRemote": "Vybrat obraz jiného volajícího",
@@ -678,7 +668,7 @@
         "knockTitle": "Někdo chce vstoupit do setkání",
         "knockingParticipantList": "Seznam zájemců",
         "lobbyChatStartedNotification": "{{moderator}} zahájil chat v lobby s {{attendee}}",
-        "lobbyChatStartedTitle": "{{moderátor}} s vámi zahájil chat v lobby.",
+        "lobbyChatStartedTitle": "{{moderator}} s vámi zahájil chat v lobby.",
         "lobbyClosed": "Lobby bylo uzavřeno.",
         "nameField": "Zadejte své jméno",
         "notificationLobbyAccessDenied": "{{originParticipantName}} zamítl/a žádost o vstup od {{targetParticipantName}}",
@@ -728,16 +718,18 @@
         "button": "Pozvat další",
         "youAreAlone": "Jste v tomto setkání jediný/á"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Nízká přenosová rychlost"
+    },
     "me": "já",
     "notify": {
         "OldElectronAPPTitle": "Bezpečnostní zranitelnost!",
-        "allowAction": "Povolit",
         "allowedUnmute": "Můžete zapnout mikrofon, spustit kameru nebo sdílet obrazovku.",
         "audioUnmuteBlockedDescription": "Operace zapnutí mikrofonu byla dočasně zablokována z důvodu omezení systému.",
         "audioUnmuteBlockedTitle": "Odtlumení mikrofonu bylo zablokováno!",
         "chatMessages": "Chatové zprávy",
         "connectedOneMember": "{{name}} se připojil/a",
-        "connectedThreePlusMembers": "{{name}} a {{count}} dalších se připojili",
+        "connectedThreePlusMembers": "{{name}} a mnoho dalších se připojilo ke schůzce",
         "connectedTwoMembers": "{{first}} a {{second}} se připojili",
         "connectionFailed": "Připojení se nezdařilo. Zkuste to znovu později!",
         "dataChannelClosed": "Kvalita videa může být snížena",
@@ -745,7 +737,6 @@
         "dataChannelClosedDescriptionWithAudio": "Přemosťovací kanál je vypnutý, a proto může dojít k přerušení zvuku a obrazu.",
         "dataChannelClosedWithAudio": "Kvalita zvuku a videa může být snížena",
         "disabledIframe": "Vkládání je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen.",
-        "disabledIframeSecondary": "Vložení domény {{domain}} je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen. Pro produkční vkládání použijte prosím <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a service</a>!",
         "disconnected": "odpojeno",
         "displayNotifications": "Zobrazit upozornění pro",
         "dontRemindMe": "Nepřipomínej mi to",
@@ -805,7 +796,7 @@
         "passwordRemovedRemotely": "Jiný účastník odebral $t(lockRoomPassword)",
         "passwordSetRemotely": "Jiný účastník nastavil $t(lockRoomPassword)",
         "raiseHandAction": "Zvednout ruku",
-        "raisedHand": "{{name}} by chtěl/a mluvit",
+        "raisedHand": "Hlásí se o slovo.",
         "raisedHands": "{{participantName}} a {{raisedHands}} dalších lidí",
         "reactionSounds": "Zakázat zvuky",
         "reactionSoundsForAll": "Zakázat zvuky pro všechny",
@@ -817,7 +808,7 @@
         "somebody": "Někdo",
         "startSilentDescription": "Připojte se znovu, aby se zvuk zapnul",
         "startSilentTitle": "Připojil/a jste se bez zvukového výstupu!",
-        "suboptimalBrowserWarning": "Obáváme se, že vás nečeká právě nejlepší zážitek. Snažíme se to zlepšit, ale prozatím prosím zkuste použít některý z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plně podporovaných prohlížečů</a>.",
+        "suboptimalBrowserWarning": "Obáváme se, že vás nečeká právě nejlepší zážitek. Snažíme se to zlepšit, ale prozatím prosím zkuste použít některý z <0>plně podporovaných prohlížečů</0>.",
         "suboptimalExperienceTitle": "Varování o prohlížeči",
         "suggestRecordingAction": "Spustit",
         "suggestRecordingDescription": "Chcete spustit nahrávání?",
@@ -896,8 +887,7 @@
             "pollQuestion": "Anketní otázka",
             "questionPlaceholder": "Položit otázku",
             "removeOption": "Vyjmout možnost",
-            "save": "Uložit",
-            "send": "Odeslat"
+            "save": "Uložit"
         },
         "errors": {
             "notUniqueOption": "Možnosti musí být jedinečné"
@@ -916,9 +906,7 @@
     },
     "poweredby": "provozováno",
     "prejoin": {
-        "audioAndVideoError": "Chyba zvuku a videa:",
         "audioDeviceProblem": "Nastal problém s vaším zvukovým zařízením",
-        "audioOnlyError": "Chyba zvuku:",
         "audioTrackError": "Nepovedlo se vytvořit stopu zvuku.",
         "callMe": "Zavolej mi",
         "callMeAtNumber": "Zavolej mi na toto číslo:",
@@ -976,7 +964,6 @@
         "screenSharingError": "Chyba sdílení obrazovky:",
         "startWithPhone": "Začít se zvukem přes telefon",
         "unsafeRoomConsent": "Chápu rizika, chci se připojit k setkání",
-        "videoOnlyError": "Chyba videa:",
         "videoTrackError": "Nepovedlo se vytvořit stopu videa.",
         "viewAllNumbers": "zobrazit všechna čísla"
     },
@@ -1056,19 +1043,16 @@
         "recordAudioAndVideo": "Záznam zvuku a videa",
         "recordTranscription": "Přepis záznamu",
         "saveLocalRecording": "Uložit záznamový soubor lokálně (Beta)",
-        "serviceDescription": "Nahrávací služba uloží vaši nahrávku",
         "serviceDescriptionCloud": "Cloudové nahrávání",
         "serviceDescriptionCloudInfo": "Nahrané schůzky jsou automaticky vymazány 24 hodin po jejich době záznamu.",
         "serviceName": "Nahrávací služba",
         "sessionAlreadyActive": "Tato relace se již nahrává nebo se vysílá živě.",
-        "showAdvancedOptions": "Pokročilé možnosti",
         "signIn": "Přihlásit se",
         "signOut": "Odhlásit se",
         "surfaceError": "Vyberte prosím aktuální kartu.",
         "title": "Nahrávání",
         "unavailable": "Jejda! Služba {{serviceName}} není dostupná. Problém se snažíme vyřešit. Zkuste to prosím později.",
-        "unavailableTitle": "Nahrávání nedostupné",
-        "uploadToCloud": "Nahrát do cloudu"
+        "unavailableTitle": "Nahrávání nedostupné"
     },
     "screenshareDisplayName": "Obrazovka uživatele {{name}}",
     "sectionList": {
@@ -1078,7 +1062,7 @@
         "about": "Můžete pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "aboutReadOnly": "Moderující účastníci můžou pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "insecureRoomNameWarningNative": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky ",
-        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">zde</a>.",
+        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <0>zde</0>.",
         "title": "Možnosti zabezpečení",
         "unsafeRoomActions": {
             "meeting": "Zvažte zabezpečení schůzky pomocí bezpečnostního tlačítka.",
@@ -1207,7 +1191,6 @@
         "Settings": "Nastavení",
         "accessibilityLabel": {
             "Settings": "Přepnout nastavení",
-            "audioOnly": "Přepnout režim pouze zvuku",
             "audioRoute": "Vybrat zvukové zařízení",
             "boo": "Bú",
             "breakoutRooms": "Podmístnosti",
@@ -1249,6 +1232,7 @@
             "localRecording": "Přepnout ovládání místního nahrávání",
             "lockRoom": "Přepnout heslo setkání",
             "love": "Srdce",
+            "lowBandwidthMode": "Přepnout režim pouze zvuku",
             "lowerHand": "Spustit ruku dolů",
             "moreActions": "Přepnout nabídku více činností",
             "moreActionsMenu": "Nabídka více činností",
@@ -1261,7 +1245,7 @@
             "muteGUMPending": "Připojování mikrofonu",
             "noiseSuppression": "Potlačení šumu",
             "openChat": "Otevřít chat",
-            "participants": "Účastníci",
+            "participants": "Otevřít panel účastníků. Počet účastníků: {{participantsCount}}",
             "pip": "Přepnout režim obrazu v obraze",
             "privateMessage": "Poslat soukromou zprávu",
             "profile": "Upravit váš profil",
@@ -1297,8 +1281,6 @@
             "videounmute": "Zapnpout kameru"
         },
         "addPeople": "Přidat do hovoru účastníky",
-        "audioOnlyOff": "Vypnout mód slabého připojení",
-        "audioOnlyOn": "Zapnout mód slabého připojení",
         "audioRoute": "Vybrat zvukové zařízení",
         "audioSettings": "Nastavení zvuku",
         "authenticate": "Ověřit",
@@ -1339,6 +1321,8 @@
         "login": "Přihlásit se",
         "logout": "Odhlásit se",
         "love": "Srdce",
+        "lowBandwidthModeOff": "Vypnout mód slabého připojení",
+        "lowBandwidthModeOn": "Zapnout mód slabého připojení",
         "lowerYourHand": "Přestat se hlásit",
         "moreActions": "Více činností",
         "moreOptions": "Více možností",
@@ -1380,7 +1364,7 @@
         "silence": "Umlčet",
         "speakerStats": "Statistiky řečníků",
         "startScreenSharing": "Začít sdílet obrazovku",
-        "startSubtitles": "Zapnout titulky",
+        "startSubtitles": "Titulky • {{language}}",
         "stopAudioSharing": "Zastavit sdílení zvuku",
         "stopScreenSharing": "Zastavit sdílení obrazovky",
         "stopSharedVideo": "Zastavit video",
@@ -1399,8 +1383,7 @@
         "ccButtonTooltip": "Spustit / zastavit titulky",
         "expandedLabel": "Přepis je momentálně zapnutý",
         "failed": "Přepis se nezdařil",
-        "labelToolTip": "Schůzka se přepisuje",
-        "sourceLanguageDesc": "Momentálně je jazyk schůzky nastaven na <b>{{sourceLanguage}}</b>. <br/> Můžete jej změnit z ",
+        "sourceLanguageDesc": "Momentálně je jazyk schůzky nastaven na <0>{{sourceLanguage}}</0>. <1/> Můžete jej změnit z ",
         "sourceLanguageHere": "zde",
         "start": "Začít zobrazovat titulky",
         "stop": "Přestat zobrazovat titulky",
@@ -1424,8 +1407,6 @@
     },
     "videoStatus": {
         "adjustFor": "Přizpůsobit pro",
-        "audioOnly": "AU",
-        "audioOnlyExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "bestPerformance": "Nejlepší výkon",
         "callQuality": "Kvalita hovoru",
         "hd": "HD",
@@ -1433,9 +1414,11 @@
         "highDefinition": "Vysoká kvalita",
         "highestQuality": "Nejvyšší kvalita",
         "labelTooiltipNoVideo": "Žádné video",
-        "labelTooltipAudioOnly": "Zapnut režim slabého připojení",
+        "labelTooltipLowBandwidthMode": "Zapnut režim slabého připojení",
         "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízké kvalitě",
+        "lowBandwidthMode": "AU",
+        "lowBandwidthModeExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "lowDefinition": "Nízká kvalita",
         "performanceSettings": "Nastavení výkonu",
         "recording": "Probíhá nahrávání",
@@ -1552,7 +1535,7 @@
         "mobileDownLoadLinkAndroid": "Stáhněte si mobilní aplikaci pro Android",
         "mobileDownLoadLinkFDroid": "Stáhněte si mobilní aplikaci pro F-Droid",
         "mobileDownLoadLinkIos": "Stáhněte si mobilní aplikaci pro iOS",
-        "moderatedMessage": "Nebo si předem <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">rezervujte adresu setkání</a>, kde budete jediný moderátor.",
+        "moderatedMessage": "Nebo si předem <0>rezervujte adresu setkání</0>, kde budete jediný moderátor.",
         "privacy": "Soukromí",
         "recentList": "Nedávné",
         "recentListDelete": "Smazat",

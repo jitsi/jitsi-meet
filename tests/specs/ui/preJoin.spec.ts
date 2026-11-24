@@ -32,6 +32,22 @@ describe('Pre-join screen', () => {
 
         await error.waitForDisplayed();
 
+        // While the name is missing the join button is natively disabled, which keeps it out of the tab order so
+        // keyboard users don't land on a control that does nothing. Its options arrow is disabled with it.
+        const joinOptions = p1PreJoinScreen.getJoinOptions();
+
+        expect(await joinButton.isEnabled()).toBe(false);
+        expect(await joinOptions.isEnabled()).toBe(false);
+
+        await p1PreJoinScreen.enterDisplayName('P1');
+
+        // Both controls become usable again as soon as the name is in.
+        await joinButton.waitForEnabled({
+            timeout: 3000,
+            timeoutMsg: 'join button was not re-enabled after entering a display name'
+        });
+        expect(await joinOptions.isEnabled()).toBe(true);
+
         await ctx.p1.hangup();
     });
 

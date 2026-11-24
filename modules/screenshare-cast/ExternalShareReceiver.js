@@ -1,0 +1,253 @@
+import Logger from '@jitsi/logger';
+
+import JitsiMeetJS from '../../react/features/base/lib-jitsi-meet';
+
+const logger = Logger.getLogger('modules/screenshare-cast/ExternalShareReceiver');
+
+/**
+ * ExternalShareReceiver — direct-cast wireless screenshare, RECEIVER side.
+ *
+ * A remote sharer (e.g. a laptop) opens a PLAIN RTCPeerConnection straight to THIS
+ * Jitsi Meet instance and adds its screen — and, optionally, system audio — tracks.
+ * We terminate that peer connection here, take the track(s) off `pc.ontrack`, wrap
+ * them as JitsiLocalTracks via the public
+ * {@code JitsiMeetJS.createLocalTracksFromMediaStreams}, and hand them to the
+ * conference as the local screenshare. No lib-jitsi-meet ProxyConnectionService, no
+ * Jingle, no XMPP/Strophe JIDs.
+ *
+ * This replaces the brittle ProxyConnectionService path. The shape — terminate the
+ * peer connection at the TV's Jitsi Meet and let Jitsi move the tracks from this
+ * "proxy" PC into the conference PC — is exactly what Spot's screenshare always did,
+ * minus the Jingle/XMPP plumbing that made it Chromium-only and audio-less. Built on a
+ * vanilla RTCPeerConnection so screenshare audio rides along for free and Firefox/Safari
+ * are no longer locked out the way ProxyConnectionService locked them.
+ *
+ * Signalling is plain JSON, carried over any transport the embedder wires up (e.g. the
+ * iframe external API) — never XMPP:
+ *   { kind: 'offer',     sdp }        sharer → here   (answered with { kind:'answer', sdp })
+ *   { kind: 'answer',    sdp }        here   → sharer
+ *   { kind: 'candidate', candidate }  both ways
+ *   { kind: 'stop' }                  sharer → here   (tears down)
+ */
+export default class ExternalShareReceiver {
+    /**
+     * @param {Object} options
+     * @param {RTCConfiguration} [options.pcConfig] - ICE config for the peer
+     * connection. The meeting's own TURN creds work here (same source the old proxy
+     * borrowed) — just without the Jingle.
+     * @param {Function} options.onSignal - Emit a signalling message back to the
+     * sharer: {@code (signal) => void}.
+     * @param {Function} options.onTracks - Publish the received screenshare:
+     * {@code ({ desktopVideoTrack, desktopAudioTrack }) => void}.
+     * @param {Function} [options.onClosed] - Invoked once when the connection closes:
+     * {@code ({ published, spontaneous }) => void}. {@code published} is whether a share
+     * had been handed to the conference; {@code spontaneous} is whether the peer
+     * connection dropped on its own (vs. an explicit {@link stop}).
+     */
+    constructor({ pcConfig, onSignal, onTracks, onClosed }) {
+        this._onSignal = onSignal;
+        this._onTracks = onTracks;
+        this._onClosed = onClosed;
+
+        this._desktopVideoTrack = null;
+        this._desktopAudioTrack = null;
+        this._published = false;
+        this._closed = false;
+        this._spontaneous = false;
+
+        if (!pcConfig) {
+            // Don't fail outright — a same-LAN sharer can still connect with host
+            // candidates — but make the missing TURN/STUN loud: a remote sharer behind
+            // NAT will silently never reach 'connected' without it.
+            logger.warn('external share: no ICE config supplied; the peer connection has '
+                + 'no STUN/TURN servers, so only same-LAN sharers will connect');
+        }
+
+        const pc = new RTCPeerConnection(pcConfig || {});
+
+        this._pc = pc;
+
+        pc.addEventListener('icecandidate', ({ candidate }) => {
+            if (candidate) {
+                this._onSignal({
+                    kind: 'candidate',
+                    candidate: candidate.toJSON()
+                });
+            }
+        });
+
+        pc.addEventListener('connectionstatechange', () => {
+            const state = pc.connectionState;
+
+            logger.info(`external share pc state: ${state}`);
+
+            if (state === 'connected') {
+                // By the time the PC is connected, ontrack has fired for every track in
+                // the offer, so we know whether audio is present. Publish exactly once.
+                this._publish();
+            } else if (state === 'failed' || state === 'closed') {
+                // Terminal only. 'disconnected' is deliberately NOT treated as terminal —
+                // it is frequently a transient blip that recovers back to 'connected', so
+                // tearing the cast down on it would drop the share on a momentary glitch.
+                // The peer connection dropped on its own — flag it so the conference can
+                // tear down a now-frozen published share (see onClosed).
+                this._spontaneous = true;
+                this.stop();
+            }
+        });
+
+        pc.addEventListener('track', ({ track }) => this._collectTrack(track));
+    }
+
+    /**
+     * Handle one inbound signalling message from the sharer.
+     *
+     * Messages are processed strictly in arrival order: callers don't await us, so we
+     * chain on an internal queue. Without it a trickled {@code candidate} could run its
+     * {@code addIceCandidate} before the preceding {@code offer}'s asynchronous
+     * {@code setRemoteDescription} has resolved — which throws ("remote description was
+     * null") and silently drops the candidate.
+     *
+     * @param {Object} signal - The signalling message (see class doc for shapes).
+     * @returns {Promise<void>}
+     */
+    handleSignal(signal) {
+        this._signalQueue = (this._signalQueue || Promise.resolve())
+            .then(() => this._processSignal(signal));
+
+        return this._signalQueue;
+    }
+
+    /**
+     * Process a single inbound signalling message. Serialized by {@link handleSignal}.
+     *
+     * @param {Object} signal - The signalling message (see class doc for shapes).
+     * @private
+     * @returns {Promise<void>}
+     */
+    async _processSignal(signal) {
+        if (!signal || this._closed) {
+            return;
+        }
+
+        try {
+            if (signal.kind === 'offer') {
+                await this._pc.setRemoteDescription(signal.sdp);
+                const answer = await this._pc.createAnswer();
+
+                await this._pc.setLocalDescription(answer);
+
+                // Emit a plain { type, sdp } so it survives structured-clone over
+                // whatever transport carries it (an RTCSessionDescription may not).
+                this._onSignal({
+                    kind: 'answer',
+                    sdp: {
+                        type: this._pc.localDescription.type,
+                        sdp: this._pc.localDescription.sdp
+                    }
+                });
+            } else if (signal.kind === 'candidate' && signal.candidate) {
+                await this._pc.addIceCandidate(signal.candidate);
+            } else if (signal.kind === 'stop') {
+                this.stop();
+            }
+        } catch (error) {
+            // Signalling failed (bad SDP, unexpected state, etc.) — the connection can't
+            // be salvaged, so tear it down rather than hang half-negotiated. Flag it as
+            // spontaneous so a share that did get published is taken back down.
+            logger.error('external share signal handling failed', error);
+            this._spontaneous = true;
+            this.stop();
+        }
+    }
+
+    /**
+     * Wrap a received MediaStreamTrack as a JitsiLocalTrack and stash it until publish.
+     *
+     * @param {MediaStreamTrack} track - A track arriving over the peer connection.
+     * @private
+     * @returns {void}
+     */
+    _collectTrack(track) {
+        const isVideo = track.kind === 'video';
+
+        try {
+            // Each received track gets its OWN single-track MediaStream:
+            // createLocalTracksFromMediaStreams throws if a stream holds 0 or >1 tracks
+            // of the requested kind. Guard the call (it runs inside the 'track' event)
+            // so an unexpected/extra track can't leave the handler with an uncaught
+            // throw and a half-collected state.
+            const stream = new MediaStream([ track ]);
+
+            const [ jitsiTrack ] = JitsiMeetJS.createLocalTracksFromMediaStreams([ {
+                stream,
+                track,
+                mediaType: track.kind,
+                sourceType: 'proxy',
+                deviceId: 'proxy:screenshare-cast',
+                videoType: isVideo ? 'desktop' : undefined
+            } ]);
+
+            if (isVideo) {
+                this._desktopVideoTrack = jitsiTrack;
+            } else {
+                this._desktopAudioTrack = jitsiTrack;
+            }
+
+            logger.info(`external share collected ${track.kind} track`);
+        } catch (error) {
+            logger.error(`external share failed to wrap ${track.kind} track`, error);
+        }
+    }
+
+    /**
+     * Hand the collected screenshare track(s) to the conference, exactly once.
+     *
+     * @private
+     * @returns {void}
+     */
+    _publish() {
+        if (this._published || !this._desktopVideoTrack) {
+            return;
+        }
+
+        this._published = true;
+        logger.info(`external share publishing (audio: ${Boolean(this._desktopAudioTrack)})`);
+        this._onTracks({
+            desktopVideoTrack: this._desktopVideoTrack,
+            desktopAudioTrack: this._desktopAudioTrack
+        });
+    }
+
+    /**
+     * Tear down the peer connection. Idempotent.
+     *
+     * @returns {void}
+     */
+    stop() {
+        if (this._closed) {
+            return;
+        }
+
+        this._closed = true;
+
+        try {
+            this._pc.close();
+        } catch (error) {
+            // already torn down
+        }
+
+        // Dispose the wrapped track(s) regardless of whether they were published — a
+        // double dispose is harmless, and on a pre-'connected' failure nobody else owns
+        // them, so this is the only thing that stops them leaking.
+        this._desktopVideoTrack?.dispose();
+        this._desktopAudioTrack?.dispose();
+        this._desktopVideoTrack = null;
+        this._desktopAudioTrack = null;
+
+        this._onClosed?.({
+            published: this._published,
+            spontaneous: this._spontaneous
+        });
+    }
+}

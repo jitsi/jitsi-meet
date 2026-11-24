@@ -14,7 +14,7 @@ export const WHITEBOARD_ID = 'whiteboard';
 export const WHITEBOARD_UI_OPTIONS = {
     canvasActions: {
         allowedShapes: [
-            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text'
+            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text', 'eraser'
         ],
         allowedShortcuts: [
             'cut', 'deleteSelectedElements', 'redo', 'selectAll', 'undo'
@@ -33,15 +33,18 @@ export const WHITEBOARD_UI_OPTIONS = {
         hideFontFamily: true,
         hideHelpDialog: true,
         hideIOActions: true,
+        hideLaserOnCollaboration: true,
         hideLayers: true,
         hideLibraries: true,
         hideLockButton: true,
         hideOpacityInput: true,
+        hideEmbedableTools: true,
         hideSharpness: true,
         hideStrokeStyle: true,
         hideTextAlign: true,
         hideThemeControls: true,
         hideUserList: true,
+        hideWelcomeScreen: true,
         saveAsImageOptions: {
             defaultBackgroundValue: true,
             disableScale: true,
@@ -50,6 +53,23 @@ export const WHITEBOARD_UI_OPTIONS = {
             disableSceneEmbed: true,
             hideTheme: true
         }
+    }
+};
+
+/**
+ * Whiteboard UI Options with image support enabled.
+ *
+ * Used only for the inline web whiteboard, where a storage backend and a token
+ * provider are available to persist and sync image binaries. The standalone
+ * whiteboard page (mobile/native) keeps {@link WHITEBOARD_UI_OPTIONS}, since it
+ * has no conference context to supply storage credentials.
+ */
+export const WHITEBOARD_UI_OPTIONS_WITH_IMAGES = {
+    ...WHITEBOARD_UI_OPTIONS,
+    canvasActions: {
+        ...WHITEBOARD_UI_OPTIONS.canvasActions,
+        allowedShapes: [ ...WHITEBOARD_UI_OPTIONS.canvasActions.allowedShapes, 'image' ],
+        disableFileDrop: false
     }
 };
 

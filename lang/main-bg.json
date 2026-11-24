@@ -39,9 +39,6 @@
         "phone": "Телефон",
         "speaker": "Високоговорител"
     },
-    "audioOnly": {
-        "audioOnly": "Само звук"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "напр. 10000000 за 10 Mbps",
         "assumedBandwidthBpsWarning": "Високи стойности могат да причинят проблеми с мрежата.",
@@ -224,7 +221,7 @@
     "deepLinking": {
         "appNotInstalled": "Имате нужда от мобилното приложение {{app}} за влизане в тази среща от телефона.",
         "description": "Нищо не се случва? Опитахме се да заредим срещата в приложението {{app}}. Пробвайте отново или влезте чрез уеб приложението {{app}}.",
-        "descriptionNew": "Нищо не се случва? Опитахме се да заредим срещата в настолното приложение {{app}}. <br /><br /> Можете да опитате отново или да я заредите в уеб браузъра.",
+        "descriptionNew": "Нищо не се случва? Опитахме се да заредим срещата в настолното приложение {{app}}. <0/><0/> Можете да опитате отново или да я заредите в уеб браузъра.",
         "descriptionWithoutWeb": "Нищо не се случва? Опитахме се да заредим срещата в приложението {{app}}.",
         "downloadApp": "Свалете приложението",
         "downloadMobileApp": "Изтеглете от App Store",
@@ -238,7 +235,7 @@
         "noDesktopApp": "Нямате настолното приложение?",
         "noMobileApp": "Нямате мобилното приложение?",
         "or": "ИЛИ",
-        "termsAndConditions": "Продължавайки, вие се съгласявате с нашите <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>правила и условия.</a>",
+        "termsAndConditions": "Продължавайки, вие се съгласявате с нашите <0>правила и условия.</0>",
         "title": "Зареждане на срещата в {{app}}…",
         "titleNew": "Зареждане на срещата…",
         "tryAgainButton": "Пробвайте отново в настолното приложение",
@@ -253,12 +250,6 @@
         "microphonePermission": "Грешка при получаване на разрешение за достъп до микрофона"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Управление на повикванията",
-            "connectedDevices": "Свързани устройства:",
-            "deleteDevice": "Изтрий устройство",
-            "pairDevice": "Сдвояване на устройство"
-        },
         "noPermission": "Не е получено разрешение",
         "previewUnavailable": "Няма възможност за преглед",
         "selectADevice": "Изберете устройство",
@@ -784,6 +775,9 @@
         "button": "Поканете участници",
         "youAreAlone": "Вие сте сами в срещата"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Само звук"
+    },
     "me": "аз",
     "notify": {
         "OldElectronAPPTitle": "Уязвимост в сигурността!",
@@ -796,7 +790,7 @@
         "audioUnmuteBlockedTitle": "Включването на микрофона е блокирано!",
         "chatMessages": "Съобщения от чата",
         "connectedOneMember": "{{name}} влезе в срещата",
-        "connectedThreePlusMembers": "{{name}} и още {{count}} влязоха в срещата",
+        "connectedThreePlusMembers": "{{name}} и много други се присъединиха към срещата",
         "connectedTwoMembers": "{{first}} и {{second}} влязоха в срещата",
         "connectionFailed": "Връзката се провали. Моля, опитайте отново по-късно!",
         "dataChannelClosed": "Качеството на видеото може да бъде нарушено",
@@ -806,7 +800,7 @@
         "desktopMutedRemotelyTitle": "Споделянето на екрана ви беше спряно от {{participantDisplayName}}",
         "disabledIframe": "Вграждането е предназначено само за демонстрационни цели, така че този разговор ще се прекрати след {{timeout}} минути.",
         "disabledIframeSecondaryNative": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути.",
-        "disabledIframeSecondaryWeb": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути. Моля, използвайте <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> за комерсиално вграждане!",
+        "disabledIframeSecondaryWeb": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути. Моля, използвайте <0>Jitsi as a Service</0> за комерсиално вграждане!",
         "disconnected": "Напусна срещата",
         "displayNotifications": "Показване на уведомления за",
         "dontRemindMe": "Не ме напомняй",
@@ -867,7 +861,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) е премахната от друг потребител",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) създадена от друг потребител",
         "raiseHandAction": "Вдигни ръка",
-        "raisedHand": "{{name}} иска думата.",
+        "raisedHand": "Иска да участва.",
         "raisedHands": "{{participantName}} и още {{raisedHands}} души",
         "reactionSounds": "Изключи звуците",
         "reactionSoundsForAll": "Изключи звуците за всички",
@@ -879,7 +873,7 @@
         "somebody": "Някой",
         "startSilentDescription": "Влезте повторно, за да пуснете звука",
         "startSilentTitle": "Влязохте с опция да не чувате аудио!",
-        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='{{recommendedBrowserPageLink}}' target='_blank'>напълно поддържаните браузъри</a>.",
+        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <0>напълно поддържаните браузъри</0>.",
         "suboptimalExperienceTitle": "Внимание",
         "suggestRecordingAction": "Започни",
         "suggestRecordingDescription": "Бихте ли искали да стартирате запис?",
@@ -968,8 +962,7 @@
             "pollQuestion": "Въпрос за анкета",
             "questionPlaceholder": "Задай въпрос",
             "removeOption": "Премахни опция",
-            "save": "Запази",
-            "send": "Изпрати"
+            "save": "Запази"
         },
         "errors": {
             "notUniqueOption": "Опциите трябва да са уникални"
@@ -988,9 +981,7 @@
     },
     "poweredby": "с подкрепата на",
     "prejoin": {
-        "audioAndVideoError": "Грешка в аудио и видео:",
         "audioDeviceProblem": "Има проблем с вашето аудио устройство",
-        "audioOnlyError": "Грешка в аудиото:",
         "audioTrackError": "Не можа да се създаде аудио запис.",
         "callMe": "Позвънете ми",
         "callMeAtNumber": "Позвънете ми на този номер:",
@@ -1048,7 +1039,6 @@
         "screenSharingError": "Грешка при споделяне на екран:",
         "startWithPhone": "Започни с телефонно аудио",
         "unsafeRoomConsent": "Разбирам рисковете, искам да се присъединя към срещата",
-        "videoOnlyError": "Грешка във видеото:",
         "videoTrackError": "Не можа да се създаде видео запис.",
         "viewAllNumbers": "виж всички номера"
     },
@@ -1128,19 +1118,16 @@
         "recordAudioAndVideo": "Записвай аудио и видео",
         "recordTranscription": "Записвай транскрипция",
         "saveLocalRecording": "Запази записа локално (Бета)",
-        "serviceDescription": "Записът Ви ще се запише от специална записваща услуга",
         "serviceDescriptionCloud": "Облачен запис",
         "serviceDescriptionCloudInfo": "Записаните срещи автоматично се изчистват 24 часа след времето на записа.",
         "serviceName": "Записваща услуга",
         "sessionAlreadyActive": "Тази сесия вече се записва или излъчва на живо.",
-        "showAdvancedOptions": "Разширени опции",
         "signIn": "Влизане",
         "signOut": "Излизане",
         "surfaceError": "Моля, изберете текущия таб.",
         "title": "Запис",
         "unavailable": "Упс! В момента {{serviceName}} е недостъпна. В момента се опитваме да решим проблема. Моля, опитайте отново малко по-късно.",
-        "unavailableTitle": "Записът е невъзможен",
-        "uploadToCloud": "Качи в облака"
+        "unavailableTitle": "Записът е невъзможен"
     },
     "screenshareDisplayName": "Екранът на {{name}}",
     "sectionList": {
@@ -1150,7 +1137,7 @@
         "about": "Може да добавите парола към вашите срещи. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
         "aboutReadOnly": "Модераторите могат да добавят парола към срещата. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
         "insecureRoomNameWarningNative": "Името на стаята е несигурно. Нежелани участници може да се присъединят към срещата ви. {{recommendAction}} Научете повече за защитаване на срещата си ",
-        "insecureRoomNameWarningWeb": "Името на стаята е несигурно. Нежелани участници може да се присъединят към срещата ви. {{recommendAction}} Научете повече за защитаване на срещата си <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">тук</a>.",
+        "insecureRoomNameWarningWeb": "Името на стаята е несигурно. Нежелани участници може да се присъединят към срещата ви. {{recommendAction}} Научете повече за защитаване на срещата си <0>тук</0>.",
         "title": "Опции за сигурност",
         "unsafeRoomActions": {
             "meeting": "Помислете да защитите срещата си с помощта на бутона за сигурност.",
@@ -1283,7 +1270,6 @@
         "Settings": "Настройки",
         "accessibilityLabel": {
             "Settings": "Промяна на настройки",
-            "audioOnly": "Пускане на режим само със звук",
             "audioRoute": "Изберете устройство за звук",
             "boo": "Бу",
             "breakoutRooms": "Работни стаи",
@@ -1326,6 +1312,7 @@
             "localRecording": "Показване на контроли за локален запис",
             "lockRoom": "Смяна парола на среща",
             "love": "Сърце",
+            "lowBandwidthMode": "Пускане на режим само със звук",
             "lowerHand": "Свали ръката",
             "moreActions": "Показване на меню с повече опции",
             "moreActionsMenu": "Меню с повече опции",
@@ -1388,8 +1375,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Спиране режима с нисък трафик",
-        "audioOnlyOn": "Пускане режима с нисък трафик",
         "audioRoute": "Изберете устройство за звук",
         "audioSettings": "Аудио настройки",
         "authenticate": "Идентификация",
@@ -1431,6 +1416,8 @@
         "login": "Влез",
         "logout": "Изход",
         "love": "Сърце",
+        "lowBandwidthModeOff": "Спиране режима с нисък трафик",
+        "lowBandwidthModeOn": "Пускане режима с нисък трафик",
         "lowerYourHand": "Махни искането на думата",
         "moreActions": "Още опции",
         "moreOptions": "Повече опции",
@@ -1473,7 +1460,7 @@
         "silence": "Тишина",
         "speakerStats": "Статистика за говорителите",
         "startScreenSharing": "Започни споделяне на екрана",
-        "startSubtitles": "Пускане на субтитри",
+        "startSubtitles": "Субтитри • {{language}}",
         "stopAudioSharing": "Спри споделянето на аудио",
         "stopScreenSharing": "Спиране споделяне на екрана",
         "stopSharedVideo": "Спиране на видео",
@@ -1496,7 +1483,7 @@
         "labelTooltipExtra": "Освен това, стенограма ще бъде налична по-късно.",
         "openClosedCaptions": "Отвори субтитрите",
         "original": "Оригинал",
-        "sourceLanguageDesc": "В момента езикът на срещата е настроен на <b>{{sourceLanguage}}</b>. <br/> Можете да го промените от ",
+        "sourceLanguageDesc": "В момента езикът на срещата е настроен на <0>{{sourceLanguage}}</0>. <1/> Можете да го промените от ",
         "sourceLanguageHere": "тук",
         "start": "Започва показване на субтитри",
         "stop": "Спира показване на субтитри",
@@ -1521,8 +1508,6 @@
     },
     "videoStatus": {
         "adjustFor": "Настрой за:",
-        "audioOnly": "АУДИО",
-        "audioOnlyExpanded": "Вие сте в режим на нисък трафик. В този режим ще получавате само аудио или споделени екрани.",
         "bestPerformance": "Най-добра производителност",
         "callQuality": "Качество на видеото",
         "hd": "HD",
@@ -1530,9 +1515,11 @@
         "highDefinition": "Високо качество",
         "highestQuality": "Най-високо качество",
         "labelTooiltipNoVideo": "Няма видео",
-        "labelTooltipAudioOnly": "Пуснат режим на нисък трафик",
+        "labelTooltipLowBandwidthMode": "Пуснат режим на нисък трафик",
         "ld": "LD",
         "ldTooltip": "Виждате ниско качество на видеото",
+        "lowBandwidthMode": "АУДИО",
+        "lowBandwidthModeExpanded": "Вие сте в режим на нисък трафик. В този режим ще получавате само аудио или споделени екрани.",
         "lowDefinition": "Ниско качество",
         "performanceSettings": "Настройки за производителност",
         "recording": "Тази среща се записва.",
@@ -1653,7 +1640,7 @@
         "mobileDownLoadLinkAndroid": "Свали мобилното приложение за Android",
         "mobileDownLoadLinkFDroid": "Свали мобилното приложение за F-Droid",
         "mobileDownLoadLinkIos": "Свали мобилното приложение за iOS",
-        "moderatedMessage": "Или <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">резервирайте URL за среща</a> предварително, където вие сте единственият модератор.",
+        "moderatedMessage": "Или <0>резервирайте URL за среща</0> предварително, където вие сте единственият модератор.",
         "privacy": "Поверителност",
         "recentList": "Скорошни срещи",
         "recentListDelete": "Изтрий",

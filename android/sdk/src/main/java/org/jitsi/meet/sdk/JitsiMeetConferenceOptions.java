@@ -155,13 +155,13 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         }
 
         /**
-         * Indicates the conference will be joined in audio-only mode. In this mode no video is
+         * Indicates the conference will be joined in low bandwidth mode. In this mode no video is
          * sent or received.
-         * @param audioOnly - Audio-mode indicator.
+         * @param lowBandwidthMode - Low-bandwidth-mode indicator.
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
-        public Builder setAudioOnly(boolean audioOnly) {
-            setConfigOverride("startAudioOnly", audioOnly);
+        public Builder setLowBandwidthMode(boolean lowBandwidthMode) {
+            setConfigOverride("startLowBandwidthMode", lowBandwidthMode);
 
             return this;
         }

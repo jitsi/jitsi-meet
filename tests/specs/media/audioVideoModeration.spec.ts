@@ -82,11 +82,12 @@ describe('Audio/video moderation', () => {
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
     });
 
-    it('hangup and change moderator', async () => {
+    it('hangup and change moderator', async function() {
         // The test below is only correct when the environment is configured to automatically elect a new moderator
         // when the moderator leaves. For environments where this is not the case, the test is skipped.
         if (!expectations.autoModerator) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await Promise.all([ ctx.p2.hangup(), ctx.p3.hangup() ]);
@@ -230,6 +231,34 @@ describe('Audio/video moderation', () => {
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
         await tryToAudioUnmuteAndCheck(p2, p1);
+    });
+    it('mute a participant that reports muted', async () => {
+        await hangupAllParticipants();
+
+        await ensureTwoParticipants();
+
+        const { p1, p2 } = ctx;
+        const p1ParticipantsPane = p1.getParticipantsPane();
+
+        // Enable moderation and let p2 unmute. This puts p2 on the whitelist.
+        await unmuteByModerator(p1, p2, true, false);
+
+        // p2 mutes itself. The mute state that p2 reports is not reliable, thus p1 must keep the mute action. The
+        // mute action is the action that removes p2 from the whitelist and mutes p2 on the bridge.
+        await p2.getToolbar().clickAudioMuteButton();
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
+
+        await p1ParticipantsPane.waitForMuteAudioAction(p2);
+        await p1ParticipantsPane.muteAudio(p2);
+        await p1ParticipantsPane.close();
+
+        // p2 is not on the whitelist any more, thus p2 cannot unmute.
+        await tryToAudioUnmuteAndCheck(p2, p1);
+
+        await p1ParticipantsPane.clickContextMenuButton();
+        await p1ParticipantsPane.getAVModerationMenu().clickStopAudioModeration();
+        await p1ParticipantsPane.getAVModerationMenu().clickStopVideoModeration();
+        await p1ParticipantsPane.close();
     });
 });
 

@@ -92,15 +92,60 @@ export function createApiEvent(action: string, attributes = {}) {
 }
 
 /**
+ * Creates an event for an element that could not be switched to the selected audio output device when a
+ * participant's audio was attached, after the retries.
+ *
+ * @param {Object} attributes - The failure.
+ * @param {string} [attributes.error] - The name of the error.
+ * @param {boolean} attributes.manager - Whether lib-jitsi-meet's audio output manager made the switch.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioOutputAttachFailedEvent(attributes: {
+    error?: string;
+    manager: boolean;
+}) {
+    return {
+        action: 'audio.output.attach.failed',
+        attributes
+    };
+}
+
+/**
+ * Creates an event for the outcome of a change of the audio output device.
+ *
+ * @param {Object} attributes - The outcome.
+ * @param {number} attributes.duration - How long the change took, in ms.
+ * @param {string} [attributes.error] - The name of the error when it failed.
+ * @param {number} attributes.failed - The number of tracks that did not switch.
+ * @param {boolean} attributes.manager - Whether lib-jitsi-meet's audio output manager made the change.
+ * @param {string} attributes.result - 'changed', 'partly' when some tracks did not switch, or 'failed'.
+ * @param {boolean} attributes.userSelection - Whether the user picked the device, as opposed to the app.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioOutputChangeEvent(attributes: {
+    duration: number;
+    error?: string;
+    failed: number;
+    manager: boolean;
+    result: string;
+    userSelection: boolean;
+}) {
+    return {
+        action: 'audio.output.change',
+        attributes
+    };
+}
+
+/**
  * Creates an event which indicates that the audio-only mode has been changed.
  *
  * @param {boolean} enabled - True if audio-only is enabled, false otherwise.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createAudioOnlyChangedEvent(enabled: boolean) {
+export function createLowBandwidthModeChangedEvent(enabled: boolean) {
     return {
-        action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
+        action: `low.bandwidth.mode.${enabled ? 'enabled' : 'disabled'}`
     };
 }
 
@@ -263,6 +308,23 @@ export function createDeviceChangedEvent(mediaType: string, deviceType: string) 
 }
 
 /**
+ * Creates an event which indicates that access to the camera or the microphone was denied.
+ *
+ * @param {string} mediaType - The media type of the device ('audio' or 'video').
+ * @param {string} [reason] - Why access was denied: 'user', 'browser', 'os' or 'policy'.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createDevicePermissionDeniedEvent(mediaType: string, reason?: string) {
+    return {
+        action: 'device.permission.denied',
+        attributes: {
+            'media_type': mediaType,
+            reason
+        }
+    };
+}
+
+/**
  * Creates an event indicating that an action related to E2EE occurred.
  *
  * @param {string} action - The action which occurred.
@@ -407,6 +469,7 @@ export function createPinnedEvent(action: string, participantId: string, attribu
 /**
  * Creates a poll event.
  * The following events will be created:
+ * - poll.closed
  * - poll.created
  * - poll.vote.checked
  * - poll.vote.sent
@@ -685,9 +748,9 @@ export function createShortcutEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createStartAudioOnlyEvent(audioOnly: boolean) {
+export function createStartLowBandwidthModeEvent(audioOnly: boolean) {
     return {
-        action: 'start.audio.only',
+        action: 'start.low.bandwidth.mode',
         attributes: {
             enabled: audioOnly
         }
@@ -954,5 +1017,34 @@ export function createOpenWhiteboardEvent() {
 export function createRestrictWhiteboardEvent() {
     return {
         action: 'whiteboard.restrict'
+    };
+}
+
+/**
+ * Creates an event with the startup configuration the V2 virtual background engine is running with.
+ *
+ * @param {Object} attributes - The detected and applied tier, backend, pipeline, compositor and
+ * segmentation size.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createVirtualBackgroundV2StartedEvent(attributes: Object) {
+    return {
+        action: 'started',
+        actionSubject: 'virtual.background.v2',
+        attributes
+    };
+}
+
+/**
+ * Creates an event which indicates that the V2 virtual background engine failed to start.
+ *
+ * @param {Object} attributes - The requested startup configuration and the error.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createVirtualBackgroundV2FailedEvent(attributes: Object) {
+    return {
+        action: 'failed',
+        actionSubject: 'virtual.background.v2',
+        attributes
     };
 }

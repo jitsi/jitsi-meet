@@ -67,6 +67,86 @@ Run;
 cd ios && pod install && cd ..
 ```
 
+#### Screen share
+
+Screen share on iOS needs a Broadcast Upload Extension in your app. The SDK does not include one.
+Screen share works on a physical device with iOS 14 or newer. It does not work in the simulator.
+
+The steps below are complete. For background, see the handbook section
+[Creating the Broadcast Upload Extension](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-ios-sdk/#creating-the-broadcast-upload-extension)
+and the [swift-screensharing sample](https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/ios/swift-screensharing).
+
+**1. Create the extension target**
+
+1. In Xcode, choose File > New > Target.
+2. Select the Broadcast Upload Extension template.
+3. Set the language to Swift.
+4. Clear the "Include UI Extension" checkbox.
+5. Click Finish. Xcode creates a folder that contains `SampleHandler.swift`.
+6. In the new target, set the iOS Deployment Target to 14.0 or newer.
+
+**2. Add the extension code**
+
+1. Copy these five files from the sample into the extension folder:
+   `SampleHandler.swift`, `SampleUploader.swift`, `SocketConnection.swift`,
+   `DarwinNotificationCenter.swift`, `Atomic.swift`. Replace the generated `SampleHandler.swift`.
+2. Make sure that all five files belong to the extension target. Check File Inspector > Target
+   Membership.
+
+**3. Create the app group**
+
+1. Choose an app group id, for example `group.com.example.myapp`.
+2. In the Apple Developer portal, register the app group.
+3. Assign the app group to the App ID of the app and to the App ID of the extension.
+4. In Xcode, add the App Groups capability to the app target. Select the group.
+5. Add the App Groups capability to the extension target. Select the same group.
+6. In `SampleHandler.swift`, set `Constants.appGroupIdentifier` to the same app group id.
+
+**4. Configure the app**
+
+1. Add two keys to the app `Info.plist`:
+   - `RTCAppGroupIdentifier`: the app group id.
+   - `RTCScreenSharingExtension`: the bundle id of the extension, for example
+     `com.example.myapp.broadcast`.
+2. Make sure that Background Modes has Audio and Voice over IP. See "General" above.
+3. Pass the feature flag to `JitsiMeeting`. The toolbar then shows the screen share button.
+   ```jsx
+   <JitsiMeeting flags = {{ 'ios.screensharing.enabled': true }} ... />
+   ```
+
+> **Important**
+> - The app group id must be the same in three places: `Constants.appGroupIdentifier` in
+>   `SampleHandler.swift`, the App Groups capability of both targets, and `RTCAppGroupIdentifier`.
+>   If they are different, the picker opens and the red status bar appears, but no video reaches
+>   the meeting. The SDK cannot detect this.
+> - Do not change the notification names `iOS_BroadcastStarted` and `iOS_BroadcastStopped` in
+>   `DarwinNotificationCenter.swift`. The SDK listens for these exact names.
+
+**5. Test**
+
+1. Run the app on a physical device.
+2. Join a meeting.
+3. Tap the screen share button. The system picker opens.
+4. Tap Start Broadcast. After the countdown, the red status bar appears and the other
+   participants see your screen.
+5. Tap the red status bar and stop the broadcast. The screen share ends.
+
+##### Know when screen share starts or stops
+
+Use `eventListeners.onScreenShareToggled({ sharing })`. It fires when the user starts or stops
+screen share, from the toolbar button or from the red status bar. It does not fire when the user
+dismisses the iOS picker or the Android consent dialog without a start. In that case nothing
+changes.
+
+```jsx
+  <JitsiMeeting
+    eventListeners = {{
+        onScreenShareToggled: ({ sharing }) => console.log('screen share', sharing)
+    }}
+    room = { 'ThisIsNotATestRoomName' }
+    serverURL = { 'https://meet.jit.si/' } />
+```
+
 ## Android
 
 - In your build.gradle have at least `minSdkVersion = 26`

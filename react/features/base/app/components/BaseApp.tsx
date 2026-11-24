@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { isEqual } from 'lodash-es';
 import React, { Component, ComponentType, Fragment } from 'react';
@@ -21,6 +20,12 @@ import logger from '../logger';
  * The type of the React {@code Component} state of {@link BaseApp}.
  */
 interface IState {
+
+    /**
+     * Whether an error was caught while rendering the tree below this
+     * {@code BaseApp}.
+     */
+    hasError?: boolean;
 
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
@@ -58,8 +63,19 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         this.state = {
             route: {},
-            store: undefined
+            store: undefined,
+            hasError: false
         };
+    }
+
+    /**
+     * Updates the state so the next render shows the fallback instead of
+     * unmounting the whole tree when a descendant throws while rendering.
+     *
+     * @returns {Object}
+     */
+    static getDerivedStateFromError() {
+        return { hasError: true };
     }
 
     /**
@@ -133,7 +149,18 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {Promise}
      */
     _initStorage(): Promise<any> {
-        const _initializing = jitsiLocalStorage.getItem('_initializing');
+        // On react-native, global.localStorage is replaced at startup with the
+        // Storage polyfill in react/features/mobile/polyfills/Storage.js, which
+        // stores its AsyncStorage-loading Promise as an instance property named
+        // `_initializing`. Its getItem() returns own-property values, so
+        // getItem('_initializing') surfaces that Promise and lets us wait for
+        // AsyncStorage to finish loading persisted state. On web this is always
+        // null (no such key in window.localStorage) and the cast is a no-op.
+        // The new @jitsi/js-utils types declare getItem as `string | null`,
+        // which is accurate for the standard Web Storage shape but doesn't
+        // capture this RN-only side channel — hence the cast.
+        const _initializing = jitsiLocalStorage.getItem('_initializing') as
+            Promise<unknown> | null;
 
         return _initializing || Promise.resolve();
     }
@@ -154,7 +181,11 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {ReactElement}
      */
     override render() {
-        const { route: { component, props }, store } = this.state;
+        const { hasError, route: { component, props }, store } = this.state;
+
+        if (hasError) {
+            return null;
+        }
 
         if (store) {
             return (
@@ -257,7 +288,7 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         if (route.href) {
             // This navigation requires loading a new URL in the browser.
-            window.location.href = route.href;
+            (window.location as Mutable<typeof window.location>).href = route.href;
 
             return Promise.resolve();
         }

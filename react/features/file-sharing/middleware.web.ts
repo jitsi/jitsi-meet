@@ -6,7 +6,7 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { addMessage, editMessage } from '../chat/actions.any';
+import { addMessage } from '../chat/actions.any';
 import { ChatTabs, MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../chat/constants';
 import { showErrorNotification, showNotification, showSuccessNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
@@ -255,27 +255,6 @@ MiddlewareRegistry.register(store => next => action => {
         });
 
         return next(action);
-    }
-
-    case _FILE_REMOVED: {
-        const result = next(action);
-        const state = store.getState();
-        const { messages } = state['features/chat'];
-
-        // Find the message corresponding to this file and mark it as deleted.
-        const fileMessage = messages.find(msg => msg.messageId === action.fileId);
-
-        if (fileMessage?.fileMetadata) {
-            // Replace the file metadata with just the isDeleted flag to avoid keeping unnecessary data.
-            store.dispatch(editMessage({
-                ...fileMessage,
-                fileMetadata: {
-                    isDeleted: true
-                } as any
-            }));
-        }
-
-        return result;
     }
     }
 

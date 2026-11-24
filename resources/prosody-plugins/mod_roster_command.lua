@@ -8,6 +8,16 @@
 -- This project is MIT/X11 licensed. Please see the
 -- COPYING file in the source package for more information.
 -----------------------------------------------------------
+--
+-- Source: https://modules.prosody.im/mod_roster_command.html (community module,
+-- minor local patch to handle bare host JIDs in subscribe/unsubscribe).
+--
+-- This module is NOT loaded in prosody.cfg.lua. It is a prosodyctl command
+-- plugin, invoked at provisioning time via:
+--   prosodyctl mod_roster_command subscribe <jid1> <jid2>
+-- Used by Ansible to subscribe focus.<domain> to focus@auth.<domain>.
+-- Only needed for prosody versions prior 13
+-----------------------------------------------------------
 
 if module.host ~= "*" then
 	module:log("error", "Do not load this module in Prosody, for correct usage see: https://modules.prosody.im/mod_roster_command.html");

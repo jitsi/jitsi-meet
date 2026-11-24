@@ -38,6 +38,8 @@ local util = module:require 'util';
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
+local is_admin = util.is_admin;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- Available breakout room functionality
@@ -71,6 +73,9 @@ local main_rooms_map = {};
 local cache = require 'util.cache';
 local switching_room_cache = cache.new(1000);
 
+-- How long, in seconds, a move that a moderator requested lets the participant join the target room.
+local MOVE_REQUEST_TTL = 30;
+
 -- Utility functions
 
 function get_main_room_jid(room_jid)
@@ -97,6 +102,39 @@ function get_room_from_jid(room_jid)
         or breakout_rooms_muc_service.get_room_from_jid(room_jid);
 end
 
+-- The moves that moderators requested are kept on the main room object (main_room.move_requests, not in _data so they
+-- are not saved), keyed by the real full JID of the participant. When the main room restricts joining breakout rooms
+-- (permissions.breakoutRoomJoinRestricted in the room metadata), a participant who is not a moderator can join a
+-- breakout room only through such a move. They go away with the main room.
+
+-- Remembers that a moderator moved a participant to a breakout room. Drops the moves of the room that expired.
+-- @param main_room - The main room
+-- @param participant_jid - The real full JID of the participant
+-- @param room_jid - The breakout room the participant is moved to
+function add_move_request(main_room, participant_jid, room_jid)
+    local now = os.time();
+    local move_requests = main_room.move_requests or {};
+
+    for jid, move_request in pairs(move_requests) do
+        if move_request.expires < now then
+            move_requests[jid] = nil;
+        end
+    end
+
+    move_requests[participant_jid] = {
+        room_jid = room_jid,
+        expires = now + MOVE_REQUEST_TTL
+    };
+    main_room.move_requests = move_requests;
+end
+
+-- Returns the move a moderator requested for a participant in the main room, if any.
+-- @param main_room - The main room
+-- @param participant_jid - The real full JID of the participant
+function get_move_request(main_room, participant_jid)
+    return main_room.move_requests and main_room.move_requests[participant_jid];
+end
+
 function send_json_msg(to_jid, json_msg)
     local stanza = st.message({ from = breakout_rooms_muc_component_config; to = to_jid; })
          :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' }):text(json_msg):up();
@@ -109,7 +147,7 @@ function get_participants(room)
     if room then
         for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
                 local real_nick = internal_room_jid_match_rewrite(room_nick);
@@ -174,6 +212,7 @@ function broadcast_breakout_rooms(room_jid)
         local json_msg, error = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
             event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
+            joinRestricted = is_breakout_room_join_restricted(main_room),
             roomCounter = main_room._data.breakout_rooms_counter,
             rooms = rooms
         });
@@ -184,7 +223,7 @@ function broadcast_breakout_rooms(room_jid)
         end
 
         for _, occupant in main_room:each_occupant() do
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 send_json_msg(occupant.jid, json_msg)
             end
         end
@@ -193,7 +232,7 @@ function broadcast_breakout_rooms(room_jid)
             local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
             if room then
                 for _, occupant in room:each_occupant() do
-                    if jid_node(occupant.jid) ~= 'focus' then
+                    if not is_admin(occupant.bare_jid) then
                         send_json_msg(occupant.jid, json_msg)
                     end
                 end
@@ -318,23 +357,11 @@ function on_message(event)
 
     -- check that the participant requesting is a moderator and is an occupant in the room
     local from = event.stanza.attr.from;
-    local occupant = room:get_occupant_by_real_jid(from);
+    local occupant = get_occupant_by_real_jid(room, from);
 
     if not occupant then
-        -- Check if the participant is in any breakout room.
-        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
-            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
-            if breakout_room then
-                occupant = breakout_room:get_occupant_by_real_jid(from);
-                if occupant then
-                    break;
-                end
-            end
-        end
-        if not occupant then
-            module:log('warn', 'No occupant %s found for %s', from, room.jid);
-            return false;
-        end
+        module:log('warn', 'No occupant %s found for %s', from, room.jid);
+        return false;
     end
 
     if occupant.role ~= 'moderator' then
@@ -373,6 +400,11 @@ function on_message(event)
             return false
         end
 
+        -- Returning to the main room is always allowed, only a move to a breakout room needs to be remembered.
+        if room._data.breakout_rooms[target_room_jid] then
+            add_move_request(room, participant_jid, target_room_jid);
+        end
+
         send_json_msg(participant_jid, json_msg)
         return true;
     end
@@ -391,22 +423,41 @@ function on_breakout_room_pre_create(event)
         breakout_room:set_subject(breakout_room.jid, main_room._data.breakout_rooms[breakout_room.jid]);
     else
         module:log('debug', 'Invalid breakout room %s will not be created.', breakout_room.jid);
+
+        -- Tell the client that the join failed. Without this reply the join presence is
+        -- dropped without an answer, and the client waits until its own timeout.
+        -- Prosody sends an error for restrict_room_creation, but that handler and this one
+        -- both use the default priority, so the order between the two is not defined.
+        if event.origin and event.stanza then
+            event.origin.send(st.error_reply(
+                event.stanza, 'cancel', 'item-not-found', 'Breakout room is invalid.'));
+        end
+
         breakout_room:destroy(main_room_jid, 'Breakout room is invalid.');
         return true;
     end
 end
 
 function on_occupant_joined(event)
-    local occupant, room = event.occupant, event.room;
+    local occupant, room, session = event.occupant, event.room, event.origin;
 
     if is_healthcheck_room(room.jid) then
         return;
     end
 
     local main_room, main_room_jid = get_main_room(room.jid);
+    local isFocus = is_admin(occupant.bare_jid);
+
+    -- The occupant is in the room a moderator moved them to, the move is used up.
+    local real_jid = event.stanza and event.stanza.attr.from;
+    local move_request = main_room and real_jid and get_move_request(main_room, real_jid);
+
+    if move_request and move_request.room_jid == room.jid then
+        main_room.move_requests[real_jid] = nil;
+    end
 
     if main_room and main_room._data.breakout_rooms_active then
-        if jid_node(event.occupant.jid) ~= 'focus' then
+        if not isFocus then
             broadcast_breakout_rooms(main_room_jid);
         end
 
@@ -419,6 +470,12 @@ function on_occupant_joined(event)
         -- clear any switching state for this occupant, we always store main room / resource
         switching_room_cache:set(main_room_jid..'/'..jid_resource(occupant.nick), nil);
     end
+
+    -- check if this is joining main room or breakout room
+    if main_room == room and not isFocus then
+        -- mark that this session was in the main room
+        session.jitsi_breakout_main_jid = main_room_jid;
+    end
 end
 
 function exist_occupants_in_room(room)
@@ -426,7 +483,7 @@ function exist_occupants_in_room(room)
         return false;
     end
     for _, occupant in room:each_occupant() do
-        if jid_node(occupant.jid) ~= 'focus' then
+        if not is_admin(occupant.bare_jid) then
             return true;
         end
     end
@@ -476,7 +533,7 @@ function on_occupant_left(event)
         return;
     end
 
-    if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
+    if main_room._data.breakout_rooms_active and not is_admin(event.occupant.bare_jid) then
         broadcast_breakout_rooms(main_room_jid);
     end
 
@@ -530,6 +587,8 @@ function on_main_room_destroyed(event)
     for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         destroy_breakout_room(main_room, breakout_room_jid, event.reason)
     end
+
+    main_room.move_requests = nil;
 end
 
 -- Checks for a conflict with a JID in the switching_room_cache. In case of a conflict sends an error and returns true (the join is not allowed).
@@ -565,6 +624,7 @@ end
 -- conflict with a jid which is currently in switching state or already in another room.
 function on_occupant_pre_join_or_change(e)
     local room, stanza, origin = e.room, e.stanza, e.origin;
+    local occupant = e.dest_occupant or e.occupant;
     local requested_jid = stanza.attr.to;
 
     local main_room = get_main_room(room.jid);
@@ -573,6 +633,10 @@ function on_occupant_pre_join_or_change(e)
     if not main_room then
         origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
         return true;
+    end
+
+    if is_admin(occupant.bare_jid) then
+        return;
     end
 
     local main_room_requested_jid = main_room.jid..'/'..jid_resource(requested_jid);
@@ -595,6 +659,12 @@ function on_occupant_pre_join_or_change(e)
             end
         end
     else
+        if origin.jitsi_breakout_main_jid ~= main_room.jid then
+            -- this session did not come from the main room
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+
         -- this is a breakout room let's check the main room
         if check_for_existing_occupant_in_room(main_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
             return true;
@@ -613,6 +683,57 @@ function on_occupant_pre_join_or_change(e)
     end
 end
 
+-- Returns true when the main room restricts joining breakout rooms to moderators and the moves they request.
+-- @param main_room - The main room
+function is_breakout_room_join_restricted(main_room)
+    local permissions = main_room.jitsiMetadata and main_room.jitsiMetadata.permissions;
+
+    return permissions and permissions.breakoutRoomJoinRestricted == true or false;
+end
+
+-- Returns true when the main room restricts joining breakout rooms and the occupant may not join the breakout room
+-- by themselves. A moderator of the main room can always join. Another occupant can join only a room that a moderator
+-- moved them to. Returning to the main room is not checked here, it is always allowed. The move is used up in
+-- on_occupant_joined, once the join succeeded, thus a join that another handler rejects can be retried.
+-- @param main_room - The main room
+-- @param room - The breakout room being joined
+-- @param from_jid - The real full JID of the occupant trying to join
+function is_breakout_room_join_blocked(main_room, room, from_jid)
+    if not is_breakout_room_join_restricted(main_room) then
+        return false;
+    end
+
+    if main_room:get_affiliation(jid_bare(from_jid)) == 'owner' then
+        return false;
+    end
+
+    local move_request = get_move_request(main_room, from_jid);
+
+    if move_request and move_request.room_jid == room.jid and move_request.expires >= os.time() then
+        return false;
+    end
+
+    return true;
+end
+
+-- This is a request to join a breakout room. When the main room restricts joining breakout rooms, a participant who
+-- is not a moderator needs a move from a moderator.
+function on_breakout_room_pre_join(e)
+    local room, stanza, origin = e.room, e.stanza, e.origin;
+    local occupant = e.dest_occupant or e.occupant;
+
+    if is_admin(occupant.bare_jid) then
+        return;
+    end
+
+    local main_room = get_main_room(room.jid);
+
+    if main_room and is_breakout_room_join_blocked(main_room, room, stanza.attr.from) then
+        origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Joining breakout rooms not allowed'));
+        return true;
+    end
+end
+
 -- Module operations
 
 -- operates on already loaded breakout rooms muc module
@@ -621,6 +742,9 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     -- Advertise the breakout rooms component so clients can pick up the address and use it
     module:add_identity('component', BREAKOUT_ROOMS_IDENTITY_TYPE, breakout_rooms_muc_component_config);
+
+    -- No flow invites into a breakout room. Admitting from the lobby is an invite to the main room.
+    host_module:hook('muc-pre-invite', util.refuse_mediated_invite);
 
     -- Tag the disco#info response with available features of breakout rooms.
     host_module:hook('host-disco-info-node', function (event)
@@ -640,6 +764,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     host_module:hook('muc-occupant-pre-leave', on_occupant_pre_leave);
     host_module:hook('muc-occupant-pre-join', on_occupant_pre_join_or_change);
     host_module:hook('muc-occupant-pre-change', on_occupant_pre_join_or_change);
+    host_module:hook('muc-occupant-pre-join', on_breakout_room_pre_join);
 
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
@@ -776,6 +901,16 @@ function process_main_muc_loaded(main_muc, host_module)
 
     host_module:hook('muc-occupant-pre-join', on_occupant_pre_join_or_change);
     host_module:hook('muc-occupant-pre-change', on_occupant_pre_join_or_change);
+
+    -- The occupants of the breakout rooms do not receive the metadata of the main room, thus send them the
+    -- breakout room join restriction with the breakout rooms update when a moderator changes it.
+    host_module:hook('jitsi-metadata-updated', function(event)
+        local room = event.room;
+
+        if event.key == 'permissions' and room and room._data.breakout_rooms_active then
+            broadcast_breakout_rooms(room.jid);
+        end
+    end);
 end
 
 -- process or waits to process the main muc component

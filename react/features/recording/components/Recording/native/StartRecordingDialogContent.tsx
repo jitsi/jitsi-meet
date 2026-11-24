@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
@@ -10,21 +10,46 @@ import LoadingIndicator from '../../../../base/react/components/native/LoadingIn
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
+import LanguageListItem from '../../../../subtitles/components/native/LanguageListItem';
 import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
-import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
+import AbstractStartRecordingDialogContent, { IProps, mapStateToProps } from '../AbstractStartRecordingDialogContent';
 import {
-    DROPBOX_LOGO,
-    ICON_CLOUD,
     ICON_INFO,
     ICON_USERS
 } from '../styles.native';
 
+import RecordingOptionRow from './RecordingOptionRow';
+
 
 /**
- * The start recording dialog content for the mobile application.
+ * The recording & transcription dialog content for the mobile application.
  */
 class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
+    /**
+     * Initializes a new {@code StartRecordingDialogContent} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: IProps) {
+        super(props);
+
+        this._onLanguageSelected = this._onLanguageSelected.bind(this);
+    }
+
+    /**
+     * Handles a language selection from the inline language list: applies it
+     * and collapses the list.
+     *
+     * @param {string} language - The selected ("translation-languages:"
+     * prefixed) language.
+     * @returns {void}
+     */
+    _onLanguageSelected(language: string) {
+        this.props.onSubtitlesLanguageChange(language);
+        this.setState({ showLanguageList: false });
+    }
+
     /**
      * Renders the component.
      *
@@ -36,181 +61,208 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         return (
             <View style = { styles.container }>
-                { this._renderNoIntegrationsContent() }
-                { this._renderFileSharingContent() }
-                { this._renderUploadToTheCloudInfo() }
-                { this._renderIntegrationsContent() }
-                { this._renderAdvancedOptions() }
+                { this._renderRecordingSection() }
+                { this._renderTranscriptionSection() }
+                { this._renderFooter() }
             </View>
         );
     }
 
     /**
-     * Renders the save transcription switch.
+     * Renders a section header: title and the start/stop button of the
+     * section's service.
+     *
+     * @param {Object} options - Rendering options.
+     * @returns {React$Component}
+     */
+    _renderSectionHeader({ onButtonPress, running, startDisabled, startLabelKey, stopLabelKey, titleKey }: {
+        onButtonPress: () => void;
+        running: boolean;
+        startDisabled?: boolean;
+        startLabelKey: string;
+        stopLabelKey: string;
+        titleKey: string;
+    }) {
+        const { _dialogStyles, _styles: styles, t } = this.props;
+
+        return (
+            <View style = { styles.header }>
+                <Text
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.title
+                    }}>
+                    { t(titleKey) }
+                </Text>
+                <Button
+                    accessibilityLabel = { running ? stopLabelKey : startLabelKey }
+                    disabled = { !running && startDisabled }
+                    labelKey = { running ? 'dialog.stop' : 'dialog.start' }
+                    onClick = { onButtonPress }
+                    type = { running ? BUTTON_TYPES.DESTRUCTIVE : BUTTON_TYPES.PRIMARY } />
+            </View>
+        );
+    }
+
+    /**
+     * Renders the accordion wrapping a section's options: a header with the
+     * options title, a one line summary of the current choices and a chevron,
+     * followed by the options themselves when expanded.
+     *
+     * @param {Object} options - Rendering options.
+     * @returns {React$Component}
+     */
+    _renderAccordion({ body, expanded, onToggle, summary, titleKey }: {
+        body: React.ReactNode;
+        expanded: boolean;
+        onToggle: () => void;
+        summary: string;
+        titleKey: string;
+    }) {
+        const { _styles: styles, t } = this.props;
+
+        return (
+            <View style = { styles.accordion }>
+                <TouchableOpacity
+                    accessibilityLabel = { t(titleKey) }
+                    accessibilityRole = 'button'
+                    accessibilityState = {{ expanded }}
+                    onPress = { onToggle }
+                    style = { styles.accordionHeader }>
+                    <View style = { styles.accordionText }>
+                        <Text style = { styles.accordionTitle }>
+                            { t(titleKey) }
+                        </Text>
+                        { !expanded && (
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { styles.accordionSummary }>
+                                { summary }
+                            </Text>
+                        ) }
+                    </View>
+                    <Icon
+                        size = { 18 }
+                        src = { IconArrowDown }
+                        style = { expanded ? styles.accordionChevronOpen : undefined } />
+                </TouchableOpacity>
+                { expanded && (
+                    <View style = { styles.accordionBody }>
+                        { body }
+                    </View>
+                ) }
+            </View>
+        );
+    }
+
+    /**
+     * Renders the audio & video recording section.
      *
      * @returns {React$Component}
      */
-    _renderAdvancedOptions() {
-        const { selectedRecordingService } = this.props;
+    _renderRecordingSection() {
+        const { _dialogStyles, _styles: styles, model, onStartRecording, onStopRecording, t } = this.props;
+        const { optionsLocked, running, selectedService, services, startBlocker, visible } = model.recording;
 
-        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
+        if (!visible) {
             return null;
         }
 
-        const { showAdvancedOptions } = this.state;
+        const { showRecordingOptions } = this.state;
+
+        return (
+            <View style = { styles.section }>
+                { this._renderSectionHeader({
+                    onButtonPress: running ? onStopRecording : onStartRecording,
+                    running,
+                    startDisabled: Boolean(startBlocker),
+                    startLabelKey: 'dialog.startRecording',
+                    stopLabelKey: 'dialog.stopRecording',
+                    titleKey: 'recording.recordAudioAndVideo'
+                }) }
+                { this._renderAccordion({
+                    body: (
+                        <>
+                            <Text
+                                style = {{
+                                    ..._dialogStyles.text,
+                                    ...styles.pickerLabel
+                                }}>
+                                { t('recording.storageLocation') }
+                            </Text>
+                            { services.map(service => (
+                                <RecordingOptionRow
+                                    disabled = { optionsLocked }
+                                    key = { service }
+                                    label = { t(this._getServiceLabelKey(service)) }
+                                    onSelect = { this._onRecordingServiceChange }
+                                    selected = { selectedService === service }
+                                    value = { service } />
+                            )) }
+                            { selectedService === RECORDING_TYPES.JITSI_REC_SERVICE
+                                && this._renderJitsiServiceOptions() }
+                            { selectedService === RECORDING_TYPES.DROPBOX
+                                && this._renderDropboxOptions() }
+                            { this._renderFollowMeRecorder() }
+                        </>
+                    ),
+                    expanded: showRecordingOptions,
+                    onToggle: this._onToggleRecordingOptions,
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it
+                    // (and its nested t() calls) while the section is expanded.
+                    summary: showRecordingOptions ? '' : this._getRecordingSummary(),
+                    titleKey: 'recording.recordingOptions'
+                }) }
+            </View>
+        );
+    }
+
+    /**
+     * Renders the options of the Jitsi recording service: the recording link
+     * sharing switch and the vpaas storage warning.
+     *
+     * @returns {React$Component}
+     */
+    _renderJitsiServiceOptions() {
         const {
             _dialogStyles,
             _styles: styles,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription,
+            model,
+            onSharingSettingChanged,
+            sharingSetting,
             t
         } = this.props;
+        const { optionsLocked, showFileSharing } = model.recording;
+
+        const fileSharingLabel = t('recording.fileSharingdescription');
 
         return (
             <>
-                <View
-                    style = { styles.header }>
-                    <Text
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
-                        { t('recording.showAdvancedOptions') }
-                    </Text>
-                    <Icon
-                        ariaPressed = { showAdvancedOptions }
-                        onClick = { this._onToggleShowOptions }
-                        role = 'button'
-                        size = { 24 }
-                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight } />
-                </View>
-                {showAdvancedOptions && (
-                    <>
-                        <View
-                            key = 'transcriptionSetting'
-                            style = { styles.header }>
-                            <Text
-                                style = {{
-                                    ..._dialogStyles.text,
-                                    ...styles.title
-                                }}>
-                                { t('recording.recordTranscription') }
-                            </Text>
-                            <Switch
-                                checked = { shouldRecordTranscription }
-                                onChange = { this._onTranscriptionSwitchChange }
-                                style = { styles.switch } />
-                        </View>
-                        <View
-                            key = 'audioVideoSetting'
-                            style = { styles.header }>
-                            <Text
-                                style = {{
-                                    ..._dialogStyles.text,
-                                    ...styles.title
-                                }}>
-                                { t('recording.recordAudioAndVideo') }
-                            </Text>
-                            <Switch
-                                checked = { shouldRecordAudioAndVideo }
-                                onChange = { this._onRecordAudioAndVideoSwitchChange }
-                                style = { styles.switch } />
-                        </View>
-                    </>
-                )}
+                { showFileSharing && (
+                    <View
+                        key = 'fileSharingSetting'
+                        style = { styles.headerNested }>
+                        <Image
+                            source = { ICON_USERS }
+                            style = { styles.recordingIcon } />
+                        <Text
+                            style = {{
+                                ..._dialogStyles.text,
+                                ...styles.optionLabel
+                            }}>
+                            { fileSharingLabel }
+                        </Text>
+                        <Switch
+                            accessibilityLabel = { fileSharingLabel }
+                            checked = { sharingSetting }
+                            disabled = { optionsLocked }
+                            onChange = { onSharingSettingChanged }
+                            style = { styles.switch } />
+                    </View>
+                ) }
+                { this._renderUploadToTheCloudInfo() }
             </>
-        );
-    }
-
-    /**
-     * Renders the content in case no integrations were enabled.
-     *
-     * @returns {React$Component}
-     */
-    _renderNoIntegrationsContent() {
-        const {
-            _dialogStyles,
-            _styles: styles,
-            integrationsEnabled,
-            isValidating,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo,
-            t
-        } = this.props;
-
-        if (!this._shouldRenderNoIntegrationsContent()) {
-            return null;
-        }
-
-        const switchContent
-            = integrationsEnabled
-                ? (
-                    <Switch
-                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
-                        disabled = { isValidating || !shouldRecordAudioAndVideo }
-                        onChange = { this._onRecordingServiceSwitchChange }
-                        style = { styles.switch } />
-                ) : null;
-
-        return (
-            <View
-                key = 'noIntegrationSetting'
-                style = { styles.header }>
-                <Image
-                    source = { ICON_CLOUD }
-                    style = { styles.recordingIcon } />
-                <Text
-                    style = {{
-                        ..._dialogStyles.text,
-                        ...styles.title
-                    }}>
-                    { t('recording.serviceDescription') }
-                </Text>
-                { switchContent }
-            </View>
-        );
-    }
-
-    /**
-     * Renders the file recording service sharing options, if enabled.
-     *
-     * @returns {React$Component}
-     */
-    _renderFileSharingContent() {
-        if (!this._shouldRenderFileSharingContent()) {
-            return null;
-        }
-
-        const {
-            _dialogStyles,
-            _styles: styles,
-            isValidating,
-            onSharingSettingChanged,
-            sharingSetting,
-            shouldRecordAudioAndVideo,
-            t
-        } = this.props;
-
-        return (
-            <View
-                key = 'fileSharingSetting'
-                style = { styles.header }>
-                <Image
-                    source = { ICON_USERS }
-                    style = { styles.recordingIcon } />
-                <Text
-                    style = {{
-                        ..._dialogStyles.text,
-                        ...styles.title
-                    }}>
-                    { t('recording.fileSharingdescription') }
-                </Text>
-                <Switch
-                    checked = { sharingSetting }
-                    disabled = { isValidating || !shouldRecordAudioAndVideo }
-                    onChange = { onSharingSettingChanged }
-                    style = { styles.switch } />
-            </View>
         );
     }
 
@@ -225,11 +277,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             _hideStorageWarning,
             _styles: styles,
             isVpaas,
-            selectedRecordingService,
             t
         } = this.props;
 
-        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
+        if (!isVpaas || _hideStorageWarning) {
             return null;
         }
 
@@ -252,129 +303,217 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     }
 
     /**
-     * Renders a spinner component.
+     * Renders the Dropbox account area: sign in button, or account info plus
+     * sign out button once authorized.
      *
      * @returns {React$Component}
      */
-    _renderSpinner() {
-        return (
-            <LoadingIndicator
-                size = 'small' />
-        );
-    }
+    _renderDropboxOptions() {
+        const { _dialogStyles, _styles: styles, isTokenValid, isValidating, spaceLeft, t, userName } = this.props;
 
-    /**
-     * Renders the screen with the account information of a logged in user.
-     *
-     * @returns {React$Component}
-     */
-    _renderSignOut() {
-        const { _styles: styles, spaceLeft, t, userName } = this.props;
+        if (isValidating) {
+            return (
+                <View style = { styles.loggedIn }>
+                    <LoadingIndicator size = 'small' />
+                </View>
+            );
+        }
+
+        if (!isTokenValid) {
+            return (
+                <View style = { styles.headerNested }>
+                    <Text
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.optionLabel
+                        }}>
+                        { t('recording.dropboxSignInPrompt') }
+                    </Text>
+                    <Button
+                        accessibilityLabel = 'recording.signIn'
+                        labelKey = 'recording.signIn'
+                        onClick = { this._onSignIn }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                </View>
+            );
+        }
+
         const duration = getRecordingDurationEstimation(spaceLeft);
 
         return (
-            <View
-                style = { styles.loggedIn }>
-                <Text
-                    style = { [
-                        styles.text,
-                        styles.recordingText
-                    ] }>
-                    { t('recording.loggedIn', { userName }) }
-                </Text>
-                <Text
-                    style = { [
-                        styles.text,
-                        styles.recordingText
-                    ] }>
-                    {
-                        t('recording.availableSpace', {
-                            spaceLeft,
-                            duration
-                        })
-                    }
-                </Text>
-            </View>
-        );
-    }
-
-    /**
-     * Renders the content in case integrations were enabled.
-     *
-     * @protected
-     * @returns {React$Component}
-     */
-    _renderIntegrationsContent() {
-        if (!this._shouldRenderIntegrationsContent()) {
-            return null;
-        }
-
-        const {
-            _dialogStyles,
-            _styles: styles,
-            fileRecordingsServiceEnabled,
-            isTokenValid,
-            isValidating,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo,
-            t
-        } = this.props;
-
-        let content = null;
-        let switchContent = null;
-
-        if (isValidating) {
-            content = this._renderSpinner();
-            switchContent = <View />;
-        } else if (isTokenValid) {
-            content = this._renderSignOut();
-            switchContent = (
+            <View style = { styles.headerNested }>
+                <View style = { styles.loggedInInfo }>
+                    <Text
+                        style = { [
+                            styles.text,
+                            styles.recordingText
+                        ] }>
+                        { t('recording.loggedIn', { userName }) }
+                    </Text>
+                    <Text
+                        style = { [
+                            styles.text,
+                            styles.recordingText
+                        ] }>
+                        {
+                            t('recording.availableSpace', {
+                                spaceLeft,
+                                duration
+                            })
+                        }
+                    </Text>
+                </View>
                 <Button
                     accessibilityLabel = 'recording.signOut'
                     labelKey = 'recording.signOut'
                     onClick = { this._onSignOut }
                     type = { BUTTON_TYPES.SECONDARY } />
-            );
+            </View>
+        );
+    }
 
-        } else {
-            switchContent = (
-                <Button
-                    accessibilityLabel = 'recording.signIn'
-                    labelKey = 'recording.signIn'
-                    onClick = { this._onSignIn }
-                    type = { BUTTON_TYPES.PRIMARY } />
-            );
+    /**
+     * Renders the recorder follow me switch for cloud based recordings.
+     *
+     * @returns {React$Component}
+     */
+    _renderFollowMeRecorder() {
+        const { _dialogStyles, _styles: styles, model, t } = this.props;
+        const { followMeRecorderChecked, followMeRecorderDisabled, showFollowMeRecorder } = model.recording;
+
+        if (!showFollowMeRecorder) {
+            return null;
         }
 
-        if (fileRecordingsServiceEnabled) {
-            switchContent = (
+        const followMeLabel = t('settings.followMeRecorder');
+
+        return (
+            <View style = { styles.headerNested }>
+                <Text
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.optionLabel
+                    }}>
+                    { followMeLabel }
+                </Text>
                 <Switch
-                    checked = { selectedRecordingService === RECORDING_TYPES.DROPBOX }
-                    disabled = { isValidating || !shouldRecordAudioAndVideo }
-                    onChange = { this._onDropboxSwitchChange }
+                    accessibilityLabel = { followMeLabel }
+                    checked = { followMeRecorderChecked }
+                    disabled = { followMeRecorderDisabled }
+                    onChange = { this._onFollowMeRecorderChange }
                     style = { styles.switch } />
-            );
+            </View>
+        );
+    }
+
+    /**
+     * Renders the transcription section with the inline language picker.
+     *
+     * @returns {React$Component}
+     */
+    _renderTranscriptionSection() {
+        const {
+            _availableLanguages,
+            _dialogStyles,
+            _styles: styles,
+            model,
+            onStartTranscription,
+            onStopTranscription,
+            selectedLanguage,
+            t
+        } = this.props;
+        const { running, startBlocker, visible } = model.transcription;
+
+        if (!visible) {
+            return null;
+        }
+
+        const { showLanguageList, showTranscriptionOptions } = this.state;
+
+        return (
+            <View style = { styles.section }>
+                { this._renderSectionHeader({
+                    onButtonPress: running ? onStopTranscription : onStartTranscription,
+                    running,
+                    startDisabled: Boolean(startBlocker),
+                    startLabelKey: 'dialog.startTranscription',
+                    stopLabelKey: 'dialog.stopTranscription',
+                    titleKey: 'recording.recordTranscription'
+                }) }
+                { this._renderAccordion({
+                    body: (
+                        <>
+                            <View style = { styles.headerNested }>
+                                <Text
+                                    style = {{
+                                        ..._dialogStyles.text,
+                                        ...styles.pickerLabel
+                                    }}>
+                                    { `${t('recording.transcriptionLanguage')}: ${t(selectedLanguage ?? '')}` }
+                                </Text>
+                                <Icon
+                                    ariaPressed = { showLanguageList }
+                                    onClick = { running ? undefined : this._onToggleLanguageList }
+                                    role = 'button'
+                                    size = { 24 }
+                                    src = { showLanguageList ? IconArrowDown : IconArrowRight } />
+                            </View>
+                            { showLanguageList && !running
+                                && _availableLanguages.map((language: string) => (
+                                    <LanguageListItem
+                                        key = { language }
+                                        lang = { language }
+                                        onLanguageSelected = { this._onLanguageSelected }
+                                        selected = { selectedLanguage === language } />
+                                )) }
+                        </>
+                    ),
+                    expanded: showTranscriptionOptions,
+                    onToggle: this._onToggleTranscriptionOptions,
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it while
+                    // the section is expanded.
+                    summary: showTranscriptionOptions ? '' : this._getTranscriptionSummary(),
+                    titleKey: 'recording.transcriptionOptions'
+                }) }
+            </View>
+        );
+    }
+
+    /**
+     * Renders the footer buttons acting on both services at once. When only
+     * one service is running both buttons are shown: stop both stops the
+     * running one, start both starts the missing one.
+     *
+     * @returns {React$Component}
+     */
+    _renderFooter() {
+        const { _styles: styles, model, onStartBoth, onStopBoth } = this.props;
+        const { showStartBoth, showStopBoth, startBothBlocker, visible } = model.footer;
+
+        if (!visible) {
+            return null;
         }
 
         return (
-            <View>
-                <View
-                    style = { styles.headerIntegrations }>
-                    <Image
-                        source = { DROPBOX_LOGO }
-                        style = { styles.recordingIcon } />
-                    <Text
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
-                        { t('recording.authDropboxText') }
-                    </Text>
-                    { switchContent }
-                </View>
-                <View>
-                    { content }
-                </View>
+            <View style = { styles.footer }>
+                { showStopBoth && (
+                    <Button
+                        accessibilityLabel = 'dialog.stopBoth'
+                        labelKey = 'dialog.stopBoth'
+                        onClick = { onStopBoth }
+                        style = { styles.footerButton }
+                        type = { BUTTON_TYPES.DESTRUCTIVE } />
+                ) }
+                { showStartBoth && (
+                    <Button
+                        accessibilityLabel = 'dialog.startBoth'
+                        disabled = { Boolean(startBothBlocker) }
+                        labelKey = 'dialog.startBoth'
+                        onClick = { onStartBoth }
+                        style = { styles.footerButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                ) }
             </View>
         );
     }

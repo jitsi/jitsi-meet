@@ -2,15 +2,20 @@ import { merge } from 'lodash-es';
 
 import * as jitsiTokens from './jitsiTokens.json';
 import * as tokens from './tokens.json';
+import { IPalette } from './types';
 
 /**
  * Creates the color tokens based on the color theme and the association map.
  *
  * @param {Object} colorMap - A map between the token name and the actual color value.
+ * @param {Object} customTokens - Optional custom token overrides to merge before resolution.
+ * This allows custom branding colors to propagate through semantic token references.
+ * For example, if customTokens contains { action01: '#custom' }, then any semantic token
+ * that references 'action01' (like 'prejoinActionButtonPrimary') will resolve to '#custom'.
  * @returns {Object}
  */
-export function createColorTokens(colorMap: Object): any {
-    const allTokens = merge({}, tokens, jitsiTokens);
+export function createColorTokens(colorMap: Object, customTokens?: Partial<IPalette>): any {
+    const allTokens = merge({}, tokens, jitsiTokens, customTokens || {});
     const result: any = {};
 
     // First pass: resolve tokens that reference allTokens directly

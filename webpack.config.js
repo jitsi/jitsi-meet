@@ -54,6 +54,42 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
 }
 
 /**
+ * Builds the module rules for the preload script. It runs before the app bundle, in the same modern
+ * browsers the app requires, so the core-js polyfills babel injects for the app would only add
+ * weight to a script whose whole point is to be small and fast (51 KiB with them, 7 KiB without).
+ * Syntax is still transpiled for the configured targets; only polyfill injection is disabled. The
+ * flip side: the preload and the modules it imports must only use built-ins available on the
+ * supported browser floor, and nothing enforces that automatically.
+ *
+ * @param {Array} rules - The shared module rules.
+ * @returns {Array} The rules with polyfill injection disabled.
+ */
+function getPreloadRules(rules) {
+    return rules.map(rule => {
+        if (rule.loader !== 'babel-loader') {
+            return rule;
+        }
+
+        const [ [ presetEnv, presetEnvOptions ], ...otherPresets ] = rule.options.presets;
+        const { corejs, ...presetEnvOptionsWithoutPolyfills } = presetEnvOptions; // eslint-disable-line no-unused-vars
+
+        return {
+            ...rule,
+            options: {
+                ...rule.options,
+                presets: [
+                    [ presetEnv, {
+                        ...presetEnvOptionsWithoutPolyfills,
+                        useBuiltIns: false
+                    } ],
+                    ...otherPresets
+                ]
+            }
+        };
+    });
+}
+
+/**
  * Determines whether a specific (HTTP) request is to bypass the proxy of
  * webpack-dev-server (i.e. is to be handled by the proxy target) and, if not,
  * which local file is to be served in response to the request.
@@ -69,6 +105,12 @@ function devServerProxyBypass({ path }) {
         // The CDN is not available in the dev server, so we need to bypass it.
         tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, '/');
     }
+
+    // A page opened from a tenant meeting URL asks for its static assets under
+    // that tenant (e.g. /tenant/static/secondScreen.html), which would otherwise
+    // be proxied to the dev target and serve that deployment's copy, or a 404 for
+    // a file that only exists locally.
+    tpath = tpath.replace(/^\/[^/]+\/static\//, '/static/');
 
     if (tpath.startsWith('/css/')
             || tpath.startsWith('/doc/')
@@ -152,6 +194,19 @@ function getConfig(options = {}) {
                 test: /\.(j|t)sx?$/,
                 exclude: /node_modules/
             }, {
+                // Emit woff2 fonts to excalidraw/fonts/ preserving the subdirectory
+                // structure so they land at the same path that deploy-excalidraw copies
+                // them to (libs/excalidraw/fonts/...) and CSS @font-face URLs resolve.
+                test: /\.woff2$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: pathData => {
+                        const match = pathData.filename?.match(/\/fonts\/(.*)/);
+
+                        return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
+                    }
+                }
+            }, {
                 // Allow CSS to be imported into JavaScript.
 
                 test: /\.css$/,
@@ -181,7 +236,13 @@ function getConfig(options = {}) {
                 loader: 'ts-loader',
                 options: {
                     configFile: 'tsconfig.web.json',
-                    transpileOnly: !isProduction // Skip type checking for dev builds.,
+
+                    // Only strip types here. Type checking runs once, through `tsc` (the Makefile
+                    // `typecheck` target, the `build:load-test` script and CI). With type checking
+                    // enabled, ts-loader builds and checks a full TypeScript program of the whole
+                    // tree for every bundle below, which multiplied the build time and memory by
+                    // the number of bundles.
+                    transpileOnly: true
                 }
             } ]
         },
@@ -197,8 +258,9 @@ function getConfig(options = {}) {
         },
         output: {
             filename: `[name]${isProduction ? '.min' : ''}.js`,
+            chunkFilename: `chunks/[id]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
-            publicPath: '/libs/',
+            publicPath: isProduction ? 'auto' : '/libs/',
             sourceMapFilename: '[file].map'
         },
         plugins: [
@@ -212,7 +274,12 @@ function getConfig(options = {}) {
         resolve: {
             alias: {
                 'focus-visible': 'focus-visible/dist/focus-visible.min.js',
-                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js')
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+                'roughjs/bin/rough': 'roughjs/bin/rough.js',
+                'roughjs/bin/generator': 'roughjs/bin/generator.js',
+                'roughjs/bin/math': 'roughjs/bin/math.js'
             },
             aliasFields: [
                 'browser'
@@ -257,6 +324,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
+        allowedHosts: 'all',
         host: 'localhost',
         hot: true,
         proxy: [
@@ -271,10 +339,13 @@ function getDevServerConfig() {
             }
         ],
         server: process.env.CODESPACES ? 'http' : 'https',
+        setupMiddlewares: (middlewares, _devServer) => middlewares.filter(
+            m => m.name !== 'cross-origin-header-check'
+        ),
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('node_modules')
             }
         }
     };
@@ -319,7 +390,7 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 3.6 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'
@@ -327,6 +398,28 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
+
+        // The load-test client used by Malleus (tests/malleus). Not part of the application: it is built only by
+        // `npm run build:load-test` (BUILD_LOAD_TEST=true) and injected into the browsers by the load tester.
+        ...process.env.BUILD_LOAD_TEST ? [ { ...config,
+            name: 'load-test',
+            entry: {
+                'load-test-participant': './react/features/load-test/loadTestParticipant.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'load-test-participant')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 400 * 1024) } ] : [],
+        { ...config,
+            entry: {
+                'documentpip': './react/features/always-on-top/document-pip-index.tsx'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'documentpip')
             ],
             performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
         { ...config,
@@ -350,7 +443,18 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 95 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 110 * 1024) },
+        { ...config,
+            entry: {
+                'preload': './react/features/preload/preload.web.ts'
+            },
+            module: { ...config.module,
+                rules: getPreloadRules(config.module.rules) },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'preload')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 30 * 1024) },
         { ...config,
             entry: {
                 'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
@@ -358,6 +462,16 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
+        { ...config,
+            entry: {
+                'vb-inference-worker':
+                    './react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
         { ...config, /**

@@ -1,3 +1,5 @@
+import { Key } from 'webdriverio';
+
 import BasePageObject from './BasePageObject';
 
 /**
@@ -24,14 +26,19 @@ export default class ChatPanel extends BasePageObject {
         if (!await this.isOpen()) {
             await this.pressShortcut();
         }
-        if (!await this.isOpen()) {
-            throw new Error('Chat panel failed to open');
-        }
+
+        await this.participant.driver.$('#sideToolbarContainer').waitForExist({
+            timeout: 3000,
+            timeoutMsg: 'Chat panel failed to open'
+        });
 
         const inputField = this.participant.driver.$('#chat-input');
 
         await inputField.click();
-        await this.participant.driver.keys(`${message}\n`);
+        await this.participant.driver.keys(message);
+
+        // A typed '\n' sends the message in Chrome only. Firefox needs the Return key.
+        await this.participant.driver.keys(Key.Return);
     }
 
     /**
@@ -61,6 +68,19 @@ export default class ChatPanel extends BasePageObject {
             .waitForExist({
                 timeout: 2000,
                 timeoutMsg: 'New poll not created'
+            });
+    }
+
+    /**
+     * Waits for the new poll input to disappear.
+     */
+    async waitForNewPollInputNonExisting() {
+        await this.participant.driver.$(
+            '#polls-create-input')
+            .waitForExist({
+                reverse: true,
+                timeout: 2000,
+                timeoutMsg: 'New poll input still exists'
             });
     }
 
@@ -194,6 +214,24 @@ export default class ChatPanel extends BasePageObject {
      */
     async isPollVisible(pollId: string) {
         return this.participant.driver.$(`#poll-${pollId}`).isDisplayed();
+    }
+
+    /**
+     * Clicks the close button of the given saved poll and waits for the poll to disappear.
+     * @param pollId
+     */
+    async closePoll(pollId: string) {
+        const closeButton = this.participant.driver.$(`#poll-${pollId} [aria-label="Close poll"]`);
+
+        await closeButton.scrollIntoView();
+        await closeButton.waitForClickable({ timeout: 2000 });
+        await closeButton.click();
+
+        await this.participant.driver.$(`#poll-${pollId}`).waitForExist({
+            reverse: true,
+            timeout: 3000,
+            timeoutMsg: `Poll ${pollId} still visible`
+        });
     }
 
     /**

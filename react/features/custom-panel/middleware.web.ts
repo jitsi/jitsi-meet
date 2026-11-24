@@ -1,4 +1,2 @@
-/**
- * Custom panel middleware placeholder.
- * Override to add custom panel functionality.
- */
+import './middleware.any';
+import './subscriber.web';

@@ -4,8 +4,8 @@
  * @enum {string}
  */
 export const VIRTUAL_BACKGROUND_TYPE = {
-    IMAGE: 'image',
     BLUR: 'blur',
+    IMAGE: 'image',
     NONE: 'none'
 };
 

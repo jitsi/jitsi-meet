@@ -4,6 +4,7 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
+import { useAudioTranslationButton } from '../audio-translation/hooks.web';
 import { toggleDialog } from '../base/dialog/actions';
 import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
 import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
@@ -25,6 +26,7 @@ import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
+import { areCtrlAltReactionShortcutsEnabled } from '../keyboard-shortcuts/functions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
@@ -36,6 +38,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -225,8 +228,10 @@ function useLinkToSalesforceButton() {
  *
  *  @returns {Object | undefined}
  */
-function getShareAudioButton() {
-    if (JitsiMeetJS.isDesktopSharingEnabled() && isScreenAudioSupported()) {
+function useShareAudioButton() {
+    const _isScreenAudioSupported = useSelector(isScreenAudioSupported);
+
+    if (JitsiMeetJS.isDesktopSharingEnabled() && _isScreenAudioSupported) {
         return shareAudio;
     }
 }
@@ -291,12 +296,13 @@ export function useToolboxButtons(
     const tileview = useTileViewButton();
     const chat = useChatButton();
     const cc = useClosedCaptionButton();
+    const audioTranslation = useAudioTranslationButton();
     const polls = usePollsButton();
     const filesharing = useFileSharingButton();
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
     const linktosalesforce = useLinkToSalesforceButton();
-    const shareaudio = getShareAudioButton();
+    const shareaudio = useShareAudioButton();
     const shareVideo = useSharedVideoButton();
     const whiteboard = useWhiteboardButton();
     const etherpad = useEtherpadButton();
@@ -309,6 +315,7 @@ export function useToolboxButtons(
     const _help = useHelpButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
+    const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -322,10 +329,12 @@ export function useToolboxButtons(
         invite: _invite,
         tileview,
         'toggle-camera': toggleCameraButton,
+        'toggle-pip': togglePiPButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        audiotranslation: audioTranslation,
         polls,
         filesharing,
         recording,
@@ -374,6 +383,7 @@ export function useToolboxButtons(
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
+    const _ctrlAltReactionShortcutsEnabled = useSelector(areCtrlAltReactionShortcutsEnabled);
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
@@ -625,6 +635,16 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
                     handler: shortcut.exec,
                     helpDescription: shortcut.helpDescription
                 }));
+
+                if (_ctrlAltReactionShortcutsEnabled) {
+                    dispatch(registerShortcut({
+                        alt: true,
+                        character: shortcut.character,
+                        ctrl: true,
+                        handler: shortcut.exec,
+                        helpDescription: shortcut.helpDescription
+                    }));
+                }
             });
 
             if (gifsEnabled) {
@@ -649,11 +669,17 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
 
             if (_shouldDisplayReactionsButtons) {
                 Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
-                    .forEach(letter =>
-                        dispatch(unregisterShortcut(letter, true)));
+                    .forEach(letter => {
+                        dispatch(unregisterShortcut(letter, true));
+
+                        if (_ctrlAltReactionShortcutsEnabled) {
+                            dispatch(unregisterShortcut(letter, true, true));
+                        }
+                    });
             }
         };
     }, [
+        _ctrlAltReactionShortcutsEnabled,
         _shouldDisplayReactionsButtons,
         chatOpen,
         desktopSharingButtonDisabled,

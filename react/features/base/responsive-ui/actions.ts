@@ -28,6 +28,16 @@ const REDUCED_UI_THRESHOLD = 300;
 const WEB_REDUCED_UI_THRESHOLD = 320;
 
 /**
+ * Aspect ratio hysteresis deadband margin.
+ *
+ * Prevents layout thrashing / infinite oscillation on square/foldable displays
+ * (e.g. Galaxy Z Fold, Pixel Fold, split-screen mode, iPad multitasking) where
+ * applying a layout (such as rendering a filmstrip or dialog insets) subtly alters
+ * available dimensions across the 1:1 boundary.
+ */
+const ASPECT_RATIO_HYSTERESIS = 0.05;
+
+/**
  * Indicates a resize of the window.
  *
  * @param {number} clientWidth - The width of the window.
@@ -40,10 +50,11 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             return;
         }
 
+        const state = getState();
+        const prevResponsiveUI = state['features/base/responsive-ui'];
         let availableWidth = clientWidth;
 
         if (navigator.product !== 'ReactNative') {
-            const state = getState();
             const { reducedUIEnabled = true } = state['features/base/config'];
             const { isOpen: isChatOpen, width } = state['features/chat'];
 
@@ -55,6 +66,12 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             availableWidth -= getCustomPanelWidth(state);
 
             reducedUIEnabled && dispatch(setReducedUI(availableWidth, clientHeight));
+        }
+
+        if (prevResponsiveUI.clientHeight === clientHeight
+                && prevResponsiveUI.clientWidth === clientWidth
+                && prevResponsiveUI.videoSpaceWidth === availableWidth) {
+            return;
         }
 
         batch(() => {
@@ -82,19 +99,35 @@ export function clientResized(clientWidth: number, clientHeight: number) {
  */
 export function setAspectRatio(width: number, height: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        // Don't change the aspect ratio if width and height are the same, that
-        // is, if we transition to a 1:1 aspect ratio.
-        if (width !== height) {
-            const aspectRatio
-                = width < height ? ASPECT_RATIO_NARROW : ASPECT_RATIO_WIDE;
+        if (!width || !height) {
+            return;
+        }
 
-            if (aspectRatio
-                    !== getState()['features/base/responsive-ui'].aspectRatio) {
-                return dispatch({
-                    type: SET_ASPECT_RATIO,
-                    aspectRatio
-                });
+        const currentAspectRatio = getState()['features/base/responsive-ui'].aspectRatio;
+        const ratio = width / height;
+        let aspectRatio = currentAspectRatio;
+
+        // Apply hysteresis:
+        // - To switch from NARROW to WIDE: width must exceed height by the hysteresis margin (ratio > 1 + margin).
+        // - To switch from WIDE to NARROW: width must be less than height by the hysteresis margin (ratio < 1 - margin).
+        // - In the deadband around 1:1 (~[0.95, 1.05]), retain the current stable aspect ratio.
+        if (currentAspectRatio === ASPECT_RATIO_NARROW) {
+            if (ratio > 1 + ASPECT_RATIO_HYSTERESIS) {
+                aspectRatio = ASPECT_RATIO_WIDE;
             }
+        } else if (currentAspectRatio === ASPECT_RATIO_WIDE) {
+            if (ratio < 1 - ASPECT_RATIO_HYSTERESIS) {
+                aspectRatio = ASPECT_RATIO_NARROW;
+            }
+        } else {
+            aspectRatio = width < height ? ASPECT_RATIO_NARROW : ASPECT_RATIO_WIDE;
+        }
+
+        if (aspectRatio !== currentAspectRatio) {
+            return dispatch({
+                type: SET_ASPECT_RATIO,
+                aspectRatio
+            });
         }
     };
 }

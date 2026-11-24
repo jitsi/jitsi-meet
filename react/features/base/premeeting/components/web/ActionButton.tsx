@@ -12,19 +12,20 @@ interface IProps {
     OptionsIcon?: Function;
 
     /**
-     * The Label of the child element.
+     * The accessible name of the options button.
      */
     ariaDropDownLabel?: string;
 
     /**
-     * The Label of the current element.
+     * Whether the options popup is open. Rendered as aria-expanded on the options button, so screen
+     * readers announce its open/closed state instead of a pressed/unpressed toggle.
      */
-    ariaLabel?: string;
+    ariaExpanded?: boolean;
 
     /**
-     * To give a aria-pressed to the icon.
+     * The accessible name of the main button.
      */
-    ariaPressed?: boolean;
+    ariaLabel?: string;
 
     /**
      * Text of the button.
@@ -32,12 +33,13 @@ interface IProps {
     children: ReactNode;
 
     /**
-     * Text css class of the button.
+     * Extra css class for the component's container.
      */
     className?: string;
 
     /**
-     * If the button is disabled or not.
+     * If the buttons are disabled or not. Native disabled buttons are not focusable and ignore clicks and
+     * key presses, so both buttons leave the tab order together with their handlers.
      */
     disabled?: boolean;
 
@@ -45,7 +47,6 @@ interface IProps {
      * If the button has options.
      */
     hasOptions?: boolean;
-
 
     /**
      * OnClick button handler.
@@ -58,100 +59,115 @@ interface IProps {
     onOptionsClick?: (e?: React.KeyboardEvent | React.MouseEvent) => void;
 
     /**
-     * To give a role to the icon.
-     */
-    role?: string;
-
-    /**
-     * To navigate with the keyboard.
-     */
-    tabIndex?: number;
-
-    /**
-     * TestId of the button. Can be used to locate element when testing UI.
+     * TestId of the main button. Can be used to locate element when testing UI.
      */
     testId?: string;
 
     /**
-     * The type of th button: primary, secondary, text.
+     * The type of the button: primary, secondary, text.
      */
     type: string;
 }
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            display: 'inline-block',
+            marginBottom: '16px',
+            position: 'relative' as const,
+            width: '100%',
+
+            // The options button is a sibling of the main button, so hovering it no longer hovers the main
+            // button. Driving the hover colour from the container keeps the whole control highlighted as one.
+            '&:hover > .primary:not(:disabled)': {
+                backgroundColor: theme.palette.prejoinActionButtonPrimaryHover
+            },
+
+            '&:hover > .secondary:not(:disabled)': {
+                backgroundColor: theme.palette.prejoinActionButtonSecondaryHover
+            },
+
+            '&.text': {
+                width: 'auto',
+                margin: 0
+            },
+
+            [theme.breakpoints.down(400)]: {
+                marginBottom: 8
+            }
+        },
         actionButton: {
             ...theme.typography.bodyLongBold,
+            background: 'none',
+            border: 0,
             borderRadius: theme.shape.borderRadius,
             boxSizing: 'border-box',
             color: theme.palette.actionButtonText,
             cursor: 'pointer',
-            display: 'inline-block',
-            marginBottom: '16px',
+            display: 'block',
             padding: '7px 16px',
-            position: 'relative' as const,
             textAlign: 'center',
             width: '100%',
-            border: 0,
 
             '&.primary': {
                 background: theme.palette.prejoinActionButtonPrimary,
-                color: theme.palette.prejoinActionButtonPrimaryText,
-
-                '&:hover': {
-                    backgroundColor: theme.palette.prejoinActionButtonPrimaryHover
-                }
+                color: theme.palette.prejoinActionButtonPrimaryText
             },
 
             '&.secondary': {
                 background: theme.palette.prejoinActionButtonSecondary,
-                color: theme.palette.prejoinActionButtonSecondaryText,
-
-                '&:hover': {
-                    backgroundColor: theme.palette.prejoinActionButtonSecondaryHover
-                }
+                color: theme.palette.prejoinActionButtonSecondaryText
             },
 
             '&.text': {
                 width: 'auto',
                 fontSize: '0.875rem',
-                margin: '0',
                 padding: '0'
             },
 
-            '&.disabled': {
+            '&:disabled': {
                 background: theme.palette.prejoinActionButtonDisabled,
                 border: '1px solid #5E6D7A',
                 color: '#AFB6BC',
-                cursor: 'initial',
-
-                '.icon': {
-                    '& > svg': {
-                        fill: '#AFB6BC'
-                    }
-                }
+                cursor: 'initial'
             },
-
 
             [theme.breakpoints.down(400)]: {
                 fontSize: '1rem',
-                marginBottom: 8,
                 padding: '11px 16px'
             }
         },
         options: {
+            background: 'none',
+            border: 0,
             borderRadius: Number(theme.shape.borderRadius) / 2,
+
+            // The options button sits flush with the main button's right edge, so its outer corners must follow
+            // the main button's radius. The two are siblings now, so the value cannot be inherited.
+            borderTopRightRadius: theme.shape.borderRadius,
+            borderBottomRightRadius: theme.shape.borderRadius,
             alignItems: 'center',
+            color: 'inherit',
+            cursor: 'pointer',
             display: 'flex',
             height: '100%',
             justifyContent: 'center',
+            padding: 0,
             position: 'absolute' as const,
             right: 0,
             top: 0,
             width: 36,
 
-            '&:hover': {
-                backgroundColor: '#0262B6'
+            '&:hover:not(:disabled)': {
+                backgroundColor: theme.palette.prejoinActionButtonOptionsHover
+            },
+
+            '&:disabled': {
+                cursor: 'initial',
+
+                '& .icon > svg': {
+                    fill: '#AFB6BC'
+                }
             },
 
             '& svg': {
@@ -163,6 +179,11 @@ const useStyles = makeStyles()(theme => {
 
 /**
  * Button used for pre meeting actions.
+ *
+ * The main button and the options button are two sibling native buttons. A button nested in another button
+ * is presentational for assistive technologies, so the previous nested markup could hide the options button
+ * from screen readers. Native buttons also give the tab order, Enter/Space activation and the disabled state
+ * without custom key handling.
  *
  * @returns {ReactElement}
  */
@@ -176,64 +197,49 @@ function ActionButton({
     type = 'primary',
     onClick,
     onOptionsClick,
-    tabIndex,
-    role,
-    ariaPressed,
+    ariaExpanded,
     ariaLabel,
     ariaDropDownLabel
 }: IProps) {
     const { classes, cx } = useStyles();
 
-    const onKeyPressHandler = useCallback(e => {
-        if (onClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            onClick(e);
-        }
-    }, [ onClick, disabled ]);
-
-    const onOptionsKeyPressHandler = useCallback(e => {
-        if (onOptionsClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
+    // The prejoin screen wraps this component in a Popover whose keypress handler calls preventDefault on
+    // Enter and Space. That cancels the click a native button fires for those keys, so the handlers below
+    // would never run. Keeping the keypress on the button lets the browser deliver the click as usual.
+    const onActivationKeyPress = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
             e.stopPropagation();
-            onOptionsClick(e);
         }
-    }, [ onOptionsClick, disabled ]);
-
-    const containerClasses = cx(
-        classes.actionButton,
-        className && className,
-        type,
-        disabled && 'disabled'
-    );
+    }, []);
 
     return (
-        <div
-            aria-disabled = { disabled }
-            aria-label = { ariaLabel }
-            className = { containerClasses }
-            data-testid = { testId ? testId : undefined }
-            onClick = { disabled ? undefined : onClick }
-            onKeyPress = { onKeyPressHandler }
-            role = 'button'
-            tabIndex = { 0 } >
-            {children}
+        <div className = { cx(classes.container, className && className, type) }>
+            <button
+                aria-label = { ariaLabel }
+                className = { cx(classes.actionButton, type) }
+                data-testid = { testId ? testId : undefined }
+                disabled = { disabled }
+                onClick = { onClick }
+                onKeyPress = { onActivationKeyPress }
+                type = 'button'>
+                {children}
+            </button>
             { hasOptions
-                && <div
-                    aria-disabled = { disabled }
-                    aria-haspopup = 'true'
+                && <button
+                    aria-expanded = { ariaExpanded }
+                    aria-haspopup = 'dialog'
                     aria-label = { ariaDropDownLabel }
-                    aria-pressed = { ariaPressed }
                     className = { classes.options }
                     data-testid = 'prejoin.joinOptions'
-                    onClick = { disabled ? undefined : onOptionsClick }
-                    onKeyPress = { onOptionsKeyPressHandler }
-                    role = { role }
-                    tabIndex = { tabIndex }>
+                    disabled = { disabled }
+                    onClick = { onOptionsClick }
+                    onKeyPress = { onActivationKeyPress }
+                    type = 'button'>
                     <Icon
                         className = 'icon'
                         size = { 24 }
                         src = { OptionsIcon } />
-                </div>
+                </button>
             }
         </div>
     );

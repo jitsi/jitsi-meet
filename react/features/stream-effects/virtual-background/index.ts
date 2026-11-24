@@ -1,45 +1,105 @@
 /* eslint-disable lines-around-comment */
-import { IStore } from '../../app/types';
+import {
+    createVirtualBackgroundV2FailedEvent,
+    createVirtualBackgroundV2StartedEvent
+} from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
+import { IVirtualBackground } from '../../virtual-background/reducer';
 
-import JitsiStreamBackgroundEffect, { IBackgroundEffectOptions } from './JitsiStreamBackgroundEffect';
+import { detectDeviceTier } from './DeviceTierDetector';
+import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
 // @ts-ignore
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
+/* eslint-enable lines-around-comment */
+
 const models = {
     modelLandscape: 'libs/selfie_segmentation_landscape.tflite'
 };
-/* eslint-enable lines-around-comment */
 
 let modelBuffer: ArrayBuffer;
 let tflite: any;
-let wasmCheck;
+let wasmCheck: any;
 let isWasmDisabled = false;
-
-const segmentationDimensions = {
-    modelLandscape: {
-        height: 144,
-        width: 256
-    }
-};
+const reportedV2Events = new Set<string>();
 
 /**
- * Creates a new instance of JitsiStreamBackgroundEffect. This loads the Meet background model that is used to
- * extract person segmentation.
+ * Sends a V2 startup analytics event once per distinct payload, since an effect is created for every
+ * preview and track (re)creation.
+ *
+ * @param {Object} event - The analytics event.
+ * @returns {void}
+ */
+function sendV2StartupEvent(event: Object) {
+    const key = JSON.stringify(event);
+
+    if (!reportedV2Events.has(key)) {
+        reportedV2Events.add(key);
+        sendAnalytics(event);
+    }
+}
+
+/**
+ * Creates a new instance of the virtual background stream effect.
  *
  * @param {Object} virtualBackground - The virtual object that contains the background image source and
  * the isVirtualBackground flag that indicates if virtual image is activated.
  * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Promise<JitsiStreamBackgroundEffect>}
+ * @returns {Promise<JitsiStreamBackgroundEffect | undefined>}
  */
-export async function createVirtualBackgroundEffect(virtualBackground: IBackgroundEffectOptions['virtualBackground'],
-        dispatch?: IStore['dispatch']) {
+export async function createVirtualBackgroundEffect(virtualBackground: IVirtualBackground,
+        dispatch?: Function
+): Promise<JitsiStreamBackgroundEffect | undefined> {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
+    }
+    const fullVbConfig = APP.store.getState()['features/base/config'].virtualBackground;
+
+    // V2 is the default engine. V1 is only used when enableV2 is explicitly set to false.
+    // (The type of enableV2 is `boolean | undefined` per IConfig, so `undefined` picks V2.)
+    const useV2Engine = fullVbConfig?.enableV2 !== false;
+
+    if (useV2Engine) {
+        const vbConfig = fullVbConfig?.advanced;
+        const capabilities = await detectDeviceTier(vbConfig);
+
+        logger.info(
+            '[VirtualBackground] Using V2 engine —'
+            + ` tier: ${capabilities.tier}, backend: ${capabilities.backend}`
+        );
+
+        const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
+            capabilities,
+            enableV2: true,
+            vbConfig
+        });
+
+        try {
+            await effect.init();
+        } catch (error: any) {
+            sendV2StartupEvent(createVirtualBackgroundV2FailedEvent({
+                ...effect.v2StartupConfig,
+                error: String(error?.message ?? error)
+            }));
+
+            throw error;
+        }
+
+        const startup = effect.v2StartupConfig;
+
+        if (startup) {
+            sendV2StartupEvent(createVirtualBackgroundV2StartedEvent({
+                ...startup,
+                workerFallback: startup.backend !== capabilities.backend
+            }));
+        }
+
+        return effect;
     }
 
     if (isWasmDisabled) {
@@ -97,10 +157,5 @@ export async function createVirtualBackgroundEffect(virtualBackground: IBackgrou
         tflite._loadModel(modelBuffer.byteLength);
     }
 
-    const options = {
-        ...segmentationDimensions.modelLandscape,
-        virtualBackground
-    };
-
-    return new JitsiStreamBackgroundEffect(tflite, options);
+    return new JitsiStreamBackgroundEffect(tflite, virtualBackground);
 }

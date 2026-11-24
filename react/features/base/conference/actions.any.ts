@@ -1,7 +1,6 @@
 import { maybeRedirectToTokenAuthUrl } from '../../app/actions.any';
 import { IReduxState, IStore } from '../../app/types';
 import { isTokenAuthInline } from '../../authentication/functions.any';
-import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
@@ -38,6 +37,7 @@ import { getBackendSafeRoomName } from '../util/uri';
 
 import {
     AUTH_STATUS_CHANGED,
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
@@ -77,6 +77,7 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    _sendReadyToClose,
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
@@ -126,6 +127,13 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
+    // CONNECTION_ESTABLISHED is skipped when P2P wins the ICE race; CONNECTION_RESTORED covers it.
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_ESTABLISHED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (..._args: any[]) => {
@@ -153,7 +161,8 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                     isReplaced
                 }));
 
-                dispatch(readyToClose());
+                dispatch(conferenceLeft(conference));
+                _sendReadyToClose(dispatch);
             } else {
                 dispatch(kickedOut(conference, participant));
             }
@@ -428,6 +437,19 @@ export function conferenceJoinInProgress(conference: IJitsiConference) {
 }
 
 /**
+ * Signals that the conference's ICE connection was established (media flowing).
+ *
+ * @param {JitsiConference} conference - The conference whose ICE connection was established.
+ * @returns {{ type: CONFERENCE_CONNECTION_ESTABLISHED, conference: JitsiConference }}
+ */
+export function conferenceConnectionEstablished(conference: IJitsiConference) {
+    return {
+        type: CONFERENCE_CONNECTION_ESTABLISHED,
+        conference
+    };
+}
+
+/**
  * Signals that a specific conference has been left.
  *
  * @param {JitsiConference} conference - The JitsiConference instance which was
@@ -526,7 +548,8 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
                 .map(t => t.jitsiTrack);
 
         if (localTracks.length && !iAmVisitor(state)) {
-            _addLocalTracksToConference(conference, localTracks);
+            _addLocalTracksToConference(conference, localTracks)
+                .catch((err: Error) => logger.error('Failed to add local tracks on conference join', err));
         }
 
         dispatch(conferenceWillJoin(conference));

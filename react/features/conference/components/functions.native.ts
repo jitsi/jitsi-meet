@@ -1,4 +1,5 @@
 import { IReduxState } from '../../app/types';
+import { getParticipantCountWithFake } from '../../base/participants/functions';
 
 export * from './functions.any';
 
@@ -12,10 +13,14 @@ export const isConnecting = (state: IReduxState) => {
     const { connecting, connection } = state['features/base/connection'];
     const {
         conference,
+        iceConnected,
         joining,
         membersOnly,
         leaving
     } = state['features/base/conference'];
+
+    // Alone never establishes a media session.
+    const mediaConnecting = !iceConnected && getParticipantCountWithFake(state) > 1;
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -25,8 +30,12 @@ export const isConnecting = (state: IReduxState) => {
     // - the XMPP connection is connecting, or
     // - the XMPP connection is connected and the conference is joining, or
     // - the XMPP connection is connected and we have no conference yet, nor we
-    //   are leaving one.
+    //   are leaving one, or
+    // - the conference is joined but its ICE connection (media) is not up yet,
+    //   so the loader also covers the media-connection gap.
     return Boolean(
-        connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))))
+        connecting
+            || (connection && (!membersOnly && (joining || (!conference && !leaving))))
+            || (conference && mediaConnecting && !leaving)
     );
 };

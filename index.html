@@ -1,4 +1,5 @@
-<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
+<!-- lang="en" is a pre-JS fallback; modules/translation/translation.js overrides it dynamically at runtime once initialized -->
+<html lang="en" itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
     <!--#include virtual="head.html" -->
     <meta charset="utf-8">
@@ -22,7 +23,7 @@
                 : pathname.substring(0, contextRootEndIndex + 1)
             );
         }
-        window.EXCALIDRAW_ASSET_PATH = 'libs/';
+        window.EXCALIDRAW_ASSET_PATH = 'libs/excalidraw/';
         // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
         // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
         document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + contextRoot(window.location.pathname) + 'manifest.json');
@@ -197,6 +198,8 @@
     </script>
     <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script><!--#include virtual="/interface_config.js" --></script>
+    <!-- Starts downloading config.js (when not inlined) and the dynamic branding before the app bundle. Optional. -->
+    <script src="libs/preload.min.js?v=139"></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->

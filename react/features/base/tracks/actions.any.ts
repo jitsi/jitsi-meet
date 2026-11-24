@@ -1,11 +1,12 @@
 import { createTrackMutedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
-import { showErrorNotification, showNotification } from '../../notifications/actions';
+import { showErrorNotification, showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { isMacOS } from '../environment/environment';
+import { JitsiTrackErrors, JitsiTrackEvents, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -40,6 +41,24 @@ import {
 } from './functions';
 import logger from './logger';
 import { ITrack, ITrackOptions } from './types';
+
+// The listeners trackAdded registers on each track, so trackRemoved removes those and not the library's own.
+const trackListenerRemovers = new WeakMap<any, Array<() => void>>();
+
+const addTrackListener = (track: any, event: string, listener: (...args: any[]) => void) => {
+    let removers = trackListenerRemovers.get(track);
+
+    if (!removers) {
+        removers = [];
+        trackListenerRemovers.set(track, removers);
+    }
+    removers.push(track.addCancellableListener(event, listener));
+};
+
+const removeTrackListeners = (track: any) => {
+    trackListenerRemovers.get(track)?.forEach(remove => remove());
+    trackListenerRemovers.delete(track);
+};
 
 /**
  * Add a given local track to the conference.
@@ -270,12 +289,12 @@ export function noDataFromSource(track: any) {
 }
 
 /**
- * Displays a no data from source video error if needed.
+ * Displays a no data from source error if needed.
  *
  * @param {JitsiLocalTrack} jitsiTrack - The track.
  * @returns {Function}
  */
-export function showNoDataFromSourceVideoError(jitsiTrack: any) {
+export function showNoDataFromSourceError(jitsiTrack: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let notificationInfo;
 
@@ -288,10 +307,21 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
         if (track.isReceivingData) {
             notificationInfo = undefined;
         } else {
-            const notificationAction = dispatch(showErrorNotification({
-                descriptionKey: 'dialog.cameraNotSendingData',
-                titleKey: 'dialog.cameraNotSendingDataTitle'
-            }));
+            let notificationAction;
+
+            if (track.mediaType === MEDIA_TYPE.AUDIO) {
+                notificationAction = dispatch(showNotification({
+                    descriptionKey: 'dialog.micNotSendingData',
+                    titleKey: 'dialog.micNotSendingDataTitle'
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+                dispatch(setNoSrcDataNotificationUid(notificationAction?.uid));
+            } else {
+                notificationAction = dispatch(showErrorNotification({
+                    descriptionKey: 'dialog.cameraNotSendingData',
+                    titleKey: 'dialog.cameraNotSendingDataTitle'
+                }));
+            }
 
             notificationInfo = {
                 uid: notificationAction?.uid
@@ -376,13 +406,23 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  */
 export function trackAdded(track: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        track.on(
-            JitsiTrackEvents.TRACK_MUTE_CHANGED,
-            () => dispatch(trackMutedChanged(track)));
-        track.on(
+        // Translated audio tracks (source name <regularSourceName>.<language>) have no mute lifecycle, since
+        // presence/source-info is only signaled for the original source. Skip the inert mute listener for them.
+        const sourceName = track.getSourceName?.();
+        const isTranslatedTrack = typeof sourceName === 'string' && sourceName.includes('.');
+
+        if (!isTranslatedTrack) {
+            addTrackListener(
+                track,
+                JitsiTrackEvents.TRACK_MUTE_CHANGED,
+                () => dispatch(trackMutedChanged(track)));
+        }
+        addTrackListener(
+            track,
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
         const local = track.isLocal();
+        const state = getState();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
@@ -406,14 +446,17 @@ export function trackAdded(track: any) {
             // Reset the no data from src notification state when we change the track, as it's context is set
             // on a per device basis.
             dispatch(setNoSrcDataNotificationUid());
-            const participant = getLocalParticipant(getState);
+            const participant = getLocalParticipant(state);
 
             if (participant) {
                 participantId = participant.id;
             }
 
             isReceivingData = track.isReceivingData();
-            track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
+            addTrackListener(
+                track,
+                JitsiTrackEvents.NO_DATA_FROM_SOURCE,
+                () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
                     const notificationAction = dispatch(showNotification({
@@ -429,16 +472,24 @@ export function trackAdded(track: any) {
                     noDataFromSourceNotificationInfo = { uid: notificationAction?.uid };
                 } else {
                     const timeout = setTimeout(() => dispatch(
-                        showNoDataFromSourceVideoError(track)),
+                        showNoDataFromSourceError(track)),
                         NOTIFICATION_TIMEOUT.MEDIUM);
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }
             }
 
-            track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+            addTrackListener(
+                track,
+                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                 () => {
                     logger.debug(`Local track stopped: ${track}, removing it from the conference`);
+                    if (mediaType === MEDIA_TYPE.SCREENSHARE && isMacOS()) {
+                        dispatch(showWarningNotification({
+                            descriptionKey: 'dialog.screenshareStoppedDiskSpace',
+                            titleKey: 'dialog.screenshareStoppedTitle'
+                        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }
                     dispatch({
                         type: TRACK_STOPPED,
                         track: {
@@ -461,6 +512,7 @@ export function trackAdded(track: any) {
                 muted: track.isMuted(),
                 noDataFromSourceNotificationInfo,
                 participantId,
+                streamingStatus: local ? undefined : (track.isP2P ? JitsiTrackStreamingStatus.ACTIVE : track.getTrackStreamingStatus()),
                 videoStarted: false,
                 videoType: track.videoType
             }
@@ -579,9 +631,7 @@ export function trackRemoved(track: any): {
     };
     type: 'TRACK_REMOVED';
 } {
-    track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+    removeTrackListeners(track);
 
     // Remove MediaStreamTrack "ended" event.
     if (navigator.product === 'ReactNative') {
@@ -760,7 +810,7 @@ function _onCreateLocalTracksRejected(error?: Error, device?: string) {
         // If permissions are not allowed, alert the user.
         dispatch({
             type: TRACK_CREATE_ERROR,
-            permissionDenied: error?.name === 'SecurityError',
+            permissionDenied: error?.name === JitsiTrackErrors.PERMISSION_DENIED,
             trackType: device
         });
     };

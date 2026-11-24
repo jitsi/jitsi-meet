@@ -19,8 +19,6 @@ import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
-import { translateToHTML } from '../base/i18n/functions';
-import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
 import { pinParticipant, raiseHand, raiseHandClear } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -46,6 +44,7 @@ import { setToolboxEnabled } from '../toolbox/actions.any';
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
 import { dismissCalendarNotification } from './actions';
 import { IFRAME_DISABLED_TIMEOUT_MINUTES, IFRAME_EMBED_ALLOWED_LOCATIONS } from './constants';
+import { getDisabledIframeDescription } from './functions';
 
 
 let intervalID: any;
@@ -211,32 +210,15 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
             domain = hostname;
         }
 
-        if (browser.isReactNative()) {
-            dispatch(showWarningNotification({
-                description: i18next.t(translationKey,
-                    {
-                        domain,
-                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
-                    }
-                )
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        dispatch(showWarningNotification({
+            description: getDisabledIframeDescription(translationKey, domain, jaasDomain)
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
+        if (browser.isReactNative()) {
             setTimeout(() => {
                 dispatch(hangup());
             }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
         } else {
-            dispatch(showWarningNotification({
-                description: translateToHTML(
-                    i18next.t.bind(i18next),
-                    translationKey,
-                    {
-                        domain,
-                        jaasDomain,
-                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
-                    }
-                )
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
             setTimeout(() => {
                 // redirect to the promotional page
                 dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));

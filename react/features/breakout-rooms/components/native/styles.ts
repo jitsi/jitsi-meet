@@ -7,11 +7,11 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export default {
 
     button: {
-        marginBottom: BaseTheme.spacing[4],
+        marginBottom: BaseTheme.spacing[2],
         marginHorizontal: BaseTheme.spacing[3]
     },
 
-    collapsibleList: {
+    breakoutRoom: {
         alignItems: 'center',
         borderRadius: BaseTheme.shape.borderRadius,
         display: 'flex',

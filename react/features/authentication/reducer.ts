@@ -5,6 +5,7 @@ import {
     CANCEL_LOGIN,
     DISABLE_MODERATOR_LOGIN,
     ENABLE_MODERATOR_LOGIN,
+    SET_TOKEN_AUTH_PENDING,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -18,6 +19,7 @@ export interface IAuthenticationState {
     thenableWithCancel?: {
         cancel: Function;
     };
+    tokenAuthPending?: boolean;
     waitForOwnerTimeoutID?: number;
 }
 
@@ -36,7 +38,13 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
         return assign(state, {
             error: undefined,
             progress: undefined,
-            thenableWithCancel: undefined
+            thenableWithCancel: undefined,
+            tokenAuthPending: undefined
+        });
+
+    case SET_TOKEN_AUTH_PENDING:
+        return assign(state, {
+            tokenAuthPending: action.pending || undefined
         });
     case ENABLE_MODERATOR_LOGIN:
         return assign(state, {

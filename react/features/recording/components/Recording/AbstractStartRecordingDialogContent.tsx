@@ -6,13 +6,12 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
-import { MEET_FEATURES } from '../../../base/jwt/constants';
-import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
+import { setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
-import { canAddTranscriber } from '../../../transcribing/functions';
+import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
 import { RECORDING_TYPES } from '../../constants';
-import { supportsLocalRecording } from '../../functions';
+import { IRecordingDialogModel } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -21,9 +20,10 @@ import { supportsLocalRecording } from '../../functions';
 export interface IProps extends WithTranslation {
 
     /**
-     * Whether the local participant can start transcribing.
+     * The available ("translation-languages:" prefixed) transcription
+     * languages.
      */
-    _canStartTranscribing: boolean;
+    _availableLanguages: Array<string>;
 
     /**
      * Style of the dialogs feature.
@@ -36,16 +36,6 @@ export interface IProps extends WithTranslation {
     _hideStorageWarning: boolean;
 
     /**
-     * Whether local recording is available or not.
-     */
-    _localRecordingAvailable: boolean;
-
-    /**
-     * Whether local recording is enabled or not.
-     */
-    _localRecordingEnabled: boolean;
-
-    /**
      * Whether we won't notify the other participants about the recording.
      */
     _localRecordingNoNotification: boolean;
@@ -56,36 +46,19 @@ export interface IProps extends WithTranslation {
     _localRecordingSelfEnabled: boolean;
 
     /**
-     * Whether to render recording.
-     */
-    _renderRecording: boolean;
-
-    /**
      * The color-schemed stylesheet of this component.
      */
     _styles: any;
 
     /**
+     * CSS classes object (web only).
+     */
+    classes?: Partial<Record<string, string>>;
+
+    /**
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Whether to show file recordings service, even if integrations
-     * are enabled.
-     */
-    fileRecordingsServiceEnabled: boolean;
-
-    /**
-     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
-     * the actual implementation on the backend.
-     */
-    fileRecordingsServiceSharingEnabled: boolean;
-
-    /**
-     * If true the content related to the integrations will be shown.
-     */
-    integrationsEnabled: boolean;
 
     /**
      * <tt>true</tt> if we have valid oauth token.
@@ -108,10 +81,9 @@ export interface IProps extends WithTranslation {
     localRecordingOnlySelf?: boolean;
 
     /**
-     * The function will be called when there are changes related to the
-     * switches.
+     * Every decision about what to show and what can be started, computed by the dialog.
      */
-    onChange: Function;
+    model: IRecordingDialogModel;
 
     /**
      * Callback to change the local recording only self setting.
@@ -119,9 +91,9 @@ export interface IProps extends WithTranslation {
     onLocalRecordingSelfChange?: () => void;
 
     /**
-     * Callback to change the audio and video recording setting.
+     * The function will be called when the selected recording service changes.
      */
-    onRecordAudioAndVideoChange: Function;
+    onRecordingServiceChange: (service: string) => void;
 
     /**
      * Callback to be invoked on sharing setting change.
@@ -129,29 +101,57 @@ export interface IProps extends WithTranslation {
     onSharingSettingChanged: () => void;
 
     /**
-     * Callback to change the transcription recording setting.
+     * Starts every service which is not running.
      */
-    onTranscriptionChange: Function;
+    onStartBoth: () => void;
 
     /**
-     * The currently selected recording service of type: RECORDING_TYPES.
+     * Starts the audio & video recording.
      */
-    selectedRecordingService: string | null;
+    onStartRecording: () => void;
+
+    /**
+     * Starts the transcription.
+     */
+    onStartTranscription: () => void;
+
+    /**
+     * Stops every running service.
+     */
+    onStopBoth: () => void;
+
+    /**
+     * Stops the audio & video recording.
+     */
+    onStopRecording: () => void;
+
+    /**
+     * Stops the transcription.
+     */
+    onStopTranscription: () => void;
+
+    /**
+     * Callback to be invoked when the transcription language changes.
+     */
+    onSubtitlesLanguageChange: (language: string) => void;
+
+    /**
+     * When false, the recording section starts collapsed and the
+     * transcription section starts expanded, putting the focus on
+     * transcription (e.g. subtitles/nudge flows).
+     */
+    recordAudioAndVideo?: boolean;
+
+    /**
+     * The ("translation-languages:" prefixed) language the transcription will
+     * be saved in.
+     */
+    selectedLanguage: string | null;
 
     /**
      * Boolean to set file recording sharing on or off.
      */
     sharingSetting: boolean;
-
-    /**
-     * Whether to show the audio and video related content.
-     */
-    shouldRecordAudioAndVideo: boolean;
-
-    /**
-     * Whether to show the transcription related content.
-     */
-    shouldRecordTranscription: boolean;
 
     /**
      * Number of MiB of available space in user's Dropbox account.
@@ -167,13 +167,27 @@ export interface IProps extends WithTranslation {
 export interface IState {
 
     /**
-     * Whether to show the advanced options or not.
+     * Whether the language list is expanded (used by the native inline
+     * picker; the web renders a combobox instead).
      */
-    showAdvancedOptions: boolean;
+    showLanguageList: boolean;
+
+    /**
+     * Whether the recording section options are expanded.
+     */
+    showRecordingOptions: boolean;
+
+    /**
+     * Whether the transcription section options are expanded.
+     */
+    showTranscriptionOptions: boolean;
 }
 
 /**
- * React Component for getting confirmation to start a recording session.
+ * React Component for the recording & transcription dialog content: two
+ * sections (audio & video recording, transcription), each with its own
+ * start/stop button and a collapsible options area, plus footer buttons
+ * acting on both services at once.
  *
  * @augments Component
  */
@@ -189,199 +203,164 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         // Bind event handler; it bounds once for every instance.
         this._onSignIn = this._onSignIn.bind(this);
         this._onSignOut = this._onSignOut.bind(this);
-        this._onDropboxSwitchChange = this._onDropboxSwitchChange.bind(this);
-        this._onRecordingServiceSwitchChange = this._onRecordingServiceSwitchChange.bind(this);
-        this._onLocalRecordingSwitchChange = this._onLocalRecordingSwitchChange.bind(this);
-        this._onTranscriptionSwitchChange = this._onTranscriptionSwitchChange.bind(this);
-        this._onRecordAudioAndVideoSwitchChange = this._onRecordAudioAndVideoSwitchChange.bind(this);
-        this._onToggleShowOptions = this._onToggleShowOptions.bind(this);
+        this._onRecordingServiceChange = this._onRecordingServiceChange.bind(this);
+        this._onFollowMeRecorderChange = this._onFollowMeRecorderChange.bind(this);
+        this._onToggleRecordingOptions = this._onToggleRecordingOptions.bind(this);
+        this._onToggleTranscriptionOptions = this._onToggleTranscriptionOptions.bind(this);
+        this._onToggleLanguageList = this._onToggleLanguageList.bind(this);
 
+        // Both sections start collapsed, except transcription options are pre-expanded when a
+        // caller (e.g. the transcription nudge) explicitly asks to focus transcription instead
+        // of recording by passing recordAudioAndVideo: false.
         this.state = {
-            showAdvancedOptions: true
+            showLanguageList: false,
+            showRecordingOptions: false,
+            showTranscriptionOptions: props.recordAudioAndVideo === false
         };
     }
 
     /**
-     * Implements the Component's componentDidMount method.
+     * Toggles the recording section options.
      *
-     * @inheritdoc
+     * @returns {void}
      */
-    override componentDidMount() {
-        if (!this._shouldRenderNoIntegrationsContent()
-            && !this._shouldRenderIntegrationsContent()
-            && !this._shouldRenderFileSharingContent()) {
-            this._onLocalRecordingSwitchChange();
-        }
+    _onToggleRecordingOptions() {
+        this.setState({ showRecordingOptions: !this.state.showRecordingOptions });
     }
 
     /**
-     * Implements {@code Component#componentDidUpdate}.
+     * Toggles the transcription section options.
      *
-     * @inheritdoc
+     * @returns {void}
      */
-    override componentDidUpdate(prevProps: IProps) {
-        // Auto sign-out when the use chooses another recording service.
-        if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
-                && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
+    _onToggleTranscriptionOptions() {
+        this.setState({ showTranscriptionOptions: !this.state.showTranscriptionOptions });
+    }
+
+    /**
+     * Toggles the inline language list.
+     *
+     * @returns {void}
+     */
+    _onToggleLanguageList() {
+        this.setState({ showLanguageList: !this.state.showLanguageList });
+    }
+
+    /**
+     * Returns the translation key labelling the given recording service in
+     * the storage service picker.
+     *
+     * @param {string} service - One of the RECORDING_TYPES values.
+     * @returns {string}
+     */
+    _getServiceLabelKey(service: string | null) {
+        switch (service) {
+        case RECORDING_TYPES.JITSI_REC_SERVICE:
+            return this.props.isVpaas ? 'recording.serviceDescriptionCloud' : 'recording.serviceName';
+        case RECORDING_TYPES.DROPBOX:
+            return 'recording.dropbox';
+        case RECORDING_TYPES.LOCAL:
+            return 'recording.localRecording';
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the one line summary of the recording options, shown in the
+     * collapsed accordion header: the selected storage service followed by
+     * the state of its suboptions.
+     *
+     * @returns {string}
+     */
+    _getRecordingSummary() {
+        const {
+            isTokenValid,
+            localRecordingOnlySelf,
+            model,
+            sharingSetting,
+            t,
+            userName
+        } = this.props;
+        const { followMeRecorderChecked, selectedService, showFileSharing, showFollowMeRecorder } = model.recording;
+
+        if (!selectedService) {
+            return '';
+        }
+
+        const parts = [ t(this._getServiceLabelKey(selectedService)) ];
+
+        switch (selectedService) {
+        case RECORDING_TYPES.JITSI_REC_SERVICE:
+            if (showFileSharing) {
+                parts.push(t(sharingSetting ? 'recording.linkShared' : 'recording.linkNotShared'));
+            }
+            break;
+        case RECORDING_TYPES.DROPBOX:
+            parts.push(isTokenValid ? t('recording.loggedIn', { userName }) : t('recording.notSignedIn'));
+            break;
+        case RECORDING_TYPES.LOCAL:
+            if (localRecordingOnlySelf) {
+                parts.push(t('recording.onlyRecordSelf'));
+            }
+            break;
+        }
+
+        if (showFollowMeRecorder && followMeRecorderChecked) {
+            parts.push(t('settings.followMeRecorder'));
+        }
+
+        return parts.join(' · ');
+    }
+
+    /**
+     * Returns the one line summary of the transcription options, shown in the
+     * collapsed accordion header: the selected language.
+     *
+     * @returns {string}
+     */
+    _getTranscriptionSummary() {
+        const { selectedLanguage, t } = this.props;
+
+        return selectedLanguage ? t(selectedLanguage) : '';
+    }
+
+    /**
+     * Handler for recording service selection changes.
+     *
+     * @param {string} service - The newly selected service.
+     * @returns {void}
+     */
+    _onRecordingServiceChange(service: string) {
+        const { isTokenValid, model, onRecordingServiceChange } = this.props;
+        const { selectedService } = model.recording;
+
+        if (service === selectedService) {
+            return;
+        }
+
+        onRecordingServiceChange(service);
+
+        // Sign in and out of Dropbox along with the user's choice. Only the user's: when the model
+        // moves the selection away from Dropbox on its own, because the services offered changed,
+        // the stored token is kept.
+        if (service === RECORDING_TYPES.DROPBOX && !isTokenValid) {
+            this._onSignIn();
+        } else if (selectedService === RECORDING_TYPES.DROPBOX && isTokenValid) {
             this._onSignOut();
         }
     }
 
     /**
-     * Returns whether the advanced options should be rendered.
+     * Handler for the recorder follow me setting.
      *
-     * @returns {boolean}
-     */
-    _onToggleShowOptions() {
-        this.setState({ showAdvancedOptions: !this.state.showAdvancedOptions });
-    }
-
-    /**
-     * Whether the file sharing content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderFileSharingContent() {
-        const {
-            fileRecordingsServiceEnabled,
-            fileRecordingsServiceSharingEnabled,
-            isVpaas,
-            selectedRecordingService
-        } = this.props;
-
-        if (!fileRecordingsServiceEnabled
-            || !fileRecordingsServiceSharingEnabled
-            || isVpaas
-            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Whether the save transcription content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _canStartTranscribing() {
-        return this.props._canStartTranscribing;
-    }
-
-    /**
-     * Whether the no integrations content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderNoIntegrationsContent() {
-        // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled
-        if (!this.props.fileRecordingsServiceEnabled) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Whether the integrations content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderIntegrationsContent() {
-        if (!this.props.integrationsEnabled) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Handler for transcription switch change.
-     *
-     * @param {boolean} value - The new value.
+     * @param {boolean} [enabled] - The new value; toggles the switch when omitted.
      * @returns {void}
      */
-    _onTranscriptionSwitchChange(value: boolean | undefined) {
-        this.props.onTranscriptionChange(value);
-    }
+    _onFollowMeRecorderChange(enabled?: boolean) {
+        const value = enabled ?? !this.props.model.recording.followMeRecorderChecked;
 
-    /**
-     * Handler for audio and video switch change.
-     *
-     * @param {boolean} value - The new value.
-     * @returns {void}
-     */
-    _onRecordAudioAndVideoSwitchChange(value: boolean | undefined) {
-        this.props.onRecordAudioAndVideoChange(value);
-    }
-
-    /**
-     * Handler for onValueChange events from the Switch component.
-     *
-     * @returns {void}
-     */
-    _onRecordingServiceSwitchChange() {
-        const {
-            onChange,
-            selectedRecordingService
-        } = this.props;
-
-        // act like group, cannot toggle off
-        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
-            return;
-        }
-
-        onChange(RECORDING_TYPES.JITSI_REC_SERVICE);
-    }
-
-    /**
-     * Handler for onValueChange events from the Switch component.
-     *
-     * @returns {void}
-     */
-    _onDropboxSwitchChange() {
-        const {
-            isTokenValid,
-            onChange,
-            selectedRecordingService
-        } = this.props;
-
-        // act like group, cannot toggle off
-        if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            return;
-        }
-
-        onChange(RECORDING_TYPES.DROPBOX);
-
-        if (!isTokenValid) {
-            this._onSignIn();
-        }
-    }
-
-    /**
-     * Handler for onValueChange events from the Switch component.
-     *
-     * @returns {void}
-     */
-    _onLocalRecordingSwitchChange() {
-        const {
-            _localRecordingAvailable,
-            onChange,
-            selectedRecordingService
-        } = this.props;
-
-        if (!_localRecordingAvailable) {
-            return;
-        }
-
-        // act like group, cannot toggle off
-        if (selectedRecordingService
-            === RECORDING_TYPES.LOCAL) {
-            return;
-        }
-
-        onChange(RECORDING_TYPES.LOCAL);
+        this.props.dispatch(setFollowMeRecorderExclusive(value));
     }
 
     /**
@@ -413,16 +392,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
  */
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
-    const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
+    const subtitlesLanguage = state['features/subtitles']._language?.replace('translation-languages:', '');
 
+    // Presentation only: every decision about what is shown and enabled comes with the model prop.
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _canStartTranscribing: canAddTranscriber(state),
+        _availableLanguages: getAvailableSubtitlesLanguages(state, subtitlesLanguage)
+            .map((lang: string) => `translation-languages:${lang}`),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
-        _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
-        _localRecordingAvailable,
-        _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')

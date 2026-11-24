@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { escape } from 'lodash-es';
 
@@ -36,7 +35,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
     soundsReactions: true,
-    startAudioOnly: false,
+    startLowBandwidthMode: false,
     startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
@@ -45,6 +44,8 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
+    userSelectedConfig: {},
+    userSelectedLanguage: undefined,
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
@@ -82,14 +83,23 @@ export interface ISettingsState {
     soundsParticipantLeft?: boolean;
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
-    startAudioOnly?: boolean;
     startCarMode?: boolean;
+    startLowBandwidthMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
     userSelectedAudioOutputDeviceId?: string;
     userSelectedAudioOutputDeviceLabel?: string;
     userSelectedCameraDeviceId?: string;
     userSelectedCameraDeviceLabel?: string;
+
+    /**
+     * Config values the user has chosen, keyed by the id of the config option (see {@code CONFIG_OPTIONS} of the
+     * settings feature).
+     */
+    userSelectedConfig?: {
+        [optionId: string]: boolean;
+    };
+    userSelectedLanguage?: string;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {

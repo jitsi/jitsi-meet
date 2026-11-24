@@ -137,15 +137,21 @@ class LoginDialog extends Component<IProps, IState> {
             _connecting: connecting,
             t
         } = this.props;
+        const cancelLabel = t('dialog.Cancel');
+        const loginTitle = t('dialog.login');
+        const okLabel = t('dialog.Ok');
+        const passwordLabel = t('dialog.userPassword');
+        const usernameLabel = t('dialog.user');
 
         return (
             <Dialog.Container
                 coverScreen = { false }
                 visible = { true }>
                 <Dialog.Title>
-                    { t('dialog.login') }
+                    { loginTitle }
                 </Dialog.Title>
                 <Dialog.Input
+                    accessibilityLabel = { usernameLabel }
                     autoCapitalize = { 'none' }
                     autoCorrect = { false }
                     onChangeText = { this._onUsernameChange }
@@ -153,20 +159,21 @@ class LoginDialog extends Component<IProps, IState> {
                     spellCheck = { false }
                     value = { this.state.username } />
                 <Dialog.Input
+                    accessibilityLabel = { passwordLabel }
                     autoCapitalize = { 'none' }
                     onChangeText = { this._onPasswordChange }
-                    placeholder = { t('dialog.userPassword') }
+                    placeholder = { passwordLabel }
                     secureTextEntry = { true }
                     value = { this.state.password } />
                 <Dialog.Description>
                     { this._renderMessage() }
                 </Dialog.Description>
                 <Dialog.Button
-                    label = { t('dialog.Cancel') }
+                    label = { cancelLabel }
                     onPress = { this._onCancel } />
                 <Dialog.Button
                     disabled = { connecting }
-                    label = { t('dialog.Ok') }
+                    label = { okLabel }
                     onPress = { this._onLogin } />
             </Dialog.Container>
         );

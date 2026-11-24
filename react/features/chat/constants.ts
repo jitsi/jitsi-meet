@@ -4,6 +4,17 @@
 export const CHAR_LIMIT = 500;
 
 /**
+ * The quick reactions offered on a chat message, on web and native.
+ */
+export const QUICK_REACTIONS = [
+    { name: 'thumbsUp', emoji: '👍', labelKey: 'toolbar.accessibilityLabel.like' },
+    { name: 'redHeart', emoji: '❤️', labelKey: 'chat.reactions.redHeart' },
+    { name: 'faceWithTearsOfJoy', emoji: '😂', labelKey: 'chat.reactions.faceWithTearsOfJoy' },
+    { name: 'faceWithOpenMouth', emoji: '😮', labelKey: 'toolbar.accessibilityLabel.surprised' },
+    { name: 'fire', emoji: '🔥', labelKey: 'chat.reactions.fire' }
+] as const;
+
+/**
  * The initial size of the chat.
  */
 export const CHAT_SIZE = 315;
@@ -19,17 +30,17 @@ export const INCOMING_MSG_SOUND_ID = 'INCOMING_MSG_SOUND';
 /**
  * The {@code messageType} of error (system) messages.
  */
-export const MESSAGE_TYPE_ERROR = 'error';
+export const MESSAGE_TYPE_ERROR = 'error' as const;
 
 /**
  * The {@code messageType} of local messages.
  */
-export const MESSAGE_TYPE_LOCAL = 'local';
+export const MESSAGE_TYPE_LOCAL = 'local' as const;
 
 /**
  * The {@code messageType} of remote messages.
  */
-export const MESSAGE_TYPE_REMOTE = 'remote';
+export const MESSAGE_TYPE_REMOTE = 'remote' as const;
 
 export const SMALL_WIDTH_THRESHOLD = 580;
 
@@ -74,3 +85,11 @@ export const TIMESTAMP_FORMAT = 'H:mm';
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
 
 export const OPTION_GROUPCHAT = 'groupchat';
+
+export const MODERATE_CHAT_MESSAGE = 'MODERATE_CHAT_MESSAGE';
+
+
+/**
+ * Maximum number of pending edits, or pending moderations, kept for messages that have not arrived yet.
+ */
+export const MAX_PENDING_ENTRIES = 200;

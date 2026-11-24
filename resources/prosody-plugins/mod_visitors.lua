@@ -16,7 +16,7 @@ local filter_identity_from_presence = util.filter_identity_from_presence;
 local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
-local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local is_jibri = util.is_jibri;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local json = require 'cjson.safe';
 
@@ -34,10 +34,6 @@ if main_muc_component_config == nil then
     return ;
 end
 
--- A list of domains which to be ignored for visitors. For occupants using those domain we do not propagate them
--- to visitor nodes and we do not update them with presence changes
-local ignore_list = module:get_option_set('visitors_ignore_list', {});
-
 -- Advertise the component for discovery via disco#items
 module:add_identity('component', 'visitors', 'visitors.'..module.host);
 
@@ -53,6 +49,11 @@ local sent_iq_cache = require 'util.cache'.new(200);
 --  roomjid2 = {}
 --}
 local visitors_nodes = {};
+
+-- forward declaration; assigned below. Referenced by a closure registered on the main muc's
+-- 'room-metadata-changed' event (see process_host_module(main_muc_component_config, ...) below) so vnodes
+-- are refreshed whenever the main room's metadata (e.g. asyncTranscription) changes.
+local update_vnodes_for_room;
 
 -- sends connect or update iq
 -- @parameter type - Type of iq to send 'connect' or 'update'
@@ -110,7 +111,9 @@ local function send_visitors_iq(conference_service, room, type)
                     senderId = poll.senderId,
                     senderName = poll.senderName,
                     question = poll.question,
-                    answers = poll.answers
+                    answers = poll.answers,
+                    singleAnswer = poll.singleAnswer,
+                    closed = poll.closed
                 };
             end
 
@@ -120,6 +123,17 @@ local function send_visitors_iq(conference_service, room, type)
             end
 
             visitors_iq:tag('polls'):text(json_msg_str):up();
+        end
+    end
+
+    -- Forward the main room's metadata (e.g. asyncTranscription) so visitor nodes/clients can make the
+    -- same decisions main-room clients do (sent on both 'connect' and 'update', not just 'update').
+    if room.jitsiMetadata then
+        local json_metadata, metadata_error = json.encode(room.jitsiMetadata);
+        if json_metadata then
+            visitors_iq:tag('metadata', { xmlns = 'jitsi:visitors' }):text(json_metadata):up();
+        else
+            module:log('error', 'Error encoding metadata for room:%s error:%s', room.jid, metadata_error);
         end
     end
 
@@ -265,14 +279,21 @@ module:hook('presence/full', function(event)
 end, 900);
 
 process_host_module(main_muc_component_config, function(host_module, host)
+    -- room metadata changed (e.g. asyncTranscription) -- refresh all connected vnodes so their
+    -- mirrored room and visitor clients stay in sync with the main room. Called via a wrapper closure
+    -- (rather than passing update_vnodes_for_room directly) since it is only assigned further down in
+    -- this file, after this hook is registered.
+    host_module:hook('room-metadata-changed', function(event)
+        update_vnodes_for_room(event);
+    end);
+
     -- detects presence change in a main participant and propagate it to the used visitor nodes
     host_module:hook('muc-occupant-pre-change', function (event)
         local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- filter focus and configured domains (used for jibri and transcribers)
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+        -- filter focus and jibri
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil or is_jibri(occupant.jid) then
             return;
         end
 
@@ -292,9 +313,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- ignore configured domains (jibri and transcribers)
+        -- ignore jicofo and jibri
         if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+            or is_jibri(occupant.jid) then
             return;
         end
 
@@ -336,9 +357,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- filter focus, ignore configured domains (jibri and transcribers)
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+        -- filter focus, ignore jibri
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil or is_jibri(occupant.jid) then
             return;
         end
 
@@ -376,6 +396,25 @@ process_host_module(main_muc_component_config, function(host_module, host)
             module:send(fmuc_msg);
         end
     end);
+    -- forwards a moderation applied by the room to the vnodes. The hook above only
+    -- handles messages sent by an occupant; a moderation is sent by the room itself,
+    -- so mod_muc_message_moderation announces it here.
+    host_module:hook('jitsi-message-moderated', function(event)
+        local room, stanza = event.room, event.stanza;
+
+        if not visitors_nodes[room.jid] or not visitors_nodes[room.jid].nodes then
+            return;
+        end
+
+        for conference_service in pairs(visitors_nodes[room.jid].nodes) do
+            local fmuc_msg = st.clone(stanza);
+            fmuc_msg.attr.to = jid.join(jid.node(room.jid), conference_service);
+            fmuc_msg.attr.from = room_jid_match_rewrite(room.jid);
+            module:log('debug', 'Forwarding moderation to %s', fmuc_msg.attr.to);
+            module:send(fmuc_msg);
+        end
+    end);
+
     -- receiving messages from visitor nodes and forward them to local main participants
     -- and forward them to the rest of visitor nodes
     host_module:hook('muc-occupant-groupchat', function(event)
@@ -460,6 +499,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
             -- Find the occupant
             local occupant = room:get_occupant_by_nick(to);
             if occupant then
+                -- This route does not go through the MUC, thus muc-private-message
+                -- does not fire for it. Give the filters a chance to block the
+                -- message, the same as the group-chat route above does.
+                if host_module:fire_event('jitsi-visitor-private-message-pre-route', event) then
+                    -- message filtered
+                    return true;
+                end
+
                 -- Add addresses element (XEP-0033) to store original visitor JID for reply functionality
                 stanza:tag('addresses', { xmlns = 'http://jabber.org/protocol/address' })
                   :tag('address', { type = 'ofrom', jid = stanza.attr.from }):up()
@@ -527,6 +574,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
             send_visitors_iq(conference_service, room, 'update');
         end
     end);
+    -- a closure as update_vnodes_for_room is only assigned further down in this file
+    host_module:hook('poll-closed', function (event)
+        update_vnodes_for_room(event);
+    end);
     host_module:hook('answer-poll', function (event)
         local room, stanza = event.room, event.event.stanza;
 
@@ -547,7 +598,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 end);
 
-local function update_vnodes_for_room(event)
+function update_vnodes_for_room(event)
     local room = event.room;
         if visitors_nodes[room.jid] then
             -- we need to update all vnodes

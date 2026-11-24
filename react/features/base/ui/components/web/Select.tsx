@@ -169,6 +169,7 @@ const Select = ({
             <div className = { classes.selectContainer }>
                 <select
                     aria-describedby = { bottomLabel ? `${id}-description` : undefined }
+                    aria-invalid = { error || undefined }
                     className = { cx(classes.select, isMobile && 'is-mobile', className, error && 'error') }
                     disabled = { disabled }
                     id = { id }

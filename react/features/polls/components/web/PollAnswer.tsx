@@ -54,13 +54,26 @@ const useStyles = makeStyles()(theme => {
         },
         buttonMargin: {
             marginRight: theme.spacing(3)
+        },
+        endPollContainer: {
+            display: 'flex',
+            marginTop: theme.spacing(3),
+
+            '& button': {
+                border: 0,
+                backgroundColor: 'transparent',
+                ...theme.typography.bodyShortRegular,
+                color: theme.palette.link01
+            }
         }
     };
 });
 
 const PollAnswer = ({
+    canClose,
     creatorName,
     checkBoxStates,
+    closePoll,
     poll,
     setCheckbox,
     setCreateMode,
@@ -95,6 +108,11 @@ const PollAnswer = ({
                 <div className = { classes.creator }>
                     { t('polls.by', { name: creatorName }) }
                 </div>
+                {
+                    poll.singleAnswer && <div className = { classes.creator }>
+                        { t('polls.answer.singleAnswerHint') }
+                    </div>
+                }
             </div>
             <ul className = { classes.answerList }>
                 {
@@ -108,7 +126,9 @@ const PollAnswer = ({
                                 id = { `poll-answer-checkbox-${poll.pollId}-${index}` }
                                 key = { index }
                                 label = { answer.name }
-                                onChange = { ev => setCheckbox(index, ev.target.checked) } />
+                                name = { `poll-answer-${poll.pollId}` }
+                                onChange = { ev => setCheckbox(index, ev.target.checked) }
+                                type = { poll.singleAnswer ? 'radio' : 'checkbox' } />
                         </li>
                     ))
                 }
@@ -144,6 +164,15 @@ const PollAnswer = ({
                     </>
                 }
             </div>
+            {
+                !pollSaved && canClose && <div className = { classes.endPollContainer }>
+                    <button
+                        onClick = { closePoll }
+                        type = 'button'>
+                        {t('polls.results.endPoll')}
+                    </button>
+                </div>
+            }
         </div>
     );
 };

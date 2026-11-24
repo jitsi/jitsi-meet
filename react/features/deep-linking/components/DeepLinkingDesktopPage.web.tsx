@@ -10,7 +10,8 @@ import { IReduxState } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
-import { translate, translateToHTML } from '../../base/i18n/functions';
+import TranslationWithMarkup from '../../base/i18n/components/web/TranslationWithMarkup';
+import { createTranslationLineBreak, createTranslationLink, translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
@@ -138,7 +139,10 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
                 <div className = { styles.descriptionLabel }>
                     {
                         isSupportedBrowser()
-                            ? translateToHTML(t, `${_TNS}.descriptionNew`, { app: desktop?.appName })
+                            ? <TranslationWithMarkup
+                                components = { [ createTranslationLineBreak() ] }
+                                i18nKey = { `${_TNS}.descriptionNew` }
+                                values = {{ app: desktop?.appName }} />
                             : t(`${_TNS}.descriptionWithoutWeb`, { app: desktop?.appName })
                     }
                 </div>
@@ -165,9 +169,10 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
 
                 </div>
                 <div className = { styles.separator } />
-                <div className = { styles.label }> {translateToHTML(t, 'deepLinking.termsAndConditions', {
-                    termsAndConditionsLink: legalUrls.terms
-                })}
+                <div className = { styles.label }>
+                    <TranslationWithMarkup
+                        components = { [ createTranslationLink(legalUrls.terms) ] }
+                        i18nKey = 'deepLinking.termsAndConditions' />
                 </div>
             </div>
         </div>

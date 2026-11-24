@@ -22,7 +22,7 @@ import VideoQualityDialog from './VideoQualityDialog.web';
  * @returns {JSX}
  */
 const VideoQualityLabel = () => {
-    const _audioOnly = useSelector((state: IReduxState) => state['features/base/audio-only'].enabled);
+    const _lowBandwidthMode = useSelector((state: IReduxState) => state['features/base/low-bandwidth-mode'].enabled);
     const _visible = useSelector(shouldDisplayVideoQualityLabel);
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -33,10 +33,10 @@ const VideoQualityLabel = () => {
 
     let className, icon, labelContent, tooltipKey;
 
-    if (_audioOnly) {
-        className = 'audio-only';
-        labelContent = t('videoStatus.audioOnly');
-        tooltipKey = 'videoStatus.labelTooltipAudioOnly';
+    if (_lowBandwidthMode) {
+        className = 'low-bandwidth-mode';
+        labelContent = t('videoStatus.lowBandwidthMode');
+        tooltipKey = 'videoStatus.labelTooltipLowBandwidthMode';
     } else {
         className = 'current-video-quality';
         icon = IconPerformance;

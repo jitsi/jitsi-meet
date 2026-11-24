@@ -26,6 +26,7 @@ local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
+local is_focus_jid = util.is_focus_jid;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local respond_iq_result = util.respond_iq_result;
@@ -94,6 +95,34 @@ local function send_transcriptions_update(room)
       }):up());
 end
 
+-- Forwards this vnode's local 'recording' metadata (isTranscribingEnabled, set by a visitor allowed via
+-- the transcription JWT feature -- see mod_filter_iq_rayo's 'jitsi-metadata-allow-moderation' hook) up to
+-- the main room, the same way send_transcriptions_update() forwards transcription-languages: as a
+-- 'visitors' IQ to the main prosody's visitors component, which applies it to the real room metadata.
+local function send_recording_metadata_update(room)
+    local recording_metadata = room.jitsiMetadata and room.jitsiMetadata.recording;
+    if not recording_metadata then
+        return;
+    end
+
+    local json_data, encode_error = json.encode(recording_metadata);
+    if not json_data then
+        module:log('error', 'Error encoding recording metadata for room:%s error:%s', room.jid, encode_error);
+        return;
+    end
+
+    local iq_id = new_id();
+    sent_iq_cache:set(iq_id, socket.gettime());
+    module:send(st.iq({
+        type = 'set',
+        to = 'visitors.'..main_domain,
+        from = local_domain,
+        id = iq_id })
+      :tag('visitors', { xmlns = 'jitsi:visitors',
+                         room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
+      :tag('recording-metadata', { xmlns = 'jitsi:visitors' }):text(json_data):up());
+end
+
 local function remove_transcription(room, occupant)
     local send_update = false;
     if room._transcription_languages then
@@ -121,6 +150,9 @@ local function add_transcription(room, occupant, lang)
         send_transcriptions_update(room);
     end
 end
+
+-- No flow invites into a room on a visitor node.
+module:hook('muc-pre-invite', util.refuse_mediated_invite);
 
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
@@ -477,6 +509,27 @@ local function message_handler(event)
     end
 end
 
+-- Adds a stanza this node has just routed to its own occupants to the local
+-- history. Prosody writes room history from broadcast_message, and routing
+-- straight to the occupants bypasses it, so without this the history stays as the
+-- main prosody left it when this node connected and a visitor joining later sees
+-- nothing that was said since. Fire prosody's own events, so the entry is built,
+-- stamped and trimmed exactly as it is in the main room and the modules hooked on
+-- them apply here too.
+local function add_to_local_history(room, stanza)
+    local event = { room = room; stanza = stanza; };
+
+    if not module:fire_event('muc-message-is-historic', event) then
+        module:log('debug', 'Not storing %s in %s history', stanza.attr.id, room.jid);
+
+        return;
+    end
+
+    module:fire_event('muc-add-history', event);
+    module:log('debug', 'Stored %s in %s history, %s entries now',
+        stanza.attr.id, room.jid, room._history and #room._history or 0);
+end
+
 -- Receives history messages from the main prosody and adds them to the local history
 -- this happens before the first participant joins and that participant gets the history using the standard flow on join
 local function history_message_handler(event)
@@ -517,9 +570,35 @@ local function history_message_handler(event)
 end
 module:hook('message/host', history_message_handler);
 
+-- The clients of this vnode never address the main prosody. Everything that goes there (messages for the main
+-- room, promotion requests, poll answers) is sent by this vnode itself, from a component or the virtual host.
+-- A stanza that a client addresses to the main domain or to one of its subdomains (the main muc component,
+-- tenant muc domains and the other components) is dropped here, before it is routed over s2s.
+-- When the vnode domains are subdomains of the main domain (as in docker-jitsi-meet: vN.meet.jitsi for meet.jitsi),
+-- this also drops a stanza to another vnode. That is intended: a client has nothing to send to another vnode either.
+-- The hosts of this vnode are local, so a stanza to them is never routed here.
+local function route_client_stanza(event)
+    local origin, stanza, to_host = event.origin, event.stanza, event.to_host;
+
+    if not origin or origin.type ~= 'c2s'
+        or not to_host or (to_host ~= main_domain and not ends_with(to_host, '.'..main_domain)) then
+        return; -- continue with hook listeners
+    end
+
+    module:log('debug', 'Dropping %s from client %s to %s', stanza.name, stanza.attr.from, stanza.attr.to);
+
+    if stanza.attr.type ~= 'error' and stanza.attr.type ~= 'result' then
+        origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Not allowed from a visitor node'));
+    end
+
+    return true;
+end
+
 process_host_module(local_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
     host_module:hook('message/full', message_handler);
+    -- mod_s2s routes on -1 and -10
+    host_module:hook('route/remote', route_client_stanza, 10);
 end);
 
 -- add to message stanza display name for the visitor
@@ -582,6 +661,9 @@ module:hook('muc-occupant-groupchat', function(event)
         main_message.attr.from = room_jid_match_rewrite(stanza.attr.from);
         module:send(main_message);
     end
+
+    add_to_local_history(room, stanza);
+
     stanza.attr.from = from; -- something prosody does internally
 
     return true;
@@ -703,6 +785,10 @@ local function iq_from_main_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
+        if visitors_iq:get_child('disconnect') then
+            -- maybe room was already destroyed, mark as processed so we can response with ok for the iq
+            return true;
+        end
         module:log('warn', 'No room found %s in iq_from_main_handler for:%s', room_jid, visitors_iq);
         return;
     end
@@ -747,6 +833,22 @@ local function iq_from_main_handler(event)
         room._main_room_lobby_enabled = true;
     elseif node.attr.lobby == 'false' then
         room._main_room_lobby_enabled = false;
+    end
+
+    -- Mirror the main room's metadata (e.g. asyncTranscription) onto this vnode's room, so visitor
+    -- clients connected here see the same metadata main-room clients do. Fired as 'room-metadata-changed'
+    -- so a room_metadata_component enabled on this host (muc_component pointing at this muc) rebroadcasts
+    -- it to visitor occupants, exactly like it does for the main room.
+    local metadataEl = node:get_child('metadata', 'jitsi:visitors');
+    if metadataEl then
+        local metadataText = metadataEl:get_text();
+        local metadata, metadata_error = json.decode(metadataText);
+        if metadata then
+            room.jitsiMetadata = metadata;
+            module:fire_event('room-metadata-changed', { room = room; });
+        else
+            module:log('error', 'Failed to decode metadata for room:%s error:%s', room.jid, metadata_error);
+        end
     end
 
     -- read the moderators list
@@ -810,14 +912,29 @@ local function iq_from_main_handler(event)
 end
 module:hook('iq/host', iq_from_main_handler, 10);
 
+-- Fired locally (by the room_metadata_component enabled on this vnode) after a client successfully
+-- writes a metadata key on this vnode's mirrored room. When it's the 'recording' key (isTranscribingEnabled,
+-- set by a visitor via the transcription JWT feature), forward it up to the main room.
+module:hook('jitsi-metadata-updated', function(event)
+    if event.key == 'recording' then
+        send_recording_metadata_update(event.room);
+    end
+end);
+
 -- Filters presences (if detected) that are with destination the main prosody
 function filter_stanza(stanza, session)
     if (stanza.name == 'presence' or stanza.name == 'message') and session.type ~= 'c2s' then
+
+        -- do not send anything to the main prosody if the destination is the main domain
+        if jid.host(stanza.attr.to) == main_domain then
+            return nil; -- returning nil filters the stanza
+        end
+
         -- we clone it so we do not affect broadcast using same stanza, sending it to clients
         local f_st = st.clone(stanza);
         f_st.skipMapping = true;
         return f_st;
-    elseif stanza.name == 'presence' and session.type == 'c2s' and jid.node(stanza.attr.to) == 'focus' then
+    elseif stanza.name == 'presence' and session.type == 'c2s' and is_focus_jid(stanza.attr.to) then
         local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
         if presence_check_status(x, '110') then
             return stanza; -- no filter
@@ -868,15 +985,12 @@ end
 
 module:hook('answer-poll', function(answerData)
     local room = answerData.room;
-    local room_jid = room_jid_match_rewrite(jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain));
 
-    -- now send it to the main prosody
+    -- now send it to the main prosody, which takes the room and the voter from the jid we send it from
     local data = {
         answers = answerData.data.answers;
         command = 'answer-poll';
         pollId = answerData.pollId;
-        roomJid = room_jid,
-        senderId = answerData.voterId;
         senderName = answerData.voterName;
         type = 'polls';
     };
@@ -887,10 +1001,10 @@ module:hook('answer-poll', function(answerData)
     end
 
     local stanza = st.message({
-        from = module.host,
+        from = jid.join(jid.node(room.jid), module.host, answerData.voterId),
         to = 'polls.'..main_domain
     })
-    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet"; roomJid = room_jid; })
+    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
     :text(data_str)
     :up();
     room:route_stanza(stanza);

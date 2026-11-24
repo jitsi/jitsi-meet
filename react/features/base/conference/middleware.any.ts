@@ -18,7 +18,12 @@ import { isTokenAuthEnabled } from '../../authentication/functions.any';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
-import { clearNotifications, showErrorNotification, showNotification } from '../../notifications/actions';
+import {
+    clearNotifications,
+    showErrorNotification,
+    showNotification,
+    showWarningNotification
+} from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { INotificationProps } from '../../notifications/types';
 import { hasDisplayName } from '../../prejoin/utils';
@@ -26,22 +31,31 @@ import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
-import { overwriteConfig } from '../config/actions';
+import { configWillLoad, overwriteConfig, setConfig } from '../config/actions';
+import { buildConfigURL, getPageUnloadEventName } from '../config/functions.any';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect, setPreferVisitor } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { loadConfig } from '../lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../media/constants';
-import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
+import {
+    PARTICIPANT_LEFT,
+    PARTICIPANT_ROLE_CHANGED,
+    PARTICIPANT_UPDATED,
+    PIN_PARTICIPANT
+} from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
     getLocalParticipant,
     getParticipantById,
-    getPinnedParticipant
+    getPinnedParticipant,
+    isLocalParticipantModerator
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
-import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { TRACK_ADDED, TRACK_CREATE_CANCELED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { getLocalTrack } from '../tracks/functions.any';
 import { parseURIString } from '../util/uri';
 
 import {
@@ -53,7 +67,8 @@ import {
     SEND_TONES,
     SET_ASSUMED_BANDWIDTH_BPS,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
+    SET_ROOM,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import {
     authStatusChanged,
@@ -84,6 +99,11 @@ let beforeUnloadHandler: ((e?: any) => void) | undefined;
  * A simple flag to avoid retrying more than once to join as a visitor when hitting max occupants reached.
  */
 let retryAsVisitorOnMaxError = true;
+
+/**
+ * A simple flag to avoid showing the "settings incomplete" notification more than once per conference.
+ */
+let settingsIncompleteNotificationShown = false;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -120,6 +140,12 @@ MiddlewareRegistry.register(store => next => action => {
     case P2P_STATUS_CHANGED:
         return _p2pStatusChanged(next, action);
 
+    case PARTICIPANT_LEFT:
+        return _participantLeft(store, next, action);
+
+    case PARTICIPANT_ROLE_CHANGED:
+        return _participantRoleChanged(store, next, action);
+
     case PARTICIPANT_UPDATED:
         return _updateLocalParticipantInConference(store, next, action);
 
@@ -138,6 +164,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_ASSUMED_BANDWIDTH_BPS:
         return _setAssumedBandwidthBps(store, next, action);
+
+    case UPDATE_CONFERENCE_METADATA:
+        return _conferenceMetadataUpdated(store, next, action);
     }
 
     return next(action);
@@ -250,6 +279,18 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         break;
     }
+    case JitsiConferenceErrors.CONFERENCE_TIME_LIMIT: {
+        // The room hit the limit enforced by the mod_time_restricted Prosody plugin: it was
+        // destroyed and cannot be re-created, so there is nothing to retry here and no
+        // support link worth showing - the meeting simply ran out of time.
+        dispatch(showErrorNotification({
+            descriptionKey: 'dialog.meetingTimeLimitReached',
+            hideErrorSupportLink: true,
+            titleKey: 'dialog.meetingTimeLimitReachedTitle'
+        }));
+
+        break;
+    }
     case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
         const [ type, msg ] = error.params;
 
@@ -310,6 +351,31 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             || error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR)) {
         dispatch(conferenceWillLeave(conference));
         dispatch(reloadNow());
+    } else if (!enableForcedReload && error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR) {
+        // we need to reconnect, but make sure we update config before that
+        const { locationURL } = getState()['features/base/connection'];
+
+        if (!locationURL) {
+            logger.error('No locationURL!');
+
+            return result;
+        }
+
+        dispatch(disconnect());
+
+        dispatch(configWillLoad(locationURL));
+
+        const { room } = getState()['features/base/conference'];
+        const url = buildConfigURL(locationURL, room);
+
+        loadConfig(url).then(config => {
+            dispatch(setConfig(config));
+
+            dispatch(connect());
+        }).catch(() => {
+            // in case of an error we continue connecting reusing window.config
+            dispatch(connect());
+        });
     }
 
     return result;
@@ -332,12 +398,10 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const {
-        disableBeforeUnloadHandlers = false,
-        requireDisplayName
-    } = getState()['features/base/config'];
+    const { requireDisplayName } = getState()['features/base/config'];
 
     retryAsVisitorOnMaxError = true;
+    settingsIncompleteNotificationShown = false;
 
     dispatch(removeLobbyChatParticipant(true));
 
@@ -365,7 +429,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    const pageUnloadEventName = getPageUnloadEventName(getState());
+
+    window.addEventListener(pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -375,7 +441,131 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         }));
     }
 
+    _maybeNotifySettingsIncomplete({ dispatch, getState });
+
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code PARTICIPANT_LEFT}
+ * is being dispatched within a specific redux store. Reports the implicit unpin
+ * of a pinned participant who leaves.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code PARTICIPANT_LEFT} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _participantLeft({ getState }: IStore, next: Function, action: AnyAction) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+    const pinnedParticipant = getPinnedParticipant(state);
+    const { conference: leftConference, id } = action.participant;
+
+    // The reducer drops the pin together with the participant, so the id is only known before next(). A remote
+    // id is unique per JitsiConference (a leave for a previous conference may carry a current id), so match the
+    // conference as the reducer does; the local participant has no such scope.
+    if (conference && pinnedParticipant && pinnedParticipant.id === id
+            && (pinnedParticipant.local || pinnedParticipant.conference === leftConference)) {
+        sendAnalytics(createPinnedEvent(
+            ACTION_UNPINNED,
+            pinnedParticipant.id,
+            {
+                local: pinnedParticipant.local,
+                'participant_count': conference.getParticipantCount()
+            }));
+    }
+
+    return next(action);
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code PARTICIPANT_ROLE_CHANGED} is being
+ * dispatched within a specific redux store. Used to re-check whether the "settings incomplete"
+ * notification should be shown, in case the local participant's moderator role is confirmed after
+ * the conference was already joined and the metadata already received.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the specified
+ * {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code PARTICIPANT_ROLE_CHANGED} which is being
+ * dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _participantRoleChanged(store: IStore, next: Function, action: AnyAction) {
+    const result = next(action);
+    const { dispatch, getState } = store;
+
+    if (action.participant?.id === getLocalParticipant(getState)?.id) {
+        _maybeNotifySettingsIncomplete({ dispatch, getState });
+    }
+
+    return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code UPDATE_CONFERENCE_METADATA} is being
+ * dispatched within a specific redux store. Used to re-check whether the "settings incomplete"
+ * notification should be shown, in case the metadata arrives after the conference was already
+ * joined and the local participant's moderator role already known.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the specified
+ * {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code UPDATE_CONFERENCE_METADATA} which is being
+ * dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _conferenceMetadataUpdated(store: IStore, next: Function, action: AnyAction) {
+    const result = next(action);
+
+    _maybeNotifySettingsIncomplete(store);
+
+    return result;
+}
+
+/**
+ * Shows a one-time warning notification to a moderator when the settings service applied
+ * hardcoded defaults (e.g. for the lobby) because it could not retrieve the real meeting
+ * settings in time. Only fires once conference join, the metadata, and the local participant's
+ * moderator role are all known - whichever of those three arrives last triggers it. Non-moderators
+ * never see it, since they cannot act on it.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _maybeNotifySettingsIncomplete({ dispatch, getState }: IStore) {
+    if (settingsIncompleteNotificationShown) {
+        return;
+    }
+
+    const state = getState();
+
+    if (!getCurrentConference(state)) {
+        return;
+    }
+
+    if (!state['features/base/conference'].metadata?.settingsIncomplete) {
+        return;
+    }
+
+    if (!isLocalParticipantModerator(state)) {
+        return;
+    }
+
+    settingsIncompleteNotificationShown = true;
+
+    dispatch(showWarningNotification({
+        descriptionKey: 'notify.settingsIncompleteDescription',
+        titleKey: 'notify.settingsIncompleteTitle'
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
 
 /**
@@ -469,7 +659,17 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
         }
     }
 
-    if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
+    if (error.name === JitsiConnectionErrors.TIME_LIMIT_ERROR) {
+        // The room used up the time it was allowed and jicofo was refused when it
+        // tried to re-create it. Offering "Rejoin now" here (as the generic
+        // conference-request failure below does) would just replay the same
+        // refusal — the meeting is over, not temporarily unreachable.
+        dispatch(showErrorNotification({
+            descriptionKey: 'dialog.meetingTimeLimitReached',
+            hideErrorSupportLink: true,
+            titleKey: 'dialog.meetingTimeLimitReachedTitle'
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    } else if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
         let notificationAction: Function = showNotification;
         const notificationProps = {
             customActionNameKey: [ 'dialog.rejoinNow' ],
@@ -497,6 +697,8 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
     _removeUnloadHandler(getState);
 
+    let conferenceFound = false;
+
     forEachConference(getState, conference => {
         // TODO: revisit this
         // It feels that it would make things easier if JitsiConference
@@ -506,6 +708,8 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
         // and the retry logic is implemented in the app maybe it can be
         // left this way for now.
         if (conference.getConnection() === connection) {
+            conferenceFound = true;
+
             // XXX Note that on mobile the error type passed to
             // connectionFailed is always an object with .name property.
             // This fact needs to be checked prior to enabling this logic on
@@ -524,6 +728,18 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
         return true;
     });
+
+    // When CONFERENCE_FAILED with CONNECTION_ERROR cleans up the conference
+    // before SHARD_CHANGED_ERROR is detected, forEachConference finds no
+    // conference and conferenceFailed(SHARD_CHANGED_ERROR) is never dispatched,
+    // so the reload in _conferenceFailed never fires. Handle it directly here.
+    if (!conferenceFound && error.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR) {
+        const { enableForcedReload } = getState()['features/base/config'];
+
+        if (enableForcedReload) {
+            dispatch(reloadNow());
+        }
+    }
 
     return result;
 }
@@ -609,6 +825,11 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
             = actionName === ACTION_PINNED ? id : pinnedParticipant?.id;
     }
 
+    // Nobody is pinned (or the pinned participant already left), so there is no unpin to report.
+    if (!participantIdForEvent) {
+        return next(action);
+    }
+
     sendAnalytics(createPinnedEvent(
         actionName,
         participantIdForEvent,
@@ -621,6 +842,22 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
+ * Returns the options with which the unload handler is added to the window and removed from it.
+ *
+ * On {@code pagehide} the handler captures the event, so that it runs before the listener that persists the redux
+ * state. That listener is on the window since the app was loaded and would otherwise run first. The duration that
+ * {@code conferenceWillLeave} puts in the recent list would then not be written for a tab that is closed while it is
+ * in the background. On {@code beforeunload} the state is persisted later, so the order of the listeners stays as it
+ * was.
+ *
+ * @param {string} eventName - The name of the event the handler is registered on.
+ * @returns {Object} The options for {@code addEventListener} and {@code removeEventListener}.
+ */
+function _getUnloadHandlerOptions(eventName: string) {
+    return { capture: eventName === 'pagehide' };
+}
+
+/**
  * Removes the unload handler.
  *
  * @param {Function} getState - The redux getState function.
@@ -628,9 +865,10 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
  */
 function _removeUnloadHandler(getState: IStore['getState']) {
     if (typeof beforeUnloadHandler !== 'undefined') {
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+        const pageUnloadEventName = getPageUnloadEventName(getState());
 
-        window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.removeEventListener(
+            pageUnloadEventName, beforeUnloadHandler, _getUnloadHandlerOptions(pageUnloadEventName));
         beforeUnloadHandler = undefined;
     }
 }
@@ -727,9 +965,34 @@ async function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAc
                         const audioMixerEffect = new AudioMixerEffect(desktopAudioTrack);
 
                         await jitsiTrack.setEffect(audioMixerEffect);
-                        await conference.replaceTrack(null, jitsiTrack);
+
+                        // Only add the track to the conference if it isn't already there. During a breakout room
+                        // switch, replaceLocalTrack already called conference.replaceTrack which invoked
+                        // _setupNewTrack and pushed the track into rtc.localTracks. A second replaceTrack(null,
+                        // track) call would push it again, creating a duplicate that makes setOfferAnswerCycle
+                        // fail with "is already in TPC" when the JVB session offer arrives.
+                        if (!conference.getLocalTracks().includes(jitsiTrack)) {
+                            await conference.replaceTrack(null, jitsiTrack);
+                        }
                     } else {
-                        await _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                        try {
+                            await _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                        } catch (error) {
+                            logger.error(
+                                `Conference refused local ${track.mediaType} track, discarding it`, error);
+
+                            jitsiTrack.dispose?.().catch(() => { /* may already be disposed */ });
+
+                            // Clears a pending TRACK_WILL_CREATE stub when no ready track of this type remains.
+                            if (!getLocalTrack(getState()['features/base/tracks'], track.mediaType)) {
+                                store.dispatch({
+                                    type: TRACK_CREATE_CANCELED,
+                                    trackType: track.mediaType
+                                });
+                            }
+
+                            return;
+                        }
                     }
                 }
             } else {
