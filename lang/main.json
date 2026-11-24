@@ -564,7 +564,7 @@
         "sharedVideoDialogError": "Error: Invalid or forbidden URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "show": "Show",
-        "start": "Start ",
+        "start": "Start",
         "startBoth": "Start both",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
@@ -743,7 +743,7 @@
         "searchPlaceholder": "Participant or phone number",
         "send": "Send"
     },
-    "jitsiHome": "{{logo}} Logo, links to  Homepage",
+    "jitsiHome": "{{logo}} Logo, links to Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
@@ -1894,7 +1894,7 @@
         "image3": "White empty room",
         "image4": "Black floor lamp",
         "image5": "Mountain",
-        "image6": "Forest ",
+        "image6": "Forest",
         "image7": "Sunrise",
         "none": "None",
         "oldestBackgroundRemoved": "The oldest custom background has been removed to add the new one.",
