@@ -1271,6 +1271,7 @@
             "videoHighQuality": "Videonuzun yaxşı keyfiyyətdə olacağı gözlənilir.",
             "videoLowQuality": "Videonuzun kadr tezliyi və çözünürlük baxımından aşağı keyfiyyətli olacağı gözlənilir.",
             "videoTearing": "Videonuzun pikselləşməsi və ya vizual qüsurların olması gözlənilir."
+            "devicesError": "Mikrofonunuza və kameranıza giriş alınmadı"
         },
         "copyAndShare": "Görüş keçidini kopyala və paylaş",
         "dialInMeeting": "Görüşə telefonla qoşulun",
@@ -1280,6 +1281,8 @@
         "errorDialOut": "Zəng etmək mümkün olmadı",
         "errorDialOutDisconnected": "Zəng etmək mümkün olmadı. Bağlantı kəsildi",
         "errorDialOutFailed": "Zəng etmək mümkün olmadı. Zəng uğursuz oldu",
+        "errorNoCameraPermission": "Kamera girişini aktiv etməlisiniz",
+        "errorNoMicPermission": "Mikrofon girişini aktiv etməlisiniz",
         "errorDialOutStatus": "Zəng statusunu almaqda xəta",
         "errorMissingName": "Görüşə qoşulmaq üçün zəhmət olmasa adınızı daxil edin",
         "errorNoPermissions": "Mikrofon və kameraya çıxışı aktivləşdirməlisiniz",
