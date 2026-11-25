@@ -24,6 +24,10 @@ import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.Queue;
+
 /**
  * Helper class to encapsulate the work which needs to be done on
  * {@link Activity} lifecycle methods in order for the React side to be aware of
@@ -31,10 +35,14 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  */
 public class JitsiMeetActivityDelegate {
     /**
-     * Needed for making sure this class working with the "PermissionsAndroid"
-     * React Native module.
+     * The permission request in progress, if any.
      */
-    private static PermissionListener permissionListener;
+    private static PendingPermissionRequest currentRequest;
+
+    /**
+     * Requests made while another one is in progress, started in order as each one completes.
+     */
+    private static final Queue<PendingPermissionRequest> queuedPermissionRequests = new ArrayDeque<>();
 
     /**
      * Cached back-button handler reused across {@code onHostResume} calls so we
@@ -49,7 +57,7 @@ public class JitsiMeetActivityDelegate {
      * @return {@code true} if the permissions are being requested or {@code false} otherwise.
      */
     static boolean arePermissionsBeingRequested() {
-        return permissionListener != null;
+        return currentRequest != null;
     }
 
     /**
@@ -99,10 +107,37 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
+        endPermissionRequestsOf(activity);
+
         ReactHost reactHost = ReactHostHolder.getReactHost();
 
         if (reactHost != null) {
             reactHost.onHostDestroy(activity);
+        }
+    }
+
+    /**
+     * A destroyed activity never gets its permission result, so end its requests here or the queue stalls.
+     */
+    private static synchronized void endPermissionRequestsOf(Activity activity) {
+        // On a configuration change the result of the current request goes to the new instance.
+        if (activity.isChangingConfigurations()) {
+            return;
+        }
+
+        Iterator<PendingPermissionRequest> iterator = queuedPermissionRequests.iterator();
+
+        while (iterator.hasNext()) {
+            PendingPermissionRequest request = iterator.next();
+
+            if (request.activity == activity) {
+                iterator.remove();
+                request.listener.onRequestPermissionsResult(request.requestCode, request.permissions, new int[0]);
+            }
+        }
+
+        if (currentRequest != null && currentRequest.activity == activity) {
+            onRequestPermissionsResult(currentRequest.requestCode, currentRequest.permissions, new int[0]);
         }
     }
 
@@ -163,26 +198,68 @@ public class JitsiMeetActivityDelegate {
         }
     }
 
-    public static void onRequestPermissionsResult(
+    public static synchronized void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
-        // Invoke the callback immediately
-        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            permissionListener = null;
+        if (currentRequest == null || currentRequest.requestCode != requestCode) {
+            JitsiMeetLogger.w("Permission result with no matching request, ignored");
+
+            return;
+        }
+
+        // Still current while the listener runs, so a request the listener makes is queued behind the others.
+        currentRequest.listener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        currentRequest = null;
+
+        // Advance whatever the listener returns: RN returns false while it has other requests pending.
+        PendingPermissionRequest next = queuedPermissionRequests.poll();
+
+        if (next != null) {
+            startPermissionRequest(next);
         }
     }
 
-    public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
-        permissionListener = listener;
+    public static synchronized void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
+        PendingPermissionRequest request = new PendingPermissionRequest(activity, permissions, requestCode, listener);
 
-        // The RN Permissions module calls this in a non-UI thread. What we observe is a crash in ViewGroup.dispatchCancelPendingInputEvents,
-        // which is called on the calling (ie, non-UI) thread. This doesn't look very safe, so try to avoid a crash by pretending the permission
-        // was denied.
+        // Android answers a second concurrent request with an empty result, so queue it.
+        if (currentRequest != null) {
+            JitsiMeetLogger.i("Permission request queued until the current one completes");
+            queuedPermissionRequests.add(request);
 
+            return;
+        }
+
+        startPermissionRequest(request);
+    }
+
+    private static void startPermissionRequest(PendingPermissionRequest request) {
+        currentRequest = request;
+
+        // requestPermissions can crash off the UI thread (ViewGroup.dispatchCancelPendingInputEvents), where the RN module calls it.
+        // Answer with an empty (cancelled) result then, and for a destroyed activity.
         try {
-            activity.requestPermissions(permissions, requestCode);
+            if (request.activity.isDestroyed()) {
+                throw new IllegalStateException("Activity is destroyed");
+            }
+
+            request.activity.requestPermissions(request.permissions, request.requestCode);
         } catch (Exception e) {
             JitsiMeetLogger.e(e, "Error requesting permissions");
-            onRequestPermissionsResult(requestCode, permissions, new int[0]);
+            onRequestPermissionsResult(request.requestCode, request.permissions, new int[0]);
+        }
+    }
+
+    private static final class PendingPermissionRequest {
+        final Activity activity;
+        final String[] permissions;
+        final int requestCode;
+        final PermissionListener listener;
+
+        PendingPermissionRequest(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
+            this.activity = activity;
+            this.permissions = permissions;
+            this.requestCode = requestCode;
+            this.listener = listener;
         }
     }
 }
