@@ -113,8 +113,8 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
         this._onInstallExtensionClick = this._onInstallExtensionClick.bind(this);
         this._shouldNotRender = this._shouldNotRender.bind(this);
         this._onDontShowAgainChange = this._onDontShowAgainChange.bind(this);
-        this._onCloseKeyPress = this._onCloseKeyPress.bind(this);
-        this._onInstallExtensionKeyPress = this._onInstallExtensionKeyPress.bind(this);
+        this._onCloseKeyDown = this._onCloseKeyDown.bind(this);
+        this._onInstallExtensionKeyDown = this._onInstallExtensionKeyDown.bind(this);
     }
 
     /**
@@ -175,13 +175,13 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
     }
 
     /**
-     * KeyPress handler for accessibility.
+     * KeyDown handler for accessibility.
      *
      * @param {Object} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onCloseKeyPress(e: React.KeyboardEvent) {
+    _onCloseKeyDown(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this._onClosePressed();
@@ -202,16 +202,16 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
     }
 
     /**
-     * KeyPress handler for accessibility.
+     * KeyDown handler for accessibility.
      *
      * @param {Object} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onInstallExtensionKeyPress(e: React.KeyboardEvent) {
+    _onInstallExtensionKeyDown(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            this._onClosePressed();
+            this._onInstallExtensionClick();
         }
     }
 
@@ -284,7 +284,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
                         aria-label = { t('chromeExtensionBanner.close') }
                         className = 'chrome-extension-banner__close-container'
                         onClick = { this._onClosePressed }
-                        onKeyPress = { this._onCloseKeyPress }
+                        onKeyDown = { this._onCloseKeyDown }
                         role = 'button'
                         tabIndex = { 0 }>
                         <Icon
@@ -299,7 +299,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
                         aria-labelledby = 'chrome-extension-banner__button-text'
                         className = 'chrome-extension-banner__button-open-url'
                         onClick = { this._onInstallExtensionClick }
-                        onKeyPress = { this._onInstallExtensionKeyPress }
+                        onKeyDown = { this._onInstallExtensionKeyDown }
                         role = 'button'
                         tabIndex = { 0 }>
                         <div
