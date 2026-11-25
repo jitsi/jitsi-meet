@@ -60,10 +60,12 @@ class AddMeetingUrlButton extends Component<IProps> {
         return (
             <Tooltip content = { this.props.t('calendarSync.addMeetingURL') }>
                 <div
+                    aria-label = { this.props.t('calendarSync.addMeetingURL') }
                     className = 'button add-button'
                     onClick = { this._onClick }
                     onKeyPress = { this._onKeyPress }
-                    role = 'button'>
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon src = { IconPlus } />
                 </div>
             </Tooltip>
