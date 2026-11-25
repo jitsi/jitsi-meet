@@ -52,6 +52,7 @@ import '../speaker-stats/middleware';
 import '../subtitles/middleware';
 import '../system-wide-user-notification/middleware';
 import '../time-timer/middleware';
+import '../tutor-mode/middleware';
 import '../transcribing/middleware';
 import '../video-layout/middleware';
 import '../video-quality/middleware';

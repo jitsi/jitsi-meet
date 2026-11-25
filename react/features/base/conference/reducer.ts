@@ -220,6 +220,7 @@ export interface IJitsiConference {
     sessionId: string;
     setAgentAudioSubscription?: (sourceNames: string[]) => void;
     setAssumedBandwidthBps: (value: number) => void;
+    setAudioSubscriptionMode: Function;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setIsSilent: Function;

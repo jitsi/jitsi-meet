@@ -17,6 +17,10 @@ import {
     getScreenshareFilmstripParticipantId,
     isTopPanelEnabled
 } from '../filmstrip/functions';
+import {
+    getTutorModeAllowedVideoSources,
+    shouldIsolateLocalParticipant
+} from '../tutor-mode/functions';
 import { LAYOUTS } from '../video-layout/constants';
 import {
     getCurrentLayout,
@@ -107,6 +111,22 @@ StateListenerRegistry.register(
     /* listener */ (remoteVideoSources, store) => {
         getSsrcRewritingFeatureFlag(store.getState()) && _updateReceiverVideoConstraints(store);
     });
+
+/**
+ * Updates the receiver constraints when tutor mode isolation or the moderator video source list changes.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => ({
+        isolateTutorMode: shouldIsolateLocalParticipant(state),
+        tutorModeVideoSources: getTutorModeAllowedVideoSources(state).sort()
+    }),
+    /* listener */ (_, store) => {
+        _updateReceiverVideoConstraints(store);
+    },
+    {
+        deepEquals: true
+    }
+);
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
@@ -380,6 +400,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         return;
     }
     const { lastN } = state['features/base/lastn'];
+    const isolateTutorMode = shouldIsolateLocalParticipant(state);
+    const tutorModeVideoSources = isolateTutorMode ? getTutorModeAllowedVideoSources(state) : [];
     const {
         maxReceiverVideoQualityForTileView,
         maxReceiverVideoQualityForStageFilmstrip,
@@ -407,7 +429,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
     const receiverConstraints: any = {
         constraints: {},
         defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
-        lastN
+        lastN: isolateTutorMode ? tutorModeVideoSources.length : lastN
     };
 
     let activeParticipantsSources: string[] = [];
@@ -416,6 +438,25 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
 
     receiverConstraints.onStageSources = [];
     receiverConstraints.selectedSources = [];
+
+    if (isolateTutorMode) {
+        tutorModeVideoSources.forEach(sourceName => {
+            receiverConstraints.constraints[sourceName] = { 'maxHeight': maxFrameHeightForLargeVideo };
+        });
+
+        receiverConstraints.onStageSources = tutorModeVideoSources.slice(0, 1);
+        receiverConstraints.selectedSources = tutorModeVideoSources.slice(1);
+
+        try {
+            conference.setReceiverConstraints(receiverConstraints);
+        } catch (error: any) {
+            _handleParticipantError(error);
+            reportError(error, `Failed to set tutor mode receiver video constraints ${
+                JSON.stringify(receiverConstraints)}`);
+        }
+
+        return;
+    }
 
     if (visibleRemoteParticipants?.size) {
         visibleRemoteTrackSourceNames = _getSourceNames(Array.from(visibleRemoteParticipants), state);
