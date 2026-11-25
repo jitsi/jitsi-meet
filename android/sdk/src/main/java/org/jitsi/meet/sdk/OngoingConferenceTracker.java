@@ -18,6 +18,8 @@ package org.jitsi.meet.sdk;
 
 import com.facebook.react.bridge.ReadableMap;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ class OngoingConferenceTracker {
     private static final OngoingConferenceTracker instance = new OngoingConferenceTracker();
 
     private static final String CONFERENCE_WILL_JOIN = "CONFERENCE_WILL_JOIN";
+    private static final String CONFERENCE_JOINED = "CONFERENCE_JOINED";
     private static final String CONFERENCE_TERMINATED = "CONFERENCE_TERMINATED";
 
     private final Collection<OngoingConferenceListener> listeners =
@@ -66,6 +69,15 @@ class OngoingConferenceTracker {
             case CONFERENCE_WILL_JOIN:
                 currentConference = url;
                 updateListeners();
+                break;
+
+            // A joined can follow a terminated with no will-join (max-users retry as visitor, shard reconnect).
+            case CONFERENCE_JOINED:
+                if (!url.equals(currentConference)) {
+                    JitsiMeetLogger.i("OngoingConferenceTracker: joined with no will-join: " + url);
+                    currentConference = url;
+                    updateListeners();
+                }
                 break;
 
             case CONFERENCE_TERMINATED:

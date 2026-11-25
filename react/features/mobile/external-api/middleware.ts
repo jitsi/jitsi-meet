@@ -17,6 +17,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
+    CONFERENCE_WILL_LEAVE,
     ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
 } from '../../base/conference/actionTypes';
@@ -29,13 +30,10 @@ import {
 import { IJitsiConference } from '../../base/conference/reducer';
 import { overwriteConfig } from '../../base/config/actions';
 import { getWhitelistedJSON } from '../../base/config/functions.native';
-import { CONNECTION_DISCONNECTED } from '../../base/connection/actionTypes';
-import {
-    JITSI_CONNECTION_CONFERENCE_KEY,
-    JITSI_CONNECTION_URL_KEY
-} from '../../base/connection/constants';
+import { CONNECTION_DISCONNECTED, CONNECTION_WILL_CONNECT } from '../../base/connection/actionTypes';
+import { JITSI_CONNECTION_URL_KEY } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import { JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
@@ -52,9 +50,12 @@ import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
+import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
+import { cancelKnocking } from '../../lobby/actions.native';
+import { getIsLobbyVisible } from '../../lobby/functions';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
@@ -111,6 +112,29 @@ const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
  */
 const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
 
+/**
+ * URL of a will-join (or switch) with no joined or terminated yet.
+ * Android starts its service on will-join, so each one needs a terminated.
+ */
+let _pendingWillJoinUrl: string | undefined;
+
+/**
+ * Connection of the pending will-join; a late disconnect of an older one must not end it.
+ */
+let _pendingWillJoinConnection: Object | undefined;
+
+/**
+ * URL of a joined conference that rejoins (breakout room, visitor redirect).
+ * Native sees one conference: its left and the next joined are not sent.
+ */
+let _switchingConferenceUrl: string | undefined;
+
+/**
+ * URL of the last joined sent to native, until its terminated.
+ * Only it can switch; a reconnect after a terminated must send its joined.
+ */
+let _nativeJoinedUrl: string | undefined;
+
 const externalAPIEnabled = isExternalAPIAvailable();
 
 let eventEmitter: any;
@@ -152,7 +176,12 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         // counterpart of the External API (or at least not in the
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable) {
+        // The user stays in the lobby or prejoin to enter a name; the will-join stays pending.
+        const lobbyNeedsName = error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED && error.params?.[0];
+
+        if (lobbyNeedsName) {
+            logger.info('Terminated not sent: the lobby needs a display name');
+        } else if (!error.recoverable) {
             _sendConferenceEvent(store, /* action */ {
                 error: _toErrorString(error),
                 ...data
@@ -191,24 +220,43 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONNECTION_DISCONNECTED: {
-        // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
-        // Check if this connection was attached to any conference.
-        // If it wasn't, fake a CONFERENCE_TERMINATED event.
+        // Closed before the join, a connection can produce no conference event: send terminated here.
         const { connection } = action;
-        const conference = connection[JITSI_CONNECTION_CONFERENCE_KEY];
 
-        if (!conference) {
+        if (connection && connection === _pendingWillJoinConnection) {
             // This action will arrive late, so the locationURL stored on the state is no longer valid.
-            const locationURL = connection[JITSI_CONNECTION_URL_KEY];
+            const url = _normalizeUrl(connection[JITSI_CONNECTION_URL_KEY]);
 
-            sendEvent(
-                store,
-                CONFERENCE_TERMINATED,
-                /* data */ {
-                    url: _normalizeUrl(locationURL)
-                });
+            // Deferred: a join error's CONFERENCE_FAILED dispatches this and sends its own, with the error.
+            setTimeout(() => {
+                _pendingWillJoinConnection === connection && _sendTerminated(store, url);
+            });
         }
 
+        break;
+    }
+
+    case CONNECTION_WILL_CONNECT:
+        if (_pendingWillJoinUrl) {
+            _pendingWillJoinConnection = action.connection;
+        }
+        break;
+
+    case CONFERENCE_WILL_LEAVE:
+        // A visitor redirect reconnects to the same conference: its disconnect sends no terminated.
+        if (action.isRedirect) {
+            _pendingWillJoinConnection = undefined;
+            action.conference && _startConferenceSwitch(action.conference);
+        }
+        break;
+
+    case _RESET_BREAKOUT_ROOMS: {
+        // Before a breakout switch (conference still set), and again once it is gone.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (conference && _startConferenceSwitch(conference)) {
+            _pendingWillJoinConnection = store.getState()['features/base/connection'].connection;
+        }
         break;
     }
 
@@ -319,6 +367,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
 
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
+        _maybeTerminatePendingWillJoin(store, action);
         break;
 
     case SET_AUDIO_MUTED:
@@ -398,7 +447,12 @@ function _registerForNativeEvents(store: IStore) {
     const { getState, dispatch } = store;
 
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
-        dispatch(appNavigate(undefined));
+        // Leave the lobby like its close button; a stale lobbyVisible hides the lobby on the next join.
+        if (getIsLobbyVisible(getState())) {
+            dispatch(cancelKnocking());
+        } else {
+            dispatch(appNavigate(undefined));
+        }
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }: any) => {
@@ -729,14 +783,8 @@ function _toErrorString(
 }
 
 /**
- * If {@link SET_ROOM} action happens for a valid conference room this method
- * will emit an early {@link CONFERENCE_WILL_JOIN} event to let the external API
- * know that a conference is being joined. Before that happens a connection must
- * be created and only then base/conference feature would emit
- * {@link CONFERENCE_WILL_JOIN}. That is fine for the Jitsi Meet app, because
- * that's the a conference instance gets created, but it's too late for
- * the external API to learn that. The latter {@link CONFERENCE_WILL_JOIN} is
- * swallowed in {@link _swallowEvent}.
+ * Sends an early will-join on {@link SET_ROOM}, after closing a pending one.
+ * The base/conference one comes after the connection, too late for native; it is not sent.
  *
  * @param {Store} store - The redux store.
  * @param {Action} action - The redux action.
@@ -746,12 +794,86 @@ function _maybeTriggerEarlyConferenceWillJoin(store: IStore, action: AnyAction) 
     const { locationURL } = store.getState()['features/base/connection'];
     const { room } = action;
 
-    isRoomValid(room) && locationURL && sendEvent(
-        store,
-        CONFERENCE_WILL_JOIN,
-        /* data */ {
-            url: _normalizeUrl(locationURL)
+    if (isRoomValid(room) && locationURL) {
+        // Room switch or reload before the join.
+        if (_pendingWillJoinUrl) {
+            _sendTerminated(store, _pendingWillJoinUrl);
+        }
+
+        _pendingWillJoinUrl = _normalizeUrl(locationURL);
+
+        sendEvent(
+            store,
+            CONFERENCE_WILL_JOIN,
+            /* data */ {
+                url: _pendingWillJoinUrl
+            });
+    }
+}
+
+/**
+ * Ends a pending will-join when the room is cleared (prejoin, lobby, login cancel, hangup).
+ * Deferred: a CONFERENCE_FAILED in the same dispatch (rejected knock) sends its own, with the error.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Action} action - The redux action.
+ * @returns {void}
+ */
+function _maybeTerminatePendingWillJoin(store: IStore, action: AnyAction) {
+    const url = _pendingWillJoinUrl;
+
+    if (url && !isRoomValid(action.room)) {
+        setTimeout(() => {
+            _pendingWillJoinUrl === url && _sendTerminated(store, url);
         });
+    }
+}
+
+/**
+ * Sends a terminated that no conference action produces, and clears the pending will-join.
+ *
+ * @param {Store} store - The redux store.
+ * @param {string} url - The conference URL.
+ * @returns {void}
+ */
+function _sendTerminated(store: IStore, url: string) {
+    _clearPendingWillJoin();
+    url === _nativeJoinedUrl && (_nativeJoinedUrl = undefined);
+
+    sendEvent(store, CONFERENCE_TERMINATED, /* data */ { url });
+}
+
+/**
+ * Clears the pending will-join and any conference switch.
+ *
+ * @returns {void}
+ */
+function _clearPendingWillJoin() {
+    _pendingWillJoinUrl = undefined;
+    _pendingWillJoinConnection = undefined;
+    _switchingConferenceUrl = undefined;
+}
+
+/**
+ * Starts a switch if native holds this conference as joined.
+ * Its pending will-join gets one terminated on a hangup or failure.
+ *
+ * @param {IJitsiConference} conference - The conference that leaves.
+ * @returns {boolean} Whether a switch started.
+ */
+function _startConferenceSwitch(conference: IJitsiConference) {
+    // @ts-ignore
+    const url = _normalizeUrl(conference[JITSI_CONFERENCE_URL_KEY]);
+
+    if (_pendingWillJoinUrl || url !== _nativeJoinedUrl) {
+        return false;
+    }
+
+    logger.info(`Conference switch started: ${url}`);
+    _switchingConferenceUrl = url;
+    _pendingWillJoinUrl = url;
+
+    return true;
 }
 
 /**
@@ -794,6 +916,19 @@ function _sendConferenceEvent(
         data.isAudioMuted = isAudioMuted;
     }
 
+    // During a switch, the old left and the new joined are not sent.
+    if (_switchingConferenceUrl && data.url === _switchingConferenceUrl) {
+        if (type === CONFERENCE_LEFT) {
+            return;
+        }
+
+        if (type === CONFERENCE_JOINED) {
+            _clearPendingWillJoin();
+
+            return;
+        }
+    }
+
     if (_swallowEvent(store, action, data)) {
         return;
     }
@@ -808,6 +943,17 @@ function _sendConferenceEvent(
     default:
         type_ = type;
         break;
+    }
+
+    // Match the URL: a late left of the previous room must not clear the pending will-join.
+    if ((type_ === CONFERENCE_JOINED || type_ === CONFERENCE_TERMINATED) && data.url === _pendingWillJoinUrl) {
+        _clearPendingWillJoin();
+    }
+
+    if (type_ === CONFERENCE_JOINED) {
+        _nativeJoinedUrl = data.url;
+    } else if (type_ === CONFERENCE_TERMINATED && data.url === _nativeJoinedUrl) {
+        _nativeJoinedUrl = undefined;
     }
 
     sendEvent(store, type_, data);

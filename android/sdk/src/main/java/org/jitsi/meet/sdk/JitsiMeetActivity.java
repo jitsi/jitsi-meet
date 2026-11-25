@@ -302,7 +302,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
-        // Launch the service for the ongoing notification.
+        // The service usually runs since will-join: switch it to the joined notification,
+        // ask for missing permissions, then add the microphone type.
         JitsiMeetOngoingConferenceService.launch(this, extraData);
     }
 
@@ -312,6 +313,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     protected void onConferenceWillJoin(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference will join: " + extraData);
+        // Android 15+ cuts the network of a backgrounded app with no foreground service, which drops the connection in the lobby.
+        JitsiMeetOngoingConferenceService.launchWithoutPermissionRequest(this, extraData);
     }
 
     protected void onParticipantJoined(HashMap<String, Object> extraData) {
