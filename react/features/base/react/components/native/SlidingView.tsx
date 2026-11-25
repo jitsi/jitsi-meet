@@ -3,6 +3,7 @@ import {
     Animated,
     BackHandler,
     Dimensions,
+    NativeEventSubscription,
     TouchableWithoutFeedback,
     View,
     ViewStyle
@@ -78,7 +79,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
     /**
      * Initializes hardwareBackPress subscription.
      */
-    _hardwareBackPressSubscription: any;
+    _hardwareBackPressSubscription?: NativeEventSubscription;
 
     /**
      * True if the component is mounted.

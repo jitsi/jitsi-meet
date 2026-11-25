@@ -2,6 +2,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback } from 'react';
 import {
     BackHandler,
+    NativeEventSubscription,
     NativeModules,
     StatusBar,
     View,
@@ -180,7 +181,7 @@ class Conference extends AbstractConference<IProps, State> {
     /**
      * Initializes hardwareBackPress subscription.
      */
-    _hardwareBackPressSubscription: any;
+    _hardwareBackPressSubscription?: NativeEventSubscription;
 
     /**
      * Initializes a new Conference instance.
