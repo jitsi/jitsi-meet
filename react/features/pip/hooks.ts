@@ -5,6 +5,7 @@ import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
+import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
 import { hidePiP, openDocumentPiP } from './actions';
@@ -262,6 +263,7 @@ export function useDocumentPiPMediaSession() {
 
     useEffect(() => {
         if (!documentPiPAvailable
+                || isEmbedded()
                 || !('mediaSession' in navigator)
                 || typeof navigator.mediaSession?.setActionHandler !== 'function') {
             return;
