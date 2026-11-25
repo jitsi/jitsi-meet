@@ -145,6 +145,8 @@
         "messageCopied": "Mesaj kopyalandı",
         "messageTo": "{{recipient}} istifadəçisinə şəxsi mesaj",
         "messagebox": "Mesaj yazın",
+        "moderateMessageReason": "Səbəb (istəyə bağlı)",
+        "moderateMessageTitle": "Bu mesaj silinsin?",
         "moderatedMessage": "Moderator tərəfindən silindi.",
         "moderationReason": "Səbəb: {{reason}}",
         "newMessages": "Yeni mesajlar",
@@ -523,6 +525,7 @@
         "screenSharingFailed": "Xəta! Nəsə səhv oldu, ekran paylaşımını başlada bilmədik!",
         "screenSharingFailedTitle": "Ekran paylaşımı uğursuz oldu!",
         "screenSharingPermissionDeniedError": "Xəta! Ekran paylaşımı icazələrinizdə nəsə səhv oldu. Zəhmət olmasa yenidən yükləyin və cəhd edin.",
+        "screenSharingSystemAudio": "Sistem səsini paylaş (bu kompüterdəki bütün səslər)",
         "screenshareStoppedDiskSpace": "Bu, ekran paylaşımını dayandırmaq üçün macOS-un üzən alətlər panelindən istifadə etdikdə baş verir. Həmçinin az disk sahəsi səbəbindən də ola bilər.",
         "screenshareStoppedTitle": "Ekran paylaşımı sistem vasitəsilə dayandırıldı",
         "searchInSalesforce": "Salesforce-da axtar",
@@ -887,6 +890,88 @@
         "lowBandwidthMode": "Aşağı şəbəkə zolağı rejimi"
     },
     "me": "mən",
+    "mediaPermissions": {
+        "allowAudio": "Mikrofona icazə ver",
+        "allowBoth": "Mikrofon və kameraya icazə ver",
+        "allowVideo": "Kameraya icazə ver",
+        "blocked": {
+            "autoContinue": "İcazə aktivləşdirildikdən sonra avtomatik davam edəcəyik.",
+            "browserChromium": {
+                "pill": "Brauzerinizdə bloklanıb",
+                "step1": "Ünvan panelində sayt nəzarətləri nişanını seçin və {{domain}} üçün {{device}} icazəsini aktiv edin.",
+                "title": "Brauzeriniz {{device}} cihazınızı bloklayır"
+            },
+            "browserFirefox": {
+                "pill": "Firefox-da bloklanıb",
+                "step1": "Ünvan panelində üstündən xətt çəkilmiş {{device}} nişanını seçin və bloku ləğv edin.",
+                "step1Both": "Ünvan panelində üstündən xətt çəkilmiş mikrofon və kamera nişanlarını seçin və blokları ləğv edin.",
+                "title": "Firefox {{device}} cihazınızı bloklayır"
+            },
+            "browserSafari": {
+                "allow": "İcazə ver",
+                "askWarning": "\"Soruş\" seçimi bildirişi bir daha göstərməyəcək.",
+                "menuSafari": "Safari",
+                "menuSiteSettings": "{{domain}} üçün tənzimləmələr…",
+                "pill": "Safari-də bloklanıb",
+                "step1": "Menyu panelində seçin:",
+                "step2": "Kamera və Mikrofonu İcazə ver olaraq təyin edin.",
+                "title": "Safari {{device}} cihazınızı bloklayır"
+            },
+            "captureElement": "{{domain}} üçün bloku ləğv etmək məqsədilə aşağıdakı düyməni seçin.",
+            "embedded": "Bu görüş başqa sayta yerləşdirilib, ona görə də {{domain}} üçün icazə verin.",
+            "osMac": {
+                "pill": "macOS tərəfindən bloklanıb",
+                "privacy": "Məxfilik və Təhlükəsizlik",
+                "step1": "Sistem Tənzimləmələrini açın, sonra keçin:",
+                "step2": "{{app}} tətbiqini aktiv edin.",
+                "step2Generic": "Brauzerinizi aktiv edin.",
+                "step3": "macOS sizdən {{browser}} tətbiqindən çıxmağı və yenidən açmağı tələb edir. Yenidən başladıqdan sonra görüşə yenidən qoşulun.",
+                "step3Generic": "macOS sizdən brauzerdən çıxmağı və yenidən açmağı tələb edir. Yenidən başladıqdan sonra görüşə yenidən qoşulun.",
+                "title": "Mac cihazınız {{browser}} brauzerinə {{device}} cihazınızdan istifadə etməyi bloklayır",
+                "titleGeneric": "Mac cihazınız brauzerinizə {{device}} cihazınızdan istifadə etməyi bloklayır"
+            },
+            "osOther": {
+                "pill": "Sisteminiz tərəfindən bloklanıb",
+                "step1": "Sistem tənzimləmələrinizdə brauzerinizin {{device}} cihazından istifadə etməsinə icazə verin.",
+                "title": "Kompüteriniz {{device}} cihazınızı bloklayır"
+            },
+            "osWindows": {
+                "desktopApps": "Masaüstü tətbiqlərin {{device}} cihazınıza daxil olmasına icazə verin",
+                "deviceAccess": "{{pane}} girişi",
+                "pill": "Windows tərəfindən bloklanıb",
+                "privacy": "Məxfilik və təhlükəsizlik",
+                "step1": "Tənzimləmələri açın, sonra keçin:",
+                "step2": "Bunların hər ikisini aktiv edin:",
+                "title": "Windows {{device}} cihazınızı bloklayır"
+            },
+            "policy": {
+                "description": "Bu saytın tənzimləmələri buna icazə vermir. Sayt administratorundan mikrofon və kameraya icazə verməsini istəyin.",
+                "descriptionEmbedded": "Yalnız həmin sayt buna icazə verə bilər. Sahibindən bu görüş üçün mikrofon və kameraya icazə verməsini istəyin.",
+                "pill": "Sayt tərəfindən bloklanıb",
+                "title": "Bu sayt {{device}} cihazınızı bloklayır",
+                "titleEmbedded": "Bu görüşün yerləşdirildiyi sayt {{device}} cihazınızı bloklayır"
+            },
+            "tryAgainStep": "Yenidən cəhd et seçin."
+        },
+        "continueWithoutAudio": "Mikrofonsuz davam et",
+        "continueWithoutBoth": "Mikrofon və kamerasız davam et",
+        "continueWithoutVideo": "Kamerasız davam et",
+        "deviceAudio": "mikrofon",
+        "deviceBoth": "mikrofon və kamera",
+        "deviceVideo": "kamera",
+        "notNow": "İndi yox",
+        "openSystemSettings": "Sistem Tənzimləmələrini aç",
+        "openWindowsSettings": "Windows Tənzimləmələrini aç",
+        "paneAudio": "Mikrofon",
+        "paneVideo": "Kamera",
+        "promptDescriptionAudio": "Brauzeriniz mikrofonunuza giriş icazəsi istəyəcək. İstənilən vaxt onu söndürə bilərsiniz.",
+        "promptDescriptionBoth": "Brauzeriniz mikrofonunuza və kameranıza giriş icazəsi istəyəcək. İstənilən vaxt onları söndürə bilərsiniz.",
+        "promptDescriptionVideo": "Brauzeriniz kameranıza giriş icazəsi istəyəcək. İstənilən vaxt onu söndürə bilərsiniz.",
+        "promptTitleAudio": "Görüşdə insanların sizi eşitməsini istəyirsiniz?",
+        "promptTitleBoth": "Görüşdə insanların sizi görməsini və eşitməsini istəyirsiniz?",
+        "promptTitleVideo": "Görüşdə insanların sizi görməsini istəyirsiniz?",
+        "tryAgain": "Yenidən cəhd et"
+    },
     "multiScreen": {
         "noParticipants": "İştirakçı yoxdur",
         "openFailed": "Nəsə səhv oldu. Zəhmət olmasa yenidən cəhd edin.",
