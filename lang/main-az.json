@@ -1241,15 +1241,15 @@
     },
     "poweredby": "Dəstəkləyən:",
     "prejoin": {
-        "audioAndVideoError": "Səs və video xətası:",
         "audioDeviceProblem": "Səs cihazınızda problem var",
-        "audioOnlyError": "Səs xətası:",
         "audioTrackError": "Səs treki yaratmaq mümkün olmadı.",
         "callMe": "Mənə zəng et",
         "callMeAtNumber": "Mənə bu nömrəyə zəng et:",
         "calling": "Zəng edilir",
         "configuringDevices": "Cihazlar konfiqurasiya olunur…",
-        "blocked": {
+        "connectedWithAudioQ": "Səs ilə qoşulmusunuz?",
+        "connection": {
+            "blocked": {
                 "description": "Serverlərimizə qoşula bilmədik. Fayrvol, VPN və ya proksi onları bloklaya bilər. Başqa şəbəkəni sınayın və ya İT komandanızdan kömək istəyin.",
                 "title": "Şəbəkəniz zəngləri bloklaya bilər"
             },
@@ -1259,32 +1259,10 @@
             "udpBlocked": {
                 "description": "Bu, zənglərin adətən istifadə etdiyi daha sürətli bağlantını bloklayır, buna görə də səs və video gecikə bilər. Zəngdə çətinlik çəksəniz, başqa şəbəkəni sınayın və ya VPN-i söndürün.",
                 "title": "Şəbəkəniz zəng keyfiyyətinə təsir edə bilər"
-            },
-        "connectedWithAudioQ": "Səs ilə qoşulmusunuz?",
-        "connection": {
-            "failed": "Bağlantı sınağı uğursuz oldu!",
-            "good": "İnternet bağlantınız yaxşı görünür!",
-            "nonOptimal": "İnternet bağlantınız optimal deyil",
-            "poor": "Zəif internet bağlantınız var",
-            "running": "Bağlantı sınağı icra olunur…"
-        },
-        "connectionDetails": {
-            "audioClipping": "Səsinizdə kəsilmələr gözlənilir.",
-            "audioHighQuality": "Səsinizin əla keyfiyyətdə olacağı gözlənilir.",
-            "audioLowNoVideo": "Səs keyfiyyətinizin aşağı olacağı və videonun olmayacağı gözlənilir.",
-            "goodQuality": "Əla! Media keyfiyyətiniz çox yaxşı olacaq.",
-            "noMediaConnectivity": "Bu sınaq üçün media bağlantısı qurmaq yolu tapılmadı. Bu adətən şəbəkə ekranı (firewall) və ya NAT səbəbindən olur.",
-            "noVideo": "Videonuzun çox zəif olacağı gözlənilir.",
-            "testFailed": "Bağlantı sınağında gözlənilməz problemlər yarandı, lakin bu təcrübənizə təsir etməyə bilər.",
-            "undetectable": "Hələ də brauzerdə zəng edə bilmirsinizsə, dinamiklərinizin, mikrofonunuzun və kameranızın düzgün qurulduğundan, brauzerinizə mikrofondan və kameradan istifadə hüquqları verdiyinizdən və brauzer versiyanızın güncəl olduğundan əmin olmağınızı tövsiyə edirik. Hələ də zəng etməkdə çətinlik çəkirsinizsə, veb tətbiq tərtibatçısı ilə əlaqə saxlamalısınız.",
-            "veryPoorConnection": "Zəng keyfiyyətinizin həqiqətən də bərbad olacağı gözlənilir.",
-            "videoFreezing": "Videonuzun donması, qaralması və pikselləşməsi gözlənilir.",
-            "videoHighQuality": "Videonuzun yaxşı keyfiyyətdə olacağı gözlənilir.",
-            "videoLowQuality": "Videonuzun kadr tezliyi və çözünürlük baxımından aşağı keyfiyyətli olacağı gözlənilir.",
-            "videoTearing": "Videonuzun pikselləşməsi və ya vizual qüsurların olması gözlənilir."
-            "devicesError": "Mikrofonunuza və kameranıza giriş alınmadı"
+            }
         },
         "copyAndShare": "Görüş keçidini kopyala və paylaş",
+        "devicesError": "Mikrofonunuza və kameranıza giriş alınmadı",
         "dialInMeeting": "Görüşə telefonla qoşulun",
         "dialInPin": "Görüşə telefonla zəng edin və PIN kodu daxil edin:",
         "dialing": "Zəng edilir",
@@ -1292,10 +1270,10 @@
         "errorDialOut": "Zəng etmək mümkün olmadı",
         "errorDialOutDisconnected": "Zəng etmək mümkün olmadı. Bağlantı kəsildi",
         "errorDialOutFailed": "Zəng etmək mümkün olmadı. Zəng uğursuz oldu",
-        "errorNoCameraPermission": "Kamera girişini aktiv etməlisiniz",
-        "errorNoMicPermission": "Mikrofon girişini aktiv etməlisiniz",
         "errorDialOutStatus": "Zəng statusunu almaqda xəta",
         "errorMissingName": "Görüşə qoşulmaq üçün zəhmət olmasa adınızı daxil edin",
+        "errorNoCameraPermission": "Kamera girişini aktiv etməlisiniz",
+        "errorNoMicPermission": "Mikrofon girişini aktiv etməlisiniz",
         "errorNoPermissions": "Mikrofon və kameraya çıxışı aktivləşdirməlisiniz",
         "errorStatusCode": "Zəng xətası, status kodu: {{status}}",
         "errorValidation": "Nömrə doğrulaması uğursuz oldu",
@@ -1316,7 +1294,6 @@
         "screenSharingError": "Ekran paylaşımı xətası:",
         "startWithPhone": "Telefon səsi ilə başlat",
         "unsafeRoomConsent": "Riskləri başa düşürəm, görüşə qoşulmaq istəyirəm",
-        "videoOnlyError": "Video xətası:",
         "videoTrackError": "Video treki yaratmaq mümkün olmadı.",
         "viewAllNumbers": "bütün nömrələrə bax"
     },
