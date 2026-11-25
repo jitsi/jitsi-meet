@@ -284,7 +284,25 @@ ReducerRegistry.register<IFilmstripState>(
             state.remoteParticipants = action.participants;
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
+            // Apply tutor mode filtering: students only see the tutor and themselves
+            const conference = state['features/base/conference'];
+            const tutorMode = conference?.metadata?.tutorMode;
+            const isTutorModeStudent = tutorMode?.enabled
+                && tutorMode?.tutorId
+                && tutorMode?.tutorId !== ''
+                && conference?.local?.id !== tutorMode.tutorId;
+
+            if (isTutorModeStudent && tutorMode?.tutorId) {
+                const tutorId = tutorMode.tutorId;
+                const localId = conference.local?.id || '';
+                // Students only see the tutor and themselves
+                const filteredParticipants = state.remoteParticipants.filter(
+                    id => id === tutorId || id === localId
+                );
+                state.visibleRemoteParticipants = new Set(filteredParticipants);
+            } else {
+                state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
+            }
 
             return { ...state };
         }

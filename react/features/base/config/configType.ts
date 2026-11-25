@@ -809,6 +809,15 @@ export interface IConfig {
     };
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
+
+    /**
+     * Opt-in for the tutor-centered room mode UI. The mode is only usable when
+     * the deployment also loads the mod_tutor_mode Prosody module, which
+     * advertises {@code tutorModeCapabilities} in room metadata.
+     */
+    tutorMode?: {
+        enabled?: boolean;
+    };
     videoQuality?: {
         codecPreferenceOrder?: Array<string>;
         maxBitratesVideo?: {

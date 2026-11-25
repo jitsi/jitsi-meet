@@ -126,6 +126,29 @@ export interface IConferenceMetadata {
      * room (e.g. lobby) may not reflect what was actually configured.
      */
     settingsIncomplete?: boolean;
+
+    /**
+     * Tutor-centered mode, written by mod_tutor_mode. Clients may only request
+     * {@code { enabled }}; the server replaces the value with the sanitized,
+     * authoritative object below. The mode is only trusted when
+     * {@code tutorModeCapabilities.enforced} is true.
+     */
+    tutorMode?: {
+        enabled?: boolean;
+        tutorId?: string;
+        tutorJid?: string;
+        updatedAt?: number;
+    };
+
+    /**
+     * Server-only advertisement that tutor mode is actually enforced. Clients
+     * cannot write this key (the server blocks it), so its presence is the
+     * client's proof that the restrictions are server-side.
+     */
+    tutorModeCapabilities?: {
+        enforced?: boolean;
+        reason?: string;
+    };
     visitors?: {
         live: boolean;
     };

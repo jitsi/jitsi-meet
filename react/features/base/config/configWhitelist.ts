@@ -248,6 +248,7 @@ export default [
     'tileView',
     'transcribingEnabled',
     'transcription',
+    'tutorMode',
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',

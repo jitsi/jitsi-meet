@@ -90,6 +90,35 @@
         "showParticipantList": "Show participant list",
         "title": "Breakout Rooms"
     },
+    "tutorMode": {
+        "button": "Tutor mode",
+        "buttonTooltip": "Toggle tutor-centered room mode",
+        "dialog": {
+            "title": "Tutor-centered room mode",
+            "enable": "Enable tutor mode",
+            "disable": "Disable tutor mode",
+            "enabled": "Tutor mode is active",
+            "disabled": "Tutor mode is inactive",
+            "description": "When enabled, students can only see and hear you. Students cannot see or hear each other.",
+            "errorNoConference": "No active conference.",
+            "errorServerUnsupported": "This server does not support tutor mode.",
+            "errorNotModerator": "Only moderators can enable tutor mode.",
+            "errorAnotherTutor": "Another participant is already the tutor.",
+            "errorTimeout": "Request timed out. Please try again.",
+            "errorGeneric": "Failed to change tutor mode. Please try again.",
+            "warningNotEnforced": "Tutor mode is not enforced by the server. Student media may not be isolated."
+        },
+        "listenToEveryone": "Listen to everyone",
+        "listenToSelected": "Listen to selected student",
+        "speakToEveryone": "Speak to everyone",
+        "speakToSelected": "Speak to selected student",
+        "notifications": {
+            "enabled": "Tutor mode enabled",
+            "disabled": "Tutor mode disabled",
+            "enabledBy": "Tutor mode enabled by {{name}}",
+            "disabledBy": "Tutor mode disabled by {{name}}"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",

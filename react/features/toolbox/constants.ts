@@ -99,6 +99,7 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'reactions',
     'participants-pane',
     'tileview',
+    'tutor-mode',
     'overflowmenu',
     'hangup',
     'invite',
@@ -183,6 +184,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'tileview',
     'toggle-camera',
     'toggle-pip',
+    'tutor-mode',
     'videoquality',
     'whiteboard'
 ];
