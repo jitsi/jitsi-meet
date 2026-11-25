@@ -8,6 +8,7 @@ import {
 import { IStateful } from '../base/app/types';
 import theme from '../base/components/themes/participantsPaneTheme.json';
 import { getCurrentConference } from '../base/conference/functions';
+import { IConfig } from '../base/config/configType';
 import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import {
@@ -28,7 +29,7 @@ import { normalizeAccents } from '../base/util/strings';
 import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../breakout-rooms/constants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
+import { MEDIA_STATE, MediaState, QUICK_ACTION_BUTTON, QuickActionButtonType, REDUCER_KEY } from './constants';
 
 /**
  * Determines the audio media state (the mic icon) for a participant.
@@ -39,7 +40,7 @@ import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
  * @returns {MediaState}
  */
 export function getParticipantAudioMediaState(participant: IParticipant | undefined,
-        muted: Boolean, state: IReduxState) {
+        muted: Boolean, state: IReduxState): MediaState {
     const dominantSpeaker = getDominantSpeakerParticipant(state);
 
     if (participant?.isSilent) {
@@ -70,7 +71,7 @@ export function getParticipantAudioMediaState(participant: IParticipant | undefi
  * @returns {MediaState}
  */
 export function getParticipantVideoMediaState(participant: IParticipant | undefined,
-        muted: Boolean, state: IReduxState) {
+        muted: Boolean, state: IReduxState): MediaState {
     if (muted) {
         if (isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
@@ -97,7 +98,7 @@ const getState = (state: IReduxState) => state[REDUCER_KEY];
  * {@code getState} function, or the redux state itself.
  * @returns {Object}
  */
-export const getParticipantsPaneConfig = (stateful: IStateful) => {
+export const getParticipantsPaneConfig = (stateful: IStateful): NonNullable<IConfig['participantsPane']> => {
     const state = toState(stateful);
     const { participantsPane = {} } = state['features/base/config'];
 
@@ -110,7 +111,7 @@ export const getParticipantsPaneConfig = (stateful: IStateful) => {
  * @param {IReduxState} state - Global state.
  * @returns {boolean} Is the participants pane open.
  */
-export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(state)?.isOpen);
+export const getParticipantsPaneOpen = (state: IReduxState): boolean => Boolean(getState(state)?.isOpen);
 
 /**
  * Returns the type of quick action button to be displayed for a participant.
@@ -120,7 +121,7 @@ export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(
  * @param {IReduxState} state - The redux state.
  * @returns {string} - The type of the quick action button.
  */
-export function getQuickActionButtonType(participant: IParticipant | undefined, state: IReduxState) {
+export function getQuickActionButtonType(participant: IParticipant | undefined, state: IReduxState): QuickActionButtonType {
     if (!isLocalParticipantModerator(state)) {
         return QUICK_ACTION_BUTTON.NONE;
     }
@@ -170,7 +171,7 @@ export function getQuickActionButtonType(participant: IParticipant | undefined, 
  * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const shouldRenderInviteButton = (state: IReduxState) => {
+export const shouldRenderInviteButton = (state: IReduxState): boolean => {
     const { disableInviteFunctions } = toState(state)['features/base/config'];
     const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
     const inBreakoutRoom = isInBreakoutRoom(state);
@@ -193,7 +194,7 @@ export const shouldRenderInviteButton = (state: IReduxState) => {
  * {@code getState} function to be used to retrieve the state features/base/participants.
  * @returns {Array<string>}
  */
-export function getSortedParticipantIds(stateful: IStateful) {
+export function getSortedParticipantIds(stateful: IStateful): Array<string | undefined> {
     const id = getLocalParticipant(stateful)?.id;
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
@@ -237,7 +238,7 @@ export function getSortedParticipantIds(stateful: IStateful) {
  */
 export function participantMatchesSearch(participant: IParticipant | undefined
     | { displayName?: string; name?: string; },
-searchString: string) {
+searchString: string): boolean {
     if (searchString === '') {
         return true;
     }
@@ -254,7 +255,7 @@ searchString: string) {
  * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isMoreActionsVisible = (state: IReduxState) => {
+export const isMoreActionsVisible = (state: IReduxState): boolean => {
     const isLocalModerator = isLocalParticipantModerator(state);
     const inBreakoutRoom = isInBreakoutRoom(state);
     const { hideMoreActionsButton } = getParticipantsPaneConfig(state);
@@ -268,7 +269,7 @@ export const isMoreActionsVisible = (state: IReduxState) => {
  * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isMuteAllVisible = (state: IReduxState) => {
+export const isMuteAllVisible = (state: IReduxState): boolean => {
     const isLocalModerator = isLocalParticipantModerator(state);
     const inBreakoutRoom = isInBreakoutRoom(state);
     const { hideMuteAllButton } = getParticipantsPaneConfig(state);
@@ -282,7 +283,7 @@ export const isMuteAllVisible = (state: IReduxState) => {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if renaming the currently joined breakout room is allowed and false otherwise.
  */
-export function isCurrentRoomRenamable(state: IReduxState) {
+export function isCurrentRoomRenamable(state: IReduxState): boolean {
     return isInBreakoutRoom(state) && isBreakoutRoomRenameAllowed(state);
 }
 
@@ -292,7 +293,7 @@ export function isCurrentRoomRenamable(state: IReduxState) {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if renaming a breakout room is allowed and false otherwise.
  */
-export function isBreakoutRoomRenameAllowed(state: IReduxState) {
+export function isBreakoutRoomRenameAllowed(state: IReduxState): boolean {
     const isLocalModerator = isLocalParticipantModerator(state);
     const conference = getCurrentConference(state);
     const isRenameBreakoutRoomsSupported
@@ -308,7 +309,7 @@ export function isBreakoutRoomRenameAllowed(state: IReduxState) {
  * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const isParticipantsPaneEnabled = (stateful: IStateful) => {
+export const isParticipantsPaneEnabled = (stateful: IStateful): boolean => {
     const state = toState(stateful);
     const { enabled = true } = getParticipantsPaneConfig(state);
 
@@ -321,7 +322,7 @@ export const isParticipantsPaneEnabled = (stateful: IStateful) => {
  * @param {IReduxState} state - The Redux state object containing the application state.
  * @returns {number} - The width of the participants pane in pixels when open, or 0 when closed.
  */
-export function getParticipantsPaneWidth(state: IReduxState) {
+export function getParticipantsPaneWidth(state: IReduxState): number {
     const { isOpen } = getState(state);
 
     if (isOpen) {
