@@ -44,6 +44,7 @@ interface IProps extends IInputProps {
     name?: string;
     onBlur?: (e: any) => void;
     onFocus?: (event: React.FocusEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
     onKeyPress?: (e: React.KeyboardEvent) => void;
     readOnly?: boolean;
     required?: boolean;
@@ -194,6 +195,7 @@ const Input = React.forwardRef<any, IProps>(({
     onBlur,
     onChange,
     onFocus,
+    onKeyDown,
     onKeyPress,
     placeholder,
     readOnly = false,
@@ -273,6 +275,7 @@ const Input = React.forwardRef<any, IProps>(({
                         minRows = { minRows }
                         name = { name }
                         onChange = { handleChange }
+                        onKeyDown = { onKeyDown }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
                         readOnly = { readOnly }
@@ -300,6 +303,7 @@ const Input = React.forwardRef<any, IProps>(({
                         onBlur = { onBlur }
                         onChange = { handleChange }
                         onFocus = { onFocus }
+                        onKeyDown = { onKeyDown }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
                         readOnly = { readOnly }
