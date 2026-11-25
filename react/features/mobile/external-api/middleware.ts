@@ -53,6 +53,8 @@ import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
+import { cancelKnocking } from '../../lobby/actions.native';
+import { getIsLobbyVisible } from '../../lobby/functions';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
@@ -416,7 +418,12 @@ function _registerForNativeEvents(store: IStore) {
     const { getState, dispatch } = store;
 
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
-        dispatch(appNavigate(undefined));
+        // Leave the lobby like its close button; a stale lobbyVisible hides the lobby on the next join.
+        if (getIsLobbyVisible(getState())) {
+            dispatch(cancelKnocking());
+        } else {
+            dispatch(appNavigate(undefined));
+        }
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }: any) => {
