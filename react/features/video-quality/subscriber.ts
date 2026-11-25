@@ -13,6 +13,12 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks/functions';
 import { reportError } from '../base/util/helpers';
 import {
+    getTutorModeAllowedVideoSourceNames,
+    isLocalParticipantTutor,
+    isTutorModeEnabled,
+    isTutorModeStudent
+} from '../../tutor-mode/functions';
+import {
     getActiveParticipantsIds,
     getScreenshareFilmstripParticipantId,
     isTopPanelEnabled
@@ -432,6 +438,19 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
             largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
                 ? getSourceNamesByVideoTypeAndParticipant(state, largeVideoParticipantId, VIDEO_TYPE.CAMERA)[0]
                 : getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
+        }
+    }
+
+    // Tutor-mode video isolation: students only receive the tutor's video sources.
+    // This is enforced at the receiver-constraint level so a modified client cannot
+    // request other students' video. A server-side enforcement (Jicofo/JVB) is
+    // required for complete network-level isolation.
+    if (isTutorModeEnabled(state) && isTutorModeStudent(state)) {
+        const allowedSources = getTutorModeAllowedVideoSourceNames(state);
+        visibleRemoteTrackSourceNames = visibleRemoteTrackSourceNames.filter(s => allowedSources.includes(s));
+        activeParticipantsSources = activeParticipantsSources.filter(s => allowedSources.includes(s));
+        if (largeVideoSourceName && !allowedSources.includes(largeVideoSourceName)) {
+            largeVideoSourceName = undefined;
         }
     }
 

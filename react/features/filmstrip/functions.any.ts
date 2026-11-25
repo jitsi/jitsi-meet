@@ -1,6 +1,13 @@
 import { IReduxState, IStore } from '../app/types';
 import { getParticipantById, getVirtualScreenshareParticipantOwnerId } from '../base/participants/functions';
 
+import {
+    getTutorModeAllowedVideoSourceNames,
+    isLocalParticipantTutor,
+    isTutorModeEnabled,
+    isTutorModeStudent
+} from '../tutor-mode/functions';
+
 import { setRemoteParticipants } from './actions';
 import { isFilmstripScrollVisible } from './functions';
 
@@ -158,4 +165,35 @@ export function calculateFullyVisibleParticipantsCount(
     // Fully visible count is the minimum of actual visible and max that can fit fully
     // Ensure at least 1 if there are any visible items
     return Math.max(1, Math.min(currentVisibleCount, maxFullyVisible));
+}
+
+/**
+ * Filters remote participants for tutor mode students.
+ * Students only see themselves and the tutor in the participant list.
+ * Other students are hidden to maintain media isolation.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {Array<string>} remoteParticipants - All remote participant ids.
+ * @returns {Array<string>} - Filtered list of participant ids visible to the student.
+ */
+export function getTutorModeFilteredParticipants(
+        state: IReduxState,
+        remoteParticipants: Array<string>
+): Array<string> {
+    if (!isTutorModeStudent(state)) {
+        return remoteParticipants;
+    }
+
+    const visibleIds = new Set<string>();
+    const localId = getLocalParticipantId(state);
+    const tutorId = getTutorId(state);
+
+    if (localId) {
+        visibleIds.add(localId);
+    }
+    if (tutorId) {
+        visibleIds.add(tutorId);
+    }
+
+    return remoteParticipants.filter(id => visibleIds.has(id));
 }

@@ -21,6 +21,7 @@ import { isAudioOutputManagerEnabled } from '../../../devices/functions.web';
 import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
+import { shouldPlayAudioFromParticipant } from '../../../../tutor-mode/functions';
 
 // iOS (WebKit) ignores programmatic HTMLMediaElement.volume — it is under the user's hardware control, so
 // assigning it is a no-op. Ducking therefore can't lower the volume there; we fall back to muting the
@@ -511,7 +512,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     return {
         _ducked: ducked,
-        _muted: state['features/base/config'].startSilent,
+        _muted: state['features/base/config'].startSilent
+            || !shouldPlayAudioFromParticipant(state, ownProps.participantId),
         _volume
     };
 }

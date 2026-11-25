@@ -65,6 +65,8 @@ import VideoQualityButton from '../video-quality/components/VideoQualityButton.w
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
+import { isTutorModeFeatureAvailable } from '../tutor-mode/functions.any';
+import TutorModeButton from '../tutor-mode/components/web/TutorModeButton';
 
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
@@ -174,6 +176,12 @@ const help = {
     group: 4
 };
 
+const tutorMode = {
+    key: 'tutor-mode',
+    Content: TutorModeButton,
+    group: 2
+};
+
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
  *
@@ -267,6 +275,19 @@ function useHelpButton() {
 }
 
 /**
+ * A hook that returns the tutor mode button if the feature is available.
+ *
+ * @returns {Object | undefined}
+ */
+function useTutorModeButton() {
+    const available = useSelector(isTutorModeFeatureAvailable);
+
+    if (available) {
+        return tutorMode;
+    }
+}
+
+/**
  * Hide invite button for breakout-rooms.
  *
  * @returns {Object | undefined}
@@ -313,6 +334,7 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const _tutorMode = useTutorModeButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
     const togglePiPButton = usePipToggleButton();
@@ -353,7 +375,8 @@ export function useToolboxButtons(
         feedback,
         download: _download,
         help: _help,
-        'custom-panel': customPanel
+        'custom-panel': customPanel,
+        'tutor-mode': _tutorMode
     };
     const buttonKeys = Object.keys(buttons) as ToolbarButton[];
 
