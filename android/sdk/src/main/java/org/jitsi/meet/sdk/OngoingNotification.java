@@ -67,7 +67,7 @@ class OngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context, Class tapBackActivity) {
+    static Notification buildOngoingConferenceNotification(Boolean isMuted, boolean isJoined, Context context, Class tapBackActivity) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
@@ -78,25 +78,38 @@ class OngoingNotification {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);
 
-        if (startingTime == 0) {
-            startingTime = System.currentTimeMillis();
-        }
-
         builder
             .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setContentTitle(context.getString(R.string.ongoing_notification_title))
-            .setContentText(context.getString(R.string.ongoing_notification_text))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
-            .setWhen(startingTime)
-            .setUsesChronometer(true)
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
         NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, R.string.ongoing_notification_action_hang_up);
+
+        // Before the join (prejoin, lobby) there is no conference yet: no timer and no mute action.
+        if (!isJoined) {
+            builder
+                .setContentTitle(context.getString(R.string.ongoing_notification_waiting_title))
+                .setContentText(context.getString(R.string.ongoing_notification_waiting_text))
+                .setShowWhen(false)
+                .addAction(hangupAction);
+
+            return builder.build();
+        }
+
+        if (startingTime == 0) {
+            startingTime = System.currentTimeMillis();
+        }
+
+        builder
+            .setContentTitle(context.getString(R.string.ongoing_notification_title))
+            .setContentText(context.getString(R.string.ongoing_notification_text))
+            .setWhen(startingTime)
+            .setUsesChronometer(true);
 
         JitsiMeetOngoingConferenceService.Action toggleAudioAction = isMuted
             ? JitsiMeetOngoingConferenceService.Action.UNMUTE : JitsiMeetOngoingConferenceService.Action.MUTE;

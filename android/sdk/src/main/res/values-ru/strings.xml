@@ -2,6 +2,8 @@
 <resources>
     <string name="ongoing_notification_title">Текущая встреча</string>
     <string name="ongoing_notification_text">Нажмите, чтобы вернуться к встрече.</string>
+    <string name="ongoing_notification_waiting_title">Подключение к встрече</string>
+    <string name="ongoing_notification_waiting_text">Ожидание входа во встречу. Нажмите, чтобы вернуться к ней.</string>
     <string name="ongoing_notification_action_hang_up">Отключиться</string>
     <string name="ongoing_notification_action_mute">Отключить звук</string>
     <string name="ongoing_notification_action_unmute">Включить звук</string>
