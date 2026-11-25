@@ -17,6 +17,7 @@ export interface IProps extends AbstractButtonProps {
  * A remote video menu button which shows the connection statistics.
  */
 class ConnectionStatusButton extends AbstractButton<IProps> {
+    override accessibilityLabel = 'videothumbnail.connectionInfo';
     override icon = IconInfoCircle;
     override label = 'videothumbnail.connectionInfo';
 
