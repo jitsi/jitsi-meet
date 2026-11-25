@@ -33,6 +33,7 @@ interface IProps extends AbstractButtonProps {
  */
 class VideoShareButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopSharedVideo';
     override icon = IconPlay;
     override label = 'toolbar.sharedvideo';
     override toggledLabel = 'toolbar.stopSharedVideo';
