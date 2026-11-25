@@ -28,8 +28,8 @@ export default function BreakoutRoomNamePrompt({ breakoutRoomJid, initialRoomNam
 
     return (
         <InputDialog
-            descriptionKey = 'dialog.renameBreakoutRoomTitle'
             initialValue = { initialRoomName?.trim() }
-            onSubmit = { onSubmit } />
+            onSubmit = { onSubmit }
+            titleKey = 'dialog.renameBreakoutRoomTitle' />
     );
 }
