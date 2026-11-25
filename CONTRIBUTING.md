@@ -15,6 +15,6 @@ Ready to get started? Head over to our [Jitsi Meet Handbook](https://jitsi.githu
 Have questions or need help? Join our community discussions on the [Jitsi Forum](https://community.jitsi.org/) where contributors and maintainers can assist you.
 
 ### ❗️Additional Note
-Before sending us your code, double-check that it meets our coding standards. You can do this by running a command: `npm run lint`. If there are any issues, don't worry! You can fix them by running: `npm run lint-fix`. Once your code passes these checks, feel free to submit your pull request.
+Before sending us your code, double-check that it meets our coding standards. Run `npm run lint:ci` for ESLint and `npm run tsc:ci` for TypeScript checks on web and native. You can apply available ESLint fixes with `npm run lint-fix`, then rerun the checks to verify the result.
 
 **Happy coding!**

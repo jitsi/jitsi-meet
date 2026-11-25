@@ -182,9 +182,11 @@ const commands = {
 };
 
 /**
- * Share data to other users.
- * @param command the command
- * @param {string} value new value
+ * Shares a command value with the other conference participants.
+ *
+ * @param {string} command - The name of the command to send.
+ * @param {string} value - The value to send with the command.
+ * @returns {void} Does nothing if there is no active conference room.
  */
 function sendData(command, value) {
     if (!room) {
@@ -358,9 +360,10 @@ class ConferenceConnector {
 }
 
 /**
- * Disconnects the connection.
- * @returns resolved Promise. We need this in order to make the Promise.all
- * call in hangup() to resolve when all operations are finished.
+ * Disconnects the connection and notifies the API that the conference was left.
+ *
+ * @returns {Promise<void>} A promise that resolves after the conference-left
+ * notification is sent, whether or not disconnecting the connection succeeds.
  */
 function disconnect() {
     const onDisconnected = () => {
@@ -1000,8 +1003,8 @@ export default {
         /**
          * Receives notifications from other participants about commands aka
          * custom events (sent by sendCommand or sendCommandOnce methods).
-         * @param command {String} the name of the command
-         * @param handler {Function} handler for the command
+         * @param {string} command - The name of the command to listen for.
+         * @param {Function} handler - The function to call when the command is received.
          */
         addCommandListener() {
             // eslint-disable-next-line prefer-rest-params
