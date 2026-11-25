@@ -75,6 +75,11 @@ class ReactHostHolder {
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext)));
 
+        NativeModule backgroundEffects = BackgroundEffectsProvider.createNativeModule(reactContext);
+        if (backgroundEffects != null) {
+            nativeModules.add(backgroundEffects);
+        }
+
         if (AudioModeModule.useConnectionService()) {
             nativeModules.add(new RNConnectionService(reactContext));
         }
@@ -208,6 +213,7 @@ class ReactHostHolder {
      * @param app {@code Application} instance
      */
     static void initReactHost(Application app) {
+        BackgroundEffectsProvider.initialize(app);
         if (reactHost != null) {
             return;
         }
