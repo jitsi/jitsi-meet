@@ -1249,6 +1249,17 @@
         "callMeAtNumber": "Mənə bu nömrəyə zəng et:",
         "calling": "Zəng edilir",
         "configuringDevices": "Cihazlar konfiqurasiya olunur…",
+        "blocked": {
+                "description": "Serverlərimizə qoşula bilmədik. Fayrvol, VPN və ya proksi onları bloklaya bilər. Başqa şəbəkəni sınayın və ya İT komandanızdan kömək istəyin.",
+                "title": "Şəbəkəniz zəngləri bloklaya bilər"
+            },
+            "checkAgain": "Yenidən yoxla",
+            "checking": "Yoxlanılır…",
+            "helpLink": "Tam şəbəkə testi keçir",
+            "udpBlocked": {
+                "description": "Bu, zənglərin adətən istifadə etdiyi daha sürətli bağlantını bloklayır, buna görə də səs və video gecikə bilər. Zəngdə çətinlik çəksəniz, başqa şəbəkəni sınayın və ya VPN-i söndürün.",
+                "title": "Şəbəkəniz zəng keyfiyyətinə təsir edə bilər"
+            },
         "connectedWithAudioQ": "Səs ilə qoşulmusunuz?",
         "connection": {
             "failed": "Bağlantı sınağı uğursuz oldu!",
