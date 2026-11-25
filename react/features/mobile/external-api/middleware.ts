@@ -33,7 +33,7 @@ import { getWhitelistedJSON } from '../../base/config/functions.native';
 import { CONNECTION_DISCONNECTED, CONNECTION_WILL_CONNECT } from '../../base/connection/actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import { JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
@@ -163,7 +163,12 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         // counterpart of the External API (or at least not in the
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable) {
+        // The user stays in the lobby or prejoin to enter a name; the will-join stays pending.
+        const lobbyNeedsName = error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED && error.params?.[0];
+
+        if (lobbyNeedsName) {
+            logger.info('Terminated not sent: the lobby needs a display name');
+        } else if (!error.recoverable) {
             _sendConferenceEvent(store, /* action */ {
                 error: _toErrorString(error),
                 ...data
