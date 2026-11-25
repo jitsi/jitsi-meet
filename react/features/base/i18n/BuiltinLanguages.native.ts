@@ -15,6 +15,16 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ar')
     },
 
+    // Azerbaijani
+    'az': {
+        main: require('../../../../lang/main-az')
+    },
+
+    // Belarusian
+    'be': {
+        main: require('../../../../lang/main-be')
+    },
+
     // Bulgarian
     'bg': {
         main: require('../../../../lang/main-bg')
@@ -25,9 +35,29 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ca')
     },
 
+    // Czech
+    'cs': {
+        main: require('../../../../lang/main-cs')
+    },
+
+    // Danish
+    'da': {
+        main: require('../../../../lang/main-da')
+    },
+
     // German
     'de': {
         main: require('../../../../lang/main-de')
+    },
+
+    // Lower Sorbian
+    'dsb': {
+        main: require('../../../../lang/main-dsb')
+    },
+
+    // Greek
+    'el': {
+        main: require('../../../../lang/main-el')
     },
 
     // Esperanto
@@ -50,6 +80,11 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-et')
     },
 
+    // Basque
+    'eu': {
+        main: require('../../../../lang/main-eu')
+    },
+
     // Persian
     'fa': {
         main: require('../../../../lang/main-fa')
@@ -70,14 +105,49 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-fr-CA')
     },
 
+    // Galician
+    'gl': {
+        main: require('../../../../lang/main-gl')
+    },
+
+    // Hebrew
+    'he': {
+        main: require('../../../../lang/main-he')
+    },
+
+    // Hindi
+    'hi': {
+        main: require('../../../../lang/main-hi')
+    },
+
     // Croatian
     'hr': {
         main: require('../../../../lang/main-hr')
     },
 
+    // Upper Sorbian
+    'hsb': {
+        main: require('../../../../lang/main-hsb')
+    },
+
     // Hungarian
     'hu': {
         main: require('../../../../lang/main-hu')
+    },
+
+    // Armenian
+    'hy': {
+        main: require('../../../../lang/main-hy')
+    },
+
+    // Indonesian
+    'id': {
+        main: require('../../../../lang/main-id')
+    },
+
+    // Icelandic
+    'is': {
+        main: require('../../../../lang/main-is')
     },
 
     // Italian
@@ -90,9 +160,34 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ja')
     },
 
+    // Kabyle
+    'kab': {
+        main: require('../../../../lang/main-kab')
+    },
+
+    // Kazakh
+    'kk': {
+        main: require('../../../../lang/main-kk')
+    },
+
     // Korean
     'ko': {
         main: require('../../../../lang/main-ko')
+    },
+
+    // Lithuanian
+    'lt': {
+        main: require('../../../../lang/main-lt')
+    },
+
+    // Latvian
+    'lv': {
+        main: require('../../../../lang/main-lv')
+    },
+
+    // Malayalam
+    'ml': {
+        main: require('../../../../lang/main-ml')
     },
 
     // Mongolian
@@ -100,9 +195,24 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-mn')
     },
 
+    // Marathi
+    'mr': {
+        main: require('../../../../lang/main-mr')
+    },
+
+    // Norwegian Bokmål
+    'nb': {
+        main: require('../../../../lang/main-nb')
+    },
+
     // Dutch
     'nl': {
         main: require('../../../../lang/main-nl')
+    },
+
+    // Norwegian
+    'no': {
+        main: require('../../../../lang/main-no')
     },
 
     // Occitan
@@ -113,6 +223,11 @@ const _LANGUAGES = {
     // Polish
     'pl': {
         main: require('../../../../lang/main-pl')
+    },
+
+    // Portuguese
+    'pt': {
+        main: require('../../../../lang/main-pt')
     },
 
     // Portuguese (Brazil)
@@ -145,9 +260,24 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-sl')
     },
 
+    // Albanian
+    'sq': {
+        main: require('../../../../lang/main-sq')
+    },
+
+    // Serbian
+    'sr': {
+        main: require('../../../../lang/main-sr')
+    },
+
     // Swedish
     'sv': {
         main: require('../../../../lang/main-sv')
+    },
+
+    // Telugu
+    'te': {
+        main: require('../../../../lang/main-te')
     },
 
     // Turkish
