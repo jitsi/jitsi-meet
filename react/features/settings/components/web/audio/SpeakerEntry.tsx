@@ -125,7 +125,7 @@ const SpeakerEntry = (props: IProps) => {
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    async function _onTestButtonClick(e: React.KeyboardEvent | React.MouseEvent) {
+    async function _onTestButtonClick(e: React.MouseEvent) {
         e.stopPropagation();
 
         try {
@@ -134,6 +134,17 @@ const SpeakerEntry = (props: IProps) => {
         } catch (err) {
             logger.log('Could not set sink id', err);
         }
+    }
+
+    /**
+     * Key press handler for Test button. The native button already turns Enter and Space into a click,
+     * which plays the sound, so only keep the key press from reaching the entry, which would select the device.
+     *
+     * @param {Object} e - The synthetic event.
+     * @returns {void}
+     */
+    function _onTestButtonKeyPress(e: React.KeyboardEvent) {
+        e.stopPropagation();
     }
 
     const { children, isSelected, index, length } = props;
@@ -166,7 +177,7 @@ const SpeakerEntry = (props: IProps) => {
                 className = { cx(classes.testButton, 'testButton') }
                 label = { testLabel }
                 onClick = { _onTestButtonClick }
-                onKeyPress = { _onTestButtonClick }
+                onKeyPress = { _onTestButtonKeyPress }
                 type = { BUTTON_TYPES.SECONDARY } />
         </li>
     );
