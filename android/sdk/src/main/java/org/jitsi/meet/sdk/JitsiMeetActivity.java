@@ -302,7 +302,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
-        // Usually running since will-join; this shows the joined notification, asks for missing permissions and adds the microphone type.
+        // The service usually runs since will-join: switch it to the joined notification,
+        // ask for missing permissions, then add the microphone type.
         JitsiMeetOngoingConferenceService.launch(this, extraData);
     }
 
