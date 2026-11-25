@@ -50,6 +50,7 @@ import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
+import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
@@ -112,7 +113,7 @@ const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
 
 /**
- * URL of a will-join with no joined or terminated yet.
+ * URL of a will-join (or switch) with no joined or terminated yet.
  * Android starts its service on will-join, so each one needs a terminated.
  */
 let _pendingWillJoinUrl: string | undefined;
@@ -121,6 +122,18 @@ let _pendingWillJoinUrl: string | undefined;
  * Connection of the pending will-join; a late disconnect of an older one must not end it.
  */
 let _pendingWillJoinConnection: Object | undefined;
+
+/**
+ * URL of a joined conference that rejoins (breakout room, visitor redirect).
+ * Native sees one conference: its left and the next joined are not sent.
+ */
+let _switchingConferenceUrl: string | undefined;
+
+/**
+ * URL of the last joined sent to native, until its terminated.
+ * Only it can switch; a reconnect after a terminated must send its joined.
+ */
+let _nativeJoinedUrl: string | undefined;
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
@@ -233,8 +246,19 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         // A visitor redirect reconnects to the same conference: its disconnect sends no terminated.
         if (action.isRedirect) {
             _pendingWillJoinConnection = undefined;
+            action.conference && _startConferenceSwitch(action.conference);
         }
         break;
+
+    case _RESET_BREAKOUT_ROOMS: {
+        // Before a breakout switch (conference still set), and again once it is gone.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (conference && _startConferenceSwitch(conference)) {
+            _pendingWillJoinConnection = store.getState()['features/base/connection'].connection;
+        }
+        break;
+    }
 
     case CUSTOM_BUTTON_PRESSED: {
         const { id, text } = action;
@@ -814,18 +838,42 @@ function _maybeTerminatePendingWillJoin(store: IStore, action: AnyAction) {
  */
 function _sendTerminated(store: IStore, url: string) {
     _clearPendingWillJoin();
+    url === _nativeJoinedUrl && (_nativeJoinedUrl = undefined);
 
     sendEvent(store, CONFERENCE_TERMINATED, /* data */ { url });
 }
 
 /**
- * Clears the pending will-join.
+ * Clears the pending will-join and any conference switch.
  *
  * @returns {void}
  */
 function _clearPendingWillJoin() {
     _pendingWillJoinUrl = undefined;
     _pendingWillJoinConnection = undefined;
+    _switchingConferenceUrl = undefined;
+}
+
+/**
+ * Starts a switch if native holds this conference as joined.
+ * Its pending will-join gets one terminated on a hangup or failure.
+ *
+ * @param {IJitsiConference} conference - The conference that leaves.
+ * @returns {boolean} Whether a switch started.
+ */
+function _startConferenceSwitch(conference: IJitsiConference) {
+    // @ts-ignore
+    const url = _normalizeUrl(conference[JITSI_CONFERENCE_URL_KEY]);
+
+    if (_pendingWillJoinUrl || url !== _nativeJoinedUrl) {
+        return false;
+    }
+
+    logger.info(`Conference switch started: ${url}`);
+    _switchingConferenceUrl = url;
+    _pendingWillJoinUrl = url;
+
+    return true;
 }
 
 /**
@@ -868,6 +916,19 @@ function _sendConferenceEvent(
         data.isAudioMuted = isAudioMuted;
     }
 
+    // During a switch, the old left and the new joined are not sent.
+    if (_switchingConferenceUrl && data.url === _switchingConferenceUrl) {
+        if (type === CONFERENCE_LEFT) {
+            return;
+        }
+
+        if (type === CONFERENCE_JOINED) {
+            _clearPendingWillJoin();
+
+            return;
+        }
+    }
+
     if (_swallowEvent(store, action, data)) {
         return;
     }
@@ -887,6 +948,12 @@ function _sendConferenceEvent(
     // Match the URL: a late left of the previous room must not clear the pending will-join.
     if ((type_ === CONFERENCE_JOINED || type_ === CONFERENCE_TERMINATED) && data.url === _pendingWillJoinUrl) {
         _clearPendingWillJoin();
+    }
+
+    if (type_ === CONFERENCE_JOINED) {
+        _nativeJoinedUrl = data.url;
+    } else if (type_ === CONFERENCE_TERMINATED && data.url === _nativeJoinedUrl) {
+        _nativeJoinedUrl = undefined;
     }
 
     sendEvent(store, type_, data);
