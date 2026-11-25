@@ -198,6 +198,8 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled, onCancel: onCan
             e.preventDefault();
             e.shiftKey ? onPrev() : onNext();
         } else if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
             onSearchClose();
         }
     }, [ onNext, onPrev, onSearchClose ]);
