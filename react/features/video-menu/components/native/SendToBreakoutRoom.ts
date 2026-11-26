@@ -27,22 +27,30 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which sends the remote participant to a breakout room.
  */
 class SendToBreakoutRoom extends AbstractButton<IProps> {
-    override accessibilityLabel = 'breakoutRooms.actions.sendToBreakoutRoom';
     override icon = IconRingGroup;
+
+    /**
+     * Gets the current accessibility label.
+     *
+     * @returns {string}
+     */
+    override _getAccessibilityLabel() {
+        return this._getLabel();
+    }
 
     /**
      * Gets the current label.
      *
      * @returns {string}
      */
-    _getLabel() {
+    override _getLabel() {
         const { t, room } = this.props;
 
         return room.name || t('breakoutRooms.mainRoom');
     }
 
     /**
-     * Handles clicking / pressing the button, and asks the participant to unmute.
+     * Handles clicking / pressing the button, and sends the participant to the room.
      *
      * @private
      * @returns {void}
