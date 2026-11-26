@@ -21,7 +21,8 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling the self view.
  */
 class ToggleSelfViewButton extends AbstractButton<IProps> {
-    override accessibilityLabel = 'toolbar.accessibilityLabel.selfView';
+    override accessibilityLabel = 'videothumbnail.hideSelfView';
+    override toggledAccessibilityLabel = 'videothumbnail.showSelfView';
     override icon = IconLowBandwidthModeOff;
     override label = 'videothumbnail.hideSelfView';
     override toggledLabel = 'videothumbnail.showSelfView';
