@@ -639,11 +639,6 @@ const DEFAULT_SERVICE_PRIORITY = [
 export interface IRecordingDialogFacts {
 
     /**
-     * Whether a recording started now should start the transcription along with it.
-     */
-    autoTranscribeOnRecord: boolean;
-
-    /**
      * Whether the local participant can start the transcription.
      */
     canTranscribe: boolean;
@@ -855,11 +850,6 @@ export interface IRecordingDialogModel {
         startBlocker?: StartBlocker;
 
         /**
-         * Whether starting the recording also starts the transcription.
-         */
-        startsWithRecording: boolean;
-
-        /**
          * Whether the section is shown at all.
          */
         visible: boolean;
@@ -971,10 +961,6 @@ export function getRecordingDialogModel(
     const transcription: IRecordingDialogModel['transcription'] = {
         running: facts.transcriptionRunning,
         startBlocker: transcriptionStartBlocker,
-
-        // shouldAutoTranscribeOnRecord() already answers no while a transcriber is in the meeting
-        // or end-to-end encryption is on: it is the one place deciding this.
-        startsWithRecording: facts.autoTranscribeOnRecord,
         visible: facts.canTranscribe || facts.transcriptionRunning
     };
 

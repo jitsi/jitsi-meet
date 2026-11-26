@@ -40,7 +40,6 @@ import {
     isLiveStreamingRunning,
     isRecordingRunning,
     isRecordingSharingEnabled,
-    shouldAutoTranscribeOnRecord,
     supportsLocalRecording
 } from '../../functions';
 import { ISessionData } from '../../reducer';
@@ -62,11 +61,6 @@ export interface IProps extends WithTranslation {
      * The app key for the dropbox authentication.
      */
     _appKey: string;
-
-    /**
-     * Whether a recording started now should start the transcription along with it.
-     */
-    _autoTranscribeOnRecord: boolean;
 
     /**
      * Whether the local participant can start/stop transcription.
@@ -318,7 +312,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _getFacts(props: IProps = this.props): IRecordingDialogFacts {
         return {
-            autoTranscribeOnRecord: props._autoTranscribeOnRecord,
             canTranscribe: props._canTranscribe,
             dropboxEnabled: props._isDropboxEnabled,
             e2eeOn: props._e2eeOn,
@@ -483,17 +476,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Starts the audio & video recording. When the deployment is configured
-     * with {@code transcription.autoTranscribeOnRecord} the transcription is
-     * started along with it.
+     * Starts the audio & video recording, leaving the transcription state untouched. Starting both
+     * at once is what the "Start both" button is for.
      *
      * @returns {boolean} - True when the action was applied.
      */
     _onStartRecording() {
-        return this._applyChanges({
-            startRecording: true,
-            startTranscription: this._getModel().transcription.startsWithRecording
-        });
+        return this._applyChanges({ startRecording: true });
     }
 
     /**
@@ -839,7 +828,6 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
 
     return {
         _appKey: dropbox.appKey ?? '',
-        _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
         _e2eeOn: isE2EEOnInMeeting(state),
         _canTranscribe: canAddTranscriber(state),
         _conference: state['features/base/conference'].conference,

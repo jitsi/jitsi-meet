@@ -38,7 +38,12 @@ describe('Recording & Transcription dialog — room metadata', () => {
         await ensureTwoParticipants({
             configOverwrite: {
                 recordingService: { enabled: true },
-                transcription: { enabled: true }
+                transcription: {
+                    // The Start recording button must not start the transcription, even when the
+                    // deployment asks for it to start along with a recording.
+                    autoTranscribeOnRecord: true,
+                    enabled: true
+                }
             },
             skipInMeetingChecks: true
         });
@@ -369,6 +374,83 @@ describe('Recording & Transcription dialog — room metadata', () => {
         await p2.driver.$('[data-testid="transcribing.off"]').waitForExist({
             timeout: 5_000,
             timeoutMsg: 'p2 did not get the transcription stopped notification'
+        });
+    });
+
+    /*
+     * The recording section's Start button starts only the audio & video recording, whatever
+     * transcription.autoTranscribeOnRecord says: starting both at once is what Start both is for.
+     *
+     * p1's conference.startRecording() is stubbed to do nothing and its conference.dial() to note
+     * that it was called, so neither a Jibri nor a transcriber is involved.
+     */
+    it('starting the recording does not start the transcription', async () => {
+        const { p1, p2 } = ctx;
+
+        await p2.driver.waitUntil(async () => {
+            const recording = (await p2.getRoomMetadata())?.recording;
+
+            return !recording?.isTranscribingEnabled && !recording?.isRecordingRequested;
+        }, {
+            timeout: 5_000,
+            timeoutMsg: 'the room metadata of the previous test was not reset'
+        });
+
+        await p1.execute(() => {
+            // @ts-ignore
+            window.transcriberDialed = false;
+            APP.conference._room.dial = () => {
+                // @ts-ignore
+                window.transcriberDialed = true;
+
+                return Promise.resolve();
+            };
+            APP.conference._room.startRecording = () => Promise.resolve();
+        });
+
+        const dialog = p1.getRecordingTranscriptionDialog();
+
+        await p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+
+        // Start recording stays disabled while the dialog validates the Dropbox token on deployments
+        // with Dropbox enabled.
+        await p1.driver.waitUntil(() => dialog.isStartRecordingEnabled(), {
+            timeout: 5_000,
+            timeoutMsg: 'Start recording did not become enabled'
+        });
+        expect(await dialog.isStartTranscriptionEnabled()).toBe(true);
+
+        await dialog.startRecording();
+
+        await p2.driver.waitUntil(async () => (await p2.getRoomMetadata())?.recording?.isRecordingRequested, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not see the recording requested'
+        });
+
+        expect((await p2.getRoomMetadata())?.recording?.isTranscribingEnabled).not.toBe(true);
+        await p2.driver.waitUntil(async () => {
+            const intent = await p2.execute(() => APP.store.getState()['features/recording'].startRecordingIntent);
+
+            return intent?.recording === true && intent.transcription === false;
+        }, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 is not waiting for the recording alone'
+        });
+        expect(await p1.execute(() => APP.store.getState()['features/subtitles']._requestingSubtitles))
+            .toBe(false);
+        // @ts-ignore
+        expect(await p1.execute(() => window.transcriberDialed)).toBe(false);
+
+        await p1.execute(() => {
+            APP.conference._room.getMetadataHandler().setMetadata('recording', {
+                isRecordingRequested: false,
+                isTranscribingEnabled: false
+            });
+        });
+        await p2.execute(() => {
+            APP.store.dispatch({ type: 'SET_START_RECORDING_INTENT',
+                intent: null });
         });
     });
 });
