@@ -1,8 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, ViewStyle } from 'react-native';
 import Dialog from 'react-native-dialog';
+import { useDispatch } from 'react-redux';
 
+import { hideDialog } from '../../../base/dialog/actions';
 import { StandaloneRaiseHandButton as RaiseHandButton } from '../../../reactions/components/native/RaiseHandButton';
 import styles from '../../components/native/styles';
 
@@ -13,11 +15,12 @@ import styles from '../../components/native/styles';
  */
 export default function JoinMeetingDialog() {
     const { t } = useTranslation();
-    const [ visible, setVisible ] = useState(true);
+    const dispatch = useDispatch();
 
+    // Clear the dialog from redux, otherwise it remounts when leaving PiP (reduced UI).
     const closeDialog = useCallback(() => {
-        setVisible(false);
-    }, []);
+        dispatch(hideDialog());
+    }, [ dispatch ]);
 
     const description = t('visitors.joinMeeting.description');
     const okLabel = t('dialog.Ok');
@@ -27,7 +30,7 @@ export default function JoinMeetingDialog() {
     return (
         <Dialog.Container
             coverScreen = { false }
-            visible = { visible }>
+            visible = { true }>
             <Dialog.Title>{ title }</Dialog.Title>
             <Dialog.Description>
                 { description }
