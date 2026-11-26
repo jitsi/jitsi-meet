@@ -93,7 +93,7 @@ export function toggleScreensharing(
  * @private
  * @param {JitsiLocalTrack} desktopAudioTrack - The audio track to be added to the conference.
  * @param {*} state - The redux state.
- * @returns {void}
+ * @returns {Promise<void>} Rejects if the desktop audio could not be shared.
  */
 async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IReduxState): Promise<void> {
     const localAudio = getLocalJitsiAudioTrack(state);
@@ -207,8 +207,28 @@ async function _toggleScreenSharing(
             // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
             await dispatch(setNoiseSuppressionEnabled(false));
-            _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
+
+            // Store the track before it is mixed in, so that a share stopped meanwhile still finds it to undo the mix.
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
+
+            try {
+                // Read the state again: the microphone track may have changed while the share picker was open.
+                await _maybeApplyAudioMixerEffect(desktopAudioTrack, getState());
+            } catch (error) {
+                // The desktop audio is not shared, so don't keep its track as if it were: stopping the share would
+                // then try to undo a mix or a track replacement that never happened.
+                logger.error('Failed to share the desktop audio', error);
+                dispatch(setScreenshareAudioTrack(null));
+                desktopAudioTrack.dispose();
+                dispatch(showErrorNotification({
+                    titleKey: 'notify.screenShareNoAudioTitle'
+                }));
+
+                // An audio-only share has nothing left to share; a screen share goes on without its audio.
+                if (audioOnly) {
+                    return;
+                }
+            }
 
             // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
             if (audioOnly) {
