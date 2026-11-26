@@ -17,6 +17,11 @@ export * from './actions.any';
 const PROMPT_POPUP_NOTIFICATION_ID = 'PROMPT_POPUP_NOTIFICATION_ID';
 
 /**
+ * How long {@code silentLogout} waits for the logout page to report success.
+ */
+const SILENT_LOGOUT_TIMEOUT_MS = 15000;
+
+/**
  * Custom error that includes a recovery callback.
  */
 class PopupBlockedError extends Error {
@@ -224,29 +229,45 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
  * invisible iframe.
  *
  * @param {string} tokenAuthLogoutServiceUrl - Logout service URL.
- * @returns {Promise<any>} A promise that resolves when logout is complete.
+ * @param {number} timeoutMs - How long to wait for the logout page to report success.
+ * @returns {Promise<void>} A promise that resolves when logout is complete and rejects if the logout page does not
+ * report success in time.
  */
-export function silentLogout(tokenAuthLogoutServiceUrl: string): any {
-    return new Promise<void>(resolve => {
+export function silentLogout(
+        tokenAuthLogoutServiceUrl: string,
+        timeoutMs: number = SILENT_LOGOUT_TIMEOUT_MS): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
         const iframe = document.createElement('iframe');
+        let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
-        iframe.style.display = 'none';
-        iframe.src = tokenAuthLogoutServiceUrl;
-        document.body.appendChild(iframe);
+        const cleanup = (handler: (event: MessageEvent) => void) => {
+            clearTimeout(timeout);
+            window.removeEventListener('message', handler);
+            iframe.remove();
+        };
 
         // Listen for logout completion
-        const handler = (event: any) => {
+        const handler = (event: MessageEvent) => {
             if (event.origin !== window.location.origin) return;
 
-            if (event.data.type === 'logout-success') {
-                window.removeEventListener('message', handler);
-                document.body.removeChild(iframe);
-
+            if (event.data?.type === 'logout-success') {
+                cleanup(handler);
                 resolve();
             }
         };
 
+        // The logout page may never report back: the provider may refuse to be framed, fail, or stop on a page of
+        // its own. Give up then, so that the iframe and the listener do not stay around and the caller gets to know.
+        timeout = setTimeout(() => {
+            cleanup(handler);
+            reject(new Error(`Logout did not complete within ${timeoutMs}ms`));
+        }, timeoutMs);
+
         window.addEventListener('message', handler);
+
+        iframe.style.display = 'none';
+        iframe.src = tokenAuthLogoutServiceUrl;
+        document.body.appendChild(iframe);
     });
 }
 

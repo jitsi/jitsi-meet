@@ -25,6 +25,7 @@ import {
     enableKeyboardShortcuts,
     setCtrlAltReactionShortcutsEnabled
 } from '../keyboard-shortcuts/actions';
+import { showErrorNotification } from '../notifications/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
@@ -74,7 +75,12 @@ export function openLogoutDialog() {
                 .then(() => {
                     dispatch(setJWT());
                 })
-                .catch(() => logger.error('logout failed'));
+                .catch((error: Error) => {
+                    logger.error('logout failed', error);
+                    dispatch(showErrorNotification({
+                        titleKey: 'dialog.logoutFailed'
+                    }));
+                });
 
             return;
         }
