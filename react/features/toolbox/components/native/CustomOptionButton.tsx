@@ -24,17 +24,19 @@ export interface ICustomOptionButton extends AbstractButtonProps {
  * @returns {Component}
  */
 class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
-    backgroundColor = this.props.backgroundColor;
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
+    override backgroundColor = this.props.backgroundColor;
+
+    override accessibilityLabel = this.text || '';
 
     /**
      * Custom icon component.
      *
      * @returns {React.Component}
      */
-    icon = () => {
+    override icon = () => {
         let iconComponent;
 
         if (!this.iconSrc) {
@@ -69,7 +71,7 @@ class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
         );
     };
 
-    label = this.text || '';
+    override label = this.text || '';
 }
 
 export default translate(connect()(CustomOptionButton));
