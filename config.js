@@ -621,7 +621,9 @@ var config = {
     //     'dsb-DE': 'Lower Sorbian (Germany)'
     // },
 
-    //     // Enables automatic turning on transcribing when recording is started
+    //     // Enables automatic turning on transcribing when recording is started from the "start recording"
+    //     // suggestion notification. It does not apply to the recording dialog, which has its own
+    //     // "Start both" button for that.
     //     autoTranscribeOnRecord: false,
 
     //     // Enables automatic request of subtitles when transcriber is present in the meeting, uses the default
