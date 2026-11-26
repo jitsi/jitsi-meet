@@ -68,8 +68,6 @@ export const DECREASE_ZOOM = 'DECREASE_ZOOM';
 
 export const ADD_TO_OFFSET = 'ADD_TO_OFFSET';
 
-export const SET_OFFSET = 'RESET_OFFSET';
-
 export const ADD_TO_OFFSET_LEFT = 'ADD_TO_OFFSET_LEFT';
 
 export const ADD_TO_OFFSET_RIGHT = 'ADD_TO_OFFSET_RIGHT';
