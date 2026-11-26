@@ -37,11 +37,26 @@ class AskUnmuteButton extends AbstractButton<IProps> {
     override label = 'participantsPane.actions.askUnmute';
 
     /**
+     * Gets the current accessibility label.
+     *
+     * @returns {string}
+     */
+    override _getAccessibilityLabel() {
+        const { isAudioForceMuted, isVideoForceMuted } = this.props;
+
+        if (!isAudioForceMuted && isVideoForceMuted) {
+            return 'participantsPane.actions.allowVideo';
+        }
+
+        return this.accessibilityLabel;
+    }
+
+    /**
      * Gets the current label.
      *
      * @returns {string}
      */
-    _getLabel() {
+    override _getLabel() {
         const { isAudioForceMuted, isVideoForceMuted } = this.props;
 
         if (!isAudioForceMuted && isVideoForceMuted) {
@@ -56,7 +71,7 @@ class AskUnmuteButton extends AbstractButton<IProps> {
      *
      * @returns {string}
      */
-    _getIcon() {
+    override _getIcon() {
         const { isAudioForceMuted, isVideoForceMuted } = this.props;
 
         if (!isAudioForceMuted && isVideoForceMuted) {
