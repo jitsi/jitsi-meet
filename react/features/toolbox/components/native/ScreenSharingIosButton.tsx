@@ -50,6 +50,7 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
     _nativeComponent: React.Component<any, any> | null;
 
     override accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
     override icon = IconScreenshare;
     override label = 'toolbar.startScreenSharing';
     override toggledLabel = 'toolbar.stopScreenSharing';
