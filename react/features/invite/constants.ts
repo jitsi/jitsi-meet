@@ -39,6 +39,14 @@ export const OUTGOING_CALL_RINGING_SOUND_ID = 'OUTGOING_CALL_RINGING_SOUND';
 export const OUTGOING_CALL_START_SOUND_ID = 'OUTGOING_CALL_START_SOUND';
 
 /**
+ * The longest text that is checked against {@link SIP_ADDRESS_REGEX}. The regex backtracks quadratically on long
+ * input that almost matches, and a real SIP address is far shorter than this.
+ *
+ * @type {number}
+ */
+export const MAX_SIP_ADDRESS_LENGTH = 512;
+
+/**
  * Regex for matching sip addresses.
  */
 // eslint-disable-next-line max-len
