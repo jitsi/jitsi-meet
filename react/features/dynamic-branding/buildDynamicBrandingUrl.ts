@@ -29,7 +29,17 @@ export function buildDynamicBrandingUrl(
     }
 
     if (brandingDataUrl && fqn) {
-        return `${brandingDataUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
+        const fragmentStart = brandingDataUrl.indexOf('#');
+        const url = fragmentStart === -1 ? brandingDataUrl : brandingDataUrl.slice(0, fragmentStart);
+        const fragment = fragmentStart === -1 ? '' : brandingDataUrl.slice(fragmentStart);
+        const queryStart = url.indexOf('?');
+        let separator = queryStart === -1 ? '?' : '&';
+
+        if (queryStart !== -1 && (queryStart === url.length - 1 || url.endsWith('&'))) {
+            separator = '';
+        }
+
+        return `${url}${separator}conferenceFqn=${encodeURIComponent(fqn)}${fragment}`;
     }
 
     return undefined;
