@@ -1,6 +1,7 @@
 import { IStateful } from '../base/app/types';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
+import { MEDIA_TYPE } from '../base/media/constants';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getUserSelectedCameraDeviceId } from '../base/settings/functions.web';
@@ -18,29 +19,50 @@ import { ConfigOption, IConfigOptionValues } from './types';
 export * from './functions.any';
 
 /**
+ * Whether the device gets a preview. Firefox grants access per device, previewing every device would prompt for each.
+ *
+ * @param {string} deviceId - The device id.
+ * @param {string} selectedDeviceId - The id of the device in use.
+ * @returns {boolean}
+ */
+function isPreviewed(deviceId: string, selectedDeviceId: string) {
+    return !browser.isFirefox() || deviceId === selectedDeviceId;
+}
+
+/**
  * Returns a promise which resolves with a list of objects containing
  * all the video jitsiTracks and appropriate errors for the given device ids.
  *
  * @param {string[]} ids - The list of the camera ids for which to create tracks.
+ * @param {string} selectedDeviceId - The id of the camera in use.
  * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  *
  * @returns {Promise<Object[]>}
  */
-export function createLocalVideoTracks(ids: string[], timeout?: number) {
-    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId, timeout)
-                    .then((jitsiTrack: any) => {
-                        return {
-                            jitsiTrack,
-                            deviceId
-                        };
-                    })
-                    .catch(() => {
-                        return {
-                            jitsiTrack: null,
-                            deviceId,
-                            error: 'deviceSelection.previewUnavailable'
-                        };
-                    })));
+export function createLocalVideoTracks(ids: string[], selectedDeviceId: string, timeout?: number) {
+    return Promise.all(ids.map(deviceId => {
+        if (!isPreviewed(deviceId, selectedDeviceId)) {
+            return {
+                jitsiTrack: null,
+                deviceId
+            };
+        }
+
+        return createLocalTrack(MEDIA_TYPE.VIDEO, deviceId, timeout)
+            .then((jitsiTrack: any) => {
+                return {
+                    jitsiTrack,
+                    deviceId
+                };
+            })
+            .catch(() => {
+                return {
+                    jitsiTrack: null,
+                    deviceId,
+                    error: 'deviceSelection.previewUnavailable'
+                };
+            });
+    }));
 }
 
 
@@ -49,6 +71,7 @@ export function createLocalVideoTracks(ids: string[], timeout?: number) {
  * the audio track and the corresponding audio device information.
  *
  * @param {Object[]} devices - A list of microphone devices.
+ * @param {string} selectedDeviceId - The id of the microphone in use.
  * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  * @returns {Promise<{
  *   deviceId: string,
@@ -57,16 +80,21 @@ export function createLocalVideoTracks(ids: string[], timeout?: number) {
  *   label: string
  * }[]>}
  */
-export function createLocalAudioTracks(devices: Array<{ deviceId: string; label: string; }>, timeout?: number) {
+export function createLocalAudioTracks(
+        devices: Array<{ deviceId: string; label: string; }>,
+        selectedDeviceId: string,
+        timeout?: number) {
     return Promise.all(
         devices.map(async ({ deviceId, label }) => {
             let jitsiTrack = null;
             let hasError = false;
 
-            try {
-                jitsiTrack = await createLocalTrack('audio', deviceId, timeout);
-            } catch (err) {
-                hasError = true;
+            if (isPreviewed(deviceId, selectedDeviceId)) {
+                try {
+                    jitsiTrack = await createLocalTrack(MEDIA_TYPE.AUDIO, deviceId, timeout);
+                } catch (err) {
+                    hasError = true;
+                }
             }
 
             return {
