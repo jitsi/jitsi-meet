@@ -185,12 +185,19 @@ export class HumanHelper implements IFaceLandmarksHelper {
             return [];
         }
 
-        this.human.tf.engine().startScope();
+        const engine = this.human.tf.engine();
 
-        const imageTensor = this.human.tf.browser.fromPixels(image);
-        const { face: detections } = await this.human.detect(imageTensor, this.config);
+        engine.startScope();
 
-        this.human.tf.engine().endScope();
+        let detections: Array<FaceResult>;
+
+        try {
+            const imageTensor = this.human.tf.browser.fromPixels(image);
+
+            ({ face: detections } = await this.human.detect(imageTensor, this.config));
+        } finally {
+            engine.endScope();
+        }
 
         return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
     }
@@ -207,36 +214,39 @@ export class HumanHelper implements IFaceLandmarksHelper {
 
         this.detectionInProgress = true;
 
-        const detections = await this.getDetections(image);
+        try {
+            const detections = await this.getDetections(image);
 
-        if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-            faceExpression = this.getFaceExpression(detections);
-        }
-
-        if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
-            // if more than one face is detected the face centering will be disabled.
-            if (this.getFaceCount(detections) > 1) {
-                this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
-
-                // face-box for re-centering
-                faceBox = {
-                    left: 0,
-                    right: 100,
-                    width: 100
-                };
-            } else {
-                faceBox = this.getFaceBox(detections, threshold);
+            if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
+                faceExpression = this.getFaceExpression(detections);
             }
 
+            if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
+                // if more than one face is detected the face centering will be disabled.
+                if (this.getFaceCount(detections) > 1) {
+                    this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
+
+                    // face-box for re-centering
+                    faceBox = {
+                        left: 0,
+                        right: 100,
+                        width: 100
+                    };
+                } else {
+                    faceBox = this.getFaceBox(detections, threshold);
+                }
+
+            }
+
+            return {
+                faceExpression,
+                faceBox,
+                faceCount: this.getFaceCount(detections)
+            };
+        } finally {
+            this.detectionInProgress = false;
         }
 
-        this.detectionInProgress = false;
-
-        return {
-            faceExpression,
-            faceBox,
-            faceCount: this.getFaceCount(detections)
-        };
     }
 
     /**
