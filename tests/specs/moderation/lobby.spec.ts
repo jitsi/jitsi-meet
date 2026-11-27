@@ -376,6 +376,66 @@ describe('Lobby', () => {
         await p2.getFilmstrip().assertNoGapsInFilmstrip();
         await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
+
+    it('moderator sees the knocking participant once after moving to a breakout room', async () => {
+        await hangupAllParticipants();
+
+        await ensureTwoParticipants();
+
+        const { p1 } = ctx;
+
+        if (!await p1.isBreakoutRoomsSupported()) {
+            return;
+        }
+
+        await enableLobby();
+        await enterLobby(p1, false);
+
+        const lobbyParticipants = '//div[@id="lobby-list"]//div[starts-with(@id, "participant-item-")]';
+        const p1BreakoutRooms = p1.getBreakoutRooms();
+
+        await p1BreakoutRooms.addBreakoutRoom();
+        await p1.driver.waitUntil(
+            async () => await p1BreakoutRooms.getRoomsCount() === 1, {
+                timeout: 5000,
+                timeoutMsg: 'No breakout room added for p1'
+            });
+        await p1.driver.waitUntil(
+            async () => await p1.driver.$$(lobbyParticipants).length === 1, {
+                timeout: 5000,
+                timeoutMsg: 'The knocking participant is not in the lobby list of p1'
+            });
+
+        const [ room ] = await p1BreakoutRooms.getRooms();
+
+        await room.joinRoom();
+        await p1.driver.waitUntil(
+            () => p1.isInBreakoutRoom(), {
+                timeout: 10000,
+                timeoutMsg: 'p1 did not join the breakout room'
+            });
+
+        await p1.getNotifications().getKnockingParticipantName();
+
+        if (!await p1.getParticipantsPane().isOpen()) {
+            await p1.getParticipantsPane().open();
+        }
+
+        await p1.driver.waitUntil(
+            async () => await p1.driver.$$(lobbyParticipants).length === 1, {
+                timeout: 5000,
+                timeoutMsg: 'The knocking participant is not listed exactly once in the breakout room'
+            });
+
+        await ctx.p3.hangup();
+
+        await p1.getNotifications().waitForHideOfKnockingParticipants();
+        await p1.driver.waitUntil(
+            async () => await p1.driver.$$(lobbyParticipants).length === 0, {
+                timeout: 5000,
+                timeoutMsg: 'The knocking participant is still listed after leaving the lobby'
+            });
+    });
 });
 
 /**
