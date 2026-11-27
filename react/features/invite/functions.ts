@@ -26,6 +26,7 @@ import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import {
     DIAL_IN_INFO_PAGE_PATH_NAME,
     INVITE_TYPES,
+    MAX_SIP_ADDRESS_LENGTH,
     SIP_ADDRESS_REGEX,
     UPGRADE_OPTIONS_TEXT
 } from './constants';
@@ -551,8 +552,9 @@ function isMaybeAPhoneNumber(text: string): boolean {
  * @param {string} text - The text to check.
  * @returns {boolean} True if provided text matches a sip address format.
  */
-function isASipAddress(text: string): boolean {
-    return SIP_ADDRESS_REGEX.test(text);
+export function isASipAddress(text: string): boolean {
+    // The regex is quadratic on long input that almost matches, and this runs on text typed or pasted by the user.
+    return text.length <= MAX_SIP_ADDRESS_LENGTH && SIP_ADDRESS_REGEX.test(text);
 }
 
 /**
