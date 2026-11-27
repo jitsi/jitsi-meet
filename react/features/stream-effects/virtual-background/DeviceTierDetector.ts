@@ -136,14 +136,17 @@ export async function detectDeviceTier(
             }
         }
 
-        if (typeof vbConfig.segmentationWidth === 'number') {
-            caps.segWidth = vbConfig.segmentationWidth;
-            logger.debug(`[VirtualBackground] Config override: segmentationWidth = ${caps.segWidth}`);
-        }
+        // The LOW tier's TFLite model has a fixed 256x144 input size.
+        if (caps.tier !== DeviceTier.LOW) {
+            if (typeof vbConfig.segmentationWidth === 'number') {
+                caps.segWidth = vbConfig.segmentationWidth;
+                logger.debug(`[VirtualBackground] Config override: segmentationWidth = ${caps.segWidth}`);
+            }
 
-        if (typeof vbConfig.segmentationHeight === 'number') {
-            caps.segHeight = vbConfig.segmentationHeight;
-            logger.debug(`[VirtualBackground] Config override: segmentationHeight = ${caps.segHeight}`);
+            if (typeof vbConfig.segmentationHeight === 'number') {
+                caps.segHeight = vbConfig.segmentationHeight;
+                logger.debug(`[VirtualBackground] Config override: segmentationHeight = ${caps.segHeight}`);
+            }
         }
 
         if (typeof vbConfig.targetFps === 'number') {
