@@ -93,6 +93,8 @@ local verify_room_ok = true;
 local verify_room_calls = {};
 -- What the module asked of set_asap_require_room_claim, in load order.
 local require_room_claim_calls = {};
+-- The key servers the module gave set_asap_key_server, in load order.
+local key_server_calls = {};
 -- A breakout room the room lookups return for its JID, when a test sets one.
 local breakout_room = nil;
 -- Room JIDs the lookups no longer find, as after a room is destroyed.
@@ -183,7 +185,7 @@ local token_util_stub = {
         return {
             enableDomainVerification = true,
             requireRoomClaim = false,
-            set_asap_key_server = function() end,
+            set_asap_key_server = function(_, key_server) table.insert(key_server_calls, key_server); end,
             set_asap_require_room_claim = function(_, required)
                 table.insert(require_room_claim_calls, required);
             end,
@@ -697,6 +699,27 @@ describe('mod_voice_agent_component', function()
         it('rejects an endpoint.authorization with control characters', function()
             assert.are.equal(400, invite({ conference = 'r'; displayName = 'B';
                 endpoint = { url = 'wss://agents.example.com/s'; authorization = 'Bearer k\r\nX: 1' } }).status_code);
+        end)
+
+        it('rejects an endpoint.url with userinfo', function()
+            for _, url in ipairs({ 'wss://user@agents.example.com/s', 'wss://user:pass@agents.example.com/s',
+                                   'wss:///user:pass@agents.example.com/s', 'wss:////user@agents.example.com/s',
+                                   'wss://\\user@agents.example.com/s' }) do
+                assert.are.equal(400,
+                    invite({ conference = 'r'; displayName = 'B'; endpoint = { url = url } }).status_code, url);
+                assert.are.equal('endpoint.url must not contain credentials', encoded[#encoded].error);
+            end
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('accepts an endpoint.url without userinfo, an @ past the first slash included', function()
+            for i, url in ipairs({ 'wss://agents.example.com', 'wss://agents.example.com:8443/s?room=r',
+                                   'wss://agents.example.com/s/@me?as=bot@example.com',
+                                   'wss://agents.example.com?as=bot@example.com' }) do
+                assert.are.equal(200, invite({ conference = 'r'; displayName = 'B'; agentId = 'a' .. i;
+                    endpoint = { url = url } }).status_code, url);
+                assert.are.equal(url, mock_room._data.voice_agents['agent-a' .. i].endpoint.url);
+            end
         end)
 
         it('keeps the endpoint and its secret out of the client-facing entry', function()
@@ -1461,6 +1484,45 @@ describe('mod_voice_agent_component', function()
                 callbackUrl = 'https://eu.app.example.com:8443/hook' }).status_code);
         end)
 
+        it('refuses a callbackUrl with userinfo, on the listed host too', function()
+            for _, url in ipairs({ 'https://user@app.example.com/hook', 'https://user:pass@app.example.com/hook',
+                                   'https://app.example.com@app.example.com/hook' }) do
+                assert.are.equal(400,
+                    invite({ conference = 'r'; displayName = 'B'; callbackUrl = url }).status_code, url);
+                assert.are.equal('callbackUrl must not contain credentials', encoded[#encoded].error);
+            end
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('refuses an @ before the first slash behind a ? or #, which net.http can read as userinfo', function()
+            for _, url in ipairs({ 'https://app.example.com?@other.example.net/hook',
+                                   'https://app.example.com#@other.example.net/hook' }) do
+                assert.are.equal(400,
+                    invite({ conference = 'r'; displayName = 'B'; callbackUrl = url }).status_code, url);
+                assert.are.equal('callbackUrl must not contain credentials', encoded[#encoded].error);
+            end
+        end)
+
+        it('refuses a callbackUrl whose host net.http would read past a ?, # or backslash', function()
+            for _, url in ipairs({ 'https://app.example.com?.other.example.net/hook',
+                                   'https://app.example.com#.other.example.net/hook',
+                                   'https://app.example.com\\.other.example.net/hook',
+                                   'https://app.example.com?tenant=acme' }) do
+                assert.are.equal(400,
+                    invite({ conference = 'r'; displayName = 'B'; callbackUrl = url }).status_code, url);
+                assert.are.equal('Invalid callbackUrl', encoded[#encoded].error);
+            end
+        end)
+
+        it('accepts a callbackUrl without userinfo, an @ past the first slash included', function()
+            for i, url in ipairs({ 'https://app.example.com', 'https://app.example.com:8443/hook?tenant=acme',
+                                   'https://app.example.com/hook/@me?as=bot@example.com' }) do
+                assert.are.equal(200, invite({ conference = 'r'; displayName = 'B'; agentId = 'a' .. i;
+                    callbackUrl = url }).status_code, url);
+                assert.are.equal(url, mock_room._data.voice_agents['agent-a' .. i].callbackUrl);
+            end
+        end)
+
         it('logs only the host when a delivery gives up, never the URL\'s query string', function()
             http_next_code = 500;
             invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK .. '?token=sekrit' });
@@ -1659,6 +1721,7 @@ describe('mod_voice_agent_component', function()
             for k in pairs(routes) do routes[k] = nil; end
             for k in pairs(shared_store) do shared_store[k] = nil; end
             logs = {};
+            key_server_calls = {};
             assert(pcall(dofile, 'mod_voice_agent_component.lua'));
         end
         after_each(function()
@@ -1715,11 +1778,33 @@ describe('mod_voice_agent_component', function()
             assert.is_nil(next(routes), 'no route may be registered');
             local said_why = false;
             for _, entry in ipairs(logs) do
-                if entry.level == 'error' and entry.text:find('prosody_password_public_key_repo_url', 1, true) then
+                if entry.level == 'error' and entry.text:find('prosody_password_public_key_repo_url', 1, true)
+                        and entry.text:find('voice_agent_asap_key_server', 1, true) then
                     said_why = true;
                 end
             end
-            assert.is_true(said_why);
+            assert.is_true(said_why, 'the error must name both key repository options');
+            assert.are.same({}, key_server_calls);
+        end)
+
+        it('uses prosody_password_public_key_repo_url while voice_agent_asap_key_server is unset', function()
+            reload_with({});
+            assert.are.same({ 'https://keys.example.com/' }, key_server_calls);
+            reload_with({ voice_agent_asap_key_server = '' });
+            assert.are.same({ 'https://keys.example.com/' }, key_server_calls, 'an empty option counts as unset');
+        end)
+
+        it('uses voice_agent_asap_key_server when it is set, and never the shared key repository', function()
+            reload_with({ voice_agent_asap_key_server = 'https://agent-keys.example.com/' });
+            assert.are.same({ 'https://agent-keys.example.com/' }, key_server_calls);
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot' }).status_code);
+        end)
+
+        it('loads with voice_agent_asap_key_server as the only key repository', function()
+            reload_with({ voice_agent_asap_key_server = 'https://agent-keys.example.com/';
+                prosody_password_public_key_repo_url = '' });
+            assert.is_function(routes['POST voice-agent/invite']);
+            assert.are.same({ 'https://agent-keys.example.com/' }, key_server_calls);
         end)
 
         it('a dev rig without auth replays every missed event, rooms gone or not', function()
