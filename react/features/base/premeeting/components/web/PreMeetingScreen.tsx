@@ -57,6 +57,11 @@ interface IProps {
     name?: string;
 
     /**
+     * Shown over the camera preview.
+     */
+    previewContent?: ReactNode;
+
+    /**
      * Indicates whether the copy url button should be shown.
      */
     showCopyUrlButton?: boolean;
@@ -196,6 +201,7 @@ const PreMeetingScreen = ({
     _roomName,
     children,
     className,
+    previewContent,
     showDeviceStatus,
     showRecordingWarning,
     showUnsafeRoomWarning,
@@ -267,7 +273,9 @@ const PreMeetingScreen = ({
             </div>
             <Preview
                 videoMuted = { videoMuted }
-                videoTrack = { videoTrack } />
+                videoTrack = { videoTrack }>
+                {previewContent}
+            </Preview>
         </div>
     );
 };

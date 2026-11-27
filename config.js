@@ -959,6 +959,9 @@ var config = {
     //     preCallTestEnabled: false,
     //     preCallTestHelpUrl: '',
     //     preCallTestICEUrl: '',
+    //     // Offers the audio test in the camera preview to a user who hasn't gone through it, or skipped it, yet.
+    //     // Set to false to turn it off.
+    //     showAudioTest: true,
     //     // Shows the hangup button in the lobby screen.
     //     showHangUp: true,
     // },

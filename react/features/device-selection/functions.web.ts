@@ -14,6 +14,7 @@ import {
     groupDevicesByKind,
     isAudioOutputManagerEnabled
 } from '../base/devices/functions.web';
+import { IDevicesState } from '../base/devices/types';
 import { isIosMobileBrowser, isMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
@@ -26,6 +27,7 @@ import { getLocalJitsiAudioTrackSettings } from '../base/tracks/functions.any';
 import { isNoiseSuppressionEnabled } from '../noise-suppression/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from '../settings/constants';
+import { iAmVisitor } from '../visitors/functions';
 
 /**
  * Returns the properties for the audio device selection dialog from Redux state.
@@ -79,9 +81,39 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
         hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
         hideNoiseSuppression,
+        isDisplayedOnWelcomePage,
         noiseSuppressionEnabled,
         selectedAudioInputId,
         selectedAudioOutputId
+    };
+}
+
+/**
+ * Returns the devices that the audio test starts with: the preferred ones when they are listed, e.g. the ones the user
+ * chose, or else the OS default microphone, and the speakers of the same device, e.g. of a headset, or else the OS
+ * default speakers.
+ *
+ * @param {Object} availableDevices - The available devices, split by kind.
+ * @param {Object} [preferred] - The preferred devices.
+ * @param {string} [preferred.micId] - The preferred microphone.
+ * @param {string} [preferred.speakerId] - The preferred speakers.
+ * @returns {Object}
+ */
+export function getAudioTestDevices({ audioInput = [], audioOutput = [] }: IDevicesState['availableDevices'],
+        preferred: { micId?: string; speakerId?: string; } = {}) {
+    const find = (devices: MediaDeviceInfo[], id?: string) =>
+        id ? devices.find(({ deviceId }) => deviceId === id) : undefined;
+
+    // Chromium lists the OS default a second time with the 'default' id, the other browsers list it first.
+    const getOsDefault = (devices: MediaDeviceInfo[]) => find(devices, 'default') ?? devices[0];
+    const mic = find(audioInput, preferred.micId) ?? getOsDefault(audioInput);
+    const sameDevice = audioOutput.filter(({ deviceId, groupId }) =>
+        mic?.groupId && groupId === mic.groupId && deviceId !== 'communications');
+    const speaker = find(audioOutput, preferred.speakerId) ?? getOsDefault(sameDevice) ?? getOsDefault(audioOutput);
+
+    return {
+        micId: mic?.deviceId,
+        speakerId: speaker?.deviceId
     };
 }
 
@@ -136,6 +168,22 @@ export function getVideoDeviceSelectionDialogProps(stateful: IStateful, isDispla
         localFlipX: Boolean(localFlipX),
         selectedVideoInputId
     };
+}
+
+/**
+ * Whether the audio test can run: it records from a microphone track of its own, with a level meter.
+ *
+ * @param {IStateful} stateful - The (whole) redux state, or redux's {@code getState} function.
+ * @param {boolean} [isDisplayedOnWelcomePage] - Whether the settings are open on the welcome page.
+ * @returns {boolean}
+ */
+export function isAudioTestSupported(stateful: IStateful, isDisplayedOnWelcomePage = false) {
+    const state = toState(stateful);
+    const { hasAudioPermission, hideAudioInputPreview }
+        = getAudioDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage);
+
+    return Boolean(hasAudioPermission) && !hideAudioInputPreview && !iAmVisitor(state)
+        && typeof MediaRecorder !== 'undefined';
 }
 
 /**
@@ -291,3 +339,18 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
     return true;
 }
 
+/**
+ * Whether to offer the audio test in the pre-join preview: unless it is turned off, when the user hasn't gone through
+ * it, or skipped it, in this browser.
+ *
+ * @param {IStateful} stateful - The (whole) redux state, or redux's {@code getState} function.
+ * @returns {boolean}
+ */
+export function shouldShowAudioTestOnPrejoin(stateful: IStateful) {
+    const state = toState(stateful);
+
+    return state['features/base/config'].prejoinConfig?.showAudioTest !== false
+        && !state['features/base/settings'].audioTestDone
+        && !isMobileBrowser()
+        && isAudioTestSupported(state);
+}

@@ -14,11 +14,49 @@ import { toggleUpdateAudioSettings } from '../base/tracks/actions.web';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions.any';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions.web';
-import { setAudioSettings } from '../settings/actions.web';
+import { openSettingsDialog, setAudioSettings } from '../settings/actions.web';
+import { SETTINGS_TABS } from '../settings/constants';
 import { disposePreviewAudioTrack } from '../settings/functions.web';
 
 import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
+
+/**
+ * How long to wait for the devices that the audio test saved to be in use.
+ */
+const DEVICE_SWITCH_TIMEOUT = 5000;
+
+/**
+ * Opens the audio settings again once they show the devices that the audio test saved: the settings keep the devices
+ * they open with, so saving them would switch back otherwise.
+ *
+ * @param {string} [micId] - The microphone that the test saved.
+ * @param {string} [speakerId] - The speakers that the test saved.
+ * @param {boolean} isDisplayedOnWelcomePage - Whether the test was opened on the welcome page.
+ * @returns {Function}
+ */
+export function openAudioSettingsWhenApplied(micId: string | undefined, speakerId: string | undefined,
+        isDisplayedOnWelcomePage: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const giveUpAt = Date.now() + DEVICE_SWITCH_TIMEOUT;
+        const check = () => {
+            const { selectedAudioInputId, selectedAudioOutputId }
+                = getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
+
+            if ((!micId || selectedAudioInputId === micId) && (!speakerId || selectedAudioOutputId === speakerId)) {
+                // Unless the user opened something else meanwhile.
+                getState()['features/base/dialog'].component
+                    || dispatch(openSettingsDialog(SETTINGS_TABS.AUDIO, isDisplayedOnWelcomePage));
+            } else if (Date.now() < giveUpAt) {
+                window.setTimeout(check, 100);
+            } else {
+                logger.warn('Not opening the audio settings again: the devices of the audio test are not in use yet');
+            }
+        };
+
+        check();
+    };
+}
 
 /**
  * Submits the settings related to audio device selection.
@@ -74,6 +112,23 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
             dispatch(toggleUpdateAudioSettings(newState.audioSettings));
         }
     };
+}
+
+/**
+ * Saves the devices chosen in the audio test, the same way as the audio settings.
+ *
+ * @param {string} [micId] - The microphone.
+ * @param {string} [speakerId] - The speakers.
+ * @param {boolean} isDisplayedOnWelcomePage - Whether the test was opened on the welcome page.
+ * @returns {Function}
+ */
+export function submitAudioTestDevices(micId: string | undefined, speakerId: string | undefined,
+        isDisplayedOnWelcomePage: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => dispatch(submitAudioDeviceSelectionTab({
+        ...getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage),
+        selectedAudioInputId: micId,
+        selectedAudioOutputId: speakerId
+    }, isDisplayedOnWelcomePage));
 }
 
 /**

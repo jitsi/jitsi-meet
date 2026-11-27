@@ -662,6 +662,7 @@ export interface IConfig {
         preCallTestEnabled?: boolean;
         preCallTestHelpUrl?: string;
         preCallTestICEUrl?: string;
+        showAudioTest?: boolean;
         showHangUp?: boolean;
     };
     raisedHands?: {

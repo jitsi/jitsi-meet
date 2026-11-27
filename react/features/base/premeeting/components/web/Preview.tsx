@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
@@ -14,6 +14,11 @@ export interface IProps {
      * Local participant id.
      */
     _participantId: string;
+
+    /**
+     * Shown over the video or the avatar.
+     */
+    children?: ReactNode;
 
     /**
      * Flag controlling whether the video should be flipped or not.
@@ -43,7 +48,7 @@ export interface IProps {
  * @returns {ReactElement}
  */
 function Preview(props: IProps) {
-    const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
+    const { _participantId, children, flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
     useEffect(() => {
@@ -73,6 +78,7 @@ function Preview(props: IProps) {
                         participantId = { _participantId }
                         size = { 200 } />
                 )}
+            {children}
         </div>
     );
 }

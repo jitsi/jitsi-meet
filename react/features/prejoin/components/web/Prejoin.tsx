@@ -20,6 +20,8 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import isInsecureRoomName from '../../../base/util/isInsecureRoomName';
+import AudioTest from '../../../device-selection/components/AudioTest.web';
+import { shouldShowAudioTestOnPrejoin } from '../../../device-selection/functions.web';
 import { openDisplayNamePrompt } from '../../../display-name/actions';
 import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 import {
@@ -95,6 +97,11 @@ interface IProps {
      * Sets visibility of the 'JoinByPhoneDialog'.
      */
     setJoinByPhoneDialogVisiblity: Function;
+
+    /**
+     * Whether to offer the audio test in the camera preview.
+     */
+    showAudioTest: boolean;
 
     /**
      * Flag signaling the visibility of camera preview.
@@ -221,6 +228,7 @@ const Prejoin = ({
     prejoinConfig,
     readOnlyName,
     setJoinByPhoneDialogVisiblity,
+    showAudioTest,
     showCameraPreview,
     showDialog,
     showErrorOnJoin,
@@ -403,6 +411,7 @@ const Prejoin = ({
 
     return (
         <PreMeetingScreen
+            previewContent = { showAudioTest && <AudioTest inline = { true } /> }
             showDeviceStatus = { deviceStatusVisible }
             showRecordingWarning = { showRecordingWarning }
             showUnsafeRoomWarning = { showUnsafeRoomWarning }
@@ -517,6 +526,7 @@ function mapStateToProps(state: IReduxState) {
         participantId,
         prejoinConfig: state['features/base/config'].prejoinConfig,
         readOnlyName: isNameReadOnly(state),
+        showAudioTest: shouldShowAudioTestOnPrejoin(state),
         showCameraPreview: !isVideoMutedByUser(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         showErrorOnJoin,

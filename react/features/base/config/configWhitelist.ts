@@ -212,6 +212,7 @@ export default [
     'prejoinConfig.enabled',
     'prejoinConfig.hideDisplayName',
     'prejoinConfig.hideExtraJoinButtons',
+    'prejoinConfig.showAudioTest',
     'prejoinConfig.showHangUp',
     'raisedHands',
     'recordingService',
