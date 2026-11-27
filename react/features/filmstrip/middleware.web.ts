@@ -2,6 +2,7 @@ import { batch } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { IStore } from '../app/types';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -76,17 +77,23 @@ function _clearStageTimer(participantId: string) {
 }
 
 /**
- * Starts the timer that removes a participant from the stage after {@code ACTIVE_PARTICIPANT_TIMEOUT}. A timer
- * started earlier for the participant is cleared first, since it would remove the participant before that.
+ * Starts the timer that removes a participant from the stage after {@code ACTIVE_PARTICIPANT_TIMEOUT}, or starts
+ * it again then if the participant is still the active speaker. A timer started earlier for the participant is
+ * cleared first, since it would remove the participant before that.
  *
  * @param {string} participantId - The id of the participant.
- * @param {Function} dispatch - The redux dispatch function.
+ * @param {IStore} store - The redux store.
  * @returns {void}
  */
-function _startStageTimer(participantId: string, dispatch: Function) {
+function _startStageTimer(participantId: string, store: IStore) {
     _clearStageTimer(participantId);
-    timers.set(participantId,
-        setTimeout(() => dispatch(removeStageParticipant(participantId)), ACTIVE_PARTICIPANT_TIMEOUT));
+    timers.set(participantId, setTimeout(() => {
+        if (getDominantSpeakerParticipant(store.getState())?.id === participantId) {
+            _startStageTimer(participantId, store);
+        } else {
+            store.dispatch(removeStageParticipant(participantId));
+        }
+    }, ACTIVE_PARTICIPANT_TIMEOUT));
 }
 
 /**
@@ -258,7 +265,7 @@ MiddlewareRegistry.register(store => next => action => {
             if (pinned) {
                 _clearStageTimer(participantId);
             } else {
-                _startStageTimer(participantId, dispatch);
+                _startStageTimer(participantId, store);
             }
         }
 
@@ -268,16 +275,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case REMOVE_STAGE_PARTICIPANT: {
-        const state = store.getState();
-        const { participantId } = action;
-        const dominant = getDominantSpeakerParticipant(state);
-
-        if (participantId === dominant?.id) {
-            _startStageTimer(participantId, store.dispatch);
-
-            return;
-        }
-        _clearStageTimer(participantId);
+        // An explicit removal (follow me, self view disabled, fewer stage slots, ...) applies even to the active
+        // speaker. Only the timer keeps the active speaker on the stage, see _startStageTimer.
+        _clearStageTimer(action.participantId);
         break;
     }
     case DOMINANT_SPEAKER_CHANGED: {
@@ -345,7 +345,7 @@ MiddlewareRegistry.register(store => next => action => {
                 dispatch(setStageParticipants(queue));
 
                 // Unpinned, the participant stays on the stage only as the active speaker would.
-                _startStageTimer(participantId, dispatch);
+                _startStageTimer(participantId, store);
             } else {
                 dispatch(removeStageParticipant(participantId));
             }

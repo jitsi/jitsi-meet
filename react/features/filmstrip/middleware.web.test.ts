@@ -2,6 +2,7 @@ import { AnyAction, Store, createStore } from 'redux';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
 
 import {
     ADD_STAGE_PARTICIPANT,
@@ -86,6 +87,8 @@ const reducer = (state: IState | undefined, action: AnyAction): IState => {
     switch (action.type) {
     case 'SET_DOMINANT':
         return { ...current, dominant: action.id };
+    case 'SET_MAX_STAGE_PARTICIPANTS':
+        return { ...current, 'features/base/settings': { maxStageParticipants: action.max } };
     case SET_STAGE_PARTICIPANTS:
         return setStage(action.queue);
     case REMOVE_STAGE_PARTICIPANT:
@@ -174,5 +177,33 @@ describe('stage filmstrip timers', () => {
         store.dispatch({ id: 'x', type: 'SET_DOMINANT' });
         vi.advanceTimersByTime(ACTIVE_PARTICIPANT_TIMEOUT);
         expect(onStage()).toEqual([]);
+    });
+
+    it('removes the active speaker from the stage when asked to, as follow me does', () => {
+        add('a', true);
+        store.dispatch({ id: 'a', type: 'SET_DOMINANT' });
+
+        store.dispatch({ participantId: 'a', type: REMOVE_STAGE_PARTICIPANT });
+        expect(onStage()).toEqual([]);
+        expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('removes the local participant from the stage when the self view is disabled while they speak', () => {
+        add('local');
+        store.dispatch({ id: 'local', type: 'SET_DOMINANT' });
+
+        store.dispatch({ settings: { disableSelfView: true }, type: SETTINGS_UPDATED });
+        expect(onStage()).toEqual([]);
+    });
+
+    it('fits the stage to fewer slots even when that takes the active speaker off it', () => {
+        store.dispatch({ max: 2, type: 'SET_MAX_STAGE_PARTICIPANTS' });
+        add('a');
+        add('b');
+        store.dispatch({ id: 'a', type: 'SET_DOMINANT' });
+
+        store.dispatch({ max: 1, type: 'SET_MAX_STAGE_PARTICIPANTS' });
+        store.dispatch({ settings: { maxStageParticipants: 1 }, type: SETTINGS_UPDATED });
+        expect(onStage()).toEqual([ 'b' ]);
     });
 });
