@@ -444,7 +444,7 @@ const Chat = ({
                             className = { cx(classes.pollsPanel, _focusedTab !== ChatTabs.POLLS && 'hide') }
                             id = { `${ChatTabs.POLLS}-panel` }
                             role = 'tabpanel'
-                            tabIndex = { 1 }>
+                            tabIndex = { 0 }>
                             <PollsPane />
                         </div>
                         <KeyboardAvoider />
@@ -455,7 +455,7 @@ const Chat = ({
                     className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.CLOSED_CAPTIONS && 'hide') }
                     id = { `${ChatTabs.CLOSED_CAPTIONS}-panel` }
                     role = 'tabpanel'
-                    tabIndex = { 2 }>
+                    tabIndex = { 0 }>
                     <ClosedCaptionsTab />
                 </div> }
                 { _isFileSharingTabEnabled && <div
@@ -463,7 +463,7 @@ const Chat = ({
                     className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.FILE_SHARING && 'hide') }
                     id = { `${ChatTabs.FILE_SHARING}-panel` }
                     role = 'tabpanel'
-                    tabIndex = { 3 }>
+                    tabIndex = { 0 }>
                     <FileSharing />
                 </div> }
             </>
