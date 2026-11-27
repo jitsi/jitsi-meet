@@ -205,16 +205,22 @@ const ContextMenu = ({
         if (_overflowDrawer) {
             return;
         }
+        const menuOffsetParent = containerRef.current?.offsetParent;
+
         if (entity && offsetTarget
             && containerRef.current
-            && offsetTarget?.offsetParent
-            && offsetTarget.offsetParent instanceof HTMLElement
+            && menuOffsetParent instanceof HTMLElement
         ) {
             const { current: container } = containerRef;
 
             // make sure the max height is not set
             container.style.maxHeight = 'none';
-            const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
+            const { offsetHeight, scrollTop } = menuOffsetParent;
+            const offsetTop = offsetTarget.offsetParent === menuOffsetParent
+                ? offsetTarget.offsetTop
+                : offsetTarget.getBoundingClientRect().top
+                    - menuOffsetParent.getBoundingClientRect().top
+                    + scrollTop;
             let outerHeight = getComputedOuterHeight(container);
             let height = Math.min(MAX_HEIGHT, outerHeight);
 

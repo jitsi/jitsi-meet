@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
@@ -12,7 +13,12 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
-import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
+import {
+    getSortedParticipantIds,
+    isCurrentRoomRenamable,
+    participantMatchesSearch,
+    shouldRenderInviteButton
+} from '../../functions';
 import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
@@ -22,6 +28,12 @@ import MeetingParticipantItems from './MeetingParticipantItems';
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            flex: '0 1 auto'
+        },
+
         headingW: {
             color: theme.palette.participantWarningText
         },
@@ -42,6 +54,14 @@ const useStyles = makeStyles()(theme => {
                 textAlign: 'center',
                 paddingRight: '16px'
             }
+        },
+
+        listContainer: {
+            flex: '0 1 auto',
+            margin: `0 -${participantsPaneTheme.panePadding}px`,
+            maxHeight: '100%',
+            position: 'relative',
+            width: `calc(100% + ${participantsPaneTheme.panePadding * 2}px)`
         }
     };
 });
@@ -83,12 +103,8 @@ function MeetingParticipants({
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
-    // FIXME:
-    // It seems that useTranslation is not very scalable. Unmount 500 components that have the useTranslation hook is
-    // taking more than 10s. To workaround the issue we need to pass the texts as props. This is temporary and dirty
-    // solution!!!
-    // One potential proper fix would be to use react-window component in order to lower the number of components
-    // mounted.
+    // Virtualization is handled via react-window in MeetingParticipantItems to keep only
+    // visible rows mounted for large meetings.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
@@ -96,8 +112,34 @@ function MeetingParticipants({
 
     const { classes: styles } = useStyles();
 
+    const [ isMediumWidth, setIsMediumWidth ] = useState(() =>
+        typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+            ? window.matchMedia(`(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`).matches
+            : false
+    );
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+            return;
+        }
+
+        const mediaQuery = window.matchMedia(`(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`);
+        const handleChange = (e: MediaQueryListEvent) => setIsMediumWidth(e.matches);
+
+        setIsMediumWidth(mediaQuery.matches);
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
+
+    // ListItem height is 56px on desktop (including padding), 72px under MD_BREAKPOINT.
+    const itemSize = isMediumWidth ? 72 : 56;
+    const contentHeight = sortedParticipantIds.length * itemSize;
+
     return (
-        <>
+        <div className = { styles.container }>
             <span
                 aria-level = { 1 }
                 className = 'sr-only'
@@ -123,19 +165,26 @@ function MeetingParticipants({
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <div>
-                <MeetingParticipantItems
-                    isInBreakoutRoom = { isBreakoutRoom }
-                    lowerMenu = { lowerMenu }
-                    openDrawerForParticipant = { openDrawerForParticipant }
-                    overflowDrawer = { overflowDrawer }
-                    participantActionEllipsisLabel = { participantActionEllipsisLabel }
-                    participantIds = { sortedParticipantIds }
-                    raiseContextId = { raiseContext.entity }
-                    searchString = { normalizeAccents(searchString) }
-                    toggleMenu = { toggleMenu }
-                    youText = { youText } />
-            </div>
+            {sortedParticipantIds.length > 0 && (
+                <div
+                    className = { styles.listContainer }
+                    style = {{
+                        height: contentHeight,
+                        minHeight: Math.min(200, contentHeight)
+                    }}>
+                    <MeetingParticipantItems
+                        isInBreakoutRoom = { isBreakoutRoom }
+                        itemSize = { itemSize }
+                        lowerMenu = { lowerMenu }
+                        openDrawerForParticipant = { openDrawerForParticipant }
+                        overflowDrawer = { overflowDrawer }
+                        participantActionEllipsisLabel = { participantActionEllipsisLabel }
+                        participantIds = { sortedParticipantIds }
+                        raiseContextId = { raiseContext.entity }
+                        toggleMenu = { toggleMenu }
+                        youText = { youText } />
+                </div>
+            )}
             <MeetingParticipantContextMenu
                 closeDrawer = { closeDrawer }
                 drawerParticipant = { drawerParticipant }
@@ -145,8 +194,92 @@ function MeetingParticipants({
                 onSelect = { lowerMenu }
                 overflowDrawer = { overflowDrawer }
                 participantID = { raiseContext?.entity } />
-        </>
+        </div>
     );
+}
+
+type IStateProps = Omit<IProps, 'searchString' | 'setSearchString'>;
+
+/**
+ * Memoized selector that computes the filtered and sorted participant IDs and total count
+ * only when participant state, visitor status, or the search string changes.
+ */
+const getFilteredParticipantIds = createSelector(
+    (state: IReduxState) => state['features/base/participants'],
+    iAmVisitor,
+    (_state: IReduxState, searchString: string) => searchString,
+    (participants, _iAmVisitor, searchString) => {
+        const participantsState = { 'features/base/participants': participants } as IReduxState;
+
+        // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
+        // participants in the participants pane.
+        // Filter local participant when in visitor mode
+        const baseIds = getSortedParticipantIds(participantsState).filter((id): id is string => {
+            if (!id) {
+                return false;
+            }
+
+            const participant = getParticipantById(participantsState, id);
+
+            if (_iAmVisitor && participant?.local) {
+                return false;
+            }
+
+            return !isScreenShareParticipant(participant);
+        });
+
+        const participantsCount = baseIds.length;
+
+        if (!searchString) {
+            return {
+                participantsCount,
+                sortedParticipantIds: baseIds
+            };
+        }
+
+        const normalizedSearch = normalizeAccents(searchString);
+
+        return {
+            participantsCount,
+            sortedParticipantIds: baseIds.filter((id: string) => {
+                const participant = getParticipantById(participantsState, id);
+
+                return participantMatchesSearch(participant, normalizedSearch);
+            })
+        };
+    }
+);
+
+/**
+ * Compares state props by value, including element-wise comparison of {@code sortedParticipantIds},
+ * so {@code MeetingParticipants} does not re-render when the list of IDs is unchanged.
+ *
+ * @param {IStateProps} next - Next state props.
+ * @param {IStateProps} prev - Previous state props.
+ * @returns {boolean}
+ */
+function _areStatePropsEqual(next: IStateProps, prev: IStateProps) {
+    if (next.currentRoom !== prev.currentRoom
+        || next.overflowDrawer !== prev.overflowDrawer
+        || next.participantsCount !== prev.participantsCount
+        || next.showInviteButton !== prev.showInviteButton) {
+        return false;
+    }
+
+    const nextIds = next.sortedParticipantIds ?? [];
+    const prevIds = prev.sortedParticipantIds ?? [];
+
+    if (nextIds.length !== prevIds.length) {
+        return false;
+    }
+
+    for (let i = 0; i < nextIds.length; i++) {
+        if (nextIds[i] !== prevIds[i]) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -157,24 +290,8 @@ function MeetingParticipants({
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState) {
-    let sortedParticipantIds: any = getSortedParticipantIds(state);
-    const _iAmVisitor = iAmVisitor(state);
-
-    // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
-    // participants in the participants pane.
-    // Filter local participant when in visitor mode
-    sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
-        const participant = getParticipantById(state, id);
-
-        if (_iAmVisitor && participant?.local) {
-            return false;
-        }
-
-        return !isScreenShareParticipant(participant);
-    });
-
-    const participantsCount = sortedParticipantIds.length;
+function _mapStateToProps(state: IReduxState, ownProps: Pick<IProps, 'searchString'>) {
+    const { participantsCount, sortedParticipantIds } = getFilteredParticipantIds(state, ownProps.searchString);
     const showInviteButton = shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
@@ -189,4 +306,9 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default connect(_mapStateToProps)(MeetingParticipants);
+export default connect(
+    _mapStateToProps,
+    undefined,
+    undefined,
+    { areStatePropsEqual: _areStatePropsEqual }
+)(MeetingParticipants);
