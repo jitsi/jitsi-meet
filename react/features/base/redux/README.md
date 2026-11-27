@@ -17,7 +17,7 @@ PersistenceRegistry.register('features/base/settings', {
 });
 ```
 
-in the `reducer.js` of the `base/settings` feature.
+in `react/features/base/settings/reducer.ts` (optionally passing a `defaultState` as the third argument).
 
 If the second parameter is omitted, the entire feature state is persisted.
 
@@ -31,7 +31,7 @@ the persistence layer, meaning that the storage gets persisted only once every 2
 seconds, even if multiple redux state changes occur during this period. The
 throttling timeout can be configured in
 ```
-react/features/base/storage/middleware.js#PERSIST_STATE_DELAY
+react/features/base/redux/middleware.ts#PERSIST_STATE_DELAY
 ```
 
 Serialization
