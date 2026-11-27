@@ -20,30 +20,32 @@ const RETRY_TIMEOUT = 3000;
  * through the Promise.
  */
 export function doGetJSON(url: string, retry?: boolean, options?: Object) {
-    const fetchPromise = fetch(url, options)
+    const doFetch = () => fetch(url, options)
         .then(response => {
-            const jsonify = response.json();
-
             if (response.ok) {
-                return jsonify;
+                return response.json();
             }
 
-            return jsonify
-                .then(result => Promise.reject(result));
+            return response.json()
+                .catch(() => undefined)
+                .then(result => Promise.reject({
+                    status: response.status,
+                    ...typeof result === 'object' ? result : {}
+                }));
         });
 
     if (retry) {
-        return timeoutPromise(fetchPromise, RETRY_TIMEOUT)
+        return timeoutPromise(doFetch(), RETRY_TIMEOUT)
             .catch(response => {
-                if (response.status >= 400 && response.status < 500) {
+                if (response?.status >= 400 && response.status < 500) {
                     return Promise.reject(response);
                 }
 
-                return timeoutPromise(fetchPromise, RETRY_TIMEOUT);
+                return timeoutPromise(doFetch(), RETRY_TIMEOUT);
             });
     }
 
-    return fetchPromise;
+    return doFetch();
 }
 
 /**

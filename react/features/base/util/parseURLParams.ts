@@ -46,8 +46,8 @@ export function parseURLParams(
     }
 
     paramParts.forEach((part: string) => {
-        const param = part.split('=');
-        const key = param[0];
+        const separatorIndex = part.indexOf('=');
+        const key = separatorIndex === -1 ? part : part.slice(0, separatorIndex);
 
         if (!key || key.split('.').some((k: string) => blacklist.includes(k))) {
             return;
@@ -56,10 +56,10 @@ export function parseURLParams(
         let value;
 
         try {
-            value = param[1];
+            value = separatorIndex === -1 ? undefined : part.slice(separatorIndex + 1);
 
             if (!dontParse) {
-                const decoded = decodeURIComponent(value).replace(/\\&/, '&')
+                const decoded = decodeURIComponent(value as string).replace(/\\&/g, '&')
                     .replace(/[\u2018\u2019]/g, '\'')
                     .replace(/[\u201C\u201D]/g, '"');
 
