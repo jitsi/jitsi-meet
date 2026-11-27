@@ -73,6 +73,15 @@ class AudioDeviceHandlerGeneric implements
     private AudioManager.OnModeChangedListener modeChangedListener;
 
     /**
+     * Whether we asked the system to route communication audio to a Bluetooth LE Audio headset.
+     * Such a headset has no SCO link: it is selected with
+     * {@link AudioManager#setCommunicationDevice(AudioDeviceInfo)} (API >= 31) and stays selected
+     * until that request is cleared. Volatile because {@link #stop()} can run outside the audio
+     * thread.
+     */
+    private volatile boolean bleHeadsetRequested = false;
+
+    /**
      * {@link AudioManager} instance used to interact with the Android audio
      * subsystem.
      */
@@ -92,6 +101,13 @@ class AudioDeviceHandlerGeneric implements
                 switch (info.getType()) {
                     case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
                         devices.add(AudioModeModule.DEVICE_BLUETOOTH);
+                        break;
+                    case AudioDeviceInfo.TYPE_BLE_HEADSET:
+                        // Only the output can be selected as the communication device; the
+                        // input of the same headset is added and removed separately.
+                        if (info.isSink()) {
+                            devices.add(AudioModeModule.DEVICE_BLUETOOTH);
+                        }
                         break;
                     case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
                         devices.add(AudioModeModule.DEVICE_EARPIECE);
@@ -187,12 +203,55 @@ class AudioDeviceHandlerGeneric implements
      */
     private void setBluetoothAudioRoute(boolean enabled) {
         if (enabled) {
+            if (requestBleHeadset()) {
+                return;
+            }
             audioManager.startBluetoothSco();
             audioManager.setBluetoothScoOn(true);
         } else {
             audioManager.setBluetoothScoOn(false);
             audioManager.stopBluetoothSco();
         }
+    }
+
+    /**
+     * Routes communication audio to the connected Bluetooth LE Audio headset, if there is one.
+     *
+     * @return true if an LE Audio headset was selected, false if the SCO path should be used.
+     */
+    private boolean requestBleHeadset() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return false;
+        }
+
+        for (AudioDeviceInfo info: audioManager.getAvailableCommunicationDevices()) {
+            if (info.getType() == AudioDeviceInfo.TYPE_BLE_HEADSET) {
+                if (audioManager.setCommunicationDevice(info)) {
+                    bleHeadsetRequested = true;
+                    JitsiMeetLogger.i(TAG + " LE Audio headset selected");
+
+                    return true;
+                }
+
+                JitsiMeetLogger.w(TAG + " LE Audio headset could not be selected");
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gives up the LE Audio headset selected by {@link #requestBleHeadset()}. Only a request made
+     * by this handler is cleared, so a communication device chosen by the host application is
+     * left alone.
+     */
+    private void releaseBleHeadset() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !bleHeadsetRequested) {
+            return;
+        }
+
+        audioManager.clearCommunicationDevice();
+        bleHeadsetRequested = false;
     }
 
     @Override
@@ -227,15 +286,26 @@ class AudioDeviceHandlerGeneric implements
             audioManager.removeOnModeChangedListener(modeChangedListener);
             modeChangedListener = null;
         }
+
+        // The next handler would not know about the request and could not clear it.
+        releaseBleHeadset();
     }
 
     @Override
     public void setAudioRoute(String device) {
+        boolean bluetooth = device.equals(AudioModeModule.DEVICE_BLUETOOTH);
+
+        // Before the speaker is turned on: on API >= 31 the speaker is a communication device
+        // request too, and clearing afterwards would cancel it.
+        if (!bluetooth) {
+            releaseBleHeadset();
+        }
+
         // Turn speaker on / off
         audioManager.setSpeakerphoneOn(device.equals(AudioModeModule.DEVICE_SPEAKER));
 
         // Turn bluetooth on / off
-        setBluetoothAudioRoute(device.equals(AudioModeModule.DEVICE_BLUETOOTH));
+        setBluetoothAudioRoute(bluetooth);
     }
 
     @Override
@@ -246,6 +316,7 @@ class AudioDeviceHandlerGeneric implements
             audioFocusLost = false;
             audioManager.setMode(AudioManager.MODE_NORMAL);
             audioManager.abandonAudioFocus(this);
+            releaseBleHeadset();
             audioManager.setSpeakerphoneOn(false);
             setBluetoothAudioRoute(false);
 
