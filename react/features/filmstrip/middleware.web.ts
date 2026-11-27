@@ -2,6 +2,7 @@ import { batch } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { IStore } from '../app/types';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -58,11 +59,42 @@ import {
 import './subscriber.web';
 
 /**
- * Map of timers.
+ * The timers that remove the participants who are on the stage without being pinned, by participant id.
  *
  * @type {Map}
  */
 const timers = new Map();
+
+/**
+ * Clears the timer that removes a participant from the stage, if any.
+ *
+ * @param {string} participantId - The id of the participant.
+ * @returns {void}
+ */
+function _clearStageTimer(participantId: string) {
+    clearTimeout(timers.get(participantId));
+    timers.delete(participantId);
+}
+
+/**
+ * Starts the timer that removes a participant from the stage after {@code ACTIVE_PARTICIPANT_TIMEOUT}, or starts
+ * it again then if the participant is still the active speaker. A timer started earlier for the participant is
+ * cleared first, since it would remove the participant before that.
+ *
+ * @param {string} participantId - The id of the participant.
+ * @param {IStore} store - The redux store.
+ * @returns {void}
+ */
+function _startStageTimer(participantId: string, store: IStore) {
+    _clearStageTimer(participantId);
+    timers.set(participantId, setTimeout(() => {
+        if (getDominantSpeakerParticipant(store.getState())?.id === participantId) {
+            _startStageTimer(participantId, store);
+        } else {
+            store.dispatch(removeStageParticipant(participantId));
+        }
+    }, ACTIVE_PARTICIPANT_TIMEOUT));
+}
 
 /**
  * The middleware of the feature Filmstrip.
@@ -179,10 +211,6 @@ MiddlewareRegistry.register(store => next => action => {
                 participantId,
                 pinned
             });
-            const tid = timers.get(participantId);
-
-            clearTimeout(tid);
-            timers.delete(participantId);
         } else if (activeParticipants.length < (maxStageParticipants ?? 0)) {
             queue = [ ...activeParticipants, {
                 participantId,
@@ -224,12 +252,20 @@ MiddlewareRegistry.register(store => next => action => {
         // participants.
         // IMPORTANT: setting active participants to undefined will crash jitsi-meet.
         if (typeof queue !== 'undefined') {
-            dispatch(setStageParticipants(queue));
-            if (!pinned) {
-                const timeoutId = setTimeout(() => dispatch(removeStageParticipant(participantId)),
-                    ACTIVE_PARTICIPANT_TIMEOUT);
+            const newQueue = queue;
 
-                timers.set(participantId, timeoutId);
+            dispatch(setStageParticipants(newQueue));
+
+            // The participants this pushed off the stage must not keep their timers: left running, such a timer
+            // would remove them early if they come back on the stage before it fires.
+            activeParticipants
+                .filter(p => !newQueue.some(q => q.participantId === p.participantId))
+                .forEach(p => _clearStageTimer(p.participantId));
+
+            if (pinned) {
+                _clearStageTimer(participantId);
+            } else {
+                _startStageTimer(participantId, store);
             }
         }
 
@@ -239,22 +275,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case REMOVE_STAGE_PARTICIPANT: {
-        const state = store.getState();
-        const { participantId } = action;
-        const tid = timers.get(participantId);
-
-        clearTimeout(tid);
-        timers.delete(participantId);
-        const dominant = getDominantSpeakerParticipant(state);
-
-        if (participantId === dominant?.id) {
-            const timeoutId = setTimeout(() => store.dispatch(removeStageParticipant(participantId)),
-                ACTIVE_PARTICIPANT_TIMEOUT);
-
-            timers.set(participantId, timeoutId);
-
-            return;
-        }
+        // An explicit removal (follow me, self view disabled, fewer stage slots, ...) applies even to the active
+        // speaker. Only the timer keeps the active speaker on the stage, see _startStageTimer.
+        _clearStageTimer(action.participantId);
         break;
     }
     case DOMINANT_SPEAKER_CHANGED: {
@@ -282,11 +305,9 @@ MiddlewareRegistry.register(store => next => action => {
         const activeParticipantsIds = getActiveParticipantsIds(state);
 
         if (activeParticipantsIds.find(pId => pId === id)) {
-            const tid = timers.get(id);
             const { activeParticipants } = state['features/filmstrip'];
 
-            clearTimeout(tid);
-            timers.delete(id);
+            _clearStageTimer(id);
             store.dispatch(setStageParticipants(activeParticipants.filter(p => p.participantId !== id)));
         }
         break;
@@ -322,6 +343,9 @@ MiddlewareRegistry.register(store => next => action => {
                 });
 
                 dispatch(setStageParticipants(queue));
+
+                // Unpinned, the participant stays on the stage only as the active speaker would.
+                _startStageTimer(participantId, store);
             } else {
                 dispatch(removeStageParticipant(participantId));
             }
@@ -333,12 +357,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CLEAR_STAGE_PARTICIPANTS: {
         const activeParticipants = getActiveParticipantsIds(store.getState());
 
-        activeParticipants.forEach(pId => {
-            const tid = timers.get(pId);
-
-            clearTimeout(tid);
-            timers.delete(pId);
-        });
+        activeParticipants.forEach(_clearStageTimer);
     }
     }
 
