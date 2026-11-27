@@ -98,24 +98,29 @@ function UploadImageButton({
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
-            const url = await resizeImage(reader.result);
-            const uuId = uuidv4();
+            try {
+                const url = await resizeImage(reader.result);
+                const uuId = uuidv4();
 
-            setStoredImages([
-                ...storedImages,
-                {
-                    id: uuId,
-                    src: url
-                }
-            ]);
-            setOptions({
-                backgroundEffectEnabled: true,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
-                selectedThumbnail: uuId,
-                virtualSource: url
-            });
+                setStoredImages([
+                    ...storedImages,
+                    {
+                        id: uuId,
+                        src: url
+                    }
+                ]);
+                setOptions({
+                    backgroundEffectEnabled: true,
+                    backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                    selectedThumbnail: uuId,
+                    virtualSource: url
+                });
+                logger.info('New virtual background image uploaded!');
+            } catch (error) {
+                setLoading(false);
+                logger.error('Failed to upload virtual image!', error);
+            }
         };
-        logger.info('New virtual background image uploaded!');
 
         reader.onerror = () => {
             setLoading(false);

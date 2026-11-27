@@ -74,26 +74,31 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
     // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
     // the image happens to be in the cache and the browser is able to deliver the uncompressed/decoded image
     // before using the image in the drawImage call.
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const img = document.createElement('img');
 
         img.onload = function() {
-            // Create an off-screen canvas.
-            const canvas = document.createElement('canvas');
+            try {
+                // Create an off-screen canvas.
+                const canvas = document.createElement('canvas');
 
-            // Set its dimension to target size.
-            const context = canvas.getContext('2d');
+                // Set its dimension to target size.
+                const context = canvas.getContext('2d');
 
-            canvas.width = width;
-            canvas.height = height;
+                canvas.width = width;
+                canvas.height = height;
 
-            // Draw source image into the off-screen canvas.
-            // TODO: keep aspect ratio and implement object-fit: cover.
-            context?.drawImage(img as any, 0, 0, width, height);
+                // Draw source image into the off-screen canvas.
+                // TODO: keep aspect ratio and implement object-fit: cover.
+                context?.drawImage(img as any, 0, 0, width, height);
 
-            // Encode image to data-uri with base64 version of compressed image.
-            resolve(canvas.toDataURL('image/jpeg', 0.5));
+                // Encode image to data-uri with base64 version of compressed image.
+                resolve(canvas.toDataURL('image/jpeg', 0.5));
+            } catch (error) {
+                reject(error);
+            }
         };
+        img.onerror = () => reject(new Error('Failed to load image'));
         img.src = base64image;
     });
 }
