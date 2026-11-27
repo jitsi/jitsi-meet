@@ -74,8 +74,11 @@ The application builds multiple bundles:
 - `app.bundle.js` / `app.bundle.min.js` - Main application bundle (entry: `./app.js`)
 - `external_api.js` / `external_api.min.js` - External API for embedders (entry: `./modules/API/external/index.js`)
 - `alwaysontop.js` / `alwaysontop.min.js` - Always-on-top window functionality (entry: `./react/features/always-on-top/index.tsx`)
+- `documentpip.js` / `documentpip.min.js` - Document Picture-in-Picture window functionality (entry: `./react/features/always-on-top/document-pip-index.tsx`)
 - `close3.js` / `close3.min.js` - Close3 functionality (entry: `./static/close3.js`)
+- `preload.js` / `preload.min.js` - Preload script (entry: `./react/features/preload/preload.web.ts`)
 - `face-landmarks-worker.js` / `face-landmarks-worker.min.js` - Face landmarks detection worker (entry: `./react/features/face-landmarks/faceLandmarksWorker.ts`)
+- `vb-inference-worker.js` / `vb-inference-worker.min.js` - Virtual background inference worker (entry: `./react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts`)
 - `noise-suppressor-worklet.js` / `noise-suppressor-worklet.min.js` - Audio noise suppression worklet (entry: `./react/features/stream-effects/noise-suppression/NoiseSuppressorWorklet.ts`)
 - `screenshot-capture-worker.js` / `screenshot-capture-worker.min.js` - Screenshot capture worker (entry: `./react/features/screenshot-capture/worker.ts`)
 
@@ -210,13 +213,13 @@ react/features/sample/
 ### TypeScript Requirements
 - All new features must be written in TypeScript
 - Convert JavaScript to TypeScript when modifying existing code
-- Import middleware in `react/features/app/middlewares.{any,native,web}.js`
+- Import middleware in `react/features/app/middlewares.{any,native,web}.ts`
 - Import reducers in appropriate registry files
 - Avoid `index` files
 
 ### Bundle Size Management
 - Bundle size limits are enforced to prevent bloat
-- For increases, analyze first: `npx webpack -p --analyze-bundle`
+- For increases, analyze first: `ANALYZE_BUNDLE=true npx webpack`
 - Open analyzer: `npx webpack-bundle-analyzer build/app-stats.json`
 - Justify any dependency additions that increase bundle size
 
@@ -258,7 +261,7 @@ react/features/sample/
 
 ### Core Application Files
 - **`./conference.js`** - Foundation for user-conference interactions (connection, joining, muting)
-- **`./modules/external-api`** - External API for iframe integration and events
+- **`./modules/API/external/`** - External API for iframe integration and events
 - **`./lang/`** - Translations in `main-[language].json` files
 - **`./css/`** - SCSS files organized by features, matching React feature structure
 

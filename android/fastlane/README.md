@@ -20,7 +20,7 @@ or alternatively using `brew cask install fastlane`
 ```
 fastlane android deploy
 ```
-Deploy a new version to Goolge Play (Closed Beta)
+Deploy a new version to Google Play (Closed Beta)
 
 ----
 

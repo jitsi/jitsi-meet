@@ -4,7 +4,7 @@ opt_out_usage
 default_platform(:android)
 
 platform :android do
-    desc "Deploy a new version to Goolge Play (Closed Beta)"
+    desc "Deploy a new version to Google Play (Closed Beta)"
     lane :deploy do
         # Cleanup
         gradle(task: "clean")

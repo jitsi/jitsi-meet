@@ -16,7 +16,7 @@ node node_modules/@jitsi/react-native-sdk/update_dependencies.js
 This will check and update all your dependencies.<br/><br/>
 After that you need to ```npm i```, if some dependency versions were updated.
 
- [comment]: # (These deps definitely need to be added manually, more could be neccesary)
+ [comment]: # (These deps definitely need to be added manually, more could be necessary)
 
 Because of SVG use in react native, you need to update metro.config your project's file:
 
@@ -56,7 +56,7 @@ module.exports = (async () => {
 - Add a *Privacy - Microphone Usage Description*
 
 #### General
-- Signing & capabilites:
+- Signing & capabilities:
     - Add Background modes
         - Audio
         - Voice over IP
@@ -162,7 +162,7 @@ changes.
 - Go to your `MainApplication.java` file and add:
     1. `import com.oney.WebRTCModule.WebRTCModuleOptions;` that comes from `react-native-webrtc` dependency.
 
-    2. `WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();` instance it.
+    2. `WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();` instantiate it.
     3. `options.enableMediaProjectionService = true;` enable foreground service that takes care of screen-sharing feature.
 
 - Go to your `android/app/src/main/AndroidManifest.xml`, under the `</application>` tag and include
