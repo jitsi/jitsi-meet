@@ -10,30 +10,25 @@ import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { setFollowMe, setFollowMeRecorder, setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { getModeratorTabProps } from '../../functions.native';
+import { MODERATOR_PERMISSION_SETTINGS } from '../../moderatorPermissions';
 
 import FormRow from './FormRow';
 import FormSection from './FormSection';
 
 const ModeratorSection = () => {
     const dispatch = useDispatch();
+    const moderatorProps = useSelector((state: IReduxState) => getModeratorTabProps(state), shallowEqual);
     const {
         audioModerationEnabled,
-        breakoutRoomJoinWithPermissionsEnabled,
-        chatWithPermissionsEnabled,
-        privateChatWithPermissionsEnabled,
-        sharedVideoWithPermissionsEnabled,
-        showSharedVideoWithPermissions,
-        showBreakoutRoomJoinWithPermissions,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
         followMeRecorderEnabled,
-        hideChatWithPermissions,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted,
         videoModerationEnabled
-    } = useSelector((state: IReduxState) => getModeratorTabProps(state), shallowEqual);
+    } = moderatorProps;
 
     const { disableReactionsModeration } = useSelector((state: IReduxState) => state['features/base/config']);
 
@@ -83,8 +78,7 @@ const ModeratorSection = () => {
                 delete pendingPermissions.current[key];
             }
         }
-    }, [ conference, chatWithPermissionsEnabled, privateChatWithPermissionsEnabled, sharedVideoWithPermissionsEnabled,
-        breakoutRoomJoinWithPermissionsEnabled ]);
+    }, [ conference, moderatorProps ]);
 
     const setPermission = useCallback((key: string, enabled?: boolean) => {
         pendingPermissions.current[key] = enabled;
@@ -94,22 +88,6 @@ const ModeratorSection = () => {
             ...pendingPermissions.current
         });
     }, [ conference ]);
-
-    const onChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        setPermission('groupChatRestricted', enabled);
-    }, [ setPermission ]);
-
-    const onPrivateChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        setPermission('privateChatRestricted', enabled);
-    }, [ setPermission ]);
-
-    const onSharedVideoWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        setPermission('sharedVideoRestricted', enabled);
-    }, [ setPermission ]);
-
-    const onBreakoutRoomJoinWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        setPermission('breakoutRoomJoinRestricted', enabled);
-    }, [ setPermission ]);
 
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
@@ -146,30 +124,15 @@ const ModeratorSection = () => {
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
             },
-            {
-                hidden: hideChatWithPermissions,
-                label: 'settings.chatWithPermissions',
-                state: chatWithPermissionsEnabled,
-                onChange: onChatWithPermissionsToggled
-            },
-            {
-                hidden: hideChatWithPermissions,
-                label: 'settings.privateChatWithPermissions',
-                state: privateChatWithPermissionsEnabled,
-                onChange: onPrivateChatWithPermissionsToggled
-            },
-            {
-                hidden: !showSharedVideoWithPermissions,
-                label: 'settings.sharedVideoWithPermissions',
-                state: sharedVideoWithPermissionsEnabled,
-                onChange: onSharedVideoWithPermissionsToggled
-            },
-            {
-                hidden: !showBreakoutRoomJoinWithPermissions,
-                label: 'settings.breakoutRoomJoinWithPermissions',
-                state: breakoutRoomJoinWithPermissionsEnabled,
-                onChange: onBreakoutRoomJoinWithPermissionsToggled
-            },
+            ...MODERATOR_PERMISSION_SETTINGS.map(({ isShown, labelKey, metadataKey, propKey }) => {
+                return {
+                    disabled: false,
+                    hidden: !isShown(moderatorProps),
+                    label: labelKey,
+                    state: moderatorProps[propKey],
+                    onChange: (enabled?: boolean) => setPermission(metadataKey, enabled)
+                };
+            })
         ];
 
         // Hide the entries that the config or the room does not allow.
@@ -184,22 +147,13 @@ const ModeratorSection = () => {
         followMeRecorderChecked,
         followMeRecorderEnabled,
         disableReactionsModeration,
-        hideChatWithPermissions,
+        moderatorProps,
         onStartAudioMutedToggled,
         onStartVideoMutedToggled,
         onFollowMeToggled,
         onFollowMeRecorderToggled,
         onStartReactionsMutedToggled,
-        onChatWithPermissionsToggled,
-        onPrivateChatWithPermissionsToggled,
-        onSharedVideoWithPermissionsToggled,
-        chatWithPermissionsEnabled,
-        privateChatWithPermissionsEnabled,
-        sharedVideoWithPermissionsEnabled,
-        showSharedVideoWithPermissions,
-        onBreakoutRoomJoinWithPermissionsToggled,
-        breakoutRoomJoinWithPermissionsEnabled,
-        showBreakoutRoomJoinWithPermissions,
+        setPermission,
         startReactionsMuted ]);
 
     return (
