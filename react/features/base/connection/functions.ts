@@ -81,6 +81,18 @@ export function isInviteURLReady(stateOrGetState: IStateful): boolean {
 }
 
 /**
+ * Checks whether the server of the current connection advertised the given feature. Prosody modules advertise their
+ * features with the 'jitsi-add-feature' event; nothing is advertised with an older Prosody or lib-jitsi-meet.
+ *
+ * @param {Function|Object} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @param {string} feature - The feature to check, e.g. 'http://jitsi.org/protocol/filter_messages#chat_permissions'.
+ * @returns {boolean}
+ */
+export function isServerFeatureSupported(stateful: IStateful, feature: string): boolean {
+    return Boolean(toState(stateful)['features/base/connection'].serverFeatures?.includes(feature));
+}
+
+/**
  * Converts a specific id to jid if it's not jid yet.
  *
  * @param {string} id - User id or jid.

@@ -42,6 +42,17 @@ export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 export const CONNECTION_PROPERTIES_UPDATED = 'CONNECTION_PROPERTIES_UPDATED';
 
 /**
+ * The type of (redux) action which signals that the features the server advertises were received or changed.
+ *
+ * {
+ *     type: CONNECTION_SERVER_FEATURES_UPDATED,
+ *     connection: JitsiConnection,
+ *     features: Array<string>
+ * }
+ */
+export const CONNECTION_SERVER_FEATURES_UPDATED = 'CONNECTION_SERVER_FEATURES_UPDATED';
+
+/**
  * The type of (redux) action which signals that a connection will connect.
  *
  * {

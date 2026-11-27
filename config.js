@@ -146,15 +146,15 @@ var config = {
     // disablePolls: false,
 
     // Shows/hides the "Allow only one answer" option when creating a poll. The option is sent with
-    // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus enable this
-    // only when both support it. With visitors, enable it only once the main and all visitor prosodies run a
-    // mod_polls_component with single answer support: an old visitor node shows checkboxes and keeps multi-answer
-    // votes locally.
+    // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus the option is shown
+    // only when this is enabled and the server advertises that support. With visitors, enable it only once the
+    // main and all visitor prosodies run a mod_polls_component with single answer support: an old visitor node
+    // shows checkboxes and keeps multi-answer votes locally.
     // showPollSingleAnswerSetting: false,
 
     // Shows/hides the "End poll" button for the poll's creator and moderators. Closing a poll is enforced by
-    // the mod_polls_component prosody module, thus enable this only when the server runs a version of that
-    // module that supports it.
+    // the mod_polls_component prosody module, thus the button is shown only when this is enabled and the server
+    // advertises that support.
     // showEndPollButton: false,
 
     // Disables chat feature entirely including notifications, sounds, and private messages.
@@ -171,19 +171,19 @@ var config = {
 
     // Shows/hides the moderator settings that restrict group chat and private chat to the participants with the
     // `send-groupchat` and `send-private-message` permissions. The restrictions are enforced by the
-    // mod_filter_messages prosody module, thus enable this only when that module is loaded on the main MUC
-    // component and on the breakout rooms MUC component.
+    // mod_filter_messages prosody module, thus the settings are shown only when this is enabled and the server
+    // advertises that module. The server advertises features with mod_features_identity on the main virtual host.
     // showChatPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts video sharing to the participants with the
-    // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
-    // thus enable this only when that module is loaded on the main MUC component and on the breakout rooms MUC
-    // component.
+    // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module, thus the
+    // setting is shown only when this is enabled and the server advertises that module. Load it on the main MUC
+    // component and on the breakout rooms MUC component.
     // showSharedVideoPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator
-    // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus enable this
-    // only when the server runs a version of that module that supports it. Older clients still show Join while
+    // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus the setting is shown
+    // only when this is enabled and the server advertises that support. Older clients still show Join while
     // the restriction is on: the server refuses that join and lib-jitsi-meet moves them back to the main room.
     // showBreakoutRoomJoinPermissionsModeratorSetting: false,
 
