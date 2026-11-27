@@ -7,7 +7,7 @@ import AbstractGrantModeratorDialog, { abstractMapStateToProps }
     from '../AbstractGrantModeratorDialog';
 
 /**
- * Dialog to confirm a remote participant kick action.
+ * Dialog to confirm a grant moderator action.
  */
 class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     /**
@@ -23,7 +23,8 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
                     `${this.props.t('dialog.grantModeratorDialog',
                         { participantName: this.props.participantName })}`
                 }
-                onSubmit = { this._onSubmit } />
+                onSubmit = { this._onSubmit }
+                title = 'dialog.grantModeratorTitle' />
         );
     }
 }
