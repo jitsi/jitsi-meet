@@ -7,6 +7,7 @@ import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
+import { MODERATOR_PERMISSION_SETTINGS } from '../../moderatorPermissions';
 
 /**
  * The type of the React {@code Component} props of {@link ModeratorTab}.
@@ -158,10 +159,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
         this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
-        this._onChatWithPermissionsChanged = this._onChatWithPermissionsChanged.bind(this);
-        this._onPrivateChatWithPermissionsChanged = this._onPrivateChatWithPermissionsChanged.bind(this);
-        this._onSharedVideoWithPermissionsChanged = this._onSharedVideoWithPermissionsChanged.bind(this);
-        this._onBreakoutRoomJoinWithPermissionsChanged = this._onBreakoutRoomJoinWithPermissionsChanged.bind(this);
+        this._onPermissionChanged = this._onPermissionChanged.bind(this);
         this._onAudioTranslationEnabledChanged = this._onAudioTranslationEnabledChanged.bind(this);
     }
 
@@ -242,47 +240,16 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
-     * Callback invoked to select if chat with permissions should be activated.
+     * Callback invoked when one of the permission toggles changes.
      *
      * @param {Object} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onChatWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ chatWithPermissionsEnabled: checked });
-    }
+    _onPermissionChanged({ target: { checked, name } }: React.ChangeEvent<HTMLInputElement>) {
+        const setting = MODERATOR_PERMISSION_SETTINGS.find(s => s.name === name);
 
-    /**
-     * Callback invoked to select if private chat with permissions should be activated.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onPrivateChatWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ privateChatWithPermissionsEnabled: checked });
-    }
-
-    /**
-     * Callback invoked to select if video sharing with permissions should be activated.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onSharedVideoWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ sharedVideoWithPermissionsEnabled: checked });
-    }
-
-    /**
-     * Callback invoked to select if joining breakout rooms with permissions should be activated.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onBreakoutRoomJoinWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ breakoutRoomJoinWithPermissionsEnabled: checked });
+        setting && super._onChange({ [setting.propKey]: checked });
     }
 
     /**
@@ -295,19 +262,12 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         const {
             audioModerationEnabled,
             audioTranslationEnabled,
-            breakoutRoomJoinWithPermissionsEnabled,
-            chatWithPermissionsEnabled,
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
             followMeRecorderActive,
             followMeRecorderEnabled,
-            hideChatWithPermissions,
-            privateChatWithPermissionsEnabled,
-            sharedVideoWithPermissionsEnabled,
             showAudioTranslation,
-            showSharedVideoWithPermissions,
-            showBreakoutRoomJoinWithPermissions,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
@@ -358,34 +318,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }
-                { !hideChatWithPermissions
-                    && <Checkbox
-                        checked = { chatWithPermissionsEnabled }
-                        className = { classes.checkbox }
-                        label = { t('settings.chatWithPermissions') }
-                        name = 'chat-with-permissions'
-                        onChange = { this._onChatWithPermissionsChanged } /> }
-                { !hideChatWithPermissions
-                    && <Checkbox
-                        checked = { privateChatWithPermissionsEnabled }
-                        className = { classes.checkbox }
-                        label = { t('settings.privateChatWithPermissions') }
-                        name = 'private-chat-with-permissions'
-                        onChange = { this._onPrivateChatWithPermissionsChanged } /> }
-                { showSharedVideoWithPermissions
-                    && <Checkbox
-                        checked = { sharedVideoWithPermissionsEnabled }
-                        className = { classes.checkbox }
-                        label = { t('settings.sharedVideoWithPermissions') }
-                        name = 'shared-video-with-permissions'
-                        onChange = { this._onSharedVideoWithPermissionsChanged } /> }
-                { showBreakoutRoomJoinWithPermissions
-                    && <Checkbox
-                        checked = { breakoutRoomJoinWithPermissionsEnabled }
-                        className = { classes.checkbox }
-                        label = { t('settings.breakoutRoomJoinWithPermissions') }
-                        name = 'breakout-room-join-with-permissions'
-                        onChange = { this._onBreakoutRoomJoinWithPermissionsChanged } /> }
+                { MODERATOR_PERMISSION_SETTINGS
+                    .filter(({ isShown }) => isShown(this.props))
+                    .map(({ labelKey, name, propKey }) => (
+                        <Checkbox
+                            checked = { this.props[propKey] }
+                            className = { classes.checkbox }
+                            key = { name }
+                            label = { t(labelKey) }
+                            name = { name }
+                            onChange = { this._onPermissionChanged } />
+                    )) }
                 { showAudioTranslation
                     && <Checkbox
                         checked = { audioTranslationEnabled }

@@ -46,6 +46,7 @@ import {
     getShortcutsTabProps
 } from './functions.web';
 import logger from './logger';
+import { haveModeratorPermissionsChanged, setModeratorPermissions } from './moderatorPermissions';
 import { IConfigOptionValues, IExperimentalTabState } from './types';
 
 /**
@@ -253,24 +254,8 @@ export function submitModeratorTab(newState: any) {
                 newState.startAudioMuted, newState.startVideoMuted));
         }
 
-        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled
-            || newState.privateChatWithPermissionsEnabled !== currentState.privateChatWithPermissionsEnabled
-            || newState.sharedVideoWithPermissionsEnabled !== currentState.sharedVideoWithPermissionsEnabled
-            || newState.breakoutRoomJoinWithPermissionsEnabled
-                !== currentState.breakoutRoomJoinWithPermissionsEnabled) {
-            const { conference } = getState()['features/base/conference'];
-
-            const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
-
-            // One update for all the restrictions. The metadata changes only when the server
-            // confirms it, thus a second update here would not see the first one.
-            conference?.getMetadataHandler().setMetadata('permissions', {
-                ...currentPermissions,
-                breakoutRoomJoinRestricted: newState.breakoutRoomJoinWithPermissionsEnabled,
-                groupChatRestricted: newState.chatWithPermissionsEnabled,
-                privateChatRestricted: newState.privateChatWithPermissionsEnabled,
-                sharedVideoRestricted: newState.sharedVideoWithPermissionsEnabled
-            });
+        if (haveModeratorPermissionsChanged(newState, currentState)) {
+            setModeratorPermissions(getState()['features/base/conference'].conference, newState);
         }
 
         if (newState.audioTranslationEnabled !== currentState.audioTranslationEnabled) {
