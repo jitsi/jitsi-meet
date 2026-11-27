@@ -5,8 +5,18 @@ import { getJitsiMeetGlobalNSConnectionTimes } from '../base/util/helpers';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
+import EndConferenceDialog from './components/web/EndConferenceDialog.web';
 import LeaveReasonDialog from './components/web/LeaveReasonDialog.web';
 import logger from './logger';
+
+/**
+ * Opens {@code EndConferenceDialog}.
+ *
+ * @returns {Function}
+ */
+export function openEndConferenceDialog() {
+    return openDialog('EndConferenceDialog', EndConferenceDialog);
+}
 
 /**
  * Opens {@code LeaveReasonDialog}.
