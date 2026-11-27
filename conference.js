@@ -1052,13 +1052,40 @@ export default {
         const localTracks = await tryCreateLocalTracks;
 
         APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
-        localTracks.forEach(track => {
-            if ((track.isAudioTrack() && this.isLocalAudioMuted())
+
+        // options.startWithAudioMuted is the mute state of the audio track in the previous room, and true when there
+        // was no audio track there, for example after joining with startWithAudioMuted or disableInitialGUM and no
+        // pre-join page. base/media can still say unmuted in that case, so check both. The move always creates a new
+        // audio track and it must not be sent unmuted.
+        const audioMuted = Boolean(options?.startWithAudioMuted) || this.isLocalAudioMuted();
+        let tracks = localTracks;
+
+        // Like handleInitialTracks: stop a muted audio track instead of keeping it, so that the microphone is released
+        // (except on Safari, see there).
+        if (audioMuted && !browser.isWebKitBased()) {
+            tracks = localTracks.filter(track => {
+                if (track.isAudioTrack()) {
+                    track.stopStream();
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        // createInitialAVTracks set the requested types to PENDING_UNMUTE. Clear it for the types without a track (the
+        // stopped audio track, or a failed getUserMedia), like the initial join does. Otherwise the toolbar shows them
+        // as unmuted.
+        setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
+
+        tracks.forEach(track => {
+            if ((track.isAudioTrack() && audioMuted)
                 || (track.isVideoTrack() && this.isLocalVideoMuted())) {
                 track.mute();
             }
         });
-        this._createRoom(localTracks);
+        this._createRoom(tracks);
 
         return new Promise((resolve, reject) => {
             new ConferenceConnector(resolve, reject, this).connect();
