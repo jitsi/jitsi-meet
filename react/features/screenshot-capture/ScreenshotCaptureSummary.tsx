@@ -30,6 +30,7 @@ export default class ScreenshotCaptureSummary {
     _state: IReduxState;
     _initializedRegion: boolean;
     _imageCapture: ImageCapture;
+    _isActive: boolean;
     _streamWorker: Worker;
     _queue: Blob[];
 
@@ -56,6 +57,7 @@ export default class ScreenshotCaptureSummary {
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
+        this._isActive = false;
         this._queue = [];
     }
 
@@ -111,6 +113,7 @@ export default class ScreenshotCaptureSummary {
         if (videoType !== 'desktop') {
             return;
         }
+        this._isActive = true;
         this._imageCapture = new ImageCapture(track);
 
         if (!this._initializedRegion) {
@@ -125,6 +128,7 @@ export default class ScreenshotCaptureSummary {
      * @returns {void}
      */
     stop() {
+        this._isActive = false;
         this._streamWorker.postMessage({ id: CLEAR_TIMEOUT });
     }
 
@@ -134,6 +138,10 @@ export default class ScreenshotCaptureSummary {
      * @returns {Promise<void>}
      */
     async sendTimeout() {
+        if (!this._isActive) {
+            return;
+        }
+
         let imageBitmap: ImageBitmap | undefined;
 
         if (!this._imageCapture.track || this._imageCapture.track.readyState !== 'live') {
@@ -147,6 +155,13 @@ export default class ScreenshotCaptureSummary {
             imageBitmap = await this._imageCapture.grabFrame();
         } catch (e) {
             // ignore error
+        }
+
+        // The capture may have been stopped while grabFrame was pending.
+        if (!this._isActive) {
+            imageBitmap?.close();
+
+            return;
         }
 
         this._streamWorker.postMessage({
@@ -165,6 +180,10 @@ export default class ScreenshotCaptureSummary {
      */
     _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
         const { id, imageBlob } = message.data;
+
+        if (!this._isActive) {
+            return;
+        }
 
         this.sendTimeout();
         if (id === TIMEOUT_TICK && imageBlob && this._queue.length < SCREENSHOT_QUEUE_LIMIT) {
