@@ -32,9 +32,10 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling the audio-only mode.
  */
 class LowBandwidthModeButton extends AbstractButton<IProps> {
-    override accessibilityLabel = 'toolbar.accessibilityLabel.lowBandwidthMode';
+    override accessibilityLabel = 'toolbar.lowBandwidthModeOn';
     override icon = IconLowBandwidthMode;
     override label = 'toolbar.lowBandwidthModeOn';
+    override toggledAccessibilityLabel = 'toolbar.lowBandwidthModeOff';
     override toggledIcon = IconLowBandwidthModeOff;
     override toggledLabel = 'toolbar.lowBandwidthModeOff';
 
