@@ -38,6 +38,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePdfSharingButton } from '../pdf-sharing/hooks.web';
 import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
@@ -298,6 +299,7 @@ export function useToolboxButtons(
     const cc = useClosedCaptionButton();
     const audioTranslation = useAudioTranslationButton();
     const polls = usePollsButton();
+    const pdfsharing = usePdfSharingButton();
     const filesharing = useFileSharingButton();
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
@@ -336,6 +338,7 @@ export function useToolboxButtons(
         closedcaptions: cc,
         audiotranslation: audioTranslation,
         polls,
+        pdfsharing,
         filesharing,
         recording,
         livestreaming: liveStreaming,
