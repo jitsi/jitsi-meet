@@ -74,8 +74,12 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
     // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
     // the image happens to be in the cache and the browser is able to deliver the uncompressed/decoded image
     // before using the image in the drawImage call.
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const img = document.createElement('img');
+
+        img.onerror = () => {
+            reject(new Error('Failed to load image'));
+        };
 
         img.onload = function() {
             // Create an off-screen canvas.
